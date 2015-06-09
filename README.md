@@ -8,6 +8,7 @@ Steps to this repeat this demo:
     3. Run Tcl files. 
     4. Comple the entire quartus project, down load to FPGA.
     5. Open Eclipse. Import projects based on <above_directory>\software\DE4_DDR2_test and ~\DE4_DDR2_test_bsp
+      * import type is Nios II software build tools project
     6. Run the sw project on the sopc file generated from the demo quartus project.
 
 Steps with other settings: 
