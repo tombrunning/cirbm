@@ -15,3 +15,5 @@ Steps with other settings:
     1. Open stratix iv CD files, locate ./Tools/DE4_SystemBuilder/DE4_SystemBuilder.exe
     2. Select components you need and generate a demo project.
     3. Extend from there by adding in your customised design with correct interfaces.
+    
+NOTICE: It is important that every time a new branch is created from the master trunk, a new software project should be recreated from scratch. Errors might happen if you directly copy the software project from an old branch.
