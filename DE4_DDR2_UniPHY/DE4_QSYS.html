@@ -1,0 +1,1447 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <title>Report</title>
+  <style type="text/css">
+body { font-family:arial ;}
+a { text-decoration:underline ; color:#003000 ;}
+a:hover { text-decoration:underline ; color:0030f0 ;}
+td { padding : 5px ;}
+table.topTitle { width:100% ;}
+table.topTitle td.l { text-align:left ; font-weight: bold ; font-size:30px ;}
+table.topTitle td.r { text-align:right ; font-weight: bold ; font-size:16px ;}
+table.blueBar { width : 100% ; border-spacing : 0px ;}
+table.blueBar td { background:#0036ff ; font-size:12px ; color : white ; text-align : left ; font-weight : bold ;}
+table.blueBar td.l { text-align : left ;}
+table.blueBar td.r { text-align : right ;}
+table.items { width:100% ; border-collapse:collapse ;}
+table.items td.label { font-weight:bold ; font-size:16px ; vertical-align:top ;}
+table.items td.mono { font-family:courier ; font-size:12px ; white-space:pre ;}
+div.label { font-weight:bold ; font-size:16px ; vertical-align:top ; text-align:center ;}
+table.grid { border-collapse:collapse ;}
+table.grid td { border:1px solid #bbb ; font-size:12px ;}
+body { font-family:arial ;}
+table.x { font-family:courier ; border-collapse:collapse ; padding:2px ;}
+table.x td { border:1px solid #bbb ;}
+td.tableTitle { font-weight:bold ; text-align:center ;}
+table.grid { border-collapse:collapse ;}
+table.grid td { border:1px solid #bbb ;}
+table.grid td.tableTitle { font-weight:bold ; text-align:center ;}
+table.mmap { border-collapse:collapse ; text-size:11px ; border:1px solid #d8d8d8 ;}
+table.mmap td { border-color:#d8d8d8 ; border-width:1px ; border-style:solid ;}
+table.mmap td.empty { border-style:none ; background-color:#f0f0f0 ;}
+table.mmap td.slavemodule { text-align:left ; font-size:11px ; border-style:solid solid none solid ;}
+table.mmap td.slavem { text-align:right ; font-size:9px ; font-style:italic ; border-style:none solid none solid ;}
+table.mmap td.slaveb { text-align:right ; font-size:9px ; font-style:italic ; border-style:none solid solid solid ;}
+table.mmap td.mastermodule { text-align:center ; font-size:11px ; border-style:solid solid none solid ;}
+table.mmap td.masterlr { text-align:center ; font-size:9px ; font-style:italic ; border-style:none solid solid solid ;}
+table.mmap td.masterl { text-align:center ; font-size:9px ; font-style:italic ; border-style:none none solid solid ;}
+table.mmap td.masterm { text-align:center ; font-size:9px ; font-style:italic ; border-style:none none solid none ;}
+table.mmap td.masterr { text-align:center ; font-size:9px ; font-style:italic ; border-style:none solid solid none ;}
+table.mmap td.addr { font-family:courier ; font-size:9px ; text-align:right ;}
+table.connectionboxes { border-collapse:separate ; border-spacing:0px ; font-family:arial ;}
+table.connectionboxes td.from { border-bottom:1px solid black ; font-size:9px ; font-style:italic ; vertical-align:bottom ; text-align:left ;}
+table.connectionboxes td.to { font-size:9px ; font-style:italic ; vertical-align:top ; text-align:right ;}
+table.connectionboxes td.lefthandwire { border-bottom:1px solid black ; font-size:9px ; font-style:italic ; vertical-align:bottom ; text-align:right ;}
+table.connectionboxes td.righthandwire { border-bottom:1px solid black ; font-size:9px ; font-style:italic ; vertical-align:bottom ; text-align:left ;}
+table.connectionboxes td.righthandlabel { font-size:11px ; vertical-align:bottom ; text-align:left ;}
+table.connectionboxes td.neighbor { padding:3px ; border:1px solid black ; font-size: 11px ; background:#e8e8e8 ; vertical-align:center ; text-align:center ;}
+table.connectionboxes td.main { padding:8px ; border:1px solid black ; font-size: 14px ; font-weight:bold ; background:#ffffff ; vertical-align:center ; text-align:center ;}
+.parametersbox { border:1px solid #d0d0d0 ; display:inline-block ; max-height:160px ; overflow:auto ; width:360px ; font-size:10px ;}
+.flowbox { display:inline-block ;}
+.parametersbox table { font-size:10px ;}
+td.parametername { font-style:italic ;}
+td.parametervalue { font-weight:bold ;}
+div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; border-top:1px solid #707070 ; border-bottom:1px solid #707070 ; padding:20px ; margin:20px ; width:auto ;}</style>
+ </head>
+ <body>
+  <table class="topTitle">
+   <tr>
+    <td class="l">DE4_QSYS</td>
+    <td class="r">DE4_QSYS
+     <br/>1.0
+     <br/>
+    </td>
+   </tr>
+  </table>
+  <table class="blueBar">
+   <tr>
+    <td class="l">2012.05.28.15:39:19</td>
+    <td class="r">Generation Report</td>
+   </tr>
+  </table>
+  <table class="items">
+   <tr>
+    <td class="label">Output Directory</td>
+    <td class="mono">D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/</td>
+   </tr>
+   <tr>
+    <td class="label">Files</td>
+    <td class="mono">D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/DE4_QSYS.v (572795 bytes VERILOG)
+     <br/>
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_onchip_memory.hex (672013 bytes HEX)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_onchip_memory.v (4026 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif.v (36816 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_pll0.sv (17319 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_clock_pair_generator.v (3533 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_read_valid_selector.v (2384 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_addr_cmd_datapath.v (6017 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_reset.v (4198 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_acv_ldc.v (2773 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_addr_cmd_pads.v (12487 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_addr_cmd_ldc_pads.v (11778 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_addr_cmd_ldc_pad.v (4495 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/addr_cmd_non_ldc_pad.v (3154 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_memphy.v (32817 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_reset_sync.v (1983 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_new_io_pads.v (13217 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_fr_cycle_shifter.v (3948 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_read_datapath.v (28477 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_write_datapath.v (9247 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_hr_to_fr.v (1353 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_simple_ddio_out.v (9127 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_sequencer_mux_bridge.sv (17262 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_phy_csr.sv (5957 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_iss_probe.v (1789 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_flop_mem.v (2760 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0.sv (17000 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_altdqdqs.v (6093 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altdq_dqs2_ddio_3reg_stratixiv.sv (57835 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0.ppf (96718 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0.sdc (30044 bytes SDC)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_timing.tcl (5730 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_report_timing.tcl (17777 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_report_timing_core.tcl (80749 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl (80954 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_pin_assignments.tcl (14889 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_parameters.tcl (3219 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_p0_sequencer_cpu.sdc (796 bytes SDC)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/afi_mux_ddrx.v (10230 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_software/sequencer.c (214113 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_software/sequencer.h (13839 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_make_qsys_seq.tcl (5121 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0.v (267458 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_avalon_sc_fifo.v (32228 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_mem_if_sequencer_cpu_no_ifdef_params_synth_cpu_inst.v (85632 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_mem_if_sequencer_cpu_no_ifdef_params_synth_cpu_inst_test_bench.v (33763 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_mem_if_sequencer_mem_no_ifdef_params.sv (2845 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_arbitrator.sv (9460 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_burst_uncompressor.sv (10373 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_master_agent.sv (8686 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_master_translator.sv (16802 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_slave_agent.sv (19132 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_slave_translator.sv (16043 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_reset_controller.sdc (1179 bytes SDC)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_reset_controller.v (3595 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_reset_synchronizer.v (3564 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_addr_router.sv (7579 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_addr_router_001.sv (6094 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_cmd_xbar_demux.sv (6674 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_cmd_xbar_demux_001.sv (3522 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_cmd_xbar_mux_003.sv (11886 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_id_router.sv (6015 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_id_router_003.sv (6108 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_irq_mapper.sv (1705 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_rsp_xbar_demux_003.sv (4154 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_rsp_xbar_mux.sv (14499 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_ac_ROM_no_ifdef_params.v (3053 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_ac_ROM_reg.v (1456 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_bitcheck.v (3398 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_core.sv (17999 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_datamux.v (1733 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_data_broadcast.v (2357 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_data_decoder.v (2899 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_ddr2.v (7244 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_di_buffer.v (4084 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_di_buffer_wrap.v (2373 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_dm_decoder.v (1770 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_generic.sv (7568 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_inst_ROM_no_ifdef_params.v (3065 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_inst_ROM_reg.v (1480 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_jumplogic.v (3333 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_lfsr12.v (1448 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_lfsr36.v (2107 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_lfsr72.v (1391 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_pattern_fifo.v (2851 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_ram.v (1322 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_ram_csr.v (2522 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_read_datapath.v (3618 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/rw_manager_write_decoder.v (2858 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_data_mgr.sv (3828 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_phy_mgr.sv (17495 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_reg_file.sv (5845 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_scc_acv_phase_decode.v (1890 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_scc_acv_wrapper.sv (5253 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_scc_mgr.sv (23952 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_scc_reg_file.v (2631 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_scc_siii_phase_decode.v (11919 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_scc_siii_wrapper.sv (4872 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_scc_sv_phase_decode.v (3905 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/sequencer_scc_sv_wrapper.sv (6215 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_sequencer_mem.hex (59166 bytes HEX)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_AC_ROM.hex (853 bytes HEX)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_s0_inst_ROM.hex (2445 bytes HEX)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_mem_if_ddr2_emif_c0.v (19387 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_addr_cmd.v (25980 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_addr_cmd_wrap.v (51739 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_ddr2_odt_gen.v (19238 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_ddr3_odt_gen.v (18029 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_lpddr2_addr_cmd.v (16552 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_odt_gen.v (15324 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_rdwr_data_tmg.v (131911 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_arbiter.v (50108 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_burst_gen.v (63619 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_cmd_gen.v (129075 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_csr.v (53869 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_buffer.v (4779 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_buffer_manager.v (8991 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_burst_tracking.v (4707 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_dataid_manager.v (38461 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_fifo.v (8340 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_list.v (8613 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_rdata_path.v (52236 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_wdata_path.v (51006 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_define.iv (2237 bytes VERILOG_INCLUDE)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_ecc_decoder.v (14578 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_ecc_decoder_32_syn.v (33133 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_ecc_decoder_64_syn.v (59416 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_ecc_encoder.v (10820 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_ecc_encoder_32_syn.v (14064 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_ecc_encoder_64_syn.v (22231 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_ecc_encoder_decoder_wrapper.v (50041 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_axi_st_converter.v (58946 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_input_if.v (10915 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_rank_timer.v (116066 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_sideband.v (58617 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_tbp.v (176124 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_timing_param.v (67437 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_controller.v (172825 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_controller_st_top.v (93779 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_if_nextgen_ddr2_controller_core.sv (26982 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/alt_mem_ddrx_mm_st_converter.v (7006 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_mem_if_oct_stratixiv.sv (3483 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_mem_if_dll_stratixiv.sv (2816 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys.ocp (856 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys.sdc (4156 bytes SDC)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys.v (439512 bytes VERILOG_ENCRYPT)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_bht_ram.mif (2392 bytes MIF)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_dc_tag_ram.mif (984 bytes MIF)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_ic_tag_ram.mif (2009 bytes MIF)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_sysclk.v (7194 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_tck.v (8564 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_wrapper.v (10541 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_mult_cell.v (4878 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_ociram_default_contents.mif (5714 bytes MIF)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_oci_test_bench.v (1517 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_rf_ram_a.mif (600 bytes MIF)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_rf_ram_b.mif (600 bytes MIF)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_nios2_qsys_test_bench.v (31954 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_jtag_uart.v (23819 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_jtag_uart_input_mutex.dat (3 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_jtag_uart_input_stream.dat (10 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_jtag_uart_output_stream.dat (0 bytes OTHER)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_sysid.v (1447 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_timer.v (6907 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_led.v (2192 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_button.v (1915 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_avalon_mm_clock_crossing_bridge.v (10052 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_avalon_dc_fifo.v (23570 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_dcfifo_synchronizer_bundle.v (1458 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_ddr2_i2c_scl.v (2293 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_ddr2_i2c_sda.v (2811 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_addr_router.sv (6484 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_addr_router_001.sv (7318 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_id_router.sv (6036 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_id_router_002.sv (5980 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_id_router_003.sv (5967 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_addr_router_002.sv (7435 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_id_router_005.sv (5967 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_traffic_limiter.sv (12802 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_avalon_st_pipeline_base.v (4716 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_burst_adapter.sv (37064 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_cmd_xbar_demux.sv (4112 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_cmd_xbar_demux_001.sv (6025 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_cmd_xbar_mux.sv (10422 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_rsp_xbar_demux.sv (4106 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_rsp_xbar_demux_002.sv (3482 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_rsp_xbar_mux.sv (11235 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_rsp_xbar_mux_001.sv (13661 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_cmd_xbar_demux_002.sv (6660 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_rsp_xbar_demux_005.sv (3482 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_rsp_xbar_mux_002.sv (14467 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_width_adapter.sv (35859 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_avalon_st_handshake_clock_crosser.v (7493 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_avalon_st_clock_crosser.v (4900 bytes VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/DE4_QSYS_irq_mapper.sv (1825 bytes SYSTEM_VERILOG)
+     <br/>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_irq_clock_crosser.sv (1651 bytes SYSTEM_VERILOG)
+     <br/>
+    </td>
+   </tr>
+   <tr>
+    <td class="label">Instantiations</td>
+    <td class="mono">
+     <table class="grid">
+      <tr>
+       <td><b>DE4_QSYS</b>
+        <br/>DE4_QSYS v1.0</td>
+       <td><b>DE4_QSYS_onchip_memory</b> as onchip_memory
+        <br/><b>DE4_QSYS_mem_if_ddr2_emif</b> as mem_if_ddr2_emif
+        <br/><b>DE4_QSYS_nios2_qsys</b> as nios2_qsys
+        <br/><b>DE4_QSYS_jtag_uart</b> as jtag_uart
+        <br/><b>DE4_QSYS_sysid</b> as sysid
+        <br/><b>DE4_QSYS_timer</b> as timer
+        <br/><b>DE4_QSYS_led</b> as led
+        <br/><b>DE4_QSYS_button</b> as button
+        <br/><b>altera_avalon_mm_clock_crossing_bridge</b> as mm_clock_crossing_bridge_io
+        <br/><b>DE4_QSYS_ddr2_i2c_scl</b> as ddr2_i2c_scl
+        <br/><b>DE4_QSYS_ddr2_i2c_sda</b> as ddr2_i2c_sda
+        <br/><b>altera_merlin_master_translator</b> as nios2_qsys_instruction_master_translator, nios2_qsys_data_master_translator, mm_clock_crossing_bridge_io_m0_translator
+        <br/><b>altera_merlin_slave_translator</b> as nios2_qsys_jtag_debug_module_translator, onchip_memory_s1_translator, mem_if_ddr2_emif_avl_translator, jtag_uart_avalon_jtag_slave_translator, mm_clock_crossing_bridge_io_s0_translator, button_s1_translator, led_s1_translator, timer_s1_translator, sysid_control_slave_translator, ddr2_i2c_scl_s1_translator, ddr2_i2c_sda_s1_translator
+        <br/><b>altera_merlin_slave_agent</b> as onchip_memory_s1_translator_avalon_universal_slave_0_agent, mm_clock_crossing_bridge_io_s0_translator_avalon_universal_slave_0_agent, mem_if_ddr2_emif_avl_translator_avalon_universal_slave_0_agent, jtag_uart_avalon_jtag_slave_translator_avalon_universal_slave_0_agent, nios2_qsys_jtag_debug_module_translator_avalon_universal_slave_0_agent, led_s1_translator_avalon_universal_slave_0_agent, sysid_control_slave_translator_avalon_universal_slave_0_agent, timer_s1_translator_avalon_universal_slave_0_agent, ddr2_i2c_scl_s1_translator_avalon_universal_slave_0_agent, button_s1_translator_avalon_universal_slave_0_agent, ddr2_i2c_sda_s1_translator_avalon_universal_slave_0_agent
+        <br/><b>altera_avalon_sc_fifo</b> as onchip_memory_s1_translator_avalon_universal_slave_0_agent_rsp_fifo, mm_clock_crossing_bridge_io_s0_translator_avalon_universal_slave_0_agent_rsp_fifo, mm_clock_crossing_bridge_io_s0_translator_avalon_universal_slave_0_agent_rdata_fifo, mem_if_ddr2_emif_avl_translator_avalon_universal_slave_0_agent_rsp_fifo, mem_if_ddr2_emif_avl_translator_avalon_universal_slave_0_agent_rdata_fifo, jtag_uart_avalon_jtag_slave_translator_avalon_universal_slave_0_agent_rsp_fifo, nios2_qsys_jtag_debug_module_translator_avalon_universal_slave_0_agent_rsp_fifo, led_s1_translator_avalon_universal_slave_0_agent_rsp_fifo, led_s1_translator_avalon_universal_slave_0_agent_rdata_fifo, sysid_control_slave_translator_avalon_universal_slave_0_agent_rsp_fifo, sysid_control_slave_translator_avalon_universal_slave_0_agent_rdata_fifo, timer_s1_translator_avalon_universal_slave_0_agent_rsp_fifo, timer_s1_translator_avalon_universal_slave_0_agent_rdata_fifo, ddr2_i2c_scl_s1_translator_avalon_universal_slave_0_agent_rsp_fifo, ddr2_i2c_scl_s1_translator_avalon_universal_slave_0_agent_rdata_fifo, button_s1_translator_avalon_universal_slave_0_agent_rsp_fifo, button_s1_translator_avalon_universal_slave_0_agent_rdata_fifo, ddr2_i2c_sda_s1_translator_avalon_universal_slave_0_agent_rsp_fifo, ddr2_i2c_sda_s1_translator_avalon_universal_slave_0_agent_rdata_fifo
+        <br/><b>altera_merlin_master_agent</b> as nios2_qsys_data_master_translator_avalon_universal_master_0_agent, nios2_qsys_instruction_master_translator_avalon_universal_master_0_agent, mm_clock_crossing_bridge_io_m0_translator_avalon_universal_master_0_agent
+        <br/><b>DE4_QSYS_addr_router</b> as addr_router
+        <br/><b>DE4_QSYS_addr_router_001</b> as addr_router_001
+        <br/><b>DE4_QSYS_id_router</b> as id_router, id_router_001
+        <br/><b>DE4_QSYS_id_router_002</b> as id_router_002
+        <br/><b>DE4_QSYS_id_router_003</b> as id_router_003, id_router_004
+        <br/><b>DE4_QSYS_addr_router_002</b> as addr_router_002
+        <br/><b>DE4_QSYS_id_router_005</b> as id_router_005, id_router_006, id_router_007, id_router_008, id_router_009, id_router_010
+        <br/><b>altera_merlin_traffic_limiter</b> as limiter, limiter_001, limiter_002
+        <br/><b>altera_merlin_burst_adapter</b> as burst_adapter, burst_adapter_001, burst_adapter_002, burst_adapter_003
+        <br/><b>altera_reset_controller</b> as rst_controller, rst_controller_001, rst_controller_002
+        <br/><b>DE4_QSYS_cmd_xbar_demux</b> as cmd_xbar_demux
+        <br/><b>DE4_QSYS_cmd_xbar_demux_001</b> as cmd_xbar_demux_001
+        <br/><b>DE4_QSYS_cmd_xbar_mux</b> as cmd_xbar_mux, cmd_xbar_mux_001
+        <br/><b>DE4_QSYS_rsp_xbar_demux</b> as rsp_xbar_demux, rsp_xbar_demux_001
+        <br/><b>DE4_QSYS_rsp_xbar_demux_002</b> as rsp_xbar_demux_002, rsp_xbar_demux_003, rsp_xbar_demux_004
+        <br/><b>DE4_QSYS_rsp_xbar_mux</b> as rsp_xbar_mux
+        <br/><b>DE4_QSYS_rsp_xbar_mux_001</b> as rsp_xbar_mux_001
+        <br/><b>DE4_QSYS_cmd_xbar_demux_002</b> as cmd_xbar_demux_002
+        <br/><b>DE4_QSYS_rsp_xbar_demux_005</b> as rsp_xbar_demux_005, rsp_xbar_demux_006, rsp_xbar_demux_007, rsp_xbar_demux_008, rsp_xbar_demux_009, rsp_xbar_demux_010
+        <br/><b>DE4_QSYS_rsp_xbar_mux_002</b> as rsp_xbar_mux_002
+        <br/><b>altera_merlin_width_adapter</b> as width_adapter, width_adapter_001
+        <br/><b>altera_avalon_st_handshake_clock_crosser</b> as crosser, crosser_001, crosser_002, crosser_003, crosser_004, crosser_005, crosser_006, crosser_007, crosser_008, crosser_009, crosser_010, crosser_011, crosser_012, crosser_013
+        <br/><b>DE4_QSYS_irq_mapper</b> as irq_mapper
+        <br/><b>altera_irq_clock_crosser</b> as irq_synchronizer
+        <br/>
+       </td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_onchip_memory</b>
+        <br/>altera_avalon_onchip_memory2 v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_mem_if_ddr2_emif</b>
+        <br/>altera_mem_if_ddr2_emif v11.1</td>
+       <td><b>DE4_QSYS_mem_if_ddr2_emif_pll0</b> as pll0
+        <br/><b>DE4_QSYS_mem_if_ddr2_emif_p0</b> as p0
+        <br/><b>afi_mux_ddrx</b> as m0
+        <br/><b>DE4_QSYS_mem_if_ddr2_emif_s0</b> as s0
+        <br/><b>DE4_QSYS_mem_if_ddr2_emif_c0</b> as c0
+        <br/><b>altera_mem_if_oct_stratixiv</b> as oct0
+        <br/><b>altera_mem_if_dll_stratixiv</b> as dll0
+        <br/>
+       </td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_nios2_qsys</b>
+        <br/>altera_nios2_qsys v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_jtag_uart</b>
+        <br/>altera_avalon_jtag_uart v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_sysid</b>
+        <br/>altera_avalon_sysid_qsys v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_timer</b>
+        <br/>altera_avalon_timer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_led</b>
+        <br/>altera_avalon_pio v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_button</b>
+        <br/>altera_avalon_pio v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_avalon_mm_clock_crossing_bridge</b>
+        <br/>altera_avalon_mm_clock_crossing_bridge v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_ddr2_i2c_scl</b>
+        <br/>altera_avalon_pio v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_ddr2_i2c_sda</b>
+        <br/>altera_avalon_pio v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_merlin_master_translator</b>
+        <br/>altera_merlin_master_translator v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_merlin_slave_translator</b>
+        <br/>altera_merlin_slave_translator v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_merlin_slave_agent</b>
+        <br/>altera_merlin_slave_agent v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_avalon_sc_fifo</b>
+        <br/>altera_avalon_sc_fifo v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_merlin_master_agent</b>
+        <br/>altera_merlin_master_agent v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_addr_router</b>
+        <br/>altera_merlin_router v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_addr_router_001</b>
+        <br/>altera_merlin_router v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_id_router</b>
+        <br/>altera_merlin_router v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_id_router_002</b>
+        <br/>altera_merlin_router v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_id_router_003</b>
+        <br/>altera_merlin_router v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_addr_router_002</b>
+        <br/>altera_merlin_router v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_id_router_005</b>
+        <br/>altera_merlin_router v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_merlin_traffic_limiter</b>
+        <br/>altera_merlin_traffic_limiter v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_merlin_burst_adapter</b>
+        <br/>altera_merlin_burst_adapter v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_reset_controller</b>
+        <br/>altera_reset_controller v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_cmd_xbar_demux</b>
+        <br/>altera_merlin_demultiplexer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_cmd_xbar_demux_001</b>
+        <br/>altera_merlin_demultiplexer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_cmd_xbar_mux</b>
+        <br/>altera_merlin_multiplexer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_rsp_xbar_demux</b>
+        <br/>altera_merlin_demultiplexer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_rsp_xbar_demux_002</b>
+        <br/>altera_merlin_demultiplexer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_rsp_xbar_mux</b>
+        <br/>altera_merlin_multiplexer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_rsp_xbar_mux_001</b>
+        <br/>altera_merlin_multiplexer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_cmd_xbar_demux_002</b>
+        <br/>altera_merlin_demultiplexer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_rsp_xbar_demux_005</b>
+        <br/>altera_merlin_demultiplexer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_rsp_xbar_mux_002</b>
+        <br/>altera_merlin_multiplexer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_merlin_width_adapter</b>
+        <br/>altera_merlin_width_adapter v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_avalon_st_handshake_clock_crosser</b>
+        <br/>altera_avalon_st_handshake_clock_crosser v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_irq_mapper</b>
+        <br/>altera_irq_mapper v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_irq_clock_crosser</b>
+        <br/>altera_irq_clock_crosser v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_mem_if_ddr2_emif_pll0</b>
+        <br/>altera_mem_if_ddr2_pll_dll_oct v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_mem_if_ddr2_emif_p0</b>
+        <br/>altera_mem_if_ddr2_phy_core v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>afi_mux_ddrx</b>
+        <br/>altera_mem_if_ddr2_afi_mux v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_mem_if_ddr2_emif_s0</b>
+        <br/>altera_mem_if_ddr2_qsys_sequencer v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>DE4_QSYS_mem_if_ddr2_emif_c0</b>
+        <br/>altera_mem_if_nextgen_ddr2_controller v11.1</td>
+       <td><b>alt_mem_if_nextgen_ddr2_controller_core</b> as ng0
+        <br/><b>alt_mem_ddrx_mm_st_converter</b> as a0
+        <br/>
+       </td>
+      </tr>
+      <tr>
+       <td><b>altera_mem_if_oct_stratixiv</b>
+        <br/>altera_mem_if_oct v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>altera_mem_if_dll_stratixiv</b>
+        <br/>altera_mem_if_dll v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>alt_mem_if_nextgen_ddr2_controller_core</b>
+        <br/>altera_mem_if_nextgen_ddr2_controller_core v11.1</td>
+       <td></td>
+      </tr>
+      <tr>
+       <td><b>alt_mem_ddrx_mm_st_converter</b>
+        <br/>alt_mem_ddrx_mm_st_converter v11.1</td>
+       <td></td>
+      </tr>
+     </table>
+    </td>
+   </tr>
+  </table>
+  <div style="width:100% ;  height:10px"> </div>
+  <div class="label">Generation Messages</div>
+  <div style="white-space:pre ; font-family:courier">2012.05.28.15:36:03 [Info] DE4_QSYS.onchip_memory: Memory will be initialized from onchip_memory.hex
+2012.05.28.15:36:00 [Info] DE4_QSYS.mem_if_ddr2_emif: Auto interface leveling mode set to 'Leveling'
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.pll_ref_clk: Timing: ELA:1/0.000s
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.global_reset: Timing: ELA:1/0.000s
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.soft_reset: Timing: ELA:1/0.000s
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.afi_clk: Timing: ELA:2/0.000s/0.000s
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.afi_half_clk: Timing: ELA:2/0.000s/0.000s
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.afi_reset: Timing: ELA:1/0.000s
+2012.05.28.15:35:23 [Debug] DE4_QSYS.mem_if_ddr2_emif.altera_mem_if_ddr2_pll_dll_oct: When a generate simulation callback is defined a synthesis generation callback should also be defined
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.pll0: Timing: VAL:1/0.235s ELA:1/0.015s
+2012.05.28.15:35:24 [Debug] DE4_QSYS.mem_if_ddr2_emif.altera_mem_if_ddr2_phy_core: When a generate simulation callback is defined a synthesis generation callback should also be defined
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.p0: Timing: VAL:1/0.250s ELA:1/0.015s
+2012.05.28.15:35:24 [Debug] DE4_QSYS.mem_if_ddr2_emif.altera_mem_if_ddr2_afi_mux: When a generate simulation callback is defined a synthesis generation callback should also be defined
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.m0: Timing: VAL:1/0.032s ELA:1/0.015s
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.as0: Timing: VAL:1/0.016s ELA:1/0.015s
+2012.05.28.15:35:26 [Debug] DE4_QSYS.mem_if_ddr2_emif.altera_mem_if_ddr2_qsys_sequencer: When a generate simulation callback is defined a synthesis generation callback should also be defined
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.s0: Timing: VAL:1/0.218s ELA:1/0.016s
+2012.05.28.15:35:28 [Debug] DE4_QSYS.mem_if_ddr2_emif.c0.altera_mem_if_nextgen_ddr2_controller_core: When a generate simulation callback is defined a synthesis generation callback should also be defined
+2012.05.28.15:36:02 [Debug] DE4_QSYS.mem_if_ddr2_emif.c0.ng0: Timing: VAL:1/0.094s ELA:1/0.015s
+2012.05.28.15:36:02 [Debug] DE4_QSYS.mem_if_ddr2_emif.c0.afi_reset: Timing: ELA:1/0.000s
+2012.05.28.15:36:02 [Debug] DE4_QSYS.mem_if_ddr2_emif.c0.afi_clk: Timing: ELA:1/0.000s
+2012.05.28.15:36:02 [Debug] DE4_QSYS.mem_if_ddr2_emif.c0.afi_half_clk: Timing: ELA:1/0.000s
+2012.05.28.15:35:28 [Debug] DE4_QSYS.mem_if_ddr2_emif.c0.alt_mem_ddrx_mm_st_converter: When a generate simulation callback is defined a synthesis generation callback should also be defined
+2012.05.28.15:36:02 [Debug] DE4_QSYS.mem_if_ddr2_emif.c0.a0: Timing: VAL:1/0.000s ELA:1/0.000s
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.c0: Timing: VAL:1/0.078s COM:1/0.234s
+2012.05.28.15:35:28 [Debug] DE4_QSYS.mem_if_ddr2_emif.altera_mem_if_oct: When a generate simulation callback is defined a synthesis generation callback should also be defined
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.oct0: Timing: VAL:1/0.000s ELA:1/0.000s
+2012.05.28.15:35:29 [Debug] DE4_QSYS.mem_if_ddr2_emif.altera_mem_if_dll: When a generate simulation callback is defined a synthesis generation callback should also be defined
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif.dll0: Timing: VAL:1/0.000s ELA:1/0.016s
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mem_if_ddr2_emif: Timing: VAL:1/0.359s COM:1/2.000s
+2012.05.28.15:35:20 [Debug] DE4_QSYS.altera_nios2_qsys: When a generate simulation callback is defined a synthesis generation callback should also be defined
+2012.05.28.15:36:03 [Info] DE4_QSYS.nios2_qsys: CPUID control register value is 0. Please manually assign CPUID if creating multiple Nios II system
+2012.05.28.15:36:03 [Debug] DE4_QSYS.nios2_qsys: Timing: VAL:1/0.062s ELA:1/0.016s
+2012.05.28.15:36:03 [Info] DE4_QSYS.sysid: System ID will no longer be automatically assigned.
+2012.05.28.15:36:03 [Info] DE4_QSYS.sysid: Time stamp will be automatically updated when this component is generated.
+2012.05.28.15:36:03 [Debug] DE4_QSYS.sysid: Timing: VAL:2/0.000s/0.000s
+2012.05.28.15:36:03 [Info] DE4_QSYS.button: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
+2012.05.28.15:36:03 [Debug] DE4_QSYS.mm_clock_crossing_bridge_io: Timing: ELA:1/0.000s
+2012.05.28.15:36:03 [Info] DE4_QSYS.ddr2_i2c_sda: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
+2012.05.28.15:36:03 [Info] DE4_QSYS: Generating <b>DE4_QSYS</b> "<b>DE4_QSYS</b>" for QUARTUS_SYNTH
+2012.05.28.15:36:03 [Debug] DE4_QSYS: queue size: 0 starting:DE4_QSYS "DE4_QSYS"
+2012.05.28.15:36:06 [Debug] Transform: PipelineBridgeSwap
+2012.05.28.15:36:06 [Info] pipeline_bridge_swap_transform: After transform: <b>12</b> modules, <b>40</b> connections
+2012.05.28.15:36:06 [Debug] Transform: ClockCrossingBridgeSwap
+2012.05.28.15:36:06 [Debug] Transform: QsysBetaIPSwap
+2012.05.28.15:36:06 [Debug] Transform: CustomInstructionTransform
+2012.05.28.15:36:06 [Info] No custom instruction connections, skipping transform 
+2012.05.28.15:36:06 [Debug] Transform: TristateConduitUpgradeTransform
+2012.05.28.15:36:08 [Debug] Transform: TranslatorTransform
+2012.05.28.15:36:08 [Progress] min: 0
+2012.05.28.15:36:08 [Progress] max: 1
+2012.05.28.15:36:08 [Progress] current: 1
+2012.05.28.15:36:08 [Progress] min: 0
+2012.05.28.15:36:08 [Progress] max: 1
+2012.05.28.15:36:08 [Progress] current: 1
+2012.05.28.15:36:08 [Progress] min: 0
+2012.05.28.15:36:08 [Progress] max: 1
+2012.05.28.15:36:08 [Progress] current: 1
+2012.05.28.15:36:08 [Progress] min: 0
+2012.05.28.15:36:08 [Progress] max: 1
+2012.05.28.15:36:08 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Info] merlin_translator_transform: After transform: <b>26</b> modules, <b>82</b> connections
+2012.05.28.15:36:09 [Debug] Transform: DomainTransform
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces nios2_qsys.instruction_master and nios2_qsys_instruction_master_translator.avalon_anti_master_0
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces nios2_qsys.data_master and nios2_qsys_data_master_translator.avalon_anti_master_0
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces nios2_qsys_jtag_debug_module_translator.avalon_anti_slave_0 and nios2_qsys.jtag_debug_module
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces onchip_memory_s1_translator.avalon_anti_slave_0 and onchip_memory.s1
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces mem_if_ddr2_emif_avl_translator.avalon_anti_slave_0 and mem_if_ddr2_emif.avl
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces jtag_uart_avalon_jtag_slave_translator.avalon_anti_slave_0 and jtag_uart.avalon_jtag_slave
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces mm_clock_crossing_bridge_io_s0_translator.avalon_anti_slave_0 and mm_clock_crossing_bridge_io.s0
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces mm_clock_crossing_bridge_io.m0 and mm_clock_crossing_bridge_io_m0_translator.avalon_anti_master_0
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Progress] min: 0
+2012.05.28.15:36:09 [Progress] max: 1
+2012.05.28.15:36:09 [Progress] current: 1
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces button_s1_translator.avalon_anti_slave_0 and button.s1
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces led_s1_translator.avalon_anti_slave_0 and led.s1
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces timer_s1_translator.avalon_anti_slave_0 and timer.s1
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces sysid_control_slave_translator.avalon_anti_slave_0 and sysid.control_slave
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces ddr2_i2c_scl_s1_translator.avalon_anti_slave_0 and ddr2_i2c_scl.s1
+2012.05.28.15:36:09 [Debug] Transform merlin_domain_transform not run on matched interfaces ddr2_i2c_sda_s1_translator.avalon_anti_slave_0 and ddr2_i2c_sda.s1
+2012.05.28.15:36:09 [Info] merlin_domain_transform: After transform: <b>61</b> modules, <b>246</b> connections
+2012.05.28.15:36:09 [Debug] Transform: RouterTransform
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] merlin_router_transform: After transform: <b>75</b> modules, <b>288</b> connections
+2012.05.28.15:36:10 [Debug] Transform: TrafficLimiterTransform
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] merlin_traffic_limiter_transform: After transform: <b>78</b> modules, <b>300</b> connections
+2012.05.28.15:36:10 [Debug] Transform: BurstTransform
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] merlin_burst_transform: After transform: <b>82</b> modules, <b>312</b> connections
+2012.05.28.15:36:10 [Debug] Transform: ResetAdaptation
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] reset_adaptation_transform: After transform: <b>85</b> modules, <b>318</b> connections
+2012.05.28.15:36:10 [Debug] Transform: NetworkToSwitchTransform
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] merlin_network_to_switch_transform: After transform: <b>111</b> modules, <b>372</b> connections
+2012.05.28.15:36:10 [Debug] Transform: WidthTransform
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] merlin_width_transform: After transform: <b>113</b> modules, <b>378</b> connections
+2012.05.28.15:36:10 [Debug] Transform: RouterTableTransform
+2012.05.28.15:36:10 [Debug] Transform: ClockCrossingTransform
+2012.05.28.15:36:10 [Info] Inserting clock-crossing logic between cmd_xbar_demux_001.src4 and cmd_xbar_mux_004.sink0
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] Inserting clock-crossing logic between rsp_xbar_demux_004.src0 and rsp_xbar_mux_001.sink4
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] Inserting clock-crossing logic between cmd_xbar_demux_002.src0 and cmd_xbar_mux_005.sink0
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] Inserting clock-crossing logic between cmd_xbar_demux_002.src1 and cmd_xbar_mux_006.sink0
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] Inserting clock-crossing logic between cmd_xbar_demux_002.src2 and cmd_xbar_mux_007.sink0
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] Inserting clock-crossing logic between cmd_xbar_demux_002.src3 and cmd_xbar_mux_008.sink0
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] Inserting clock-crossing logic between cmd_xbar_demux_002.src4 and cmd_xbar_mux_009.sink0
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] Inserting clock-crossing logic between cmd_xbar_demux_002.src5 and cmd_xbar_mux_010.sink0
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] Inserting clock-crossing logic between rsp_xbar_demux_005.src0 and rsp_xbar_mux_002.sink0
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:10 [Info] Inserting clock-crossing logic between rsp_xbar_demux_006.src0 and rsp_xbar_mux_002.sink1
+2012.05.28.15:36:10 [Progress] min: 0
+2012.05.28.15:36:10 [Progress] max: 1
+2012.05.28.15:36:10 [Progress] current: 1
+2012.05.28.15:36:11 [Info] Inserting clock-crossing logic between rsp_xbar_demux_007.src0 and rsp_xbar_mux_002.sink2
+2012.05.28.15:36:11 [Progress] min: 0
+2012.05.28.15:36:11 [Progress] max: 1
+2012.05.28.15:36:11 [Progress] current: 1
+2012.05.28.15:36:11 [Info] Inserting clock-crossing logic between rsp_xbar_demux_008.src0 and rsp_xbar_mux_002.sink3
+2012.05.28.15:36:11 [Progress] min: 0
+2012.05.28.15:36:11 [Progress] max: 1
+2012.05.28.15:36:11 [Progress] current: 1
+2012.05.28.15:36:11 [Info] Inserting clock-crossing logic between rsp_xbar_demux_009.src0 and rsp_xbar_mux_002.sink4
+2012.05.28.15:36:11 [Progress] min: 0
+2012.05.28.15:36:11 [Progress] max: 1
+2012.05.28.15:36:11 [Progress] current: 1
+2012.05.28.15:36:11 [Info] Inserting clock-crossing logic between rsp_xbar_demux_010.src0 and rsp_xbar_mux_002.sink5
+2012.05.28.15:36:11 [Progress] min: 0
+2012.05.28.15:36:11 [Progress] max: 1
+2012.05.28.15:36:11 [Progress] current: 1
+2012.05.28.15:36:11 [Info] com_altera_sopcmodel_transforms_avalon_ClockCrossingTransform: After transform: <b>127</b> modules, <b>448</b> connections
+2012.05.28.15:36:11 [Debug] Transform: PipelineTransform
+2012.05.28.15:36:11 [Debug] Transform: TrafficLimiterUpdateTransform
+2012.05.28.15:36:11 [Info] limiter_update_transform: After transform: <b>127</b> modules, <b>451</b> connections
+2012.05.28.15:36:11 [Debug] Transform: InterruptMapperTransform
+2012.05.28.15:36:11 [Progress] min: 0
+2012.05.28.15:36:11 [Progress] max: 1
+2012.05.28.15:36:11 [Progress] current: 1
+2012.05.28.15:36:11 [Info] merlin_interrupt_mapper_transform: After transform: <b>128</b> modules, <b>454</b> connections
+2012.05.28.15:36:11 [Debug] Transform: InterruptSyncTransform
+2012.05.28.15:36:11 [Progress] min: 0
+2012.05.28.15:36:11 [Progress] max: 1
+2012.05.28.15:36:11 [Progress] current: 1
+2012.05.28.15:36:11 [Info] merlin_interrupt_sync_transform: After transform: <b>129</b> modules, <b>459</b> connections
+2012.05.28.15:36:11 [Debug] Transform: InterruptFanoutTransform
+2012.05.28.15:36:14 [Warning] system: "No matching role found for jtag_uart:avalon_jtag_slave:dataavailable (dataavailable)"
+2012.05.28.15:36:14 [Warning] system: "No matching role found for jtag_uart:avalon_jtag_slave:readyfordata (readyfordata)"
+2012.05.28.15:36:14 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_onchip_memory2</b> "<b>submodules/DE4_QSYS_onchip_memory</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_mem_if_ddr2_emif</b> "<b>submodules/DE4_QSYS_mem_if_ddr2_emif</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_nios2_qsys</b> "<b>submodules/DE4_QSYS_nios2_qsys</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_jtag_uart</b> "<b>submodules/DE4_QSYS_jtag_uart</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sysid_qsys</b> "<b>submodules/DE4_QSYS_sysid</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_timer</b> "<b>submodules/DE4_QSYS_timer</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_pio</b> "<b>submodules/DE4_QSYS_led</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_pio</b> "<b>submodules/DE4_QSYS_button</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_mm_clock_crossing_bridge</b> "<b>submodules/altera_avalon_mm_clock_crossing_bridge</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_pio</b> "<b>submodules/DE4_QSYS_ddr2_i2c_scl</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_pio</b> "<b>submodules/DE4_QSYS_ddr2_i2c_sda</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_master_translator</b> "<b>submodules/altera_merlin_master_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_master_translator</b> "<b>submodules/altera_merlin_master_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_master_translator</b> "<b>submodules/altera_merlin_master_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_translator</b> "<b>submodules/altera_merlin_slave_translator</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_master_agent</b> "<b>submodules/altera_merlin_master_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_master_agent</b> "<b>submodules/altera_merlin_master_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_master_agent</b> "<b>submodules/altera_merlin_master_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_slave_agent</b> "<b>submodules/altera_merlin_slave_agent</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_sc_fifo</b> "<b>submodules/altera_avalon_sc_fifo</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_addr_router</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_addr_router_001</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router_002</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router_003</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router_003</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_addr_router_002</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_router</b> "<b>submodules/DE4_QSYS_id_router_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_traffic_limiter</b> "<b>submodules/altera_merlin_traffic_limiter</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_traffic_limiter</b> "<b>submodules/altera_merlin_traffic_limiter</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_traffic_limiter</b> "<b>submodules/altera_merlin_traffic_limiter</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_burst_adapter</b> "<b>submodules/altera_merlin_burst_adapter</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_burst_adapter</b> "<b>submodules/altera_merlin_burst_adapter</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_burst_adapter</b> "<b>submodules/altera_merlin_burst_adapter</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_burst_adapter</b> "<b>submodules/altera_merlin_burst_adapter</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_reset_controller</b> "<b>submodules/altera_reset_controller</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_reset_controller</b> "<b>submodules/altera_reset_controller</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_reset_controller</b> "<b>submodules/altera_reset_controller</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_cmd_xbar_demux</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_cmd_xbar_demux_001</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_multiplexer</b> "<b>submodules/DE4_QSYS_cmd_xbar_mux</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_multiplexer</b> "<b>submodules/DE4_QSYS_cmd_xbar_mux</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux_002</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux_002</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux_002</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_multiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_mux</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_multiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_mux_001</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_cmd_xbar_demux_002</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_demultiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_demux_005</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_multiplexer</b> "<b>submodules/DE4_QSYS_rsp_xbar_mux_002</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_width_adapter</b> "<b>submodules/altera_merlin_width_adapter</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_merlin_width_adapter</b> "<b>submodules/altera_merlin_width_adapter</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_avalon_st_handshake_clock_crosser</b> "<b>submodules/altera_avalon_st_handshake_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_irq_mapper</b> "<b>submodules/DE4_QSYS_irq_mapper</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: "<b>DE4_QSYS</b>" reuses <b>altera_irq_clock_crosser</b> "<b>submodules/altera_irq_clock_crosser</b>"
+2012.05.28.15:36:15 [Debug] DE4_QSYS: queue size: 118 starting:altera_avalon_onchip_memory2 "submodules/DE4_QSYS_onchip_memory"
+2012.05.28.15:36:15 [Info] Starting classic module elaboration.
+2012.05.28.15:36:18 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0001_sopclgen  --no_splash --refresh C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0001_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:36:20 [Info] Finished elaborating classic module.
+2012.05.28.15:36:20 [Progress] Executing: C:/altera/11.1/quartus//sopc_builder/bin/sopc_builder --classic --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0001_sopclgen/yysystem.ptf
+2012.05.28.15:36:20 [Info] Running sopc_builder...
+2012.05.28.15:36:21 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0001_sopclgen  --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0001_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:36:24 [Progress] No .sopc_builder configuration file(!)
+2012.05.28.15:36:24 [Progress] .
+2012.05.28.15:36:26 [Progress] # 2012.05.28 15:36:26 (*) Success: sopc_builder finished.
+2012.05.28.15:36:27 [Info] onchip_memory: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_onchip_memory2</b> "<b>onchip_memory</b>"
+2012.05.28.15:36:27 [Debug] DE4_QSYS: queue size: 117 starting:altera_mem_if_ddr2_emif "submodules/DE4_QSYS_mem_if_ddr2_emif"
+2012.05.28.15:36:27 [Info] mem_if_ddr2_emif: Running transform <b>AvalonTransform</b>
+2012.05.28.15:36:28 [Debug] Transform: PipelineBridgeSwap
+2012.05.28.15:36:28 [Info] pipeline_bridge_swap_transform: After transform: <b>14</b> modules, <b>33</b> connections
+2012.05.28.15:36:28 [Debug] Transform: ClockCrossingBridgeSwap
+2012.05.28.15:36:28 [Debug] Transform: QsysBetaIPSwap
+2012.05.28.15:36:28 [Debug] Transform: CustomInstructionTransform
+2012.05.28.15:36:28 [Info] No custom instruction connections, skipping transform 
+2012.05.28.15:36:28 [Debug] Transform: TristateConduitUpgradeTransform
+2012.05.28.15:36:30 [Debug] Transform: TranslatorTransform
+2012.05.28.15:36:30 [Info] No Avalon connections, skipping transform 
+2012.05.28.15:36:30 [Debug] Transform: DomainTransform
+2012.05.28.15:36:30 [Debug] Transform: RouterTransform
+2012.05.28.15:36:30 [Debug] Transform: TrafficLimiterTransform
+2012.05.28.15:36:30 [Debug] Transform: BurstTransform
+2012.05.28.15:36:30 [Debug] Transform: ResetAdaptation
+2012.05.28.15:36:30 [Debug] Transform: NetworkToSwitchTransform
+2012.05.28.15:36:30 [Debug] Transform: WidthTransform
+2012.05.28.15:36:30 [Debug] Transform: RouterTableTransform
+2012.05.28.15:36:30 [Debug] Transform: ClockCrossingTransform
+2012.05.28.15:36:30 [Debug] Transform: TrafficLimiterUpdateTransform
+2012.05.28.15:36:30 [Debug] Transform: InterruptMapperTransform
+2012.05.28.15:36:30 [Debug] Transform: InterruptSyncTransform
+2012.05.28.15:36:30 [Debug] Transform: InterruptFanoutTransform
+2012.05.28.15:36:30 [Info] mem_if_ddr2_emif: Running transform <b>AvalonTransform</b> took 2.672s
+2012.05.28.15:36:30 [Debug] mem_if_ddr2_emif: "<b>mem_if_ddr2_emif</b>" reuses <b>altera_mem_if_ddr2_pll_dll_oct</b> "<b>submodules/DE4_QSYS_mem_if_ddr2_emif_pll0</b>"
+2012.05.28.15:36:30 [Debug] mem_if_ddr2_emif: "<b>mem_if_ddr2_emif</b>" reuses <b>altera_mem_if_ddr2_phy_core</b> "<b>submodules/DE4_QSYS_mem_if_ddr2_emif_p0</b>"
+2012.05.28.15:36:30 [Debug] mem_if_ddr2_emif: "<b>mem_if_ddr2_emif</b>" reuses <b>altera_mem_if_ddr2_afi_mux</b> "<b>submodules/afi_mux_ddrx</b>"
+2012.05.28.15:36:30 [Debug] mem_if_ddr2_emif: "<b>mem_if_ddr2_emif</b>" reuses <b>altera_mem_if_ddr2_qsys_sequencer</b> "<b>submodules/DE4_QSYS_mem_if_ddr2_emif_s0</b>"
+2012.05.28.15:36:30 [Debug] mem_if_ddr2_emif: "<b>mem_if_ddr2_emif</b>" reuses <b>altera_mem_if_nextgen_ddr2_controller</b> "<b>submodules/DE4_QSYS_mem_if_ddr2_emif_c0</b>"
+2012.05.28.15:36:30 [Debug] mem_if_ddr2_emif: "<b>mem_if_ddr2_emif</b>" reuses <b>altera_mem_if_oct</b> "<b>submodules/altera_mem_if_oct_stratixiv</b>"
+2012.05.28.15:36:30 [Debug] mem_if_ddr2_emif: "<b>mem_if_ddr2_emif</b>" reuses <b>altera_mem_if_dll</b> "<b>submodules/altera_mem_if_dll_stratixiv</b>"
+2012.05.28.15:36:30 [Info] mem_if_ddr2_emif: "<b>DE4_QSYS</b>" instantiated <b>altera_mem_if_ddr2_emif</b> "<b>mem_if_ddr2_emif</b>"
+2012.05.28.15:36:30 [Debug] DE4_QSYS: queue size: 123 starting:altera_nios2_qsys "submodules/DE4_QSYS_nios2_qsys"
+2012.05.28.15:36:30 [Info] nios2_qsys: Starting RTL generation for module 'DE4_QSYS_nios2_qsys'
+2012.05.28.15:36:30 [Info] nios2_qsys:   Generation command is [exec C:/altera/11.1/quartus/../ip/altera/nios2_ip/altera_nios2/eperl.exe -I C:/altera/11.1/quartus/common/ip/altera/common/perl/5.8.3 -I C:/altera/11.1/quartus/sopc_builder/bin/europa -I C:/altera/11.1/quartus/sopc_builder/bin/perl_lib -I C:/altera/11.1/quartus/sopc_builder/bin -I C:/altera/11.1/quartus/../ip/altera/nios2_ip/altera_nios2/cpu_lib -I C:/altera/11.1/quartus/../ip/altera/nios2_ip/altera_nios2/nios_lib -I C:/altera/11.1/quartus/../ip/altera/nios2_ip/altera_nios2 -I C:/altera/11.1/quartus/../ip/altera/nios2_ip/altera_nios2 -- C:/altera/11.1/quartus/../ip/altera/nios2_ip/altera_nios2/generate_rtl.epl --name=DE4_QSYS_nios2_qsys --dir=C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0002_nios2_qsys_gen/ --quartus_dir=C:/altera/11.1/quartus --verilog --config=C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0002_nios2_qsys_gen//DE4_QSYS_nios2_qsys_processor_configuration.pl  --do_build_sim=0    --bogus  ]
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:31 (*) Starting Nios II generation
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:31 (*)   Checking for encrypted license (non-evaluation).
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:34 (*)   Encrypted license found.  SOF will not be time-limited.
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:34 (*)   Elaborating CPU configuration settings
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:34 (*)   Creating all objects for CPU
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:34 (*)     Testbench
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:35 (*)     Instruction decoding
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:35 (*)       Instruction fields
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:35 (*)       Instruction decodes
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:36 (*)       Signals for RTL simulation waveforms
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:36 (*)       Instruction controls
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:36 (*)     Pipeline frontend
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:36 (*)     Pipeline backend
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:40 (*)   Generating RTL from CPU objects
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:44 (*)   Creating encrypted RTL
+2012.05.28.15:36:46 [Info] nios2_qsys: # 2012.05.28 15:36:46 (*) Done Nios II generation
+2012.05.28.15:36:46 [Info] nios2_qsys: Done RTL generation for module 'DE4_QSYS_nios2_qsys'
+2012.05.28.15:36:46 [Info] nios2_qsys: "<b>DE4_QSYS</b>" instantiated <b>altera_nios2_qsys</b> "<b>nios2_qsys</b>"
+2012.05.28.15:36:46 [Debug] DE4_QSYS: queue size: 122 starting:altera_avalon_jtag_uart "submodules/DE4_QSYS_jtag_uart"
+2012.05.28.15:36:46 [Info] Starting classic module elaboration.
+2012.05.28.15:36:48 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0003_sopclgen  --no_splash --refresh C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0003_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:36:50 [Info] Finished elaborating classic module.
+2012.05.28.15:36:50 [Progress] Executing: C:/altera/11.1/quartus//sopc_builder/bin/sopc_builder --classic --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0003_sopclgen/yysystem.ptf
+2012.05.28.15:36:50 [Info] Running sopc_builder...
+2012.05.28.15:36:51 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0003_sopclgen  --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0003_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:36:53 [Progress] No .sopc_builder configuration file(!)
+2012.05.28.15:36:54 [Progress] .
+2012.05.28.15:36:55 [Progress] # 2012.05.28 15:36:55 (*) Success: sopc_builder finished.
+2012.05.28.15:36:56 [Info] jtag_uart: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_jtag_uart</b> "<b>jtag_uart</b>"
+2012.05.28.15:36:56 [Debug] DE4_QSYS: queue size: 121 starting:altera_avalon_sysid_qsys "submodules/DE4_QSYS_sysid"
+2012.05.28.15:36:56 [Info] sysid: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_sysid_qsys</b> "<b>sysid</b>"
+2012.05.28.15:36:56 [Debug] DE4_QSYS: queue size: 120 starting:altera_avalon_timer "submodules/DE4_QSYS_timer"
+2012.05.28.15:36:56 [Info] Starting classic module elaboration.
+2012.05.28.15:36:57 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0005_sopclgen  --no_splash --refresh C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0005_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:36:59 [Info] Finished elaborating classic module.
+2012.05.28.15:36:59 [Progress] Executing: C:/altera/11.1/quartus//sopc_builder/bin/sopc_builder --classic --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0005_sopclgen/yysystem.ptf
+2012.05.28.15:37:00 [Info] Running sopc_builder...
+2012.05.28.15:37:01 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0005_sopclgen  --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0005_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:37:03 [Progress] No .sopc_builder configuration file(!)
+2012.05.28.15:37:03 [Progress] .
+2012.05.28.15:37:05 [Progress] # 2012.05.28 15:37:05 (*) Success: sopc_builder finished.
+2012.05.28.15:37:05 [Info] timer: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_timer</b> "<b>timer</b>"
+2012.05.28.15:37:05 [Debug] DE4_QSYS: queue size: 119 starting:altera_avalon_pio "submodules/DE4_QSYS_led"
+2012.05.28.15:37:05 [Info] Starting classic module elaboration.
+2012.05.28.15:37:07 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0006_sopclgen  --no_splash --refresh C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0006_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:37:09 [Info] Finished elaborating classic module.
+2012.05.28.15:37:09 [Progress] Executing: C:/altera/11.1/quartus//sopc_builder/bin/sopc_builder --classic --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0006_sopclgen/yysystem.ptf
+2012.05.28.15:37:09 [Info] Running sopc_builder...
+2012.05.28.15:37:11 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0006_sopclgen  --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0006_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:37:13 [Progress] No .sopc_builder configuration file(!)
+2012.05.28.15:37:14 [Progress] .
+2012.05.28.15:37:15 [Progress] # 2012.05.28 15:37:15 (*) Success: sopc_builder finished.
+2012.05.28.15:37:16 [Info] led: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_pio</b> "<b>led</b>"
+2012.05.28.15:37:16 [Debug] DE4_QSYS: queue size: 118 starting:altera_avalon_pio "submodules/DE4_QSYS_button"
+2012.05.28.15:37:16 [Info] Starting classic module elaboration.
+2012.05.28.15:37:19 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0007_sopclgen  --no_splash --refresh C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0007_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:37:21 [Info] Finished elaborating classic module.
+2012.05.28.15:37:21 [Progress] Executing: C:/altera/11.1/quartus//sopc_builder/bin/sopc_builder --classic --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0007_sopclgen/yysystem.ptf
+2012.05.28.15:37:21 [Info] Running sopc_builder...
+2012.05.28.15:37:22 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0007_sopclgen  --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0007_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:37:24 [Progress] No .sopc_builder configuration file(!)
+2012.05.28.15:37:24 [Progress] .
+2012.05.28.15:37:25 [Progress] # 2012.05.28 15:37:25 (*) Success: sopc_builder finished.
+2012.05.28.15:37:26 [Info] button: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_pio</b> "<b>button</b>"
+2012.05.28.15:37:26 [Debug] DE4_QSYS: queue size: 117 starting:altera_avalon_mm_clock_crossing_bridge "submodules/altera_avalon_mm_clock_crossing_bridge"
+2012.05.28.15:37:26 [Info] mm_clock_crossing_bridge_io: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_mm_clock_crossing_bridge</b> "<b>mm_clock_crossing_bridge_io</b>"
+2012.05.28.15:37:26 [Debug] DE4_QSYS: queue size: 116 starting:altera_avalon_pio "submodules/DE4_QSYS_ddr2_i2c_scl"
+2012.05.28.15:37:26 [Info] Starting classic module elaboration.
+2012.05.28.15:37:29 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0008_sopclgen  --no_splash --refresh C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0008_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:37:31 [Info] Finished elaborating classic module.
+2012.05.28.15:37:31 [Progress] Executing: C:/altera/11.1/quartus//sopc_builder/bin/sopc_builder --classic --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0008_sopclgen/yysystem.ptf
+2012.05.28.15:37:32 [Info] Running sopc_builder...
+2012.05.28.15:37:35 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0008_sopclgen  --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0008_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:37:37 [Progress] No .sopc_builder configuration file(!)
+2012.05.28.15:37:37 [Progress] .
+2012.05.28.15:37:39 [Progress] # 2012.05.28 15:37:39 (*) Success: sopc_builder finished.
+2012.05.28.15:37:39 [Info] ddr2_i2c_scl: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_pio</b> "<b>ddr2_i2c_scl</b>"
+2012.05.28.15:37:39 [Debug] DE4_QSYS: queue size: 115 starting:altera_avalon_pio "submodules/DE4_QSYS_ddr2_i2c_sda"
+2012.05.28.15:37:39 [Info] Starting classic module elaboration.
+2012.05.28.15:37:42 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0009_sopclgen  --no_splash --refresh C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0009_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:37:44 [Info] Finished elaborating classic module.
+2012.05.28.15:37:44 [Progress] Executing: C:/altera/11.1/quartus//sopc_builder/bin/sopc_builder --classic --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0009_sopclgen/yysystem.ptf
+2012.05.28.15:37:44 [Info] Running sopc_builder...
+2012.05.28.15:37:46 [Progress] "c:/altera/11.1/quartus/bin/jre/bin/java.exe" -Xmx512M -classpath "c:/altera/11.1/quartus/sopc_builder/bin/sopc_builder.jar;c:/altera/11.1/quartus/sopc_builder/bin/PinAssigner.jar;c:/altera/11.1/quartus/sopc_builder/bin/sopc_wizard.jar;c:/altera/11.1/quartus/sopc_builder/bin/jptf.jar" sopc_builder.sopc_builder  -d"c:/altera/11.1/quartus/sopc_builder" -notalkback=1 -projectnameyysystem.qpf -projectpathC:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0009_sopclgen  --generate C:/DOCUME~1/ADMINI~1/LOCALS~1/Temp/alt5488_1316448922408142395.dir/0009_sopclgen/yysystem.v --quartus_dir="c:/altera/11.1/quartus" --sopc_perl="c:/altera/11.1/quartus/bin/perl" --sopc_lib_path="++c:/altera/11.1/quartus/../ip/altera/sopc_builder_ip+c:/altera/11.1/quartus/../ip/altera/nios2_ip"
+2012.05.28.15:37:48 [Progress] No .sopc_builder configuration file(!)
+2012.05.28.15:37:48 [Progress] .
+2012.05.28.15:37:49 [Progress] # 2012.05.28 15:37:49 (*) Success: sopc_builder finished.
+2012.05.28.15:37:50 [Info] ddr2_i2c_sda: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_pio</b> "<b>ddr2_i2c_sda</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 114 starting:altera_merlin_master_translator "submodules/altera_merlin_master_translator"
+2012.05.28.15:37:50 [Info] nios2_qsys_instruction_master_translator: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_master_translator</b> "<b>nios2_qsys_instruction_master_translator</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 112 starting:altera_merlin_slave_translator "submodules/altera_merlin_slave_translator"
+2012.05.28.15:37:50 [Info] nios2_qsys_jtag_debug_module_translator: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_slave_translator</b> "<b>nios2_qsys_jtag_debug_module_translator</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 100 starting:altera_merlin_slave_agent "submodules/altera_merlin_slave_agent"
+2012.05.28.15:37:50 [Info] onchip_memory_s1_translator_avalon_universal_slave_0_agent: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_slave_agent</b> "<b>onchip_memory_s1_translator_avalon_universal_slave_0_agent</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 99 starting:altera_avalon_sc_fifo "submodules/altera_avalon_sc_fifo"
+2012.05.28.15:37:50 [Info] onchip_memory_s1_translator_avalon_universal_slave_0_agent_rsp_fifo: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_sc_fifo</b> "<b>onchip_memory_s1_translator_avalon_universal_slave_0_agent_rsp_fifo</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 92 starting:altera_merlin_master_agent "submodules/altera_merlin_master_agent"
+2012.05.28.15:37:50 [Info] nios2_qsys_data_master_translator_avalon_universal_master_0_agent: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_master_agent</b> "<b>nios2_qsys_data_master_translator_avalon_universal_master_0_agent</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 67 starting:altera_merlin_router "submodules/DE4_QSYS_addr_router"
+2012.05.28.15:37:50 [Info] addr_router: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_router</b> "<b>addr_router</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 66 starting:altera_merlin_router "submodules/DE4_QSYS_addr_router_001"
+2012.05.28.15:37:50 [Info] addr_router_001: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_router</b> "<b>addr_router_001</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 65 starting:altera_merlin_router "submodules/DE4_QSYS_id_router"
+2012.05.28.15:37:50 [Info] id_router: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_router</b> "<b>id_router</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 63 starting:altera_merlin_router "submodules/DE4_QSYS_id_router_002"
+2012.05.28.15:37:50 [Info] id_router_002: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_router</b> "<b>id_router_002</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 62 starting:altera_merlin_router "submodules/DE4_QSYS_id_router_003"
+2012.05.28.15:37:50 [Info] id_router_003: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_router</b> "<b>id_router_003</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 60 starting:altera_merlin_router "submodules/DE4_QSYS_addr_router_002"
+2012.05.28.15:37:50 [Info] addr_router_002: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_router</b> "<b>addr_router_002</b>"
+2012.05.28.15:37:50 [Debug] DE4_QSYS: queue size: 59 starting:altera_merlin_router "submodules/DE4_QSYS_id_router_005"
+2012.05.28.15:37:51 [Info] id_router_005: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_router</b> "<b>id_router_005</b>"
+2012.05.28.15:37:51 [Debug] DE4_QSYS: queue size: 53 starting:altera_merlin_traffic_limiter "submodules/altera_merlin_traffic_limiter"
+2012.05.28.15:37:51 [Info] limiter: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_traffic_limiter</b> "<b>limiter</b>"
+2012.05.28.15:37:51 [Debug] DE4_QSYS: queue size: 50 starting:altera_merlin_burst_adapter "submodules/altera_merlin_burst_adapter"
+2012.05.28.15:37:51 [Info] burst_adapter: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_burst_adapter</b> "<b>burst_adapter</b>"
+2012.05.28.15:37:51 [Debug] DE4_QSYS: queue size: 46 starting:altera_reset_controller "submodules/altera_reset_controller"
+2012.05.28.15:37:51 [Info] rst_controller: "<b>DE4_QSYS</b>" instantiated <b>altera_reset_controller</b> "<b>rst_controller</b>"
+2012.05.28.15:37:51 [Debug] DE4_QSYS: queue size: 43 starting:altera_merlin_demultiplexer "submodules/DE4_QSYS_cmd_xbar_demux"
+2012.05.28.15:37:51 [Info] cmd_xbar_demux: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_demultiplexer</b> "<b>cmd_xbar_demux</b>"
+2012.05.28.15:37:51 [Debug] DE4_QSYS: queue size: 42 starting:altera_merlin_demultiplexer "submodules/DE4_QSYS_cmd_xbar_demux_001"
+2012.05.28.15:37:51 [Info] cmd_xbar_demux_001: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_demultiplexer</b> "<b>cmd_xbar_demux_001</b>"
+2012.05.28.15:37:51 [Debug] DE4_QSYS: queue size: 41 starting:altera_merlin_multiplexer "submodules/DE4_QSYS_cmd_xbar_mux"
+2012.05.28.15:37:51 [Info] cmd_xbar_mux: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_multiplexer</b> "<b>cmd_xbar_mux</b>"
+2012.05.28.15:37:51 [Debug] DE4_QSYS: queue size: 39 starting:altera_merlin_demultiplexer "submodules/DE4_QSYS_rsp_xbar_demux"
+2012.05.28.15:37:51 [Info] rsp_xbar_demux: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_demultiplexer</b> "<b>rsp_xbar_demux</b>"
+2012.05.28.15:37:51 [Debug] DE4_QSYS: queue size: 37 starting:altera_merlin_demultiplexer "submodules/DE4_QSYS_rsp_xbar_demux_002"
+2012.05.28.15:37:51 [Info] rsp_xbar_demux_002: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_demultiplexer</b> "<b>rsp_xbar_demux_002</b>"
+2012.05.28.15:37:51 [Debug] DE4_QSYS: queue size: 34 starting:altera_merlin_multiplexer "submodules/DE4_QSYS_rsp_xbar_mux"
+2012.05.28.15:37:52 [Info] rsp_xbar_mux: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_multiplexer</b> "<b>rsp_xbar_mux</b>"
+2012.05.28.15:37:52 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_arbitrator.sv</b>
+2012.05.28.15:37:52 [Debug] DE4_QSYS: queue size: 33 starting:altera_merlin_multiplexer "submodules/DE4_QSYS_rsp_xbar_mux_001"
+2012.05.28.15:37:52 [Info] rsp_xbar_mux_001: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_multiplexer</b> "<b>rsp_xbar_mux_001</b>"
+2012.05.28.15:37:52 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_arbitrator.sv</b>
+2012.05.28.15:37:52 [Debug] DE4_QSYS: queue size: 32 starting:altera_merlin_demultiplexer "submodules/DE4_QSYS_cmd_xbar_demux_002"
+2012.05.28.15:37:52 [Info] cmd_xbar_demux_002: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_demultiplexer</b> "<b>cmd_xbar_demux_002</b>"
+2012.05.28.15:37:52 [Debug] DE4_QSYS: queue size: 31 starting:altera_merlin_demultiplexer "submodules/DE4_QSYS_rsp_xbar_demux_005"
+2012.05.28.15:37:52 [Info] rsp_xbar_demux_005: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_demultiplexer</b> "<b>rsp_xbar_demux_005</b>"
+2012.05.28.15:37:53 [Debug] DE4_QSYS: queue size: 25 starting:altera_merlin_multiplexer "submodules/DE4_QSYS_rsp_xbar_mux_002"
+2012.05.28.15:37:53 [Info] rsp_xbar_mux_002: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_multiplexer</b> "<b>rsp_xbar_mux_002</b>"
+2012.05.28.15:37:53 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_arbitrator.sv</b>
+2012.05.28.15:37:53 [Debug] DE4_QSYS: queue size: 24 starting:altera_merlin_width_adapter "submodules/altera_merlin_width_adapter"
+2012.05.28.15:37:53 [Info] width_adapter: "<b>DE4_QSYS</b>" instantiated <b>altera_merlin_width_adapter</b> "<b>width_adapter</b>"
+2012.05.28.15:37:53 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_burst_uncompressor.sv</b>
+2012.05.28.15:37:53 [Debug] DE4_QSYS: queue size: 22 starting:altera_avalon_st_handshake_clock_crosser "submodules/altera_avalon_st_handshake_clock_crosser"
+2012.05.28.15:37:53 [Info] crosser: "<b>DE4_QSYS</b>" instantiated <b>altera_avalon_st_handshake_clock_crosser</b> "<b>crosser</b>"
+2012.05.28.15:37:53 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_avalon_st_pipeline_base.v</b>
+2012.05.28.15:37:53 [Debug] DE4_QSYS: queue size: 8 starting:altera_irq_mapper "submodules/DE4_QSYS_irq_mapper"
+2012.05.28.15:37:53 [Info] irq_mapper: "<b>DE4_QSYS</b>" instantiated <b>altera_irq_mapper</b> "<b>irq_mapper</b>"
+2012.05.28.15:37:53 [Debug] DE4_QSYS: queue size: 7 starting:altera_irq_clock_crosser "submodules/altera_irq_clock_crosser"
+2012.05.28.15:37:53 [Info] irq_synchronizer: "<b>DE4_QSYS</b>" instantiated <b>altera_irq_clock_crosser</b> "<b>irq_synchronizer</b>"
+2012.05.28.15:37:53 [Debug] DE4_QSYS: queue size: 6 starting:altera_mem_if_ddr2_pll_dll_oct "submodules/DE4_QSYS_mem_if_ddr2_emif_pll0"
+2012.05.28.15:37:54 [Info] pll0: "<b>mem_if_ddr2_emif</b>" instantiated <b>altera_mem_if_ddr2_pll_dll_oct</b> "<b>pll0</b>"
+2012.05.28.15:37:54 [Debug] DE4_QSYS: queue size: 5 starting:altera_mem_if_ddr2_phy_core "submodules/DE4_QSYS_mem_if_ddr2_emif_p0"
+2012.05.28.15:37:54 [Info] p0: Generating clock pair generator
+2012.05.28.15:38:04 [Info] p0: Generating DE4_QSYS_mem_if_ddr2_emif_p0_altdqdqs
+2012.05.28.15:38:22 [Info] p0: 
+2012.05.28.15:38:22 [Info] p0: *****************************
+2012.05.28.15:38:22 [Info] p0: 
+2012.05.28.15:38:22 [Info] p0: Remember to run the DE4_QSYS_mem_if_ddr2_emif_p0_pin_assignments.tcl
+2012.05.28.15:38:22 [Info] p0: script after running Synthesis and before Fitting.
+2012.05.28.15:38:22 [Info] p0: 
+2012.05.28.15:38:22 [Info] p0: *****************************
+2012.05.28.15:38:22 [Info] p0: 
+2012.05.28.15:38:22 [Info] p0: "<b>mem_if_ddr2_emif</b>" instantiated <b>altera_mem_if_ddr2_phy_core</b> "<b>p0</b>"
+2012.05.28.15:38:22 [Debug] DE4_QSYS: queue size: 4 starting:altera_mem_if_ddr2_afi_mux "submodules/afi_mux_ddrx"
+2012.05.28.15:38:22 [Info] m0: "<b>mem_if_ddr2_emif</b>" instantiated <b>altera_mem_if_ddr2_afi_mux</b> "<b>m0</b>"
+2012.05.28.15:38:22 [Debug] DE4_QSYS: queue size: 3 starting:altera_mem_if_ddr2_qsys_sequencer "submodules/DE4_QSYS_mem_if_ddr2_emif_s0"
+2012.05.28.15:38:22 [Info] s0: Determining sequencer memory size
+2012.05.28.15:38:43 [Info] s0: Generating Qsys sequencer system
+2012.05.28.15:38:55 [Info] s0: QSYS sequencer system generated successfully
+2012.05.28.15:38:57 [Info] s0: Building sequencer software
+2012.05.28.15:39:17 [Info] s0: "<b>mem_if_ddr2_emif</b>" instantiated <b>altera_mem_if_ddr2_qsys_sequencer</b> "<b>s0</b>"
+2012.05.28.15:39:17 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_avalon_sc_fifo.v</b>
+2012.05.28.15:39:18 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_arbitrator.sv</b>
+2012.05.28.15:39:18 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_burst_uncompressor.sv</b>
+2012.05.28.15:39:18 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_master_agent.sv</b>
+2012.05.28.15:39:18 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_master_translator.sv</b>
+2012.05.28.15:39:18 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_slave_agent.sv</b>
+2012.05.28.15:39:18 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_slave_translator.sv</b>
+2012.05.28.15:39:18 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_reset_controller.sdc</b>
+2012.05.28.15:39:18 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_reset_controller.v</b>
+2012.05.28.15:39:18 [Info] Reusing file <b>D:/MYSVN/de4/test/cd_demo_version/Q11.1_sp1_QSYS/DE4_530/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_reset_synchronizer.v</b>
+2012.05.28.15:39:18 [Debug] DE4_QSYS: queue size: 2 starting:altera_mem_if_nextgen_ddr2_controller "submodules/DE4_QSYS_mem_if_ddr2_emif_c0"
+2012.05.28.15:39:18 [Info] c0: Running transform <b>AvalonTransform</b>
+2012.05.28.15:39:18 [Debug] Transform: PipelineBridgeSwap
+2012.05.28.15:39:18 [Info] pipeline_bridge_swap_transform: After transform: <b>5</b> modules, <b>8</b> connections
+2012.05.28.15:39:18 [Debug] Transform: ClockCrossingBridgeSwap
+2012.05.28.15:39:18 [Debug] Transform: QsysBetaIPSwap
+2012.05.28.15:39:18 [Debug] Transform: CustomInstructionTransform
+2012.05.28.15:39:18 [Info] No custom instruction connections, skipping transform 
+2012.05.28.15:39:18 [Debug] Transform: TristateConduitUpgradeTransform
+2012.05.28.15:39:18 [Debug] Transform: TranslatorTransform
+2012.05.28.15:39:18 [Info] No Avalon connections, skipping transform 
+2012.05.28.15:39:18 [Debug] Transform: DomainTransform
+2012.05.28.15:39:18 [Debug] Transform: RouterTransform
+2012.05.28.15:39:18 [Debug] Transform: TrafficLimiterTransform
+2012.05.28.15:39:18 [Debug] Transform: BurstTransform
+2012.05.28.15:39:18 [Debug] Transform: ResetAdaptation
+2012.05.28.15:39:18 [Debug] Transform: NetworkToSwitchTransform
+2012.05.28.15:39:18 [Debug] Transform: WidthTransform
+2012.05.28.15:39:18 [Debug] Transform: RouterTableTransform
+2012.05.28.15:39:18 [Debug] Transform: ClockCrossingTransform
+2012.05.28.15:39:18 [Debug] Transform: TrafficLimiterUpdateTransform
+2012.05.28.15:39:18 [Debug] Transform: InterruptMapperTransform
+2012.05.28.15:39:18 [Debug] Transform: InterruptSyncTransform
+2012.05.28.15:39:18 [Debug] Transform: InterruptFanoutTransform
+2012.05.28.15:39:18 [Info] c0: Running transform <b>AvalonTransform</b> took 0.281s
+2012.05.28.15:39:18 [Debug] c0: "<b>c0</b>" reuses <b>altera_mem_if_nextgen_ddr2_controller_core</b> "<b>submodules/alt_mem_if_nextgen_ddr2_controller_core</b>"
+2012.05.28.15:39:18 [Debug] c0: "<b>c0</b>" reuses <b>alt_mem_ddrx_mm_st_converter</b> "<b>submodules/alt_mem_ddrx_mm_st_converter</b>"
+2012.05.28.15:39:18 [Info] c0: "<b>mem_if_ddr2_emif</b>" instantiated <b>altera_mem_if_nextgen_ddr2_controller</b> "<b>c0</b>"
+2012.05.28.15:39:18 [Debug] DE4_QSYS: queue size: 3 starting:altera_mem_if_oct "submodules/altera_mem_if_oct_stratixiv"
+2012.05.28.15:39:18 [Info] oct0: "<b>mem_if_ddr2_emif</b>" instantiated <b>altera_mem_if_oct</b> "<b>oct0</b>"
+2012.05.28.15:39:18 [Debug] DE4_QSYS: queue size: 2 starting:altera_mem_if_dll "submodules/altera_mem_if_dll_stratixiv"
+2012.05.28.15:39:18 [Info] dll0: "<b>mem_if_ddr2_emif</b>" instantiated <b>altera_mem_if_dll</b> "<b>dll0</b>"
+2012.05.28.15:39:18 [Debug] DE4_QSYS: queue size: 1 starting:altera_mem_if_nextgen_ddr2_controller_core "submodules/alt_mem_if_nextgen_ddr2_controller_core"
+2012.05.28.15:39:18 [Info] ng0: "<b>c0</b>" instantiated <b>altera_mem_if_nextgen_ddr2_controller_core</b> "<b>ng0</b>"
+2012.05.28.15:39:18 [Debug] DE4_QSYS: queue size: 0 starting:alt_mem_ddrx_mm_st_converter "submodules/alt_mem_ddrx_mm_st_converter"
+2012.05.28.15:39:18 [Info] a0: "<b>c0</b>" instantiated <b>alt_mem_ddrx_mm_st_converter</b> "<b>a0</b>"
+2012.05.28.15:39:18 [Info] DE4_QSYS: Done <b>DE4_QSYS</b>" with 50 modules, 319 files, 7156916 bytes
+</div>
+  <div style="width:100% ; background:#eee ; height:10px"> </div>
+ </body>
+</html>
