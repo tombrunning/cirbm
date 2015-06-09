@@ -219,10 +219,10 @@ int main(){
     printf("===== DE4 DDR2 Test Program (UniPHY) =====\n");
     printf("DDR2 Clock: 400 MHZ\n");
     printf("DDR2  Size: %d MBytes\n", MEM_IF_DDR2_EMIF_SPAN/1024/1024);
-    printf("DDR2  Rank: %d Rank(s)\n", DDR2_NUM_CHIPSELECTS);
-    printf("DDR2  Bank: %d Bank(s)\n", DDR2_BA_WIDTH);
-    printf("DDR2   Row: %d \n", DDR2_ROW_WIDTH);
-    printf("DDR2   Col: %d \n", DDR2_COL_WIDTH);
+    //printf("DDR2  Rank: %d Rank(s)\n", DDR2_NUM_CHIPSELECTS);
+    //printf("DDR2  Bank: %d Bank(s)\n", DDR2_BA_WIDTH);
+    //printf("DDR2   Row: %d \n", DDR2_ROW_WIDTH);
+    //printf("DDR2   Col: %d \n", DDR2_COL_WIDTH);
 #ifdef TEST_I2C    
     printf("DDR2 PSD Test: Yes\n");
 #endif    
