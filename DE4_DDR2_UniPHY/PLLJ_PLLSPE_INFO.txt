@@ -1,4 +1,4 @@
-PLL_Name	DE4_QSYS:u0|DE4_QSYS_mem_if_ddr2_emif:mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_pll0:pll0|altpll:upll_memphy|altpll_blj3:auto_generated|pll1
+PLL_Name	DE4_QSYS:u0|DE4_QSYS_mem_if_ddr2_emif:mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_pll0:pll0|altpll:upll_memphy|altpll_rsc3:auto_generated|pll1
 PLLJITTER	25
 PLLSPEmax	40
 PLLSPEmin	-40

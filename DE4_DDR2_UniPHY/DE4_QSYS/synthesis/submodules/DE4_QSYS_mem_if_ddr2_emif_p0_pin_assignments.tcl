@@ -1,4 +1,4 @@
-# (C) 2001-2012 Altera Corporation. All rights reserved.
+# (C) 2001-2013 Altera Corporation. All rights reserved.
 # Your use of Altera Corporation's design tools, logic functions and other 
 # software and tools, and its AMPP partner logic functions, and any output 
 # files any of the foregoing (including device programming or simulation 
@@ -56,7 +56,6 @@ set usage "\[<options>\] <project_name>:"
 	
 if [catch {array set options [cmdline::getoptions argument_list $::available_options]} result] {
 	if {[llength $argument_list] > 0 } {
-		
 		post_message -type error "Illegal Options"
 		post_message -type error  [::cmdline::usage $::available_options $usage]
 		qexit -error
@@ -73,7 +72,6 @@ if {$options(c) != "#_ignore_#"} {
 }
 
 if {[llength $argument_list] == 1 } {
-	
 	set options(project_name) [lindex $argument_list 0]
 
 	if [string compare [file extension $options(project_name)] ""] {
@@ -83,7 +81,6 @@ if {[llength $argument_list] == 1 } {
 	set project_name [file normalize $options(project_name)]
 
 } elseif { [llength $argument_list] == 2 } {
-	
 	set options(project_name) [lindex $argument_list 0]
 	set options(rev)          [lindex $argument_list 1]
 
@@ -200,17 +197,14 @@ foreach inst $instances {
 	}
 	array set pins $ddr_db($inst)
 
-	
 	foreach dq_pin $pins(all_dq_pins) {
 		set_instance_assignment -name IO_STANDARD "$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_io_standard CLASS I" -to $dq_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
-		
 		set_instance_assignment -name INPUT_TERMINATION "PARALLEL 50 OHM WITH CALIBRATION" -to $dq_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 		set_instance_assignment -name OUTPUT_TERMINATION "SERIES 50 OHM WITH CALIBRATION" -to $dq_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 	}
 
 	foreach dqs_pin [ concat $pins(dqs_pins) $pins(dqsn_pins) ] {
 		set_instance_assignment -name IO_STANDARD "DIFFERENTIAL $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_io_standard_differential CLASS I" -to $dqs_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
-		
 		set_instance_assignment -name INPUT_TERMINATION "PARALLEL 50 OHM WITH CALIBRATION" -to $dqs_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 		set_instance_assignment -name OUTPUT_TERMINATION "SERIES 50 OHM WITH CALIBRATION" -to $dqs_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 	}
@@ -219,7 +213,6 @@ foreach inst $instances {
 		set_instance_assignment -name IO_STANDARD "DIFFERENTIAL $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_io_standard_differential CLASS I" -to $ck_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 		set_instance_assignment -name OUTPUT_TERMINATION "SERIES 50 OHM WITHOUT CALIBRATION" -to $ck_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 
-		
 	}
 
 	foreach ac_pin $pins(ac_pins) {
@@ -249,21 +242,34 @@ foreach inst $instances {
 	}
 	
 		set delay_chain_config FLEXIBLE_TIMING
-	
 	foreach dq_pin $pins(all_dq_pins) {
 		set_instance_assignment -name MEM_INTERFACE_DELAY_CHAIN_CONFIG $delay_chain_config -to $dq_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
-		
 	}
-	
 	foreach dm_pin $pins(dm_pins) {
 		set_instance_assignment -name MEM_INTERFACE_DELAY_CHAIN_CONFIG $delay_chain_config -to $dm_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
-		
 	}
 	foreach dqs_pin [ concat $pins(dqs_pins) $pins(dqsn_pins) ] {
 		set_instance_assignment -name MEM_INTERFACE_DELAY_CHAIN_CONFIG $delay_chain_config -to $dqs_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
-		
 	}
 
+	# Disable package skew compensation for data pins in timing analysis
+	foreach dq_pin $pins(all_dq_pins) {
+		set_instance_assignment -name PACKAGE_SKEW_COMPENSATION OFF -to $dq_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
+	}
+	foreach dm_pin $pins(dm_pins) {
+		set_instance_assignment -name PACKAGE_SKEW_COMPENSATION OFF -to $dm_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
+	}
+	foreach dqs_pin [ concat $pins(dqs_pins) $pins(dqsn_pins) ] {
+		set_instance_assignment -name PACKAGE_SKEW_COMPENSATION OFF -to $dqs_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
+	}
+
+	# Disable package skew compensation for address/command pins in timing analysis
+	foreach ac_pin $pins(ac_pins) {
+		set_instance_assignment -name PACKAGE_SKEW_COMPENSATION OFF -to $ac_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
+	}
+	foreach ck_pin [ concat $pins(ck_pins) $pins(ckn_pins) ] {
+		set_instance_assignment -name PACKAGE_SKEW_COMPENSATION OFF -to $ck_pin -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
+	}
 
 	set seq_clks 2
 
@@ -275,26 +281,24 @@ foreach inst $instances {
 
 	# PLL clocks
 	# Mem Clock
-	set pll_ck_clock [ get_pll_clock_name_for_acf $pins(pll_ck_clock) "pll_mem_clk" ]
+	set pll_ck_clock [ DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name_for_acf $pins(pll_ck_clock) "pll_mem_clk" ]
 
 	# Write Clock
-	set pll_write_clock [ get_pll_clock_name_for_acf $pins(pll_write_clock) "pll_write_clk" ]
+	set pll_write_clock [ DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name_for_acf $pins(pll_write_clock) "pll_write_clk" ]
 
 	# Address/Command Clock
-	set pll_ac_clock [ get_pll_clock_name_for_acf $pins(pll_ac_clock) "pll_addr_cmd_clk" ]
+	set pll_ac_clock [ DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name_for_acf $pins(pll_ac_clock) "pll_addr_cmd_clk" ]
 
 	# Avalon Clock
-	set pll_avl_clock [ get_pll_clock_name_for_acf $pins(pll_avl_clock) "pll_avl_clk" ]
+	set pll_avl_clock [ DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name_for_acf $pins(pll_avl_clock) "pll_avl_clk" ]
 
 	# Scan Chain Configuration CLock
-	set pll_config_clock [ get_pll_clock_name_for_acf $pins(pll_config_clock) "pll_config_clk" ]
+	set pll_config_clock [ DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name_for_acf $pins(pll_config_clock) "pll_config_clk" ]
 
 
 	if { $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_num_pll_clock == [ expr 5 + $seq_clks + $c2p_p2c_clks + $dr_clk] } {
 		if { [llength $pins(all_dq_pins)] <= 36 } {
-			
 			set_instance_assignment -name GLOBAL_SIGNAL "DUAL-REGIONAL CLOCK" -to $pll_ck_clock -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
-			
 			set global_write_clk 0
 			if {$global_write_clk} {
 				set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to $pll_write_clock -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
@@ -302,30 +306,22 @@ foreach inst $instances {
 				set_instance_assignment -name GLOBAL_SIGNAL "DUAL-REGIONAL CLOCK" -to $pll_write_clock -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 			}
 		} else {
-			
 			set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to $pll_ck_clock -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
-			
-			
 			set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to $pll_write_clock -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 		}
-		
 		set_instance_assignment -name GLOBAL_SIGNAL "DUAL-REGIONAL CLOCK" -to $pll_ac_clock -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
-		
 		set_instance_assignment -name GLOBAL_SIGNAL "DUAL-REGIONAL CLOCK" -to $pll_avl_clock -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 
-		
 		set_instance_assignment -name GLOBAL_SIGNAL "DUAL-REGIONAL CLOCK" -to $pll_config_clock -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 	} else {
 		post_message -type critical_warning "Expected [ expr 5 + $seq_clks + $c2p_p2c_clks + $dr_clk] PLL clocks but found $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_num_pll_clock!"
 	}
 
-	
 	set_instance_assignment -name GLOBAL_SIGNAL OFF -to "${inst}|p0|umemphy|ureset|phy_reset_mem_stable_n" -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 	set_instance_assignment -name GLOBAL_SIGNAL OFF -to "${inst}|p0|umemphy|ureset|phy_reset_n" -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 	set_instance_assignment -name GLOBAL_SIGNAL OFF -to "${inst}|s0|sequencer_rw_mgr_inst|rw_mgr_inst|rw_mgr_core_inst|rw_soft_reset_n" -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 	
 	for {set i 0} {$i < $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_number_of_dqs_groups} {incr i 1} {
-		
 		set_instance_assignment -name GLOBAL_SIGNAL OFF -to "${inst}|p0|umemphy|uread_datapath|reset_n_fifo_write_side[$i]" -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 		set_instance_assignment -name GLOBAL_SIGNAL OFF -to "${inst}|p0|umemphy|uread_datapath|reset_n_fifo_wraddress[$i]" -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 	}
@@ -336,6 +332,8 @@ foreach inst $instances {
 		set_instance_assignment -name GLOBAL_SIGNAL OFF -to $dqs_in_clock(div_pin) -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 	}
 	
+	set_instance_assignment -name GLOBAL_SIGNAL OFF -from $pll_write_clock -to "${inst}|dll0|dll_wys_m" -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
+
 	set_instance_assignment -name ENABLE_BENEFICIAL_SKEW_OPTIMIZATION_FOR_NON_GLOBAL_CLOCKS ON -to $inst -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 	set_instance_assignment -name PLL_ENFORCE_USER_PHASE_SHIFT ON -to "${inst}|pll0|upll_memphy|auto_generated|pll1" -tag __$::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 }
@@ -356,3 +354,4 @@ set_global_assignment -name UNIPHY_SEQUENCER_DQS_CONFIG_ENABLE ON
 set_global_assignment -name OPTIMIZE_MULTI_CORNER_TIMING ON
 set_global_assignment -name UNIPHY_TEMP_VER_CODE $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_uniphy_temp_ver_code
 
+set_global_assignment -name ECO_REGENERATE_REPORT ON

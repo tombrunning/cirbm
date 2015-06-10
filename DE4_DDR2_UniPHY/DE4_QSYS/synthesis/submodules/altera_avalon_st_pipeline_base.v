@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -10,6 +10,12 @@
 // Altera or its authorized distributors.  Please refer to the applicable 
 // agreement for further details.
 
+
+// $File: //acds/rel/13.0sp1/ip/avalon_st/altera_avalon_st_pipeline_stage/altera_avalon_st_pipeline_base.v $
+// $Revision: #1 $
+// $Date: 2013/03/07 $
+// $Author: swbranch $
+//------------------------------------------------------------------------------
 
 `timescale 1ns / 1ns
 
@@ -55,8 +61,8 @@ module altera_avalon_st_pipeline_base (
 
             always @(posedge clk, posedge reset) begin
                 if (reset) begin
-                    data0 <= 1'b0;
-                    data1 <= 1'b0;
+                    data0 <= {DATA_WIDTH{1'b0}};
+                    data1 <= {DATA_WIDTH{1'b0}};
                 end else begin
                     // ----------------------------
                     // always load the second slot if we can

@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -40,6 +40,7 @@ module alt_mem_ddrx_lpddr2_addr_cmd
 
         //run-time configuration interface
         cfg_output_regd,
+        cfg_enable_chipsel_for_sideband,
 
         // AFI interface (Signals from Arbiter block)
         do_write,
@@ -53,13 +54,13 @@ module alt_mem_ddrx_lpddr2_addr_cmd
         do_power_down,
         do_lmr,
         
-        do_lmr_read,	 	//Currently does not exist in arbiter
-        do_refresh_1bank, 	//Currently does not exist in arbiter
-        do_burst_terminate, 	//Currently does not exist in arbiter
-        do_deep_pwrdwn, 	//Currently does not exist in arbiter
+        do_lmr_read,         //Currently does not exist in arbiter
+        do_refresh_1bank,     //Currently does not exist in arbiter
+        do_burst_terminate,     //Currently does not exist in arbiter
+        do_deep_pwrdwn,     //Currently does not exist in arbiter
         
         // address information
-        to_chip, 				// active high input (one hot)
+        to_chip,                 // active high input (one hot)
         to_bank,
         to_row,
         to_col,
@@ -79,6 +80,7 @@ module alt_mem_ddrx_lpddr2_addr_cmd
 
     //run-time  configuration input
     input [CFG_PORT_WIDTH_OUTPUT_REGD -1:0] cfg_output_regd;
+    input                                   cfg_enable_chipsel_for_sideband;
 
     //  Arbiter command inputs
     input do_write;
@@ -101,18 +103,18 @@ module alt_mem_ddrx_lpddr2_addr_cmd
     input do_refresh_1bank;
     input do_burst_terminate;
     
-    input   [CFG_MEM_IF_CHIP-1:0]   to_chip;
+    input   [CFG_MEM_IF_CHIP-1:0]       to_chip;
     input   [CFG_MEM_IF_BA_WIDTH-1:0]   to_bank;
     input   [CFG_MEM_IF_ROW_WIDTH-1:0]  to_row;
     input   [CFG_MEM_IF_COL_WIDTH-1:0]  to_col;
-    input   [7:0]                   to_lmr;
-    input   [7:0]                   lmr_opcode;
+    input   [7:0]                       to_lmr;
+    input   [7:0]                       lmr_opcode;
     
     //output
     output  [(CFG_MEM_IF_CKE_WIDTH * (CFG_DWIDTH_RATIO/2)) - 1:0]   afi_cke;
-    output  [(CFG_MEM_IF_CHIP * (CFG_DWIDTH_RATIO/2)) - 1:0]    afi_cs_n;
+    output  [(CFG_MEM_IF_CHIP * (CFG_DWIDTH_RATIO/2)) - 1:0]        afi_cs_n;
     output  [(CFG_MEM_IF_ADDR_WIDTH * (CFG_DWIDTH_RATIO/2)) - 1:0]  afi_addr;
-    output  [(CFG_DWIDTH_RATIO/2) - 1:0]                        afi_rst_n;
+    output  [(CFG_DWIDTH_RATIO/2) - 1:0]                            afi_rst_n;
     
     wire do_write;
     wire do_read;
@@ -138,27 +140,32 @@ module alt_mem_ddrx_lpddr2_addr_cmd
 
     
     wire    [(CFG_MEM_IF_CKE_WIDTH * (CFG_DWIDTH_RATIO/2)) - 1:0]   afi_cke;
-    wire    [(CFG_MEM_IF_CHIP * (CFG_DWIDTH_RATIO/2)) - 1:0]    afi_cs_n;
+    wire    [(CFG_MEM_IF_CHIP * (CFG_DWIDTH_RATIO/2)) - 1:0]        afi_cs_n;
     wire    [(CFG_MEM_IF_ADDR_WIDTH * (CFG_DWIDTH_RATIO/2)) - 1:0]  afi_addr;
-    wire    [(CFG_DWIDTH_RATIO/2) - 1:0]                        afi_rst_n;
+    wire    [(CFG_DWIDTH_RATIO/2) - 1:0]                            afi_rst_n;
     
     reg [(CFG_MEM_IF_CKE_WIDTH) - 1:0]      int_cke;
     reg [(CFG_MEM_IF_CKE_WIDTH) - 1:0]      int_cke_r;
-    reg [(CFG_MEM_IF_CHIP) - 1:0]       int_cs_n;
+    reg [(CFG_MEM_IF_CHIP) - 1:0]           int_cs_n;
     reg [(CFG_MEM_IF_ADDR_WIDTH) - 1:0]     int_addr;
     
     reg [(CFG_MEM_IF_CKE_WIDTH) - 1:0]      combi_cke;
-    reg [(CFG_MEM_IF_CHIP) - 1:0]       combi_cs_n;
+    reg [(CFG_MEM_IF_CHIP) - 1:0]           combi_cs_n;
     reg [(CFG_MEM_IF_ADDR_WIDTH) - 1:0]     combi_addr;
     reg [(CFG_MEM_IF_CKE_WIDTH) - 1:0]      combi_cke_r;
-    reg [(CFG_MEM_IF_CHIP) - 1:0]       combi_cs_n_r;
+    reg [(CFG_MEM_IF_CHIP) - 1:0]           combi_cs_n_r;
     reg [(CFG_MEM_IF_ADDR_WIDTH) - 1:0]     combi_addr_r;
     
-    reg [CFG_MEM_IF_CHIP-1:0]           chip_in_self_refresh;
+    reg   [CFG_MEM_IF_CHIP - 1:0]           do_power_down_r;
+    reg   [CFG_MEM_IF_CHIP - 1:0]           do_self_refresh_r;
+    reg   [CFG_MEM_IF_CHIP - 1:0]           do_deep_pwrdwn_r;
+    reg   [CFG_MEM_IF_CHIP - 1:0]           int_do_power_down;
+    reg   [CFG_MEM_IF_CHIP - 1:0]           int_do_self_refresh;
+    reg   [CFG_MEM_IF_CHIP - 1:0]           int_do_deep_pwrdwn;
     
     assign afi_rst_n    = {(CFG_DWIDTH_RATIO/2){1'b1}};
     
-	
+    
     generate
         if (CFG_DWIDTH_RATIO == 2) begin
             assign afi_cke      = int_cke;
@@ -169,20 +176,32 @@ module alt_mem_ddrx_lpddr2_addr_cmd
             assign afi_cke      = {int_cke,int_cke};
             assign afi_cs_n     = (do_burst_terminate)? {int_cs_n,int_cs_n} :{int_cs_n,{CFG_MEM_IF_CHIP{1'b1}}};
             assign afi_addr     = {int_addr,int_addr};
-	    end		
+        end        
     endgenerate
     
 // need half rate code to adjust for half rate cke or cs
    
-    always @(posedge ctl_clk, negedge ctl_reset_n)			// toogles cs_n for only one cyle when state machine continues to stay in slf rfsh mode or DPD
+    always @(posedge ctl_clk, negedge ctl_reset_n)            // toogles cs_n for only one cyle when state machine continues to stay in slf rfsh mode or DPD
         begin
             if (!ctl_reset_n)
-                chip_in_self_refresh   <=  {(CFG_MEM_IF_CHIP){1'b0}};
+                begin
+                    do_power_down_r   <= {(CFG_MEM_IF_CHIP){1'b0}};
+                    do_self_refresh_r <= {(CFG_MEM_IF_CHIP){1'b0}};
+                    do_deep_pwrdwn_r  <= {(CFG_MEM_IF_CHIP){1'b0}};
+                end
             else
-                if ((do_self_refresh) || (do_deep_pwrdwn))
-                    chip_in_self_refresh   <=  do_self_refresh | do_deep_pwrdwn;
-                else
-                    chip_in_self_refresh   <=  {(CFG_MEM_IF_CHIP){1'b0}};
+                begin
+                    do_power_down_r   <= ~do_power_down;
+                    do_self_refresh_r <= ~do_self_refresh;
+                    do_deep_pwrdwn_r  <= ~do_deep_pwrdwn;
+                end
+        end
+    
+    always @(*)
+        begin
+            int_do_power_down   = do_power_down   & do_power_down_r;
+            int_do_self_refresh = do_self_refresh & do_self_refresh_r;
+            int_do_deep_pwrdwn  = do_deep_pwrdwn  & do_deep_pwrdwn_r;
         end
     
     always @ (posedge ctl_clk or negedge ctl_reset_n) 
@@ -246,125 +265,135 @@ module alt_mem_ddrx_lpddr2_addr_cmd
         begin
             if (ctl_cal_success)
                 begin
-                    //combi_cke     =   {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
                     combi_cs_n    =   {(CFG_MEM_IF_CHIP){1'b1}};
                     combi_addr    =   {(CFG_MEM_IF_ADDR_WIDTH){1'b0}};
                     
                     if (|do_refresh)
                         begin
-                            //combi_cke     				                =  {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
-                            combi_cs_n    				                    =  ~do_refresh;
-                            combi_addr[3:0]    				                =   4'b1100;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
+                            combi_cs_n                                          =  ~do_refresh;
+                            combi_addr[3:0]                                     =   4'b1100;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
                         end
 
                     if (do_refresh_1bank)
                         begin
-                            //combi_cke     				                =  {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
-                            combi_cs_n    				                    =  ~to_chip;
-                            combi_addr[3:0]    				                =   4'b0100;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
+                            combi_cs_n                                          =  ~to_chip;
+                            combi_addr[3:0]                                     =   4'b0100;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
                         end
 
-                    if ((|do_precharge_all) || do_precharge)
+                    if (|do_precharge_all)
                         begin
-                            //combi_cke     				                =  {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
-                            combi_cs_n    				                    =  ~ (do_precharge_all|do_precharge);
-                            combi_addr[3:0]    				                =   4'b1011;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  {temp_bank_addr,2'b00,(|do_precharge_all)};
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
+                            combi_cs_n                                          = ~do_precharge_all;
+                            combi_addr[3:0]                                     =  4'b1011;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       = {temp_bank_addr,2'b00,(|do_precharge_all)};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          = {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
                         end
                    
                     if (do_activate)
                         begin
-                            //combi_cke     			            	    =  {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
-                            combi_cs_n    				                    =  ~to_chip;
-                            combi_addr[3:0]    				                =  {temp_row_addr[9:8],2'b10};
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  {temp_bank_addr,temp_row_addr[12:10]};
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {temp_row_addr[14:13],temp_row_addr[7:0]};
+                            combi_cs_n                                          =  ~to_chip;
+                            combi_addr[3:0]                                     =  {temp_row_addr[9:8],2'b10};
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  {temp_bank_addr,temp_row_addr[12:10]};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {temp_row_addr[14:13],temp_row_addr[7:0]};
+                        end
+                    
+                    if (do_precharge)
+                        begin
+                            combi_cs_n                                          = ~to_chip;
+                            combi_addr[3:0]                                     = 4'b1011;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       = {temp_bank_addr,3'b000};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          = {temp_row_addr[14:13],temp_row_addr[7:0]};
                         end
                     
                     if (do_write)
                         begin
-                            //combi_cke     				                =  {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
-                            combi_cs_n    				                    =  ~to_chip;
-                            combi_addr[3:0]    				                =  4'b0001;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  {temp_bank_addr,temp_col_addr[2:1],1'b0};
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {temp_col_addr[11:3],do_auto_precharge};
+                            combi_cs_n                                          =  ~to_chip;
+                            combi_addr[3:0]                                     =  4'b0001;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  {temp_bank_addr,temp_col_addr[2:1],1'b0};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {temp_col_addr[11:3],do_auto_precharge};
                         end
                    
                     if (do_read)
                         begin
-                            //combi_cke     				                =  {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
-                            combi_cs_n    			                    	=  ~to_chip;
-                            combi_addr[3:0]    				                =  4'b0101;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  {temp_bank_addr,temp_col_addr[2:1],1'b0};
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {temp_col_addr[11:3],do_auto_precharge};
+                            combi_cs_n                                          =  ~to_chip;
+                            combi_addr[3:0]                                     =  4'b0101;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  {temp_bank_addr,temp_col_addr[2:1],1'b0};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {temp_col_addr[11:3],do_auto_precharge};
                         end
                     
-                    if (|do_power_down)
+                    if (|int_do_power_down)
                         begin
-                            //combi_cke     				                =  ~do_power_down;
-                            combi_cs_n    				                    =  {(CFG_MEM_IF_CHIP){1'b1}};
-                            combi_addr[3:0]    				                =  4'b0000;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
+                            combi_cs_n                                          =  {(CFG_MEM_IF_CHIP){1'b1}};
+                            combi_addr[3:0]                                     =  4'b0000;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
                         end
                     
-                    if (|do_deep_pwrdwn)
+                    if (|int_do_deep_pwrdwn)
                         begin
-                            //combi_cke     				                =  ~do_deep_pwrdwn;
-                            combi_cs_n    				                    =  ~do_deep_pwrdwn;		// toogles cs_n for only one cyle when state machine continues to stay in DPD;
-                            combi_addr[3:0]    				                =  4'b0011;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
+                            if (cfg_enable_chipsel_for_sideband)
+                                begin
+                                    combi_cs_n                                  = ~int_do_deep_pwrdwn; // toogles cs_n for only one cyle when state machine continues to stay in deep power down;
+                                end
+                            else
+                                begin
+                                    combi_cs_n                                  =  {(CFG_MEM_IF_CHIP){1'b1}};
+                                end
+                            
+                            combi_addr[3:0]                                     =  4'b0011;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
                         end
 
-                    if (|do_self_refresh)
+                    if (|int_do_self_refresh)
                         begin
-                            //combi_cke     				                =  ~do_self_refresh;
-                            combi_cs_n    				                    =  ~do_self_refresh;		// toogles cs_n for only one cyle when state machine continues to stay in DPD;
-                            combi_addr[3:0]    				                =  4'b0100;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
+                            if (cfg_enable_chipsel_for_sideband)
+                                begin
+                                    combi_cs_n                                  = ~int_do_self_refresh; // toogles cs_n for only one cyle when state machine continues to stay in deep power down;
+                                end
+                            else
+                                begin
+                                    combi_cs_n                                  =  {(CFG_MEM_IF_CHIP){1'b1}};
+                                end
+                            
+                            combi_addr[3:0]                                     =  4'b0100;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
                         end
                    
                     if (do_lmr)
                         begin
-                            //combi_cke     				                =  {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
-                            combi_cs_n    				                    =  ~to_chip;
-                            combi_addr[3:0]    				                =  4'b0000;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  to_lmr[5:0];
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {to_lmr[7:6],lmr_opcode};
+                            combi_cs_n                                          =  ~to_chip;
+                            combi_addr[3:0]                                     =  4'b0000;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  to_lmr[5:0];
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {to_lmr[7:6],lmr_opcode};
                         end
 
                     if (do_lmr_read)
                         begin
-                            //combi_cke     				                =  {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
-                            combi_cs_n    				                    =  ~to_chip;
-                            combi_addr[3:0]    				                =  4'b1000;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  to_lmr[5:0];
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {to_lmr[7:6],{8{1'b0}}};
+                            combi_cs_n                                          =  ~to_chip;
+                            combi_addr[3:0]                                     =  4'b1000;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  to_lmr[5:0];
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {to_lmr[7:6],{8{1'b0}}};
                         end
                    
                     if (do_burst_terminate)
                         begin
-                            //combi_cke     				                =  {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
-                            combi_cs_n    				                    =  ~to_chip;
-                            combi_addr[3:0]    				                =  4'b0011;
-                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]   =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
-                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]	    =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
+                            combi_cs_n                                          =  ~to_chip;
+                            combi_addr[3:0]                                     =  4'b0011;
+                            combi_addr[(CFG_MEM_IF_ADDR_WIDTH/2) - 1 : 4]       =  {(CFG_MEM_IF_ADDR_WIDTH/2 - 4){1'b0}};
+                            combi_addr[CFG_MEM_IF_ADDR_WIDTH - 1 : 10]          =  {(CFG_MEM_IF_ADDR_WIDTH/2){1'b0}};
                         end
-			
-					   	
+            
+                           
                 end
             else
                 begin
-                    //combi_cke     =  {(CFG_MEM_IF_CKE_WIDTH){1'b1}};
-                    combi_cs_n    =  {(CFG_MEM_IF_CHIP){1'b1}};
-                    combi_addr    =  {(CFG_MEM_IF_ADDR_WIDTH){1'b0}};
+                    combi_cs_n                                                  =  {(CFG_MEM_IF_CHIP){1'b1}};
+                    combi_addr                                                  =  {(CFG_MEM_IF_ADDR_WIDTH){1'b0}};
                 end
         end
 

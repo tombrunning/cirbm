@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -35,6 +35,7 @@
 module alt_mem_ddrx_rdwr_data_tmg
     # (parameter
         CFG_DWIDTH_RATIO              =    2,
+        CFG_MEM_IF_CHIP               =    1,
         CFG_MEM_IF_DQ_WIDTH           =    8,
         CFG_MEM_IF_DQS_WIDTH          =    1,
         CFG_MEM_IF_DM_WIDTH           =    1,
@@ -45,7 +46,9 @@ module alt_mem_ddrx_rdwr_data_tmg
         CFG_ECC_ENC_REG               =    0,
         CFG_AFI_INTF_PHASE_NUM        =    2,
         CFG_PORT_WIDTH_ENABLE_ECC     =    1,
-        CFG_PORT_WIDTH_OUTPUT_REGD    =    1
+        CFG_PORT_WIDTH_OUTPUT_REGD    =    1,
+        CFG_CTL_ARBITER_TYPE          =    "ROWCOL",
+        CFG_USE_SHADOW_REGS           =    0
     )
     (
         ctl_clk,
@@ -57,12 +60,15 @@ module alt_mem_ddrx_rdwr_data_tmg
         cfg_output_regd_for_afi_output,
         
         //Arbiter command input
+        bg_do_read,
+        bg_do_write,
         bg_doing_read,
         bg_doing_write,
         bg_rdwr_data_valid,        //Required for user burst length lesser than dram burst length
         dataid,
         bg_do_rmw_correct,
         bg_do_rmw_partial,
+        bg_to_chip,
         
         //Inputs from ECC/WFIFO blocks
         ecc_wdata,
@@ -94,6 +100,9 @@ module alt_mem_ddrx_rdwr_data_tmg
         ecc_wdata_fifo_rmw_correct_last,
         ecc_wdata_fifo_rmw_partial_last,
         
+        afi_rrank,
+        afi_wrank,
+        
         afi_dqs_burst,
         afi_wdata_valid,
         afi_wdata,
@@ -117,13 +126,15 @@ module alt_mem_ddrx_rdwr_data_tmg
     output [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_afi_output;
     
     //Arbiter command input
-    input                          bg_doing_read;
-    input                          bg_doing_write;
-    input                          bg_rdwr_data_valid;
-    input  [CFG_DATA_ID_WIDTH-1:0] dataid;
-    
-    input  [CFG_AFI_INTF_PHASE_NUM-1:0] bg_do_rmw_correct;
-    input  [CFG_AFI_INTF_PHASE_NUM-1:0] bg_do_rmw_partial;
+    input  [CFG_AFI_INTF_PHASE_NUM-1:0]                   bg_do_read;
+    input  [CFG_AFI_INTF_PHASE_NUM-1:0]                   bg_do_write;
+    input                                                 bg_doing_read;
+    input                                                 bg_doing_write;
+    input                                                 bg_rdwr_data_valid;
+    input  [CFG_DATA_ID_WIDTH-1:0]                        dataid;
+    input  [CFG_AFI_INTF_PHASE_NUM-1:0]                   bg_do_rmw_correct;
+    input  [CFG_AFI_INTF_PHASE_NUM-1:0]                   bg_do_rmw_partial;
+    input  [(CFG_AFI_INTF_PHASE_NUM*CFG_MEM_IF_CHIP)-1:0] bg_to_chip;
     
     //Inputs from ECC/WFIFO blocks
     input  [CFG_MEM_IF_DQ_WIDTH*CFG_DWIDTH_RATIO-1:0]                                              ecc_wdata;
@@ -155,27 +166,38 @@ module alt_mem_ddrx_rdwr_data_tmg
     output                                                   ecc_wdata_fifo_rmw_correct_last;
     output                                                   ecc_wdata_fifo_rmw_partial_last;
     
-    output [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]   afi_dqs_burst;
-    output [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]   afi_wdata_valid;
-    output [CFG_MEM_IF_DQ_WIDTH*CFG_DWIDTH_RATIO-1:0]        afi_wdata;
-    output [CFG_MEM_IF_DM_WIDTH*CFG_DWIDTH_RATIO-1:0]        afi_dm;
+    output [CFG_MEM_IF_CHIP*(CFG_DWIDTH_RATIO/2)*CFG_MEM_IF_DQS_WIDTH-1:0] afi_rrank;
+    output [CFG_MEM_IF_CHIP*(CFG_DWIDTH_RATIO/2)*CFG_MEM_IF_DQS_WIDTH-1:0] afi_wrank;
+    
+    output [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]                 afi_dqs_burst;
+    output [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]                 afi_wdata_valid;
+    output [CFG_MEM_IF_DQ_WIDTH*CFG_DWIDTH_RATIO-1:0]                      afi_wdata;
+    output [CFG_MEM_IF_DM_WIDTH*CFG_DWIDTH_RATIO-1:0]                      afi_dm;
     
     //=================================================================================================//
     //        reg/wire declaration                                                                     //
     //=================================================================================================//
     
-    wire                               bg_doing_read;
-    wire                               bg_doing_write;
-    wire                               bg_rdwr_data_valid;
-    wire  [CFG_DATA_ID_WIDTH-1:0]      dataid;
-    wire  [CFG_AFI_INTF_PHASE_NUM-1:0] bg_do_rmw_correct;
-    wire  [CFG_AFI_INTF_PHASE_NUM-1:0] bg_do_rmw_partial;
+    wire  [CFG_AFI_INTF_PHASE_NUM-1:0]                      bg_do_read;
+    wire  [CFG_AFI_INTF_PHASE_NUM-1:0]                      bg_do_write;
+    wire                                                    bg_doing_read;
+    wire                                                    bg_doing_write;
+    wire                                                    bg_rdwr_data_valid;
+    wire  [CFG_DATA_ID_WIDTH-1:0]                           dataid;
+    wire  [CFG_AFI_INTF_PHASE_NUM-1:0]                      bg_do_rmw_correct;
+    wire  [CFG_AFI_INTF_PHASE_NUM-1:0]                      bg_do_rmw_partial;
+    wire  [(CFG_AFI_INTF_PHASE_NUM*CFG_MEM_IF_CHIP)-1:0]    bg_to_chip;
     
     wire  [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]   afi_doing_read;
     wire  [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]   afi_doing_read_full;
+    wire  [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]   int_afi_doing_read;
+    wire  [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]   int_afi_doing_read_full;
+    reg   [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]   int_afi_doing_read_r;
+    reg   [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]   int_afi_doing_read_full_r;
     
     wire  [CFG_DRAM_WLAT_GROUP-1:0]                         ecc_wdata_fifo_read;
-    reg   [CFG_DRAM_WLAT_GROUP-1:0]                         ecc_wdata_fifo_read_r;
+    reg   [CFG_DRAM_WLAT_GROUP-1:0]                         ecc_wdata_fifo_read_r1;
+    reg   [CFG_DRAM_WLAT_GROUP-1:0]                         ecc_wdata_fifo_read_r2;
     wire  [CFG_DRAM_WLAT_GROUP*CFG_DATA_ID_WIDTH-1:0]       ecc_wdata_fifo_dataid;
     wire  [CFG_DRAM_WLAT_GROUP*CFG_DATAID_ARRAY_DEPTH-1:0]  ecc_wdata_fifo_dataid_vector;
     wire  [CFG_DRAM_WLAT_GROUP-1:0]                         ecc_wdata_fifo_rmw_correct;
@@ -194,16 +216,22 @@ module alt_mem_ddrx_rdwr_data_tmg
     wire                                                    ecc_wdata_fifo_rmw_correct_last;
     wire                                                    ecc_wdata_fifo_rmw_partial_last;
     
-    wire  [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]   afi_dqs_burst;
-    wire  [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]   afi_wdata_valid;
-    wire  [CFG_MEM_IF_DQ_WIDTH*CFG_DWIDTH_RATIO-1:0]        afi_wdata;
-    wire  [CFG_MEM_IF_DM_WIDTH*CFG_DWIDTH_RATIO-1:0]        afi_dm;
+    wire  [CFG_MEM_IF_CHIP*(CFG_DWIDTH_RATIO/2)*CFG_MEM_IF_DQS_WIDTH-1:0] afi_rrank;
+    wire  [CFG_MEM_IF_CHIP*(CFG_DWIDTH_RATIO/2)*CFG_MEM_IF_DQS_WIDTH-1:0] afi_wrank;
+    wire  [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]                 afi_dqs_burst;
+    wire  [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]                 afi_wdata_valid;
+    wire  [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]                 int_afi_dqs_burst;
+    wire  [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]                 int_afi_wdata_valid;
+    reg   [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]                 int_afi_dqs_burst_r;
+    reg   [CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2)-1:0]                 int_afi_wdata_valid_r;
+    wire  [CFG_MEM_IF_DQ_WIDTH*CFG_DWIDTH_RATIO-1:0]                      afi_wdata;
+    wire  [CFG_MEM_IF_DM_WIDTH*CFG_DWIDTH_RATIO-1:0]                      afi_dm;
     
     //Internal signals
-    reg  [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_afi_output_combi [CFG_DRAM_WLAT_GROUP-1:0];
-    reg  [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_wdata_path_combi [CFG_DRAM_WLAT_GROUP-1:0];
-    reg  [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_afi_output_mux   [CFG_DRAM_WLAT_GROUP-1:0];
-    reg  [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_wdata_path_mux   [CFG_DRAM_WLAT_GROUP-1:0];
+    reg  [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_afi_output_combi       [CFG_DRAM_WLAT_GROUP-1:0];
+    reg  [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_wdata_path_combi       [CFG_DRAM_WLAT_GROUP-1:0];
+    reg  [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_afi_output_mux         [CFG_DRAM_WLAT_GROUP-1:0];
+    reg  [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_wdata_path_mux         [CFG_DRAM_WLAT_GROUP-1:0];
     reg  [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_afi_output;
     reg  [CFG_PORT_WIDTH_OUTPUT_REGD-1:0] cfg_output_regd_for_wdata_path;
     
@@ -213,16 +241,17 @@ module alt_mem_ddrx_rdwr_data_tmg
     reg                                   doing_read_full_r;
     reg   [CFG_WLAT_PIPE_LENGTH-1:0]      doing_write_pipe;
     reg   [CFG_WLAT_PIPE_LENGTH-1:0]      rdwr_data_valid_pipe;
+    reg   [CFG_WLAT_PIPE_LENGTH-1:0]      do_write_pipe;
     reg   [CFG_WLAT_PIPE_LENGTH-1:0]      rmw_correct_pipe;
     reg   [CFG_WLAT_PIPE_LENGTH-1:0]      rmw_partial_pipe;
     reg   [CFG_DATA_ID_WIDTH-1:0]         dataid_pipe         [CFG_WLAT_PIPE_LENGTH-1:0];
     reg   [CFG_DATAID_ARRAY_DEPTH-1:0]    dataid_vector_pipe  [CFG_WLAT_PIPE_LENGTH-1:0];
     reg   [CFG_DATAID_ARRAY_DEPTH-1:0]    dataid_vector;
-    reg                                   int_dqs_burst;
-    reg                                   int_dqs_burst_r;
-    reg                                   int_wdata_valid;
-    reg                                   int_wdata_valid_r;
-    reg                                   int_real_wdata_valid;
+    reg   [CFG_DRAM_WLAT_GROUP-1:0]       int_dqs_burst;
+    reg   [CFG_DRAM_WLAT_GROUP-1:0]       int_dqs_burst_r;
+    reg   [CFG_DRAM_WLAT_GROUP-1:0]       int_wdata_valid;
+    reg   [CFG_DRAM_WLAT_GROUP-1:0]       int_wdata_valid_r;
+    reg   [CFG_DRAM_WLAT_GROUP-1:0]       int_real_wdata_valid;
     reg   [CFG_DRAM_WLAT_GROUP-1:0]       int_ecc_wdata_fifo_read;
     reg   [CFG_DRAM_WLAT_GROUP-1:0]       int_ecc_wdata_fifo_read_r;
     reg   [CFG_DATA_ID_WIDTH-1:0]         int_ecc_wdata_fifo_dataid          [CFG_DRAM_WLAT_GROUP-1:0];
@@ -234,12 +263,29 @@ module alt_mem_ddrx_rdwr_data_tmg
     reg   [CFG_DRAM_WLAT_GROUP-1:0]       int_ecc_wdata_fifo_rmw_partial;
     reg   [CFG_DRAM_WLAT_GROUP-1:0]       int_ecc_wdata_fifo_rmw_partial_r;
     
+    reg   [CFG_MEM_IF_CHIP-1:0]           wr_chip_pipe                       [CFG_WLAT_PIPE_LENGTH-1:0];
+    
+    reg   [CFG_MEM_IF_CHIP-1:0]           int_to_chip;
+    reg   [CFG_MEM_IF_CHIP-1:0]           int_rank                           [CFG_MEM_IF_DQS_WIDTH-1:0];
+    reg   [CFG_MEM_IF_CHIP-1:0]           rd_chip;
+    reg   [CFG_MEM_IF_CHIP-1:0]           int_rd_rank_full_rate;
+    reg   [CFG_MEM_IF_CHIP-1:0]           int_rd_rank_full_rate_r;
+    reg   [CFG_MEM_IF_CHIP-1:0]           int_wr_rank_full_rate              [CFG_MEM_IF_DQS_WIDTH-1:0];
+    reg   [CFG_MEM_IF_CHIP-1:0]           int_wr_rank_full_rate_r            [CFG_MEM_IF_DQS_WIDTH-1:0];
+    reg   [CFG_MEM_IF_CHIP-1:0]           int_wr_rank_half_rate              [CFG_MEM_IF_DQS_WIDTH-1:0];
+    reg   [CFG_MEM_IF_CHIP-1:0]           int_wr_rank_half_rate_r            [CFG_MEM_IF_DQS_WIDTH-1:0];
+    
+    wire  [CFG_MEM_IF_CHIP*(CFG_DWIDTH_RATIO/2)*CFG_MEM_IF_DQS_WIDTH-1:0] int_rd_rank;
+    wire  [CFG_MEM_IF_CHIP*(CFG_DWIDTH_RATIO/2)*CFG_MEM_IF_DQS_WIDTH-1:0] int_wr_rank;
+    reg   [CFG_MEM_IF_CHIP*(CFG_DWIDTH_RATIO/2)*CFG_MEM_IF_DQS_WIDTH-1:0] int_rd_rank_r;
+    reg   [CFG_MEM_IF_CHIP*(CFG_DWIDTH_RATIO/2)*CFG_MEM_IF_DQS_WIDTH-1:0] int_wr_rank_r;
+    
     wire                                  int_do_rmw_correct;
     wire                                  int_do_rmw_partial;
     
     // DQS burst logic for half rate design
-    reg                                   int_dqs_burst_half_rate;
-    reg                                   int_dqs_burst_half_rate_r;
+    reg   [CFG_DRAM_WLAT_GROUP-1:0]                     int_dqs_burst_half_rate;
+    reg   [CFG_DRAM_WLAT_GROUP-1:0]                     int_dqs_burst_half_rate_r;
     
     reg   [CFG_DRAM_WLAT_GROUP-1:0]                     first_afi_wlat;
     reg   [CFG_DRAM_WLAT_GROUP-1:0]                     last_afi_wlat;
@@ -251,19 +297,26 @@ module alt_mem_ddrx_rdwr_data_tmg
     reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  smallest_afi_wlat_minus_1;
     reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  smallest_afi_wlat_minus_2;
     reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  smallest_afi_wlat_minus_3;
+    reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  smallest_afi_wlat_minus_4;
     reg                                                 smallest_doing_write_pipe_eq_afi_wlat_minus_0;
     reg                                                 smallest_doing_write_pipe_eq_afi_wlat_minus_1;
     reg                                                 smallest_doing_write_pipe_eq_afi_wlat_minus_2;
+    reg                                                 smallest_doing_write_pipe_eq_afi_wlat_minus_3;
     reg                                                 smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1;
     reg                                                 smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2;
+    reg                                                 smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3;
     reg   [CFG_DATA_ID_WIDTH-1:0]                       smallest_dataid_pipe_eq_afi_wlat_minus_1;
     reg   [CFG_DATA_ID_WIDTH-1:0]                       smallest_dataid_pipe_eq_afi_wlat_minus_2;
+    reg   [CFG_DATA_ID_WIDTH-1:0]                       smallest_dataid_pipe_eq_afi_wlat_minus_3;
     reg   [CFG_DATAID_ARRAY_DEPTH-1:0]                  smallest_dataid_vector_pipe_eq_afi_wlat_minus_1;
     reg   [CFG_DATAID_ARRAY_DEPTH-1:0]                  smallest_dataid_vector_pipe_eq_afi_wlat_minus_2;
+    reg   [CFG_DATAID_ARRAY_DEPTH-1:0]                  smallest_dataid_vector_pipe_eq_afi_wlat_minus_3;
     reg                                                 smallest_rmw_correct_pipe_eq_afi_wlat_minus_1;
     reg                                                 smallest_rmw_correct_pipe_eq_afi_wlat_minus_2;
+    reg                                                 smallest_rmw_correct_pipe_eq_afi_wlat_minus_3;
     reg                                                 smallest_rmw_partial_pipe_eq_afi_wlat_minus_1;
     reg                                                 smallest_rmw_partial_pipe_eq_afi_wlat_minus_2;
+    reg                                                 smallest_rmw_partial_pipe_eq_afi_wlat_minus_3;
     reg                                                 smallest_doing_write_pipe_eq_afi_wlat_minus_x;
     reg                                                 smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_x;
     reg   [CFG_DATA_ID_WIDTH-1:0]                       smallest_dataid_pipe_eq_afi_wlat_minus_x;
@@ -275,19 +328,26 @@ module alt_mem_ddrx_rdwr_data_tmg
     reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  largest_afi_wlat_minus_1;
     reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  largest_afi_wlat_minus_2;
     reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  largest_afi_wlat_minus_3;
+    reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  largest_afi_wlat_minus_4;
     reg                                                 largest_doing_write_pipe_eq_afi_wlat_minus_0;
     reg                                                 largest_doing_write_pipe_eq_afi_wlat_minus_1;
     reg                                                 largest_doing_write_pipe_eq_afi_wlat_minus_2;
+    reg                                                 largest_doing_write_pipe_eq_afi_wlat_minus_3;
     reg                                                 largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1;
     reg                                                 largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2;
+    reg                                                 largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3;
     reg   [CFG_DATA_ID_WIDTH-1:0]                       largest_dataid_pipe_eq_afi_wlat_minus_1;
     reg   [CFG_DATA_ID_WIDTH-1:0]                       largest_dataid_pipe_eq_afi_wlat_minus_2;
+    reg   [CFG_DATA_ID_WIDTH-1:0]                       largest_dataid_pipe_eq_afi_wlat_minus_3;
     reg   [CFG_DATAID_ARRAY_DEPTH-1:0]                  largest_dataid_vector_pipe_eq_afi_wlat_minus_1;
     reg   [CFG_DATAID_ARRAY_DEPTH-1:0]                  largest_dataid_vector_pipe_eq_afi_wlat_minus_2;
+    reg   [CFG_DATAID_ARRAY_DEPTH-1:0]                  largest_dataid_vector_pipe_eq_afi_wlat_minus_3;
     reg                                                 largest_rmw_correct_pipe_eq_afi_wlat_minus_1;
     reg                                                 largest_rmw_correct_pipe_eq_afi_wlat_minus_2;
+    reg                                                 largest_rmw_correct_pipe_eq_afi_wlat_minus_3;
     reg                                                 largest_rmw_partial_pipe_eq_afi_wlat_minus_1;
     reg                                                 largest_rmw_partial_pipe_eq_afi_wlat_minus_2;
+    reg                                                 largest_rmw_partial_pipe_eq_afi_wlat_minus_3;
     reg                                                 largest_doing_write_pipe_eq_afi_wlat_minus_x;
     reg                                                 largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_x;
     reg   [CFG_DATA_ID_WIDTH-1:0]                       largest_dataid_pipe_eq_afi_wlat_minus_x;
@@ -299,25 +359,41 @@ module alt_mem_ddrx_rdwr_data_tmg
     reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  afi_wlat_minus_1                         [CFG_DRAM_WLAT_GROUP-1:0];
     reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  afi_wlat_minus_2                         [CFG_DRAM_WLAT_GROUP-1:0];
     reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  afi_wlat_minus_3                         [CFG_DRAM_WLAT_GROUP-1:0];
+    reg   [CFG_WLAT_BUS_WIDTH/CFG_DRAM_WLAT_GROUP-1:0]  afi_wlat_minus_4                         [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 doing_write_pipe_eq_afi_wlat_minus_0     [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 doing_write_pipe_eq_afi_wlat_minus_1     [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 doing_write_pipe_eq_afi_wlat_minus_2     [CFG_DRAM_WLAT_GROUP-1:0];
+    reg                                                 doing_write_pipe_eq_afi_wlat_minus_3     [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 rdwr_data_valid_pipe_eq_afi_wlat_minus_1 [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [CFG_DRAM_WLAT_GROUP-1:0];
+    reg                                                 rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [CFG_DRAM_WLAT_GROUP-1:0];
     reg   [CFG_DATA_ID_WIDTH-1:0]                       dataid_pipe_eq_afi_wlat_minus_1          [CFG_DRAM_WLAT_GROUP-1:0];
     reg   [CFG_DATA_ID_WIDTH-1:0]                       dataid_pipe_eq_afi_wlat_minus_2          [CFG_DRAM_WLAT_GROUP-1:0];
+    reg   [CFG_DATA_ID_WIDTH-1:0]                       dataid_pipe_eq_afi_wlat_minus_3          [CFG_DRAM_WLAT_GROUP-1:0];
     reg   [CFG_DATAID_ARRAY_DEPTH-1:0]                  dataid_vector_pipe_eq_afi_wlat_minus_1   [CFG_DRAM_WLAT_GROUP-1:0];
     reg   [CFG_DATAID_ARRAY_DEPTH-1:0]                  dataid_vector_pipe_eq_afi_wlat_minus_2   [CFG_DRAM_WLAT_GROUP-1:0];
+    reg   [CFG_DATAID_ARRAY_DEPTH-1:0]                  dataid_vector_pipe_eq_afi_wlat_minus_3   [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 rmw_correct_pipe_eq_afi_wlat_minus_1     [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 rmw_correct_pipe_eq_afi_wlat_minus_2     [CFG_DRAM_WLAT_GROUP-1:0];
+    reg                                                 rmw_correct_pipe_eq_afi_wlat_minus_3     [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 rmw_partial_pipe_eq_afi_wlat_minus_1     [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 rmw_partial_pipe_eq_afi_wlat_minus_2     [CFG_DRAM_WLAT_GROUP-1:0];
+    reg                                                 rmw_partial_pipe_eq_afi_wlat_minus_3     [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 doing_write_pipe_eq_afi_wlat_minus_x     [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 rdwr_data_valid_pipe_eq_afi_wlat_minus_x [CFG_DRAM_WLAT_GROUP-1:0];
     reg   [CFG_DATA_ID_WIDTH-1:0]                       dataid_pipe_eq_afi_wlat_minus_x          [CFG_DRAM_WLAT_GROUP-1:0];
     reg   [CFG_DATAID_ARRAY_DEPTH-1:0]                  dataid_vector_pipe_eq_afi_wlat_minus_x   [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 rmw_correct_pipe_eq_afi_wlat_minus_x     [CFG_DRAM_WLAT_GROUP-1:0];
     reg                                                 rmw_partial_pipe_eq_afi_wlat_minus_x     [CFG_DRAM_WLAT_GROUP-1:0];
+    
+    reg                                                 do_write_pipe_eq_afi_wlat_minus_0        [CFG_DRAM_WLAT_GROUP-1:0];
+    reg                                                 do_write_pipe_eq_afi_wlat_minus_1        [CFG_DRAM_WLAT_GROUP-1:0];
+    reg                                                 do_write_pipe_eq_afi_wlat_minus_2        [CFG_DRAM_WLAT_GROUP-1:0];
+    reg   [CFG_MEM_IF_CHIP-1:0]                         wr_chip_pipe_eq_afi_wlat_minus_0         [CFG_DRAM_WLAT_GROUP-1:0];
+    reg   [CFG_MEM_IF_CHIP-1:0]                         wr_chip_pipe_eq_afi_wlat_minus_1         [CFG_DRAM_WLAT_GROUP-1:0];
+    
+    wire  one  = 1'b1;
+    wire  zero = 1'b0;
     
     //=================================================================================================//
     //            Internal cfg_output_regd                                                             //
@@ -328,17 +404,39 @@ module alt_mem_ddrx_rdwr_data_tmg
         begin : output_regd_logic_per_dqs_group
             always @ (*)
             begin
-                if (CFG_WDATA_REG || CFG_ECC_ENC_REG)
+                
+                if (CFG_WDATA_REG && CFG_ECC_ENC_REG)
+                begin
+                    // When both wdata_reg and ecc_reg is enabled
+                    // we need to fetch data from wdata path earlier and delay the command path
+                    if (afi_wlat [(N + 1) * (CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP) - 1 : N * (CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP)] <= 1)
+                    begin
+                        // Extra latency one afi command output, to match wdata output latency
+                        cfg_output_regd_for_afi_output_combi [N] = 2'd2;
+                        cfg_output_regd_for_wdata_path_combi [N] = 2'd0;
+                    end
+                    else if (afi_wlat [(N + 1) * (CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP) - 1 : N * (CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP)] == 2)
+                    begin
+                        cfg_output_regd_for_afi_output_combi [N] = 2'd1;
+                        cfg_output_regd_for_wdata_path_combi [N] = 2'd0;
+                    end
+                    else
+                    begin
+                        cfg_output_regd_for_afi_output_combi [N] = cfg_output_regd;
+                        cfg_output_regd_for_wdata_path_combi [N] = cfg_output_regd;
+                    end
+                end
+                else if (CFG_WDATA_REG || CFG_ECC_ENC_REG)
                 begin
                     if (afi_wlat [(N + 1) * (CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP) - 1 : N * (CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP)] <= 1)
                     begin
                         // We enable output_regd for signals going to PHY
                         // because we need to fetch data 2 clock cycles earlier
-                        cfg_output_regd_for_afi_output_combi [N] = 1'b1;
+                        cfg_output_regd_for_afi_output_combi [N] = 2'd1;
                         
                         // We disable output_regd for signals going to wdata_path
                         // because we need to fecth data 2 clock cycles earlier
-                        cfg_output_regd_for_wdata_path_combi [N] = 1'b0;
+                        cfg_output_regd_for_wdata_path_combi [N] = 2'd0;
                     end
                     else
                     begin
@@ -358,29 +456,29 @@ module alt_mem_ddrx_rdwr_data_tmg
         begin : output_regd_mux_logic
             always @ (*)
             begin
-                cfg_output_regd_for_afi_output_mux [N] = cfg_output_regd_for_afi_output_combi [N] | cfg_output_regd_for_afi_output_mux [N-1];
-                cfg_output_regd_for_wdata_path_mux [N] = cfg_output_regd_for_wdata_path_combi [N] | cfg_output_regd_for_wdata_path_mux [N-1];
+                cfg_output_regd_for_afi_output_mux       [N] = cfg_output_regd_for_afi_output_combi       [N] | cfg_output_regd_for_afi_output_mux       [N-1];
+                cfg_output_regd_for_wdata_path_mux       [N] = cfg_output_regd_for_wdata_path_combi       [N] | cfg_output_regd_for_wdata_path_mux       [N-1];
             end
         end
     endgenerate
     
     always @ (*)
     begin
-        cfg_output_regd_for_afi_output_mux [0] = cfg_output_regd_for_afi_output_combi [0];
-        cfg_output_regd_for_wdata_path_mux [0] = cfg_output_regd_for_wdata_path_combi [0];
+        cfg_output_regd_for_afi_output_mux       [0] = cfg_output_regd_for_afi_output_combi       [0];
+        cfg_output_regd_for_wdata_path_mux       [0] = cfg_output_regd_for_wdata_path_combi       [0];
     end
     
     always @ (posedge ctl_clk or negedge ctl_reset_n)
     begin
         if (!ctl_reset_n)
         begin
-            cfg_output_regd_for_afi_output <= 1'b0;
-            cfg_output_regd_for_wdata_path <= 1'b0;
+            cfg_output_regd_for_afi_output       <= 2'd0;
+            cfg_output_regd_for_wdata_path       <= 2'd0;
         end
         else
         begin
-            cfg_output_regd_for_afi_output <= cfg_output_regd_for_afi_output_mux [CFG_DRAM_WLAT_GROUP-1];
-            cfg_output_regd_for_wdata_path <= cfg_output_regd_for_wdata_path_mux [CFG_DRAM_WLAT_GROUP-1];
+            cfg_output_regd_for_afi_output       <= cfg_output_regd_for_afi_output_mux       [CFG_DRAM_WLAT_GROUP-1];
+            cfg_output_regd_for_wdata_path       <= cfg_output_regd_for_wdata_path_mux       [CFG_DRAM_WLAT_GROUP-1];
         end
     end
     
@@ -424,10 +522,28 @@ module alt_mem_ddrx_rdwr_data_tmg
         genvar I;
         for (I = 0; I < CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2); I = I + 1)
             begin : B
-                assign afi_doing_read      [I] = (cfg_output_regd_for_afi_output) ? doing_read_r      : doing_read_combi;
-                assign afi_doing_read_full [I] = (cfg_output_regd_for_afi_output) ? doing_read_full_r : doing_read_full_combi;
+                assign int_afi_doing_read      [I] = (cfg_output_regd_for_afi_output) ? doing_read_r      : doing_read_combi;
+                assign int_afi_doing_read_full [I] = (cfg_output_regd_for_afi_output) ? doing_read_full_r : doing_read_full_combi;
             end
     endgenerate
+    
+    // Registered output
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            int_afi_doing_read_r      <= 0;
+            int_afi_doing_read_full_r <= 0;
+        end
+        else
+        begin
+            int_afi_doing_read_r      <= int_afi_doing_read;
+            int_afi_doing_read_full_r <= int_afi_doing_read_full;
+        end
+    end
+    
+    assign afi_doing_read      = (cfg_output_regd_for_afi_output == 2) ? int_afi_doing_read_r      : int_afi_doing_read;
+    assign afi_doing_read_full = (cfg_output_regd_for_afi_output == 2) ? int_afi_doing_read_full_r : int_afi_doing_read_full;
     
     //=================================================================================================//
     //            Write timing logic                                                                   //
@@ -442,7 +558,7 @@ module alt_mem_ddrx_rdwr_data_tmg
         end
         else
         begin
-            doing_write_pipe <= {doing_write_pipe[CFG_WLAT_PIPE_LENGTH -2 :0],bg_doing_write};
+            doing_write_pipe <= {doing_write_pipe[CFG_WLAT_PIPE_LENGTH-2:0],bg_doing_write};
         end
     end
     
@@ -455,7 +571,41 @@ module alt_mem_ddrx_rdwr_data_tmg
         end
         else
         begin
-            rdwr_data_valid_pipe <= {rdwr_data_valid_pipe[CFG_WLAT_PIPE_LENGTH - 2:0],bg_rdwr_data_valid};
+            rdwr_data_valid_pipe <= {rdwr_data_valid_pipe[CFG_WLAT_PIPE_LENGTH- 2:0],bg_rdwr_data_valid};
+        end
+    end
+    
+    // do_write pipe information
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            do_write_pipe <= 0;
+        end
+        else
+        begin
+            do_write_pipe <= {do_write_pipe[CFG_WLAT_PIPE_LENGTH-2:0],|bg_do_write};
+        end
+    end
+    
+    // to_chip pipe for write command
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            for (i=0; i<CFG_WLAT_PIPE_LENGTH; i=i+1)
+            begin
+                 wr_chip_pipe [i] <= 0;
+            end
+        end
+        else
+        begin
+            wr_chip_pipe [0] <= int_to_chip;
+            
+            for (i=1; i<CFG_WLAT_PIPE_LENGTH; i=i+1)
+            begin
+                 wr_chip_pipe [i] <= wr_chip_pipe [i-1];
+            end
         end
     end
     
@@ -474,7 +624,7 @@ module alt_mem_ddrx_rdwr_data_tmg
             
             for (i=1; i<CFG_WLAT_PIPE_LENGTH; i=i+1)
             begin
-                dataid_pipe [i] <= dataid_pipe[i-1];
+                dataid_pipe [i] <= dataid_pipe [i-1];
             end
         end
     end
@@ -560,6 +710,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     afi_wlat_minus_1 [P] <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
                     afi_wlat_minus_2 [P] <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
                     afi_wlat_minus_3 [P] <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
+                    afi_wlat_minus_4 [P] <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
                 end
                 else
                 begin
@@ -572,9 +723,10 @@ module alt_mem_ddrx_rdwr_data_tmg
                         afi_wlat_eq_0 [P] <= 1'b0;
                     end
             
-                    afi_wlat_minus_1 [P] <= current_afi_wlat - 1;
-                    afi_wlat_minus_2 [P] <= current_afi_wlat - 2;
-                    afi_wlat_minus_3 [P] <= current_afi_wlat - 3;
+                    afi_wlat_minus_1 [P] <= current_afi_wlat - 1'd1;
+                    afi_wlat_minus_2 [P] <= current_afi_wlat - 2'd2;
+                    afi_wlat_minus_3 [P] <= current_afi_wlat - 2'd3;
+                    afi_wlat_minus_4 [P] <= current_afi_wlat - 3'd4;
                 end
             end
             
@@ -585,6 +737,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     doing_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b0;
                     doing_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                     doing_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                    doing_write_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                 end
                 else
                 begin
@@ -593,6 +746,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                         doing_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b0;
                         doing_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                         doing_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        doing_write_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                     end
                     else if (current_afi_wlat == 1)
                     begin
@@ -614,13 +768,22 @@ module alt_mem_ddrx_rdwr_data_tmg
                             doing_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                         end
                         
-                        if (bg_doing_write) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (bg_doing_write)
                         begin
                             doing_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
                         end
                         else
                         begin
                             doing_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        end
+                        
+                        if (bg_doing_write)
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                         end
                     end
                     else if (current_afi_wlat == 2)
@@ -651,6 +814,53 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             doing_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
                         end
+                        
+                        if (bg_doing_write)
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
+                    end
+                    else if (current_afi_wlat == 3)
+                    begin
+                        if (doing_write_pipe[2])
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b0;
+                        end
+                        
+                        if (doing_write_pipe[1])
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
+                        end
+                        
+                        if (doing_write_pipe[0])
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        end
+                        
+                        if (bg_doing_write)
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
                     end
                     else
                     begin
@@ -680,6 +890,15 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             doing_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
                         end
+                        
+                        if (doing_write_pipe[afi_wlat_minus_4 [P]])
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            doing_write_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
                     end
                 end
             end
@@ -690,6 +909,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                 begin
                     rdwr_data_valid_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                     rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                    rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                 end
                 else
                 begin
@@ -697,6 +917,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     begin
                         rdwr_data_valid_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                         rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                     end
                     else if (current_afi_wlat == 1)
                     begin
@@ -709,13 +930,22 @@ module alt_mem_ddrx_rdwr_data_tmg
                             rdwr_data_valid_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                         end
                         
-                        if (bg_rdwr_data_valid) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (bg_rdwr_data_valid)
                         begin
                             rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
                         end
                         else
                         begin
                             rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        end
+                        
+                        if (bg_rdwr_data_valid)
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                         end
                     end
                     else if (current_afi_wlat == 2)
@@ -737,6 +967,44 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
                         end
+                        
+                        if (bg_rdwr_data_valid)
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
+                    end
+                    else if (current_afi_wlat == 3)
+                    begin
+                        if (rdwr_data_valid_pipe[1])
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_1 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
+                        end
+                        
+                        if (rdwr_data_valid_pipe[0])
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        end
+                        
+                        if (bg_rdwr_data_valid)
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
                     end
                     else
                     begin
@@ -757,6 +1025,148 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
                         end
+                        
+                        if (rdwr_data_valid_pipe[afi_wlat_minus_4 [P]])
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
+                    end
+                end
+            end
+            
+            always @ (posedge ctl_clk or negedge ctl_reset_n)
+            begin
+                if (!ctl_reset_n)
+                begin
+                    do_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b0;
+                    do_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
+                    do_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                end
+                else
+                begin
+                    if (current_afi_wlat == 0)
+                    begin
+                        do_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b0;
+                        do_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
+                        do_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                    end
+                    else if (current_afi_wlat == 1)
+                    begin
+                        if (do_write_pipe[0])
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b0;
+                        end
+                        
+                        if (|bg_do_write)
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
+                        end
+                        
+                        if (|bg_do_write) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        end
+                    end
+                    else if (current_afi_wlat == 2)
+                    begin
+                        if (do_write_pipe[1])
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b0;
+                        end
+                        
+                        if (do_write_pipe[0])
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
+                        end
+                        
+                        if (|bg_do_write)
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        end
+                    end
+                    else
+                    begin
+                        if (do_write_pipe[afi_wlat_minus_1 [P]])
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_0 [P] <= 1'b0;
+                        end
+                        
+                        if (do_write_pipe[afi_wlat_minus_2 [P]])
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
+                        end
+                        
+                        if (do_write_pipe[afi_wlat_minus_3 [P]])
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            do_write_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        end
+                    end
+                end
+            end
+            
+            always @ (posedge ctl_clk or negedge ctl_reset_n)
+            begin
+                if (!ctl_reset_n)
+                begin
+                    wr_chip_pipe_eq_afi_wlat_minus_0 [P] <= 0;
+                    wr_chip_pipe_eq_afi_wlat_minus_1 [P] <= 0;
+                end
+                else
+                begin
+                    if (current_afi_wlat == 0)
+                    begin
+                        wr_chip_pipe_eq_afi_wlat_minus_0 [P] <= int_to_chip;
+                        wr_chip_pipe_eq_afi_wlat_minus_1 [P] <= 0;
+                    end
+                    else if (current_afi_wlat == 1)
+                    begin
+                        wr_chip_pipe_eq_afi_wlat_minus_0 [P] <= wr_chip_pipe [0];
+                        wr_chip_pipe_eq_afi_wlat_minus_1 [P] <= int_to_chip;
+                    end
+                    else
+                    begin
+                        wr_chip_pipe_eq_afi_wlat_minus_0 [P] <= wr_chip_pipe [afi_wlat_minus_1 [P]];
+                        wr_chip_pipe_eq_afi_wlat_minus_1 [P] <= wr_chip_pipe [afi_wlat_minus_2 [P]];
                     end
                 end
             end
@@ -767,8 +1177,10 @@ module alt_mem_ddrx_rdwr_data_tmg
                 begin
                     dataid_pipe_eq_afi_wlat_minus_1        [P] <= 0;
                     dataid_pipe_eq_afi_wlat_minus_2        [P] <= 0;
+                    dataid_pipe_eq_afi_wlat_minus_3        [P] <= 0;
                     dataid_vector_pipe_eq_afi_wlat_minus_1 [P] <= 0;
                     dataid_vector_pipe_eq_afi_wlat_minus_2 [P] <= 0;
+                    dataid_vector_pipe_eq_afi_wlat_minus_3 [P] <= 0;
                 end
                 else
                 begin
@@ -776,29 +1188,46 @@ module alt_mem_ddrx_rdwr_data_tmg
                     begin
                         dataid_pipe_eq_afi_wlat_minus_1        [P] <= 0;
                         dataid_pipe_eq_afi_wlat_minus_2        [P] <= 0;
+                        dataid_pipe_eq_afi_wlat_minus_3        [P] <= 0;
                         dataid_vector_pipe_eq_afi_wlat_minus_1 [P] <= 0;
                         dataid_vector_pipe_eq_afi_wlat_minus_2 [P] <= 0;
+                        dataid_vector_pipe_eq_afi_wlat_minus_3 [P] <= 0;
                     end
                     else if (current_afi_wlat == 1)
                     begin
                         dataid_pipe_eq_afi_wlat_minus_1        [P] <= dataid;
-                        dataid_pipe_eq_afi_wlat_minus_2        [P] <= dataid;          // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        dataid_pipe_eq_afi_wlat_minus_2        [P] <= dataid;
+                        dataid_pipe_eq_afi_wlat_minus_3        [P] <= dataid;
                         dataid_vector_pipe_eq_afi_wlat_minus_1 [P] <= dataid_vector;
-                        dataid_vector_pipe_eq_afi_wlat_minus_2 [P] <= dataid_vector;   // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        dataid_vector_pipe_eq_afi_wlat_minus_2 [P] <= dataid_vector;
+                        dataid_vector_pipe_eq_afi_wlat_minus_3 [P] <= dataid_vector;
                     end
                     else if (current_afi_wlat == 2)
                     begin
                         dataid_pipe_eq_afi_wlat_minus_1        [P] <= dataid_pipe       [0];
                         dataid_pipe_eq_afi_wlat_minus_2        [P] <= dataid;
+                        dataid_pipe_eq_afi_wlat_minus_3        [P] <= dataid;
                         dataid_vector_pipe_eq_afi_wlat_minus_1 [P] <= dataid_vector_pipe[0];
                         dataid_vector_pipe_eq_afi_wlat_minus_2 [P] <= dataid_vector;
+                        dataid_vector_pipe_eq_afi_wlat_minus_3 [P] <= dataid_vector;
+                    end
+                    else if (current_afi_wlat == 3)
+                    begin
+                        dataid_pipe_eq_afi_wlat_minus_1        [P] <= dataid_pipe       [1];
+                        dataid_pipe_eq_afi_wlat_minus_2        [P] <= dataid_pipe       [0];
+                        dataid_pipe_eq_afi_wlat_minus_3        [P] <= dataid;
+                        dataid_vector_pipe_eq_afi_wlat_minus_1 [P] <= dataid_vector_pipe[1];
+                        dataid_vector_pipe_eq_afi_wlat_minus_2 [P] <= dataid_vector_pipe[0];
+                        dataid_vector_pipe_eq_afi_wlat_minus_3 [P] <= dataid_vector;
                     end
                     else
                     begin
                         dataid_pipe_eq_afi_wlat_minus_1        [P] <= dataid_pipe       [afi_wlat_minus_2 [P]];
                         dataid_pipe_eq_afi_wlat_minus_2        [P] <= dataid_pipe       [afi_wlat_minus_3 [P]];
+                        dataid_pipe_eq_afi_wlat_minus_3        [P] <= dataid_pipe       [afi_wlat_minus_4 [P]];
                         dataid_vector_pipe_eq_afi_wlat_minus_1 [P] <= dataid_vector_pipe[afi_wlat_minus_2 [P]];
                         dataid_vector_pipe_eq_afi_wlat_minus_2 [P] <= dataid_vector_pipe[afi_wlat_minus_3 [P]];
+                        dataid_vector_pipe_eq_afi_wlat_minus_3 [P] <= dataid_vector_pipe[afi_wlat_minus_4 [P]];
                     end
                 end
             end
@@ -809,8 +1238,10 @@ module alt_mem_ddrx_rdwr_data_tmg
                 begin
                     rmw_correct_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                     rmw_correct_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                    rmw_correct_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                     rmw_partial_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                     rmw_partial_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                    rmw_partial_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                 end
                 else
                 begin
@@ -818,8 +1249,10 @@ module alt_mem_ddrx_rdwr_data_tmg
                     begin
                         rmw_correct_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                         rmw_correct_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        rmw_correct_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                         rmw_partial_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                         rmw_partial_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        rmw_partial_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                     end
                     else if (current_afi_wlat == 1)
                     begin
@@ -841,7 +1274,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                             rmw_partial_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
                         end
                         
-                        if (int_do_rmw_correct) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (int_do_rmw_correct)
                         begin
                             rmw_correct_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
                         end
@@ -850,13 +1283,31 @@ module alt_mem_ddrx_rdwr_data_tmg
                             rmw_correct_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
                         end
                         
-                        if (int_do_rmw_partial) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (int_do_rmw_partial)
                         begin
                             rmw_partial_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
                         end
                         else
                         begin
                             rmw_partial_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_correct)
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_partial)
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
                         end
                     end
                     else if (current_afi_wlat == 2)
@@ -896,6 +1347,80 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             rmw_partial_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
                         end
+                        
+                        if (int_do_rmw_correct)
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_partial)
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
+                    end
+                    else if (current_afi_wlat == 3)
+                    begin
+                        if (rmw_correct_pipe[1])
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_1 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
+                        end
+                        
+                        if (rmw_partial_pipe[1])
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_1 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_1 [P] <= 1'b0;
+                        end
+                        
+                        if (rmw_correct_pipe[0])
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        end
+                        
+                        if (rmw_partial_pipe[0])
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_2 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_correct)
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_partial)
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
                     end
                     else
                     begin
@@ -934,13 +1459,40 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             rmw_partial_pipe_eq_afi_wlat_minus_2 [P] <= 1'b0;
                         end
+                        
+                        if (rmw_correct_pipe[afi_wlat_minus_4 [P]])
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_correct_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
+                        
+                        if (rmw_partial_pipe[afi_wlat_minus_4 [P]])
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_3 [P] <= 1'b1;
+                        end
+                        else
+                        begin
+                            rmw_partial_pipe_eq_afi_wlat_minus_3 [P] <= 1'b0;
+                        end
                     end
                 end
             end
             
             always @ (*)
             begin
-                if (CFG_WDATA_REG || CFG_ECC_ENC_REG)
+                if (CFG_WDATA_REG && CFG_ECC_ENC_REG)
+                begin
+                    doing_write_pipe_eq_afi_wlat_minus_x     [P] = doing_write_pipe_eq_afi_wlat_minus_3     [P];
+                    rdwr_data_valid_pipe_eq_afi_wlat_minus_x [P] = rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [P];
+                    dataid_pipe_eq_afi_wlat_minus_x          [P] = dataid_pipe_eq_afi_wlat_minus_3          [P];
+                    dataid_vector_pipe_eq_afi_wlat_minus_x   [P] = dataid_vector_pipe_eq_afi_wlat_minus_3   [P];
+                    rmw_correct_pipe_eq_afi_wlat_minus_x     [P] = rmw_correct_pipe_eq_afi_wlat_minus_3     [P];
+                    rmw_partial_pipe_eq_afi_wlat_minus_x     [P] = rmw_partial_pipe_eq_afi_wlat_minus_3     [P];
+                end
+                else if (CFG_WDATA_REG || CFG_ECC_ENC_REG)
                 begin
                     doing_write_pipe_eq_afi_wlat_minus_x     [P] = doing_write_pipe_eq_afi_wlat_minus_2     [P];
                     rdwr_data_valid_pipe_eq_afi_wlat_minus_x [P] = rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [P];
@@ -1042,19 +1594,26 @@ module alt_mem_ddrx_rdwr_data_tmg
                 smallest_afi_wlat_minus_1                         = afi_wlat_minus_1                         [0];
                 smallest_afi_wlat_minus_2                         = afi_wlat_minus_2                         [0];
                 smallest_afi_wlat_minus_3                         = afi_wlat_minus_3                         [0];
+                smallest_afi_wlat_minus_4                         = afi_wlat_minus_4                         [0];
                 smallest_doing_write_pipe_eq_afi_wlat_minus_0     = doing_write_pipe_eq_afi_wlat_minus_0     [0];
                 smallest_doing_write_pipe_eq_afi_wlat_minus_1     = doing_write_pipe_eq_afi_wlat_minus_1     [0];
                 smallest_doing_write_pipe_eq_afi_wlat_minus_2     = doing_write_pipe_eq_afi_wlat_minus_2     [0];
+                smallest_doing_write_pipe_eq_afi_wlat_minus_3     = doing_write_pipe_eq_afi_wlat_minus_3     [0];
                 smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 = rdwr_data_valid_pipe_eq_afi_wlat_minus_1 [0];
                 smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 = rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [0];
+                smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 = rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [0];
                 smallest_dataid_pipe_eq_afi_wlat_minus_1          = dataid_pipe_eq_afi_wlat_minus_1          [0];
                 smallest_dataid_pipe_eq_afi_wlat_minus_2          = dataid_pipe_eq_afi_wlat_minus_2          [0];
+                smallest_dataid_pipe_eq_afi_wlat_minus_3          = dataid_pipe_eq_afi_wlat_minus_3          [0];
                 smallest_dataid_vector_pipe_eq_afi_wlat_minus_1   = dataid_vector_pipe_eq_afi_wlat_minus_1   [0];
                 smallest_dataid_vector_pipe_eq_afi_wlat_minus_2   = dataid_vector_pipe_eq_afi_wlat_minus_2   [0];
+                smallest_dataid_vector_pipe_eq_afi_wlat_minus_3   = dataid_vector_pipe_eq_afi_wlat_minus_3   [0];
                 smallest_rmw_correct_pipe_eq_afi_wlat_minus_1     = rmw_correct_pipe_eq_afi_wlat_minus_1     [0];
                 smallest_rmw_correct_pipe_eq_afi_wlat_minus_2     = rmw_correct_pipe_eq_afi_wlat_minus_2     [0];
+                smallest_rmw_correct_pipe_eq_afi_wlat_minus_3     = rmw_correct_pipe_eq_afi_wlat_minus_3     [0];
                 smallest_rmw_partial_pipe_eq_afi_wlat_minus_1     = rmw_partial_pipe_eq_afi_wlat_minus_1     [0];
                 smallest_rmw_partial_pipe_eq_afi_wlat_minus_2     = rmw_partial_pipe_eq_afi_wlat_minus_2     [0];
+                smallest_rmw_partial_pipe_eq_afi_wlat_minus_3     = rmw_partial_pipe_eq_afi_wlat_minus_3     [0];
                 smallest_doing_write_pipe_eq_afi_wlat_minus_x     = doing_write_pipe_eq_afi_wlat_minus_x     [0];
                 smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_x = rdwr_data_valid_pipe_eq_afi_wlat_minus_x [0];
                 smallest_dataid_pipe_eq_afi_wlat_minus_x          = dataid_pipe_eq_afi_wlat_minus_x          [0];
@@ -1066,19 +1625,26 @@ module alt_mem_ddrx_rdwr_data_tmg
                 largest_afi_wlat_minus_1                          = afi_wlat_minus_1                         [0];
                 largest_afi_wlat_minus_2                          = afi_wlat_minus_2                         [0];
                 largest_afi_wlat_minus_3                          = afi_wlat_minus_3                         [0];
+                largest_afi_wlat_minus_4                          = afi_wlat_minus_4                         [0];
                 largest_doing_write_pipe_eq_afi_wlat_minus_0      = doing_write_pipe_eq_afi_wlat_minus_0     [0];
                 largest_doing_write_pipe_eq_afi_wlat_minus_1      = doing_write_pipe_eq_afi_wlat_minus_1     [0];
                 largest_doing_write_pipe_eq_afi_wlat_minus_2      = doing_write_pipe_eq_afi_wlat_minus_2     [0];
+                largest_doing_write_pipe_eq_afi_wlat_minus_3      = doing_write_pipe_eq_afi_wlat_minus_3     [0];
                 largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1  = rdwr_data_valid_pipe_eq_afi_wlat_minus_1 [0];
                 largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2  = rdwr_data_valid_pipe_eq_afi_wlat_minus_2 [0];
+                largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3  = rdwr_data_valid_pipe_eq_afi_wlat_minus_3 [0];
                 largest_dataid_pipe_eq_afi_wlat_minus_1           = dataid_pipe_eq_afi_wlat_minus_1          [0];
                 largest_dataid_pipe_eq_afi_wlat_minus_2           = dataid_pipe_eq_afi_wlat_minus_2          [0];
+                largest_dataid_pipe_eq_afi_wlat_minus_3           = dataid_pipe_eq_afi_wlat_minus_3          [0];
                 largest_dataid_vector_pipe_eq_afi_wlat_minus_1    = dataid_vector_pipe_eq_afi_wlat_minus_1   [0];
                 largest_dataid_vector_pipe_eq_afi_wlat_minus_2    = dataid_vector_pipe_eq_afi_wlat_minus_2   [0];
+                largest_dataid_vector_pipe_eq_afi_wlat_minus_3    = dataid_vector_pipe_eq_afi_wlat_minus_3   [0];
                 largest_rmw_correct_pipe_eq_afi_wlat_minus_1      = rmw_correct_pipe_eq_afi_wlat_minus_1     [0];
                 largest_rmw_correct_pipe_eq_afi_wlat_minus_2      = rmw_correct_pipe_eq_afi_wlat_minus_2     [0];
+                largest_rmw_correct_pipe_eq_afi_wlat_minus_3      = rmw_correct_pipe_eq_afi_wlat_minus_3     [0];
                 largest_rmw_partial_pipe_eq_afi_wlat_minus_1      = rmw_partial_pipe_eq_afi_wlat_minus_1     [0];
                 largest_rmw_partial_pipe_eq_afi_wlat_minus_2      = rmw_partial_pipe_eq_afi_wlat_minus_2     [0];
+                largest_rmw_partial_pipe_eq_afi_wlat_minus_3      = rmw_partial_pipe_eq_afi_wlat_minus_3     [0];
                 largest_doing_write_pipe_eq_afi_wlat_minus_x      = doing_write_pipe_eq_afi_wlat_minus_x     [0];
                 largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_x  = rdwr_data_valid_pipe_eq_afi_wlat_minus_x [0];
                 largest_dataid_pipe_eq_afi_wlat_minus_x           = dataid_pipe_eq_afi_wlat_minus_x          [0];
@@ -1098,6 +1664,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     smallest_afi_wlat_minus_1  <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
                     smallest_afi_wlat_minus_2  <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
                     smallest_afi_wlat_minus_3  <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
+                    smallest_afi_wlat_minus_4  <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
                 end
                 else
                 begin
@@ -1113,6 +1680,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     smallest_afi_wlat_minus_1  <= smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] - 1;
                     smallest_afi_wlat_minus_2  <= smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] - 2;
                     smallest_afi_wlat_minus_3  <= smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] - 3;
+                    smallest_afi_wlat_minus_4  <= smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] - 4;
                 end
             end
             
@@ -1123,6 +1691,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     smallest_doing_write_pipe_eq_afi_wlat_minus_0  <= 1'b0;
                     smallest_doing_write_pipe_eq_afi_wlat_minus_1  <= 1'b0;
                     smallest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
+                    smallest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
                 end
                 else
                 begin
@@ -1131,6 +1700,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                         smallest_doing_write_pipe_eq_afi_wlat_minus_0  <= 1'b0;
                         smallest_doing_write_pipe_eq_afi_wlat_minus_1  <= 1'b0;
                         smallest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
+                        smallest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
                     end
                     else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 1)
                     begin
@@ -1152,13 +1722,22 @@ module alt_mem_ddrx_rdwr_data_tmg
                             smallest_doing_write_pipe_eq_afi_wlat_minus_1  <= 1'b0;
                         end
                         
-                        if (bg_doing_write) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (bg_doing_write)
                         begin
                             smallest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b1;
                         end
                         else
                         begin
                             smallest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
+                        end
+                        
+                        if (bg_doing_write)
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
                         end
                     end
                     else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 2)
@@ -1189,6 +1768,53 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             smallest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
                         end
+                        
+                        if (bg_doing_write)
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
+                        end
+                    end
+                    else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 3)
+                    begin
+                        if (doing_write_pipe[2])
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_0  <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_0  <= 1'b0;
+                        end
+                        
+                        if (doing_write_pipe[1])
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_1  <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_1  <= 1'b0;
+                        end
+                        
+                        if (doing_write_pipe[0])
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
+                        end
+                        
+                        if (bg_doing_write)
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
+                        end
                     end
                     else
                     begin
@@ -1218,6 +1844,15 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             smallest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
                         end
+                        
+                        if (doing_write_pipe[smallest_afi_wlat_minus_4])
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
+                        end
                     end
                 end
             end
@@ -1228,6 +1863,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                 begin
                     smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                     smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                    smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                 end
                 else
                 begin
@@ -1235,6 +1871,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     begin
                         smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                         smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                     end
                     else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 1)
                     begin
@@ -1247,13 +1884,22 @@ module alt_mem_ddrx_rdwr_data_tmg
                             smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                         end
                         
-                        if (bg_rdwr_data_valid) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (bg_rdwr_data_valid)
                         begin
                             smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b1;
                         end
                         else
                         begin
                             smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (bg_rdwr_data_valid)
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                         end
                     end
                     else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 2)
@@ -1275,6 +1921,44 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
                         end
+                        
+                        if (bg_rdwr_data_valid)
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                    end
+                    else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 3)
+                    begin
+                        if (rdwr_data_valid_pipe[1])
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 <= 1'b0;
+                        end
+                        
+                        if (rdwr_data_valid_pipe[0])
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (bg_rdwr_data_valid)
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
                     end
                     else
                     begin
@@ -1295,6 +1979,15 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
                         end
+                        
+                        if (rdwr_data_valid_pipe[smallest_afi_wlat_minus_4])
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
                     end
                 end
             end
@@ -1305,8 +1998,10 @@ module alt_mem_ddrx_rdwr_data_tmg
                 begin
                     smallest_dataid_pipe_eq_afi_wlat_minus_1        <= 0;
                     smallest_dataid_pipe_eq_afi_wlat_minus_2        <= 0;
+                    smallest_dataid_pipe_eq_afi_wlat_minus_3        <= 0;
                     smallest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= 0;
                     smallest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= 0;
+                    smallest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= 0;
                 end
                 else
                 begin
@@ -1314,29 +2009,46 @@ module alt_mem_ddrx_rdwr_data_tmg
                     begin
                         smallest_dataid_pipe_eq_afi_wlat_minus_1        <= 0;
                         smallest_dataid_pipe_eq_afi_wlat_minus_2        <= 0;
+                        smallest_dataid_pipe_eq_afi_wlat_minus_3        <= 0;
                         smallest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= 0;
                         smallest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= 0;
+                        smallest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= 0;
                     end
                     else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 1)
                     begin
                         smallest_dataid_pipe_eq_afi_wlat_minus_1        <= dataid;
-                        smallest_dataid_pipe_eq_afi_wlat_minus_2        <= dataid;          // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        smallest_dataid_pipe_eq_afi_wlat_minus_2        <= dataid;
+                        smallest_dataid_pipe_eq_afi_wlat_minus_3        <= dataid;
                         smallest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= dataid_vector;
-                        smallest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= dataid_vector;   // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        smallest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= dataid_vector;
+                        smallest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= dataid_vector;
                     end
                     else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 2)
                     begin
                         smallest_dataid_pipe_eq_afi_wlat_minus_1        <= dataid_pipe       [0];
                         smallest_dataid_pipe_eq_afi_wlat_minus_2        <= dataid;
+                        smallest_dataid_pipe_eq_afi_wlat_minus_3        <= dataid;
                         smallest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= dataid_vector_pipe[0];
                         smallest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= dataid_vector;
+                        smallest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= dataid_vector;
+                    end
+                    else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 3)
+                    begin
+                        smallest_dataid_pipe_eq_afi_wlat_minus_1        <= dataid_pipe       [1];
+                        smallest_dataid_pipe_eq_afi_wlat_minus_2        <= dataid_pipe       [0];
+                        smallest_dataid_pipe_eq_afi_wlat_minus_3        <= dataid;
+                        smallest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= dataid_vector_pipe[1];
+                        smallest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= dataid_vector_pipe[0];
+                        smallest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= dataid_vector;
                     end
                     else
                     begin
                         smallest_dataid_pipe_eq_afi_wlat_minus_1        <= dataid_pipe       [smallest_afi_wlat_minus_2];
                         smallest_dataid_pipe_eq_afi_wlat_minus_2        <= dataid_pipe       [smallest_afi_wlat_minus_3];
+                        smallest_dataid_pipe_eq_afi_wlat_minus_3        <= dataid_pipe       [smallest_afi_wlat_minus_4];
                         smallest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= dataid_vector_pipe[smallest_afi_wlat_minus_2];
                         smallest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= dataid_vector_pipe[smallest_afi_wlat_minus_3];
+                        smallest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= dataid_vector_pipe[smallest_afi_wlat_minus_4];
                     end
                 end
             end
@@ -1347,8 +2059,10 @@ module alt_mem_ddrx_rdwr_data_tmg
                 begin
                     smallest_rmw_correct_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                     smallest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                    smallest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                     smallest_rmw_partial_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                     smallest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                    smallest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                 end
                 else
                 begin
@@ -1356,8 +2070,10 @@ module alt_mem_ddrx_rdwr_data_tmg
                     begin
                         smallest_rmw_correct_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                         smallest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        smallest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                         smallest_rmw_partial_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                         smallest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        smallest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                     end
                     else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 1)
                     begin
@@ -1379,7 +2095,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                             smallest_rmw_partial_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                         end
                         
-                        if (int_do_rmw_correct) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (int_do_rmw_correct)
                         begin
                             smallest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b1;
                         end
@@ -1388,13 +2104,31 @@ module alt_mem_ddrx_rdwr_data_tmg
                             smallest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b0;
                         end
                         
-                        if (int_do_rmw_partial) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (int_do_rmw_partial)
                         begin
                             smallest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b1;
                         end
                         else
                         begin
                             smallest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_correct)
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_partial)
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                         end
                     end
                     else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 2)
@@ -1433,6 +2167,80 @@ module alt_mem_ddrx_rdwr_data_tmg
                         else
                         begin
                             smallest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_correct)
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_partial)
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                    end
+                    else if (smallest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 3)
+                    begin
+                        if (rmw_correct_pipe[1])
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_1 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_1 <= 1'b0;
+                        end
+                        
+                        if (rmw_partial_pipe[1])
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_1 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_1 <= 1'b0;
+                        end
+                        
+                        if (rmw_correct_pipe[0])
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (rmw_partial_pipe[0])
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_correct)
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_partial)
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                         end
                     end
                     else
@@ -1472,13 +2280,40 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             smallest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
                         end
+                        
+                        if (rmw_correct_pipe[smallest_afi_wlat_minus_4])
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                        
+                        if (rmw_partial_pipe[smallest_afi_wlat_minus_4])
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            smallest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
                     end
                 end
             end
             
             always @ (*)
             begin
-                if (CFG_WDATA_REG || CFG_ECC_ENC_REG)
+                if (CFG_WDATA_REG && CFG_ECC_ENC_REG)
+                begin
+                    smallest_doing_write_pipe_eq_afi_wlat_minus_x     = smallest_doing_write_pipe_eq_afi_wlat_minus_3    ;
+                    smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_x = smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3;
+                    smallest_dataid_pipe_eq_afi_wlat_minus_x          = smallest_dataid_pipe_eq_afi_wlat_minus_3         ;
+                    smallest_dataid_vector_pipe_eq_afi_wlat_minus_x   = smallest_dataid_vector_pipe_eq_afi_wlat_minus_3  ;
+                    smallest_rmw_correct_pipe_eq_afi_wlat_minus_x     = smallest_rmw_correct_pipe_eq_afi_wlat_minus_3    ;
+                    smallest_rmw_partial_pipe_eq_afi_wlat_minus_x     = smallest_rmw_partial_pipe_eq_afi_wlat_minus_3    ;
+                end
+                else if (CFG_WDATA_REG || CFG_ECC_ENC_REG)
                 begin
                     smallest_doing_write_pipe_eq_afi_wlat_minus_x     = smallest_doing_write_pipe_eq_afi_wlat_minus_2    ;
                     smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_x = smallest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2;
@@ -1506,6 +2341,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     largest_afi_wlat_minus_1  <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
                     largest_afi_wlat_minus_2  <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
                     largest_afi_wlat_minus_3  <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
+                    largest_afi_wlat_minus_4  <= {(CFG_WLAT_BUS_WIDTH / CFG_DRAM_WLAT_GROUP){1'b0}};
                 end
                 else
                 begin
@@ -1521,6 +2357,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     largest_afi_wlat_minus_1  <= largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] - 1;
                     largest_afi_wlat_minus_2  <= largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] - 2;
                     largest_afi_wlat_minus_3  <= largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] - 3;
+                    largest_afi_wlat_minus_4  <= largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] - 4;
                 end
             end
             
@@ -1531,6 +2368,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     largest_doing_write_pipe_eq_afi_wlat_minus_0  <= 1'b0;
                     largest_doing_write_pipe_eq_afi_wlat_minus_1  <= 1'b0;
                     largest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
+                    largest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
                 end
                 else
                 begin
@@ -1539,6 +2377,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                         largest_doing_write_pipe_eq_afi_wlat_minus_0  <= 1'b0;
                         largest_doing_write_pipe_eq_afi_wlat_minus_1  <= 1'b0;
                         largest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
+                        largest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
                     end
                     else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 1)
                     begin
@@ -1560,13 +2399,22 @@ module alt_mem_ddrx_rdwr_data_tmg
                             largest_doing_write_pipe_eq_afi_wlat_minus_1  <= 1'b0;
                         end
                         
-                        if (bg_doing_write) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (bg_doing_write)
                         begin
                             largest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b1;
                         end
                         else
                         begin
                             largest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
+                        end
+                        
+                        if (bg_doing_write)
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
                         end
                     end
                     else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 2)
@@ -1597,6 +2445,53 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             largest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
                         end
+                        
+                        if (bg_doing_write)
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
+                        end
+                    end
+                    else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 3)
+                    begin
+                        if (doing_write_pipe[2])
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_0  <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_0  <= 1'b0;
+                        end
+                        
+                        if (doing_write_pipe[1])
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_1  <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_1  <= 1'b0;
+                        end
+                        
+                        if (doing_write_pipe[0])
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
+                        end
+                        
+                        if (bg_doing_write)
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
+                        end
                     end
                     else
                     begin
@@ -1626,6 +2521,15 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             largest_doing_write_pipe_eq_afi_wlat_minus_2  <= 1'b0;
                         end
+                        
+                        if (doing_write_pipe[largest_afi_wlat_minus_4])
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_doing_write_pipe_eq_afi_wlat_minus_3  <= 1'b0;
+                        end
                     end
                 end
             end
@@ -1636,6 +2540,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                 begin
                     largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                     largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                    largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                 end
                 else
                 begin
@@ -1643,6 +2548,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                     begin
                         largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                         largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                     end
                     else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 1)
                     begin
@@ -1655,13 +2561,22 @@ module alt_mem_ddrx_rdwr_data_tmg
                             largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                         end
                         
-                        if (bg_rdwr_data_valid) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (bg_rdwr_data_valid)
                         begin
                             largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b1;
                         end
                         else
                         begin
                             largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (bg_rdwr_data_valid)
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                         end
                     end
                     else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 2)
@@ -1683,6 +2598,44 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
                         end
+                        
+                        if (bg_rdwr_data_valid)
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                    end
+                    else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 3)
+                    begin
+                        if (rdwr_data_valid_pipe[1])
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_1 <= 1'b0;
+                        end
+                        
+                        if (rdwr_data_valid_pipe[0])
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (bg_rdwr_data_valid)
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
                     end
                     else
                     begin
@@ -1703,6 +2656,15 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2 <= 1'b0;
                         end
+                        
+                        if (rdwr_data_valid_pipe[largest_afi_wlat_minus_4])
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
                     end
                 end
             end
@@ -1713,8 +2675,10 @@ module alt_mem_ddrx_rdwr_data_tmg
                 begin
                     largest_dataid_pipe_eq_afi_wlat_minus_1        <= 0;
                     largest_dataid_pipe_eq_afi_wlat_minus_2        <= 0;
+                    largest_dataid_pipe_eq_afi_wlat_minus_3        <= 0;
                     largest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= 0;
                     largest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= 0;
+                    largest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= 0;
                 end
                 else
                 begin
@@ -1722,29 +2686,46 @@ module alt_mem_ddrx_rdwr_data_tmg
                     begin
                         largest_dataid_pipe_eq_afi_wlat_minus_1        <= 0;
                         largest_dataid_pipe_eq_afi_wlat_minus_2        <= 0;
+                        largest_dataid_pipe_eq_afi_wlat_minus_3        <= 0;
                         largest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= 0;
                         largest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= 0;
+                        largest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= 0;
                     end
                     else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 1)
                     begin
                         largest_dataid_pipe_eq_afi_wlat_minus_1        <= dataid;
-                        largest_dataid_pipe_eq_afi_wlat_minus_2        <= dataid;          // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        largest_dataid_pipe_eq_afi_wlat_minus_2        <= dataid;
+                        largest_dataid_pipe_eq_afi_wlat_minus_3        <= dataid;
                         largest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= dataid_vector;
-                        largest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= dataid_vector;   // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        largest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= dataid_vector;
+                        largest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= dataid_vector;
                     end
                     else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 2)
                     begin
                         largest_dataid_pipe_eq_afi_wlat_minus_1        <= dataid_pipe       [0];
                         largest_dataid_pipe_eq_afi_wlat_minus_2        <= dataid;
+                        largest_dataid_pipe_eq_afi_wlat_minus_3        <= dataid;
                         largest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= dataid_vector_pipe[0];
                         largest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= dataid_vector;
+                        largest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= dataid_vector;
+                    end
+                    else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 3)
+                    begin
+                        largest_dataid_pipe_eq_afi_wlat_minus_1        <= dataid_pipe       [1];
+                        largest_dataid_pipe_eq_afi_wlat_minus_2        <= dataid_pipe       [0];
+                        largest_dataid_pipe_eq_afi_wlat_minus_3        <= dataid;
+                        largest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= dataid_vector_pipe[1];
+                        largest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= dataid_vector_pipe[0];
+                        largest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= dataid_vector;
                     end
                     else
                     begin
                         largest_dataid_pipe_eq_afi_wlat_minus_1        <= dataid_pipe       [largest_afi_wlat_minus_2];
                         largest_dataid_pipe_eq_afi_wlat_minus_2        <= dataid_pipe       [largest_afi_wlat_minus_3];
+                        largest_dataid_pipe_eq_afi_wlat_minus_3        <= dataid_pipe       [largest_afi_wlat_minus_4];
                         largest_dataid_vector_pipe_eq_afi_wlat_minus_1 <= dataid_vector_pipe[largest_afi_wlat_minus_2];
                         largest_dataid_vector_pipe_eq_afi_wlat_minus_2 <= dataid_vector_pipe[largest_afi_wlat_minus_3];
+                        largest_dataid_vector_pipe_eq_afi_wlat_minus_3 <= dataid_vector_pipe[largest_afi_wlat_minus_4];
                     end
                 end
             end
@@ -1755,8 +2736,10 @@ module alt_mem_ddrx_rdwr_data_tmg
                 begin
                     largest_rmw_correct_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                     largest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                    largest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                     largest_rmw_partial_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                     largest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                    largest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                 end
                 else
                 begin
@@ -1764,8 +2747,10 @@ module alt_mem_ddrx_rdwr_data_tmg
                     begin
                         largest_rmw_correct_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                         largest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        largest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                         largest_rmw_partial_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                         largest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        largest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                     end
                     else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 1)
                     begin
@@ -1787,7 +2772,7 @@ module alt_mem_ddrx_rdwr_data_tmg
                             largest_rmw_partial_pipe_eq_afi_wlat_minus_1 <= 1'b0;
                         end
                         
-                        if (int_do_rmw_correct) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (int_do_rmw_correct)
                         begin
                             largest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b1;
                         end
@@ -1796,13 +2781,31 @@ module alt_mem_ddrx_rdwr_data_tmg
                             largest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b0;
                         end
                         
-                        if (int_do_rmw_partial) // we must disable int_cfg_output_regd when (afi_wlat < 2)
+                        if (int_do_rmw_partial)
                         begin
                             largest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b1;
                         end
                         else
                         begin
                             largest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_correct)
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_partial)
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
                         end
                     end
                     else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 2)
@@ -1842,6 +2845,80 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             largest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
                         end
+                        
+                        if (int_do_rmw_correct)
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_partial)
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                    end
+                    else if (largest_afi_wlat [CFG_DRAM_WLAT_GROUP-1] == 3)
+                    begin
+                        if (rmw_correct_pipe[1])
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_1 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_1 <= 1'b0;
+                        end
+                        
+                        if (rmw_partial_pipe[1])
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_1 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_1 <= 1'b0;
+                        end
+                        
+                        if (rmw_correct_pipe[0])
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (rmw_partial_pipe[0])
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_correct)
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                        
+                        if (int_do_rmw_partial)
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
                     end
                     else
                     begin
@@ -1880,13 +2957,40 @@ module alt_mem_ddrx_rdwr_data_tmg
                         begin
                             largest_rmw_partial_pipe_eq_afi_wlat_minus_2 <= 1'b0;
                         end
+                        
+                        if (rmw_correct_pipe[largest_afi_wlat_minus_4])
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_correct_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
+                        
+                        if (rmw_partial_pipe[largest_afi_wlat_minus_4])
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b1;
+                        end
+                        else
+                        begin
+                            largest_rmw_partial_pipe_eq_afi_wlat_minus_3 <= 1'b0;
+                        end
                     end
                 end
             end
             
             always @ (*)
             begin
-                if (CFG_WDATA_REG || CFG_ECC_ENC_REG)
+                if (CFG_WDATA_REG && CFG_ECC_ENC_REG)
+                begin
+                    largest_doing_write_pipe_eq_afi_wlat_minus_x     = largest_doing_write_pipe_eq_afi_wlat_minus_3    ;
+                    largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_x = largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_3;
+                    largest_dataid_pipe_eq_afi_wlat_minus_x          = largest_dataid_pipe_eq_afi_wlat_minus_3         ;
+                    largest_dataid_vector_pipe_eq_afi_wlat_minus_x   = largest_dataid_vector_pipe_eq_afi_wlat_minus_3  ;
+                    largest_rmw_correct_pipe_eq_afi_wlat_minus_x     = largest_rmw_correct_pipe_eq_afi_wlat_minus_3    ;
+                    largest_rmw_partial_pipe_eq_afi_wlat_minus_x     = largest_rmw_partial_pipe_eq_afi_wlat_minus_3    ;
+                end
+                else if (CFG_WDATA_REG || CFG_ECC_ENC_REG)
                 begin
                     largest_doing_write_pipe_eq_afi_wlat_minus_x     = largest_doing_write_pipe_eq_afi_wlat_minus_2    ;
                     largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_x = largest_rdwr_data_valid_pipe_eq_afi_wlat_minus_2;
@@ -1909,165 +3013,492 @@ module alt_mem_ddrx_rdwr_data_tmg
     endgenerate
     
     //*************************************************************************************************//
-    //            afi_dqs_burst generation logic                                                       //
+    //            afi_rank generation logic                                                            //
     //*************************************************************************************************//
-    // high earlier than wdata_valid but ends the same
-    // for writes only, where dqs should toggle, use doing_write_pipe
-    always @(*)
-    begin
-        if (smallest_afi_wlat_eq_0)
-        begin
-            if (bg_doing_write || doing_write_pipe[0])
-            begin
-                int_dqs_burst = 1'b1;
-            end
-            else
-            begin
-                int_dqs_burst = 1'b0;
-            end
-        end
-        else
-        begin
-            if (smallest_doing_write_pipe_eq_afi_wlat_minus_1 || smallest_doing_write_pipe_eq_afi_wlat_minus_0)
-            begin
-                int_dqs_burst = 1'b1;
-            end
-            else
-            begin
-                int_dqs_burst = 1'b0;
-            end
-        end
-    end
-    
-    // registered output
-    always @(posedge ctl_clk, negedge ctl_reset_n)
-    begin
-        if (!ctl_reset_n)
-        begin
-            int_dqs_burst_r <= 1'b0;
-        end
-        else
-        begin
-            int_dqs_burst_r <= int_dqs_burst;
-        end
-    end
-    
+    // to_chip information, based on arbiter type, we need column chip information only
     always @ (*)
     begin
-        if (smallest_afi_wlat_eq_0)
+        if (CFG_CTL_ARBITER_TYPE == "ROWCOL")
         begin
-            if (doing_write_pipe[0])
-            begin
-                int_dqs_burst_half_rate = 1'b1;
-            end
-            else
-            begin
-                int_dqs_burst_half_rate = 1'b0;
-            end
+            // Take the top chip information
+            int_to_chip = bg_to_chip [CFG_AFI_INTF_PHASE_NUM * CFG_MEM_IF_CHIP - 1 : (CFG_AFI_INTF_PHASE_NUM - 1) * CFG_MEM_IF_CHIP];
         end
-        else
+        else if (CFG_CTL_ARBITER_TYPE == "COLROW")
         begin
-            if (smallest_doing_write_pipe_eq_afi_wlat_minus_0)
-            begin
-                int_dqs_burst_half_rate = 1'b1;
-            end
-            else
-            begin
-                int_dqs_burst_half_rate = 1'b0;
-            end
+            // Take the bottom chip information
+            int_to_chip = bg_to_chip [CFG_MEM_IF_CHIP - 1 : 0];
         end
     end
     
+    // Chip information for read command
     always @ (posedge ctl_clk or negedge ctl_reset_n)
     begin
         if (!ctl_reset_n)
         begin
-            int_dqs_burst_half_rate_r <= 1'b0;
+            rd_chip <= 0;
         end
         else
         begin
-            int_dqs_burst_half_rate_r <= int_dqs_burst_half_rate;
+            if (|bg_do_read)
+            begin
+                rd_chip <= int_to_chip;
+            end
         end
     end
     
+    // afi_rank information for read command
+    always @ (*)
+    begin
+        if (|bg_do_read)
+        begin
+            int_rd_rank_full_rate = int_to_chip;
+        end
+        else if (bg_doing_read)
+        begin
+            int_rd_rank_full_rate = rd_chip;
+        end
+        else
+        begin
+            // afi_rrank needs to be sticky (case:45607)
+            int_rd_rank_full_rate = rd_chip;
+        end
+    end
+    
+    // Registered read rank information
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            int_rd_rank_full_rate_r <= 0;
+        end
+        else
+        begin
+            int_rd_rank_full_rate_r <= int_rd_rank_full_rate;
+        end
+    end
+    
+    // afi_rank information for write command
     generate
-        genvar K;
-        if (CFG_DWIDTH_RATIO == 2) // fullrate
-        begin
-            for (K = 0; K < CFG_MEM_IF_DQS_WIDTH; K = K + 1)
-            begin : C
-                assign afi_dqs_burst[K] = (cfg_output_regd_for_afi_output == 1) ? int_dqs_burst_r : int_dqs_burst;
+        genvar R;
+        for (R = 0;R < CFG_DRAM_WLAT_GROUP;R = R + 1)
+        begin : wr_rank_info_loop
+            // Full rate rank information
+            always @ (*)
+            begin
+                if (afi_wlat_eq_0 [R])
+                begin
+                    if (do_write_pipe [0])
+                    begin
+                        int_wr_rank_full_rate [R] = wr_chip_pipe_eq_afi_wlat_minus_0 [R];
+                    end
+                    else if (|bg_do_write)
+                    begin
+                        int_wr_rank_full_rate [R] = int_to_chip;
+                    end
+                    else if (doing_write_pipe [0])
+                    begin
+                        int_wr_rank_full_rate [R] = int_wr_rank_full_rate_r [R];
+                    end
+                    else
+                    begin
+                        int_wr_rank_full_rate [R] = 0;
+                    end
+                end
+                else
+                begin
+                    if (do_write_pipe_eq_afi_wlat_minus_0 [R])
+                    begin
+                        int_wr_rank_full_rate [R] = wr_chip_pipe_eq_afi_wlat_minus_0 [R];
+                    end
+                    else if (do_write_pipe_eq_afi_wlat_minus_1 [R])
+                    begin
+                        int_wr_rank_full_rate [R] = wr_chip_pipe_eq_afi_wlat_minus_1 [R];
+                    end
+                    else if (doing_write_pipe_eq_afi_wlat_minus_0 [R])
+                    begin
+                        int_wr_rank_full_rate [R] = int_wr_rank_full_rate_r [R];
+                    end
+                    else
+                    begin
+                        int_wr_rank_full_rate [R] = 0;
+                    end
+                end
+            end
+            
+            // Half rate rank information
+            always @ (*)
+            begin
+                if (afi_wlat_eq_0 [R])
+                begin
+                    if (do_write_pipe [0])
+                    begin
+                        int_wr_rank_half_rate [R] = wr_chip_pipe_eq_afi_wlat_minus_0 [R];
+                    end
+                    else if (doing_write_pipe [0])
+                    begin
+                        int_wr_rank_half_rate [R] = int_wr_rank_half_rate_r [R];
+                    end
+                    else
+                    begin
+                        int_wr_rank_half_rate [R] = 0;
+                    end
+                end
+                else
+                begin
+                    if (do_write_pipe_eq_afi_wlat_minus_0 [R])
+                    begin
+                        int_wr_rank_half_rate [R] = wr_chip_pipe_eq_afi_wlat_minus_0 [R];
+                    end
+                    else if (doing_write_pipe_eq_afi_wlat_minus_0 [R])
+                    begin
+                        int_wr_rank_half_rate [R] = int_wr_rank_half_rate_r [R];
+                    end
+                    else
+                    begin
+                        int_wr_rank_half_rate [R] = 0;
+                    end
+                end
+            end
+            
+            // Registered write rank information
+            always @ (posedge ctl_clk or negedge ctl_reset_n)
+            begin
+                if (!ctl_reset_n)
+                begin
+                    int_wr_rank_full_rate_r [R] <= 0;
+                    int_wr_rank_half_rate_r [R] <= 0;
+                end
+                else
+                begin
+                    int_wr_rank_full_rate_r [R] <= int_wr_rank_full_rate [R];
+                    int_wr_rank_half_rate_r [R] <= int_wr_rank_half_rate [R];
+                end
             end
         end
-        else if (CFG_DWIDTH_RATIO == 4) // halfrate
-        begin
-            for (K = 0; K < CFG_MEM_IF_DQS_WIDTH; K = K + 1)
-            begin : C
-                assign afi_dqs_burst[K + CFG_MEM_IF_DQS_WIDTH] = (cfg_output_regd_for_afi_output == 1) ? int_dqs_burst_r           : int_dqs_burst          ;
-                assign afi_dqs_burst[K                       ] = (cfg_output_regd_for_afi_output == 1) ? int_dqs_burst_half_rate_r : int_dqs_burst_half_rate;
+            
+        for (R = 0;R < CFG_MEM_IF_DQS_WIDTH;R = R + 1)
+        begin : rank_info_per_dqs_group
+            wire [CFG_MEM_IF_CHIP-1:0] derived_rd_rank_full_rate;
+            wire [CFG_MEM_IF_CHIP-1:0] derived_rd_rank_full_rate_r;
+            wire [CFG_MEM_IF_CHIP-1:0] derived_wr_rank_full_rate;
+            wire [CFG_MEM_IF_CHIP-1:0] derived_wr_rank_full_rate_r;
+            wire [CFG_MEM_IF_CHIP-1:0] derived_wr_rank_half_rate;
+            wire [CFG_MEM_IF_CHIP-1:0] derived_wr_rank_half_rate_r;
+            
+            if (CFG_DRAM_WLAT_GROUP == 1)
+            begin
+                assign derived_rd_rank_full_rate   = int_rd_rank_full_rate;
+                assign derived_rd_rank_full_rate_r = int_rd_rank_full_rate_r;
+                assign derived_wr_rank_full_rate   = int_wr_rank_full_rate   [0];
+                assign derived_wr_rank_full_rate_r = int_wr_rank_full_rate_r [0];
+                assign derived_wr_rank_half_rate   = int_wr_rank_half_rate   [0];
+                assign derived_wr_rank_half_rate_r = int_wr_rank_half_rate_r [0];
+            end
+            else
+            begin
+                assign derived_rd_rank_full_rate   = int_rd_rank_full_rate;
+                assign derived_rd_rank_full_rate_r = int_rd_rank_full_rate_r;
+                assign derived_wr_rank_full_rate   = int_wr_rank_full_rate   [R];
+                assign derived_wr_rank_full_rate_r = int_wr_rank_full_rate_r [R];
+                assign derived_wr_rank_half_rate   = int_wr_rank_half_rate   [R];
+                assign derived_wr_rank_half_rate_r = int_wr_rank_half_rate_r [R];
+            end
+            
+            // afi_rank information
+            if (CFG_DWIDTH_RATIO == 2) // full rate
+            begin
+                assign int_rd_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0)] = (cfg_output_regd_for_afi_output) ? derived_rd_rank_full_rate_r : derived_rd_rank_full_rate;
+                
+                assign int_wr_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0)] = (cfg_output_regd_for_afi_output) ? derived_wr_rank_full_rate_r : derived_wr_rank_full_rate;
+            end
+            else if (CFG_DWIDTH_RATIO == 4) // half rate
+            begin
+                assign int_rd_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 1) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 1)] = (cfg_output_regd_for_afi_output) ? derived_rd_rank_full_rate_r : derived_rd_rank_full_rate;
+                assign int_rd_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0)] = (cfg_output_regd_for_afi_output) ? derived_rd_rank_full_rate_r : derived_rd_rank_full_rate;
+                
+                assign int_wr_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 1) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 1)] = (cfg_output_regd_for_afi_output) ? derived_wr_rank_full_rate_r: derived_wr_rank_full_rate;
+                assign int_wr_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0)] = (cfg_output_regd_for_afi_output) ? derived_wr_rank_half_rate_r: derived_wr_rank_half_rate;
+            end
+            else if (CFG_DWIDTH_RATIO == 8) // quarter rate
+            begin
+                assign int_rd_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 3) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 3)] = (cfg_output_regd_for_afi_output) ? derived_rd_rank_full_rate_r : derived_rd_rank_full_rate;
+                assign int_rd_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 2) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 2)] = (cfg_output_regd_for_afi_output) ? derived_rd_rank_full_rate_r : derived_rd_rank_full_rate;
+                assign int_rd_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 1) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 1)] = (cfg_output_regd_for_afi_output) ? derived_rd_rank_full_rate_r : derived_rd_rank_full_rate;
+                assign int_rd_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0)] = (cfg_output_regd_for_afi_output) ? derived_rd_rank_full_rate_r : derived_rd_rank_full_rate;
+                
+                assign int_wr_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 3) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 3)] = (cfg_output_regd_for_afi_output) ? derived_wr_rank_full_rate_r : derived_wr_rank_full_rate;
+                assign int_wr_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 2) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 2)] = (cfg_output_regd_for_afi_output) ? derived_wr_rank_half_rate_r : derived_wr_rank_half_rate;
+                assign int_wr_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 1) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 1)] = (cfg_output_regd_for_afi_output) ? derived_wr_rank_half_rate_r : derived_wr_rank_half_rate;
+                assign int_wr_rank [((R + 1) * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0) - 1 : (R * CFG_MEM_IF_CHIP) + (CFG_MEM_IF_CHIP * CFG_MEM_IF_DQS_WIDTH * 0)] = (cfg_output_regd_for_afi_output) ? derived_wr_rank_half_rate_r : derived_wr_rank_half_rate;
             end
         end
-        else if (CFG_DWIDTH_RATIO == 8) // quarterrate
+        
+        // Registered output
+        always @ (posedge ctl_clk or negedge ctl_reset_n)
         begin
-            for (K = 0; K < CFG_MEM_IF_DQS_WIDTH; K = K + 1)
-            begin : C
-                assign afi_dqs_burst[K + CFG_MEM_IF_DQS_WIDTH * 3] = (cfg_output_regd_for_afi_output == 1) ? int_dqs_burst_r           : int_dqs_burst          ;
-                assign afi_dqs_burst[K + CFG_MEM_IF_DQS_WIDTH * 2] = (cfg_output_regd_for_afi_output == 1) ? int_dqs_burst_half_rate_r : int_dqs_burst_half_rate;
-                assign afi_dqs_burst[K + CFG_MEM_IF_DQS_WIDTH * 1] = (cfg_output_regd_for_afi_output == 1) ? int_dqs_burst_half_rate_r : int_dqs_burst_half_rate;
-                assign afi_dqs_burst[K                           ] = (cfg_output_regd_for_afi_output == 1) ? int_dqs_burst_half_rate_r : int_dqs_burst_half_rate;
+            if (!ctl_reset_n)
+            begin
+                int_rd_rank_r <= 0;
+                int_wr_rank_r <= 0;
+            end
+            else
+            begin
+                int_rd_rank_r <= int_rd_rank;
+                int_wr_rank_r <= int_wr_rank;
+            end
+        end
+        
+        if (CFG_USE_SHADOW_REGS)
+        begin
+            assign afi_rrank = (cfg_output_regd_for_afi_output == 2) ? int_rd_rank_r : int_rd_rank;
+            assign afi_wrank = (cfg_output_regd_for_afi_output == 2) ? int_wr_rank_r : int_wr_rank;
+        end
+        else
+        begin
+            assign afi_rrank = 0;
+            assign afi_wrank = 0;
+        end
+    endgenerate
+    
+    //*************************************************************************************************//
+    //            afi_dqs_burst generation logic                                                       //
+    //*************************************************************************************************//
+    generate
+        genvar S;
+        for (S = 0;S < CFG_DRAM_WLAT_GROUP;S = S + 1) // generate wlat logic for each DQS group
+        begin : dqs_burst_logic_per_dqs_group_1
+            // high earlier than wdata_valid but ends the same
+            // for writes only, where dqs should toggle, use doing_write_pipe
+            always @(*)
+            begin
+                if (afi_wlat_eq_0 [S])
+                begin
+                    if (bg_doing_write || doing_write_pipe[0])
+                    begin
+                        int_dqs_burst [S] = 1'b1;
+                    end
+                    else
+                    begin
+                        int_dqs_burst [S] = 1'b0;
+                    end
+                end
+                else
+                begin
+                    if (doing_write_pipe_eq_afi_wlat_minus_1 [S] || doing_write_pipe_eq_afi_wlat_minus_0 [S])
+                    begin
+                        int_dqs_burst [S] = 1'b1;
+                    end
+                    else
+                    begin
+                        int_dqs_burst [S] = 1'b0;
+                    end
+                end
+            end
+            
+            // registered output
+            always @(posedge ctl_clk, negedge ctl_reset_n)
+            begin
+                if (!ctl_reset_n)
+                begin
+                    int_dqs_burst_r [S] <= 1'b0;
+                end
+                else
+                begin
+                    int_dqs_burst_r [S] <= int_dqs_burst [S];
+                end
+            end
+            
+            always @ (*)
+            begin
+                if (afi_wlat_eq_0 [S])
+                begin
+                    if (doing_write_pipe[0])
+                    begin
+                        int_dqs_burst_half_rate [S] = 1'b1;
+                    end
+                    else
+                    begin
+                        int_dqs_burst_half_rate [S] = 1'b0;
+                    end
+                end
+                else
+                begin
+                    if (doing_write_pipe_eq_afi_wlat_minus_0 [S])
+                    begin
+                        int_dqs_burst_half_rate [S] = 1'b1;
+                    end
+                    else
+                    begin
+                        int_dqs_burst_half_rate [S] = 1'b0;
+                    end
+                end
+            end
+            
+            always @ (posedge ctl_clk or negedge ctl_reset_n)
+            begin
+                if (!ctl_reset_n)
+                begin
+                    int_dqs_burst_half_rate_r [S] <= 1'b0;
+                end
+                else
+                begin
+                    int_dqs_burst_half_rate_r [S] <= int_dqs_burst_half_rate [S];
+                end
+            end
+        end
+        
+        for (S = 0; S < CFG_MEM_IF_DQS_WIDTH; S = S + 1)
+        begin : dqs_burst_logic_per_dqs_group_2
+            wire derived_dqs_burst;
+            wire derived_dqs_burst_r;
+            wire derived_dqs_burst_half_rate;
+            wire derived_dqs_burst_half_rate_r;
+            
+            if (CFG_DRAM_WLAT_GROUP == 1)
+            begin
+                assign derived_dqs_burst             = int_dqs_burst             [0];
+                assign derived_dqs_burst_r           = int_dqs_burst_r           [0];
+                assign derived_dqs_burst_half_rate   = int_dqs_burst_half_rate   [0];
+                assign derived_dqs_burst_half_rate_r = int_dqs_burst_half_rate_r [0];
+            end
+            else
+            begin
+                assign derived_dqs_burst             = int_dqs_burst             [S];
+                assign derived_dqs_burst_r           = int_dqs_burst_r           [S];
+                assign derived_dqs_burst_half_rate   = int_dqs_burst_half_rate   [S];
+                assign derived_dqs_burst_half_rate_r = int_dqs_burst_half_rate_r [S];
+            end
+            
+            if (CFG_DWIDTH_RATIO == 2) // fullrate
+            begin
+                assign int_afi_dqs_burst [S] = (cfg_output_regd_for_afi_output) ? derived_dqs_burst_r : derived_dqs_burst;
+            end
+            else if (CFG_DWIDTH_RATIO == 4) // halfrate
+            begin
+                assign int_afi_dqs_burst[S + CFG_MEM_IF_DQS_WIDTH] = (cfg_output_regd_for_afi_output) ? derived_dqs_burst_r           : derived_dqs_burst          ;
+                assign int_afi_dqs_burst[S                       ] = (cfg_output_regd_for_afi_output) ? derived_dqs_burst_half_rate_r : derived_dqs_burst_half_rate;
+            end
+            else if (CFG_DWIDTH_RATIO == 8) // quarterrate
+            begin
+                assign int_afi_dqs_burst[S + CFG_MEM_IF_DQS_WIDTH * 3] = (cfg_output_regd_for_afi_output) ? derived_dqs_burst_r           : derived_dqs_burst          ;
+                assign int_afi_dqs_burst[S + CFG_MEM_IF_DQS_WIDTH * 2] = (cfg_output_regd_for_afi_output) ? derived_dqs_burst_half_rate_r : derived_dqs_burst_half_rate;
+                assign int_afi_dqs_burst[S + CFG_MEM_IF_DQS_WIDTH * 1] = (cfg_output_regd_for_afi_output) ? derived_dqs_burst_half_rate_r : derived_dqs_burst_half_rate;
+                assign int_afi_dqs_burst[S                           ] = (cfg_output_regd_for_afi_output) ? derived_dqs_burst_half_rate_r : derived_dqs_burst_half_rate;
             end
         end
     endgenerate
+    
+    // Registered output
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            int_afi_dqs_burst_r <= 0;
+        end
+        else
+        begin
+            int_afi_dqs_burst_r <= int_afi_dqs_burst;
+        end
+    end
+    
+    assign afi_dqs_burst = (cfg_output_regd_for_afi_output == 2) ? int_afi_dqs_burst_r : int_afi_dqs_burst;
     
     //*************************************************************************************************//
     //            afi_wdata_valid generation logic                                                     //
     //*************************************************************************************************//
-    always @(*)
-    begin
-        if (smallest_afi_wlat_eq_0)
-        begin
-            if (doing_write_pipe[0])
+    generate
+        genvar T;
+        for (T = 0;T < CFG_DRAM_WLAT_GROUP;T = T + 1) // generate wlat logic for each DQS group
+        begin : wdata_valid_logic_per_dqs_group_1
+            always @(*)
             begin
-                int_wdata_valid = 1'b1;
+                if (afi_wlat_eq_0 [T])
+                begin
+                    if (doing_write_pipe[0])
+                    begin
+                        int_wdata_valid [T] = 1'b1;
+                    end
+                    else
+                    begin
+                        int_wdata_valid [T] = 1'b0;
+                    end
+                end
+                else
+                begin
+                    if (doing_write_pipe_eq_afi_wlat_minus_0 [T])
+                    begin
+                        int_wdata_valid [T] = 1'b1;
+                    end
+                    else
+                    begin
+                        int_wdata_valid [T] = 1'b0;
+                    end
+                end
+            end
+            
+            // registered output
+            always @(posedge ctl_clk, negedge ctl_reset_n)
+            begin
+                if (!ctl_reset_n)
+                begin
+                    int_wdata_valid_r [T] <= 1'b0;
+                end
+                else
+                begin
+                    int_wdata_valid_r [T] <= int_wdata_valid [T];
+                end
+            end
+        end
+        
+        for (T = 0;T < CFG_MEM_IF_DQS_WIDTH;T = T + 1)
+        begin : wdata_valid_logic_per_dqs_group_2
+            wire derived_wdata_valid;
+            wire derived_wdata_valid_r;
+            
+            if (CFG_DRAM_WLAT_GROUP == 1)
+            begin
+                assign derived_wdata_valid   = int_wdata_valid   [0];
+                assign derived_wdata_valid_r = int_wdata_valid_r [0];
             end
             else
             begin
-                int_wdata_valid = 1'b0;
+                assign derived_wdata_valid   = int_wdata_valid   [T];
+                assign derived_wdata_valid_r = int_wdata_valid_r [T];
+            end
+            
+            if (CFG_DWIDTH_RATIO == 2) // fullrate
+            begin
+                assign int_afi_wdata_valid [T] = (cfg_output_regd_for_afi_output) ? derived_wdata_valid_r : derived_wdata_valid;
+            end
+            else if (CFG_DWIDTH_RATIO == 4) // halfrate
+            begin
+                assign int_afi_wdata_valid [T + CFG_MEM_IF_DQS_WIDTH] = (cfg_output_regd_for_afi_output) ? derived_wdata_valid_r : derived_wdata_valid;
+                assign int_afi_wdata_valid [T                       ] = (cfg_output_regd_for_afi_output) ? derived_wdata_valid_r : derived_wdata_valid;
+            end
+            else if (CFG_DWIDTH_RATIO == 8) // quarterrate
+            begin
+                assign int_afi_wdata_valid [T + CFG_MEM_IF_DQS_WIDTH * 3] = (cfg_output_regd_for_afi_output) ? derived_wdata_valid_r : derived_wdata_valid;
+                assign int_afi_wdata_valid [T + CFG_MEM_IF_DQS_WIDTH * 2] = (cfg_output_regd_for_afi_output) ? derived_wdata_valid_r : derived_wdata_valid;
+                assign int_afi_wdata_valid [T + CFG_MEM_IF_DQS_WIDTH * 1] = (cfg_output_regd_for_afi_output) ? derived_wdata_valid_r : derived_wdata_valid;
+                assign int_afi_wdata_valid [T                           ] = (cfg_output_regd_for_afi_output) ? derived_wdata_valid_r : derived_wdata_valid;
             end
         end
-        else
-        begin
-            if (smallest_doing_write_pipe_eq_afi_wlat_minus_0)
-            begin
-                int_wdata_valid = 1'b1;
-            end
-            else
-            begin
-                int_wdata_valid = 1'b0;
-            end
-        end
-    end
+    endgenerate
     
-    // registered output
-    always @(posedge ctl_clk, negedge ctl_reset_n)
+    // Registered output
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
     begin
         if (!ctl_reset_n)
         begin
-            int_wdata_valid_r <= 1'b0;
+            int_afi_wdata_valid_r <= 0;
         end
         else
         begin
-            int_wdata_valid_r <= int_wdata_valid;
+            int_afi_wdata_valid_r <= int_afi_wdata_valid;
         end
     end
     
-    generate
-        genvar L;
-        for (L = 0; L < CFG_MEM_IF_DQS_WIDTH*(CFG_DWIDTH_RATIO/2); L = L + 1)
-        begin : D
-            assign afi_wdata_valid[L] = (cfg_output_regd_for_afi_output) ? int_wdata_valid_r : int_wdata_valid;
-        end
-    endgenerate
+    assign afi_wdata_valid = (cfg_output_regd_for_afi_output == 2) ? int_afi_wdata_valid_r : int_afi_wdata_valid;
     
     //*************************************************************************************************//
     //            afi_wdata generation logic                                                           //
@@ -2129,11 +3560,37 @@ module alt_mem_ddrx_rdwr_data_tmg
             begin
                 if (!ctl_reset_n)
                 begin
-                    ecc_wdata_fifo_read_r [M] <= 1'b0;
+                    ecc_wdata_fifo_read_r1 [M] <= 1'b0;
+                    ecc_wdata_fifo_read_r2 [M] <= 1'b0;
                 end
                 else
                 begin
-                    ecc_wdata_fifo_read_r [M] <= ecc_wdata_fifo_read [M];
+                    ecc_wdata_fifo_read_r1 [M] <= ecc_wdata_fifo_read    [M];
+                    ecc_wdata_fifo_read_r2 [M] <= ecc_wdata_fifo_read_r1 [M];
+                end
+            end
+            
+            // data valid one clock cycle after read
+            always @(posedge ctl_clk, negedge ctl_reset_n)
+            begin
+                if (!ctl_reset_n)
+                begin
+                    int_real_wdata_valid [M] <=  1'b0;
+                end
+                else
+                begin
+                    if (CFG_WDATA_REG && CFG_ECC_ENC_REG)
+                    begin
+                        int_real_wdata_valid [M] <= ecc_wdata_fifo_read_r2 [M];
+                    end
+                    else if (CFG_WDATA_REG || CFG_ECC_ENC_REG)
+                    begin
+                        int_real_wdata_valid [M] <= ecc_wdata_fifo_read_r1 [M];
+                    end
+                    else
+                    begin
+                        int_real_wdata_valid [M] <= ecc_wdata_fifo_read    [M];
+                    end
                 end
             end
             
@@ -2625,31 +4082,25 @@ module alt_mem_ddrx_rdwr_data_tmg
     // ecc_dm will not get updated till we read another data from wrfifo, so we need to drive DMs based on rdwr_data_valid
     //Output registered information already backed in ecc_wdata_fifo_read
     
-    // data valid one clock cycle after read
-    always @(posedge ctl_clk, negedge ctl_reset_n)
-    begin
-        if (!ctl_reset_n)
+    generate
+        genvar J;
+        genvar K;
+        if (CFG_DRAM_WLAT_GROUP == 1)
         begin
-            int_real_wdata_valid <=  1'b0;
+            for (J = 0; J < CFG_MEM_IF_DM_WIDTH * CFG_DWIDTH_RATIO; J = J + 1)
+            begin : dm_loop
+                assign afi_dm [J] = ~ecc_dm [J] | ~int_real_wdata_valid;
+            end
         end
         else
         begin
-            if (CFG_WDATA_REG || CFG_ECC_ENC_REG)
-                begin
-                    int_real_wdata_valid <=  ecc_wdata_fifo_read_r;
+            for (J = 0; J < CFG_DWIDTH_RATIO; J = J + 1)
+            begin : dwidth_ratio_loop
+                for (K = 0; K < CFG_DRAM_WLAT_GROUP; K = K + 1)
+                begin : dm_loop
+                    assign afi_dm [(J * CFG_DRAM_WLAT_GROUP) + K] = ~ecc_dm [(J * CFG_DRAM_WLAT_GROUP) + K] | ~int_real_wdata_valid [K];
                 end
-            else
-                begin
-                    int_real_wdata_valid <=  ecc_wdata_fifo_read;
-                end
-        end
-    end
-    
-    generate
-        genvar J;
-        for (J = 0; J < CFG_MEM_IF_DM_WIDTH*CFG_DWIDTH_RATIO; J = J + 1)
-        begin : F
-            assign afi_dm[J]    =   ~ecc_dm[J] | ~int_real_wdata_valid;
+            end
         end
     endgenerate
     

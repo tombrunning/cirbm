@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -11,12 +11,17 @@
 // agreement for further details.
 
 
+//altera message_off 10230 10036
+
+`timescale 1 ps / 1 ps
+
 module alt_mem_ddrx_ecc_decoder #
     ( parameter
         CFG_DATA_WIDTH              =   40,
         CFG_ECC_CODE_WIDTH          =   8,
 
         CFG_ECC_DEC_REG             =   1,
+		CFG_ECC_DECODER_REG			=	0,
         CFG_ECC_RDATA_REG           =   0,
         
         CFG_MMR_DRAM_DATA_WIDTH     =   7,
@@ -97,6 +102,7 @@ output                          err_sbe;
 
     reg  [CFG_ECC_DATA_WIDTH - 1 : 0] decoder_output_r;
     reg                               decoder_output_valid_r;
+	reg								  decoder_output_valid_r_r;
     reg                               int_err_corrected_r;
     reg                               int_err_detected_r;
     reg                               int_err_fatal_r;
@@ -184,6 +190,7 @@ output                          err_sbe;
         begin
             decoder_output_r        <= {CFG_ECC_DATA_WIDTH{1'b0}};
             decoder_output_valid_r  <= 1'b0;
+			decoder_output_valid_r_r<= 1'b0;
             int_err_corrected_r     <= 1'b0;
             int_err_detected_r      <= 1'b0;
             int_err_fatal_r         <= 1'b0;
@@ -194,6 +201,7 @@ output                          err_sbe;
         begin
             decoder_output_r        <= decoder_output;
             decoder_output_valid_r  <= decoder_output_valid;
+			decoder_output_valid_r_r<= decoder_output_valid_r;
             int_err_corrected_r     <= int_err_corrected;
             int_err_detected_r      <= int_err_detected;
             int_err_fatal_r         <= int_err_fatal;
@@ -234,7 +242,7 @@ output                          err_sbe;
                 if (cfg_enable_ecc)
                 begin
                     output_data         = {{CFG_ECC_CODE_WIDTH{1'b0}}, decoder_output_r};     // Assign '0' to ECC code portions
-                    output_data_valid   = decoder_output_valid_r;
+                    output_data_valid   = (CFG_ECC_DECODER_REG == 1) ? decoder_output_valid_r_r : decoder_output_valid_r;
                     err_corrected       = int_err_corrected_r;
                     err_detected        = int_err_detected_r;
                     err_fatal           = int_err_fatal_r;
@@ -260,7 +268,7 @@ output                          err_sbe;
                 if (cfg_enable_ecc)
                 begin
                     output_data         = {{CFG_ECC_CODE_WIDTH{1'b0}}, decoder_output};     // Assign '0' to ECC code portions
-                    output_data_valid   = decoder_output_valid;
+                    output_data_valid   = (CFG_ECC_DECODER_REG == 1) ? decoder_output_valid_r : decoder_output_valid;
                     err_corrected       = int_err_corrected;
                     err_detected        = int_err_detected;
                     err_fatal           = int_err_fatal;
@@ -308,8 +316,14 @@ output                          err_sbe;
             assign decoder_output    = internal_decoder_output [CFG_ECC_DATA_WIDTH - 1 : 0];
             
             // 32/39 bit decoder instantiation
-            alt_mem_ddrx_ecc_decoder_32 decoder_inst
+            alt_mem_ddrx_ecc_decoder_32 
+				# (
+					.CFG_ECC_DECODER_REG	(CFG_ECC_DECODER_REG)
+				)
+			decoder_inst
                 (
+					.clk		   (ctl_clk						   ),
+					.reset_n	   (ctl_reset_n					   ),
             	    .data          (internal_decoder_input [38 : 0]),
             	    .err_corrected (int_err_corrected              ),
             	    .err_detected  (int_err_detected               ),
@@ -330,8 +344,14 @@ output                          err_sbe;
             assign decoder_output    = internal_decoder_output [CFG_ECC_DATA_WIDTH - 1 : 0];
             
             // 32/39 bit decoder instantiation
-            alt_mem_ddrx_ecc_decoder_32 decoder_inst
+            alt_mem_ddrx_ecc_decoder_32
+				# (
+					.CFG_ECC_DECODER_REG	(CFG_ECC_DECODER_REG)
+				)			
+			decoder_inst
                 (
+					.clk		   (ctl_clk						   ),
+					.reset_n	   (ctl_reset_n					   ),
             	    .data          (internal_decoder_input [38 : 0]),
             	    .err_corrected (int_err_corrected              ),
             	    .err_detected  (int_err_detected               ),
@@ -343,8 +363,14 @@ output                          err_sbe;
         else if (CFG_ECC_DATA_WIDTH == 32)
         begin
             // 32/39 bit decoder instantiation
-            alt_mem_ddrx_ecc_decoder_32 decoder_inst
+            alt_mem_ddrx_ecc_decoder_32
+				# (
+					.CFG_ECC_DECODER_REG	(CFG_ECC_DECODER_REG)
+				)			
+			decoder_inst
                 (
+					.clk		   (ctl_clk				  ),
+					.reset_n	   (ctl_reset_n			  ),
             	    .data          (decoder_input [38 : 0]),
             	    .err_corrected (int_err_corrected     ),
             	    .err_detected  (int_err_detected      ),
@@ -356,8 +382,14 @@ output                          err_sbe;
         else if (CFG_ECC_DATA_WIDTH == 64)
         begin
             // 32/39 bit decoder instantiation
-            alt_mem_ddrx_ecc_decoder_64 decoder_inst
+            alt_mem_ddrx_ecc_decoder_64
+				# (
+					.CFG_ECC_DECODER_REG	(CFG_ECC_DECODER_REG)
+				)			
+			decoder_inst
                 (
+					.clk		   (ctl_clk			 ),
+					.reset_n	   (ctl_reset_n	     ),
             	    .data          (decoder_input    ),
             	    .err_corrected (int_err_corrected),
             	    .err_detected  (int_err_detected ),
@@ -366,6 +398,14 @@ output                          err_sbe;
             	    .q             (decoder_output   )
                 );
         end
+        else
+        begin
+        	assign int_err_corrected	= 1'b0;
+        	assign int_err_detected		= 1'b0;
+        	assign int_err_fatal 		= 1'b0;
+        	assign int_err_sbe 			= 1'b0;
+        	assign decoder_output		= {CFG_ECC_DATA_WIDTH{1'b0}};
+        end	        
     end
     endgenerate
     

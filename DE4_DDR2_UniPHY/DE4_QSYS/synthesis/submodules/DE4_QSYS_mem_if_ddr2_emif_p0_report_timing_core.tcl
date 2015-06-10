@@ -1,4 +1,4 @@
-# (C) 2001-2012 Altera Corporation. All rights reserved.
+# (C) 2001-2013 Altera Corporation. All rights reserved.
 # Your use of Altera Corporation's design tools, logic functions and other 
 # software and tools, and its AMPP partner logic functions, and any output 
 # files any of the foregoing (including device programming or simulation 
@@ -14,7 +14,7 @@
 #############################################################
 # Write Timing Analysis
 #############################################################
-proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS_min_max interface_type max_package_skew dll_length period pin_array_name timing_parameters_array_name summary_name MP_name IP_name board_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS_min_max interface_type max_package_skew dll_length period pin_array_name timing_parameters_array_name summary_name MP_name IP_name board_name} {
 
 	###############################################################################
 	# This timing analysis covers the write timing constraints.  It includes support 
@@ -51,7 +51,6 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 
 	set num_failing_path $IP(num_report_paths)
 
-	
 	set debug 0
 	set result 1
 	
@@ -59,7 +58,7 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 	# Find the clock output of the PLL
 	set ref_clock_input $pins(pll_ref_clock)
 	set msg_list [ list ]
-	set dqs_pll_clock_id [get_output_clock_id $pins(dqs_pins) "DQS output" msg_list]
+	set dqs_pll_clock_id [DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_id $pins(dqs_pins) "DQS output" msg_list]
 	if {$dqs_pll_clock_id == -1} {
 		foreach {msg_type msg} $msg_list {
 			post_message -type $msg_type "$msg"
@@ -87,7 +86,7 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 		set panel_name_hold   "Before Spatial Pessimism Removal \u0028Negative slacks are OK\u0029||$inst Write (hold)"
 	}	
 	
-	#####################################################################		
+	#####################################################################
 	# Default Write Analysis
 	set before_calibration_reporting [get_ini_var -name "qsta_enable_before_calibration_ddr_reporting"]
 	if {![string equal -nocase $before_calibration_reporting off]}  {
@@ -103,7 +102,7 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 
 	#####################################
 	# Find Memory Calibration Improvement 
-	#####################################				
+	#####################################
 	
 	set mp_setup_slack 0
 	set mp_hold_slack  0
@@ -122,8 +121,8 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 	# Find paths from the reference clock to the PLL
 	set ref_pll_paths_max [get_path -from $pins(pll_ref_clock_input_buffer) -to $dqsclksource -nworst 1]
 	set ref_pll_paths_min [get_path -from $pins(pll_ref_clock_input_buffer) -to $dqsclksource -nworst 1 -min_path]
-	set ref_pll_min_of_max [min_in_collection $ref_pll_paths_max "arrival_time"]
-	set ref_pll_min_of_min [min_in_collection $ref_pll_paths_min "arrival_time"]	
+	set ref_pll_min_of_max [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $ref_pll_paths_max "arrival_time"]
+	set ref_pll_min_of_min [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $ref_pll_paths_min "arrival_time"]	
 	set pll_ccpp [expr $ref_pll_min_of_max - $ref_pll_min_of_min]	
 
 	########################################
@@ -163,10 +162,10 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 			# Find paths from PLL to DQS clock periphery node
 			set DQSpaths_max [get_path -from $dqsclksource -to $dqs_periphery_node -nworst 1]
 			set DQSpaths_min [get_path -from $dqsclksource -to $dqs_periphery_node -nworst 1 -min_path]
-			set DQSmin_of_max [min_in_collection $DQSpaths_max "arrival_time"]
-			set DQSmax_of_min [max_in_collection $DQSpaths_min "arrival_time"]
-			set DQSmax_of_max [max_in_collection $DQSpaths_max "arrival_time"]
-			set DQSmin_of_min [min_in_collection $DQSpaths_min "arrival_time"]
+			set DQSmin_of_max [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $DQSpaths_max "arrival_time"]
+			set DQSmax_of_min [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection $DQSpaths_min "arrival_time"]
+			set DQSmax_of_max [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection $DQSpaths_max "arrival_time"]
+			set DQSmin_of_min [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $DQSpaths_min "arrival_time"]
 		
 			#############################################
 			# Find extra DQS pessimism due to correlation
@@ -175,8 +174,8 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 			# Find paths from DQS clock periphery node to beginning of output buffer
 			set output_buffer_node ${inst}|p0|umemphy|uio_pads|dq_ddio[${group_number}].ubidir_dq_dqs|altdq_dqs2_inst|*obuf*_0|i
 			set DQSperiphery_min [get_path -from [get_pins -compatibility_mode $dqs_periphery_node] -to $dqspin -min_path -nworst 100]
-			set DQSperiphery_delay [min_in_collection $DQSperiphery_min "arrival_time"]
-			set aiot_delay [round_3dp [expr [get_min_aiot_delay $dqspin] * 1e9]]
+			set DQSperiphery_delay [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $DQSperiphery_min "arrival_time"]
+			set aiot_delay [DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [expr [DE4_QSYS_mem_if_ddr2_emif_p0_get_min_aiot_delay $dqspin] * 1e9]]
 			set DQSperiphery_delay [expr $DQSperiphery_delay - $aiot_delay]
 			set DQSpath_pessimism [expr $DQSperiphery_delay*$DQS_min_max]
 			
@@ -195,8 +194,8 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 				}
 				
 				# Perform the default timing analysis to get required and arrival times
-				set pin_setup_slack [min_in_collection_to_name $paths_setup "slack" $dqpin]
-				set pin_hold_slack  [min_in_collection_to_name $paths_hold "slack" $dqpin]
+				set pin_setup_slack [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection_to_name $paths_setup "slack" $dqpin]
+				set pin_hold_slack  [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection_to_name $paths_hold "slack" $dqpin]
 
 				set default_setup_slack [min $default_setup_slack $pin_setup_slack]
 				set default_hold_slack  [min $default_hold_slack  $pin_hold_slack]		
@@ -219,10 +218,10 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 				# Find paths from PLL to DQ clock periphery node
 				set DQpaths_max [get_path -from $dqsclksource -to $dq_periphery_node -nworst 1]
 				set DQpaths_min [get_path -from $dqsclksource -to $dq_periphery_node -nworst 1 -min_path]
-				set DQmin_of_max [min_in_collection $DQpaths_max "arrival_time"]
-				set DQmax_of_min [max_in_collection $DQpaths_min "arrival_time"]
-				set DQmax_of_max [max_in_collection $DQpaths_max "arrival_time"]
-				set DQmin_of_min [min_in_collection $DQpaths_min "arrival_time"]
+				set DQmin_of_max [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $DQpaths_max "arrival_time"]
+				set DQmax_of_min [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection $DQpaths_min "arrival_time"]
+				set DQmax_of_max [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection $DQpaths_max "arrival_time"]
+				set DQmin_of_min [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $DQpaths_min "arrival_time"]
 				if {([expr abs($DQSmin_of_max - $DQmin_of_max)] < 0.002) && ([expr abs($DQSmax_of_min - $DQmax_of_min)] < 0.002)} {
 					set extra_ccpp_max [expr $DQSmax_of_max - $DQSmax_of_min]
 					set extra_ccpp_min [expr $DQSmin_of_max - $DQSmin_of_min]
@@ -259,8 +258,8 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 				}
 				
 				set DQperiphery_min [get_path -from [get_pins -compatibility_mode $dq_periphery_node] -to $dqpin -min_path -nworst 100]
-				set DQperiphery_delay [min_in_collection $DQperiphery_min "arrival_time"]
-				set aiot_delay [round_3dp [expr [get_min_aiot_delay $dqpin] * 1e9]]
+				set DQperiphery_delay [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $DQperiphery_min "arrival_time"]
+				set aiot_delay [DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [expr [DE4_QSYS_mem_if_ddr2_emif_p0_get_min_aiot_delay $dqpin] * 1e9]]
 				set DQperiphery_delay [expr $DQperiphery_delay - $aiot_delay]
 				set DQpath_pessimism [expr $DQperiphery_delay*$DQS_min_max]
 				
@@ -369,13 +368,13 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 	set wr_summary [list]
 	
 	if {$IP(write_deskew_mode) == "dynamic"} {
-		lappend wr_summary [list "  Before Calibration Write" [format_3dp $default_setup_slack] [format_3dp $default_hold_slack]]
+		lappend wr_summary [list "  Before Calibration Write" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $default_setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $default_hold_slack]]
 	} else {
-		lappend wr_summary [list "  Standard Write" [format_3dp $default_setup_slack] [format_3dp $default_hold_slack]]
+		lappend wr_summary [list "  Standard Write" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $default_setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $default_hold_slack]]
 	}
 	
 	if {($IP(write_deskew_mode) == "dynamic") && ($IP(mp_calibration) == 1) && ($IP(num_ranks) == 1)} {
-		lappend wr_summary [list "  Memory Calibration" [format_3dp $mp_setup_slack] [format_3dp $mp_hold_slack]]
+		lappend wr_summary [list "  Memory Calibration" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $mp_setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $mp_hold_slack]]
 	}		
 	
 	if {$IP(write_deskew_mode) == "dynamic"} {
@@ -394,7 +393,7 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 			set t(WL_PSE) 0
 		}
 		[catch {get_float_table_node_delay -src {DELAYCHAIN_T9} -dst {VTVARIATION} -parameters [list IO $interface_type]} t9_vt_variation_percent]
-		set extra_shift [expr $board(intra_DQS_group_skew) + [round_3dp [expr (1.0-$t9_vt_variation_percent)*$t(WL_PSE)]]]
+		set extra_shift [expr $board(intra_DQS_group_skew) + [DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [expr (1.0-$t9_vt_variation_percent)*$t(WL_PSE)]]]
 		
 		if {$extra_shift > [expr $max_write_deskew_setup - $max_shift]} {
 			set setup_slack [expr $setup_slack + $max_write_deskew_setup - $max_shift]
@@ -413,13 +412,13 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 		}
 		set deskew_setup [expr $setup_slack - $default_setup_slack -$mp_setup_slack]
 		set deskew_hold  [expr $hold_slack - $default_hold_slack - $mp_hold_slack]
-		lappend wr_summary [list "  Deskew Write and/or more clock pessimism removal" [format_3dp $deskew_setup] [format_3dp $deskew_hold]]
+		lappend wr_summary [list "  Deskew Write and/or more clock pessimism removal" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $deskew_setup] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $deskew_hold]]
 		
 		#######################################
 		# Find values for uncertainty table
 		set t(wru_external_deskew_s) [expr $deskew_setup - $t(wru_fpga_deskew_s) + $mp_setup_slack - $extra_ccpp]
 		set t(wru_external_deskew_h) [expr $deskew_hold  - $t(wru_fpga_deskew_h) + $mp_hold_slack  - $extra_ccpp]
-		#######################################	
+		#######################################
 
 		# Consider errors in the dynamic deskew
 		set t9_quantization $IP(quantization_T9)
@@ -428,18 +427,17 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 		if { $debug } {
 			puts "	$setup_slack $hold_slack"
 		}
-		lappend wr_summary [list "  Quantization error" [format_3dp [expr 0-$t9_quantization]] [format_3dp [expr 0-$t9_quantization]]]
+		lappend wr_summary [list "  Quantization error" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$t9_quantization]] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$t9_quantization]]]
 		
 		# Consider variation in the delay chains used during dynamic deksew
 		set offset_from_90 [expr abs(90-(360.0/$dll_length*2))/360.0*$period]
-		
 		set t9_variation [expr [min [expr $offset_from_90 + (2*$board(intra_DQS_group_skew) + $max_package_skew + $t(WL_PSE))] [max $max_write_deskew_setup $max_write_deskew_hold]]*2*$t9_vt_variation_percent]
 		set setup_slack [expr $setup_slack - $t9_variation]
 		set hold_slack  [expr $hold_slack - $t9_variation]	
 		if { $debug } {
 			puts "	$setup_slack $hold_slack"
 		}
-		lappend wr_summary [list "  Calibration uncertainty" [format_3dp [expr 0-$t9_variation]] [format_3dp [expr 0-$t9_variation]]] 
+		lappend wr_summary [list "  Calibration uncertainty" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$t9_variation]] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$t9_variation]]] 
 		
 		#######################################
 		# Find values for uncertainty table
@@ -452,12 +450,12 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 			set t(wru_extl_uncertainty_s) [expr $t(wru_output_max_delay_external)]
 			set t(wru_extl_uncertainty_h) [expr $t(wru_output_min_delay_external)]		
 		}
-		#######################################			
+		#######################################
 		
 	} else {
 		set pessimism_setup [expr $setup_slack - $default_setup_slack - $mp_setup_slack]
 		set pessimism_hold  [expr $hold_slack - $default_hold_slack - $mp_hold_slack]
-		lappend wr_summary [list "  Spatial correlation pessimism removal" [format_3dp $pessimism_setup] [format_3dp $pessimism_hold]]
+		lappend wr_summary [list "  Spatial correlation pessimism removal" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $pessimism_setup] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $pessimism_hold]]
 
 		#######################################
 		# Find values for uncertainty table
@@ -479,7 +477,7 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 	
 	###############################
 	# Consider Duty Cycle Calibration if enabled
-	###############################	
+	###############################
 
 	if {($IP(write_dcc) == "dynamic")} {
 		#First remove the Systematic DCD
@@ -497,7 +495,7 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 		if { $debug } {
 			puts "	$setup_slack $hold_slack"
 		}
-		lappend wr_summary [list "  Duty cycle correction quantization error" [format_3dp [expr 0-$DCC_quantization]] [format_3dp [expr 0-$DCC_quantization]]]
+		lappend wr_summary [list "  Duty cycle correction quantization error" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$DCC_quantization]] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$DCC_quantization]]]
 		
 		# Consider variation in the DCC 
 		[catch {get_float_table_node_delay -src {DELAYCHAIN_DUTY_CYCLE} -dst {VTVARIATION} -parameters [list IO $interface_type]} dcc_vt_variation_percent]
@@ -507,7 +505,7 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 		if { $debug } {
 			puts "	$setup_slack $hold_slack"
 		}
-		lappend wr_summary [list "  Duty cycle correction calibration uncertainity" [format_3dp [expr 0-$dcc_variation]] [format_3dp [expr 0-$dcc_variation]]]
+		lappend wr_summary [list "  Duty cycle correction calibration uncertainity" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$dcc_variation]] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$dcc_variation]]]
 	}
 	
 	#######################################
@@ -538,13 +536,13 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 	add_row_to_table -id $panel_id [list "Operation" "Setup Slack" "Hold Slack"] 		
 	
 	if {($IP(write_deskew_mode) == "dynamic")} {
-		set fcolour [get_colours $setup_slack $hold_slack]
-		add_row_to_table -id $panel_id [list "After Calibration Write" [format_3dp $setup_slack] [format_3dp $hold_slack]] -fcolor $fcolour
+		set fcolour [DE4_QSYS_mem_if_ddr2_emif_p0_get_colours $setup_slack $hold_slack]
+		add_row_to_table -id $panel_id [list "After Calibration Write" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $hold_slack]] -fcolor $fcolour
 		lappend summary [list $opcname 0 "Write ($opcname)" $setup_slack $hold_slack]
 	} else {
-		set fcolour [get_colours $setup_slack $hold_slack] 
-		add_row_to_table -id $panel_id [list "Write" [format_3dp $setup_slack] [format_3dp $hold_slack]] -fcolor $fcolour
-		lappend summary [list $opcname 0 "Write ($opcname)" [format_3dp $setup_slack] [format_3dp $hold_slack]]
+		set fcolour [DE4_QSYS_mem_if_ddr2_emif_p0_get_colours $setup_slack $hold_slack] 
+		add_row_to_table -id $panel_id [list "Write" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $hold_slack]] -fcolor $fcolour
+		lappend summary [list $opcname 0 "Write ($opcname)" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $hold_slack]]
 	}
 
 	foreach summary_line $wr_summary {
@@ -571,12 +569,12 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 		set panel_id [create_report_panel -table $panel_name]
 		add_row_to_table -id $panel_id [list "Value" "Setup Side" "Hold Side"]
 		add_row_to_table -id $panel_id [list "Uncertainty" "" ""]
-		add_row_to_table -id $panel_id [list "  FPGA uncertainty" [format_3dp $t(wru_fpga_uncertainty_s)] [format_3dp $t(wru_fpga_uncertainty_h)]] 
-		add_row_to_table -id $panel_id [list "  External uncertainty" [format_3dp $t(wru_extl_uncertainty_s)] [format_3dp $t(wru_extl_uncertainty_h)]] 
+		add_row_to_table -id $panel_id [list "  FPGA uncertainty" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(wru_fpga_uncertainty_s)] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(wru_fpga_uncertainty_h)]] 
+		add_row_to_table -id $panel_id [list "  External uncertainty" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(wru_extl_uncertainty_s)] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(wru_extl_uncertainty_h)]] 
 		add_row_to_table -id $panel_id [list "Deskew" "" ""]
-		add_row_to_table -id $panel_id [list "  FPGA deskew" [format_3dp $t(wru_fpga_deskew_s)] [format_3dp $t(wru_fpga_deskew_h)]] 
-		add_row_to_table -id $panel_id [list "  External deskew" [format_3dp $t(wru_external_deskew_s)] [format_3dp $t(wru_external_deskew_h)]] 
-		add_row_to_table -id $panel_id [list "  Calibration uncertainty/error" [format_3dp $t(wru_calibration_uncertaintyerror_s)] [format_3dp $t(wru_calibration_uncertaintyerror_h)]] 
+		add_row_to_table -id $panel_id [list "  FPGA deskew" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(wru_fpga_deskew_s)] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(wru_fpga_deskew_h)]] 
+		add_row_to_table -id $panel_id [list "  External deskew" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(wru_external_deskew_s)] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(wru_external_deskew_h)]] 
+		add_row_to_table -id $panel_id [list "  Calibration uncertainty/error" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(wru_calibration_uncertaintyerror_s)] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(wru_calibration_uncertaintyerror_h)]] 
 	}		
 }
 
@@ -584,7 +582,7 @@ proc perform_flexible_write_launch_timing_analysis {opcs opcname inst family DQS
 #############################################################
 # Read Timing Analysis
 #############################################################
-proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS_min_max io_std interface_type max_package_skew dqs_phase period all_dq_pins pin_array_name timing_parameters_array_name summary_name MP_name IP_name board_name fpga_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS_min_max io_std interface_type max_package_skew dqs_phase period all_dq_pins pin_array_name timing_parameters_array_name summary_name MP_name IP_name board_name fpga_name} {
 
 	################################################################################
 	# This timing analysis covers the read timing constraints.  It includes support 
@@ -637,7 +635,7 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 		set panel_name_hold   "Before Spatial Pessimism Removal \u0028Negative slacks are OK\u0029||$inst Read Capture (hold)"
 	}	
 
-	#####################################################################		
+	#####################################################################
 	# Default Read Analysis
 	set before_calibration_reporting [get_ini_var -name "qsta_enable_before_calibration_ddr_reporting"]
 	if {![string equal -nocase $before_calibration_reporting off]} {
@@ -652,7 +650,7 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 
 	#####################################
 	# Find Memory Calibration Improvement
-	#####################################				
+	#####################################
 	
 	set mp_setup_slack 0
 	set mp_hold_slack  0
@@ -720,7 +718,7 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 			                          "${prefix}*dq_ddio[${group_number}].ubidir_dq_dqs|*altdq_dqs2_inst|*read_data_out[*]" ]
 
 			set DQSperiphery_min [get_path -from $input_buffer_node -to $DQScapture_node]
-			set DQSperiphery_delay [max_in_collection $DQSperiphery_min "arrival_time"]
+			set DQSperiphery_delay [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection $DQSperiphery_min "arrival_time"]
 			set DQSpath_pessimism [expr ($DQSperiphery_delay-$dqs_phase/360.0*$period)*$DQS_min_max]
 			
 			# Go over each DQ pin in group
@@ -729,8 +727,8 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 				regexp {\d+} $qpin q_pin_index
 			
 				# Perform the default timing analysis to get required and arrival times
-				set pin_setup_slack [min_in_collection_from_name $paths_setup "slack" $qpin]
-				set pin_hold_slack  [min_in_collection_from_name $paths_hold "slack" $qpin]
+				set pin_setup_slack [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection_from_name $paths_setup "slack" $qpin]
+				set pin_hold_slack  [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection_from_name $paths_hold "slack" $qpin]
 
 				set default_setup_slack [min $default_setup_slack $pin_setup_slack]
 				set default_hold_slack  [min $default_hold_slack  $pin_hold_slack]		
@@ -756,12 +754,12 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 				                         "${prefix}*dq_ddio[${group_number}].ubidir_dq_dqs|*altdq_dqs2_inst|*read_data_out[${q_index}]" ]
 
 				set DQperiphery_min [get_path -from $input_buffer_node_dq -to $DQcapture_node -min_path -nworst 10]
-				set DQperiphery_delay [min_in_collection $DQperiphery_min "arrival_time"]
+				set DQperiphery_delay [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $DQperiphery_min "arrival_time"]
 				set DQpath_pessimism [expr $DQperiphery_delay*$DQS_min_max]
 				
 				########################################
 				# Merge current slacks with other slacks
-				########################################			
+				########################################
 
 				# If read deskew is available, the setup and hold slacks for this pin will be equal
 				#   and can also remove the extra DQS pessimism removal
@@ -851,22 +849,22 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 	########################################################
 	# Consider some post calibration effects on calibration
 	#  and output the read summary report
-	########################################################	
+	########################################################
 	
 	set positive_fcolour [list "black" "blue" "blue"]
 	set negative_fcolour [list "black" "red"  "red"]	
 
 	set rc_summary [list]	
 	
-	set fcolour [get_colours $default_setup_slack $default_hold_slack]
+	set fcolour [DE4_QSYS_mem_if_ddr2_emif_p0_get_colours $default_setup_slack $default_hold_slack]
 	if {$IP(read_deskew_mode) == "dynamic"} {
-		lappend rc_summary [list "  Before Calibration Read Capture" [format_3dp $default_setup_slack] [format_3dp $default_hold_slack]]
+		lappend rc_summary [list "  Before Calibration Read Capture" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $default_setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $default_hold_slack]]
 	} else {
-		lappend rc_summary [list "  Standard Read Capture" [format_3dp $default_setup_slack] [format_3dp $default_hold_slack]] 
+		lappend rc_summary [list "  Standard Read Capture" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $default_setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $default_hold_slack]] 
 	}
 	
 	if {($IP(read_deskew_mode) == "dynamic") && ($IP(mp_calibration) == 1) && ($IP(num_ranks) == 1)} {
-		lappend rc_summary [list "  Memory Calibration" [format_3dp $mp_setup_slack] [format_3dp $mp_hold_slack]] 
+		lappend rc_summary [list "  Memory Calibration" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $mp_setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $mp_hold_slack]] 
 	}
 	
 	if {$IP(read_deskew_mode) == "dynamic"} {
@@ -882,7 +880,7 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 
 		# Remove external delays (add slack) that are fixed by the dynamic deskew
 		[catch {get_float_table_node_delay -src {DELAYCHAIN_T1} -dst {VTVARIATION} -parameters [list IO $interface_type]} t1_vt_variation_percent]
-		set extra_shift [expr $board(intra_DQS_group_skew) + [round_3dp [expr (1.0-$t1_vt_variation_percent)*$fpga(tDQS_PSERR)]]]
+		set extra_shift [expr $board(intra_DQS_group_skew) + [DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [expr (1.0-$t1_vt_variation_percent)*$fpga(tDQS_PSERR)]]]
 		
 		if {$extra_shift > [expr $max_read_deskew_setup - $max_shift]} {
 			set setup_slack [expr $setup_slack + $max_read_deskew_setup - $max_shift]
@@ -900,7 +898,7 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 		}
 		set deskew_setup [expr $setup_slack - $default_setup_slack - $mp_setup_slack]
 		set deskew_hold  [expr $hold_slack - $default_hold_slack - $mp_hold_slack]
-		lappend rc_summary [list "  Deskew Read" [format_3dp $deskew_setup] [format_3dp $deskew_hold]]
+		lappend rc_summary [list "  Deskew Read" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $deskew_setup] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $deskew_hold]]
 		
 		#######################################
 		# Find values for uncertainty table
@@ -915,7 +913,7 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 		if { $debug } {
 			puts "	$setup_slack $hold_slack"
 		}
-		lappend rc_summary [list "  Quantization error" [format_3dp [expr 0-$t1_quantization]] [format_3dp [expr 0-$t1_quantization]]]
+		lappend rc_summary [list "  Quantization error" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$t1_quantization]] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$t1_quantization]]]
 		
 		# Consider variation in the delay chains used during dynamic deksew
 		set offset_from_90 [expr abs(90-$dqs_phase)/360.0*$period]
@@ -929,7 +927,7 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 		if { $debug } {
 			puts "	$setup_slack $hold_slack"
 		}
-		lappend rc_summary [list "  Calibration uncertainty" [format_3dp [expr 0-$t1_variation]] [format_3dp [expr 0-$t1_variation]]]
+		lappend rc_summary [list "  Calibration uncertainty" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$t1_variation]] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp [expr 0-$t1_variation]]]
 		
 		#######################################
 		# Find values for uncertainty table
@@ -942,12 +940,12 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 			set t(rdu_extl_uncertainty_s) [expr $t(rdu_input_max_delay_external)]
 			set t(rdu_extl_uncertainty_h) [expr $t(rdu_input_min_delay_external)]		
 		}
-		#######################################		
+		#######################################
 		
 	} else {
 		set pessimism_setup [expr $setup_slack - $default_setup_slack - $mp_setup_slack]
 		set pessimism_hold  [expr $hold_slack - $default_hold_slack - $mp_hold_slack]
-		lappend rc_summary [list "  Spatial correlation pessimism removal" [format_3dp $pessimism_setup] [format_3dp $pessimism_hold]] 
+		lappend rc_summary [list "  Spatial correlation pessimism removal" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $pessimism_setup] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $pessimism_hold]] 
 		
 		#######################################
 		# Find values for uncertainty table
@@ -964,7 +962,7 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 			set t(rdu_extl_uncertainty_s) [expr $t(rdu_input_max_delay_external)]
 			set t(rdu_extl_uncertainty_h) [expr $t(rdu_input_min_delay_external)]				
 		}
-		#######################################		
+		#######################################
 	}
 	
 	#######################################
@@ -994,12 +992,12 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 	add_row_to_table -id $panel_id [list "Operation" "Setup Slack" "Hold Slack"]	
 	
 	if {$IP(read_deskew_mode) == "dynamic"} {
-		set fcolour [get_colours $setup_slack $hold_slack] 
-		add_row_to_table -id $panel_id [list "After Calibration Read Capture" [format_3dp $setup_slack] [format_3dp $hold_slack]] -fcolor $fcolour
+		set fcolour [DE4_QSYS_mem_if_ddr2_emif_p0_get_colours $setup_slack $hold_slack] 
+		add_row_to_table -id $panel_id [list "After Calibration Read Capture" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $hold_slack]] -fcolor $fcolour
 		lappend summary [list $opcname 0 "Read Capture ($opcname)" $setup_slack $hold_slack]
 	} else {
-		set fcolour [get_colours $setup_slack $hold_slack] 
-		add_row_to_table -id $panel_id [list "Read Capture" [format_3dp $setup_slack] [format_3dp $hold_slack]] -fcolor $fcolour
+		set fcolour [DE4_QSYS_mem_if_ddr2_emif_p0_get_colours $setup_slack $hold_slack] 
+		add_row_to_table -id $panel_id [list "Read Capture" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $setup_slack] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $hold_slack]] -fcolor $fcolour
 		lappend summary [list $opcname 0 "Read Capture ($opcname)" $setup_slack $hold_slack]  
 	}	
 	
@@ -1027,12 +1025,12 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 		set panel_id [create_report_panel -table $panel_name]
 		add_row_to_table -id $panel_id [list "Value" "Setup Side" "Hold Side"]
 		add_row_to_table -id $panel_id [list "Uncertainty" "" ""]
-		add_row_to_table -id $panel_id [list "  FPGA uncertainty" [format_3dp $t(rdu_fpga_uncertainty_s)] [format_3dp $t(rdu_fpga_uncertainty_h)]] 
-		add_row_to_table -id $panel_id [list "  External uncertainty" [format_3dp $t(rdu_extl_uncertainty_s)] [format_3dp $t(rdu_extl_uncertainty_h)]] 
+		add_row_to_table -id $panel_id [list "  FPGA uncertainty" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(rdu_fpga_uncertainty_s)] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(rdu_fpga_uncertainty_h)]] 
+		add_row_to_table -id $panel_id [list "  External uncertainty" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(rdu_extl_uncertainty_s)] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(rdu_extl_uncertainty_h)]] 
 		add_row_to_table -id $panel_id [list "Deskew" "" ""]
-		add_row_to_table -id $panel_id [list "  FPGA deskew" [format_3dp $t(rdu_fpga_deskew_s)] [format_3dp $t(rdu_fpga_deskew_h)]] 
-		add_row_to_table -id $panel_id [list "  External deskew" [format_3dp $t(rdu_external_deskew_s)] [format_3dp $t(rdu_external_deskew_h)]] 
-		add_row_to_table -id $panel_id [list "  Calibration uncertainty/error" [format_3dp $t(rdu_calibration_uncertaintyerror_s)] [format_3dp $t(rdu_calibration_uncertaintyerror_h)]] 
+		add_row_to_table -id $panel_id [list "  FPGA deskew" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(rdu_fpga_deskew_s)] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(rdu_fpga_deskew_h)]] 
+		add_row_to_table -id $panel_id [list "  External deskew" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(rdu_external_deskew_s)] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(rdu_external_deskew_h)]] 
+		add_row_to_table -id $panel_id [list "  Calibration uncertainty/error" [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(rdu_calibration_uncertaintyerror_s)] [DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp $t(rdu_calibration_uncertaintyerror_h)]] 
 	}
 		
 }
@@ -1042,7 +1040,7 @@ proc perform_flexible_read_capture_timing_analysis {opcs opcname inst family DQS
 # Other Timing Analysis
 #############################################################
 
-proc perform_phy_analyses {opcs opcname inst inst_controller pin_array_name timing_parameters_array_name summary_name IP_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_perform_phy_analyses {opcs opcname inst inst_controller pin_array_name timing_parameters_array_name summary_name IP_name} {
 
 	###############################################################################
 	# The PHY analysis concerns the timing requirements of the PHY which includes
@@ -1060,7 +1058,7 @@ proc perform_phy_analyses {opcs opcname inst inst_controller pin_array_name timi
 	
 	set num_failing_path $IP(num_report_paths)
 
-	set entity_names_on [ are_entity_names_on ]
+	set entity_names_on [ DE4_QSYS_mem_if_ddr2_emif_p0_are_entity_names_on ]
 
 	set prefix [ string map "| |*:" $inst ]
 	set prefix "*:$prefix"
@@ -1086,7 +1084,7 @@ proc perform_phy_analyses {opcs opcname inst inst_controller pin_array_name timi
 
 }
 
-proc perform_ac_analyses {opcs opcname inst DQS_min_max pin_array_name timing_parameters_array_name summary_name IP_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_perform_ac_analyses {opcs opcname inst DQS_min_max pin_array_name timing_parameters_array_name summary_name IP_name} {
 
 	###############################################################################
 	# The adress/command analysis concerns the timing requirements of the pins (other
@@ -1109,7 +1107,7 @@ proc perform_ac_analyses {opcs opcname inst DQS_min_max pin_array_name timing_pa
 	set cmd_pins $pins(cmd_pins)
 	set ac_pins [ concat $add_pins $ba_pins $cmd_pins ]
 
-	set entity_names_on [ are_entity_names_on ]
+	set entity_names_on [ DE4_QSYS_mem_if_ddr2_emif_p0_are_entity_names_on ]
 
 	set prefix [ string map "| |*:" $inst ]
 	set prefix "*:$prefix"
@@ -1125,7 +1123,7 @@ proc perform_ac_analyses {opcs opcname inst DQS_min_max pin_array_name timing_pa
 # Write Levelling Timing Analysis
 #############################################################
 
-proc perform_flexible_write_levelling_timing_analysis {opcs opcname instname family period dll_length interface_type tJITper tJITdty tDCD pll_steps pin_array_name timing_parameters_array_name summary_name  MP_name IP_name SSN_name board_name ISI_parameters_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_perform_flexible_write_levelling_timing_analysis {opcs opcname instname family period dll_length interface_type tJITper tJITdty tDCD pll_steps pin_array_name timing_parameters_array_name summary_name  MP_name IP_name SSN_name board_name ISI_parameters_name} {
 
 	###############################################################################
 	# The write levelling analysis concerns meeting the DDR3 requirements between DQS 
@@ -1212,8 +1210,8 @@ proc perform_flexible_write_levelling_timing_analysis {opcs opcname instname fam
 	set data_hold  [get_timing_paths -to [get_ports $all_dq_pins] -hold]
 	set ac_setup   [get_timing_paths -to $add_pins -setup]
 
-	set dqs_launch_time [max_in_collection $data_hold "latch_time"]
-	set clk_launch_time [min_in_collection $ac_setup "latch_time"]
+	set dqs_launch_time [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection $data_hold "latch_time"]
+	set clk_launch_time [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $ac_setup "latch_time"]
 	if {$clk_launch_time - $t(CK) > $dqs_launch_time} {
 		set clk_launch_time [expr $clk_launch_time - $t(CK)]
 	}
@@ -1222,14 +1220,14 @@ proc perform_flexible_write_levelling_timing_analysis {opcs opcname instname fam
 	# See if we can level to the first device
 
 	# Get the min CLK delay
-	set clk_min [min_in_collection [get_path -from $pins(pll_ck_clock) -to $pins(ck_pins) -min_path] "arrival_time"]
+	set clk_min [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection [get_path -from $pins(pll_ck_clock) -to $pins(ck_pins) -min_path] "arrival_time"]
 
 	# Get the max DQS delay, slightly complicated because TimeQuest doesn't allow the path to go through the levelling delay chains
 	set dqs_path_part1 [get_path -to $pins(dqs_pins)]
 	foreach_in_collection path $dqs_path_part1 { set tempstartnode [get_path_info $path -from] }
 	set tempstart [get_node_info $tempstartnode -name]
 	set dqs_path_part2 [get_path -from $pins(pll_write_clock) -to $tempstart]
-	set dqs_max [expr [max_in_collection $dqs_path_part1 "arrival_time"] + [max_in_collection $dqs_path_part2 "arrival_time"]]
+	set dqs_max [expr [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection $dqs_path_part1 "arrival_time"] + [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection $dqs_path_part2 "arrival_time"]]
 
 	# Get the total delays
 	set dqs_time [expr $dqs_launch_time + $dqs_max + $t(WL_DCD) + $t(WL_JITTER) + $t(WL_PSE) + $board(inter_DQS_group_skew)/2 + $SSN(pushout_o) + $ISI(DQS)/2 - $t(DQSS)*$t(CK)]
@@ -1246,14 +1244,14 @@ proc perform_flexible_write_levelling_timing_analysis {opcs opcname instname fam
 	# See if we can level to the last device
 
 	# Get the min CLK delay
-	set clk_max [max_in_collection [get_path -from $pins(pll_ck_clock) -to $pins(ck_pins)] "arrival_time"]
+	set clk_max [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection [get_path -from $pins(pll_ck_clock) -to $pins(ck_pins)] "arrival_time"]
 
 	# Get the min DQS delay, slightly complicated because TimeQuest doesn't allow the path to go through the levelling delay chains
 	set dqs_path_part1 [get_path -from [get_pins -compatibility_mode *dqs_alignment|clk] -to $pins(dqs_pins) -min_path]
 	foreach_in_collection path $dqs_path_part1 { set tempstartnode [get_path_info $path -from] }
 	set tempstart [get_node_info $tempstartnode -name]
 	set dqs_path_part2 [get_path -from $pins(pll_write_clock) -to $tempstart -min_path]
-	set dqs_min [expr [min_in_collection $dqs_path_part1 "arrival_time"] + [min_in_collection $dqs_path_part2 "arrival_time"]]
+	set dqs_min [expr [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $dqs_path_part1 "arrival_time"] + [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $dqs_path_part2 "arrival_time"]]
 
 	# Determine the maximum possible phase increase
 	if {$dll_length == 6} {
@@ -1360,7 +1358,7 @@ proc perform_flexible_write_levelling_timing_analysis {opcs opcname instname fam
 # Bus Turnaround Time Analysis
 #############################################################
 
-proc perform_flexible_bus_turnaround_time_analysis {opcs opcname instname family period dll_length interface_type tJITper tJITdty tDCD pll_steps pin_array_name timing_parameters_array_name summary_name  MP_name IP_name SSN_name board_name ISI_parameters_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_perform_flexible_bus_turnaround_time_analysis {opcs opcname instname family period dll_length interface_type tJITper tJITdty tDCD pll_steps pin_array_name timing_parameters_array_name summary_name  MP_name IP_name SSN_name board_name ISI_parameters_name} {
 
 	###############################################################################
 	# The bus-turnaround time analysis concerns making sure there is no contention on
@@ -1400,7 +1398,7 @@ proc perform_flexible_bus_turnaround_time_analysis {opcs opcname instname family
 	
 	# Maximum clock delay
 	set ac_hold   [get_timing_paths -to $pins(add_pins) -hold -npaths 100]
-	set max_dly [expr [max_in_collection $ac_hold "clock_skew"]]
+	set max_dly [expr [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection $ac_hold "clock_skew"]]
 	
 	# SSO and Jitter pushout on clock
 	set max_dly [expr $max_dly + $SSN(pushout_o) + $tJITper/2]
@@ -1428,7 +1426,7 @@ proc perform_flexible_bus_turnaround_time_analysis {opcs opcname instname family
 	# the clock is the same as the output delay of the write (other than 
 	# board delays and transient delays
 	set ac_setup   [get_timing_paths -to $pins(add_pins) -setup -npaths 100]
-	set min_dly [expr [min_in_collection $ac_setup "clock_skew"]]
+	set min_dly [expr [DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection $ac_setup "clock_skew"]]
 
 	# SSO pullin on write data
 	set min_dly [expr $min_dly - $SSN(pullin_o)]
@@ -1441,7 +1439,6 @@ proc perform_flexible_bus_turnaround_time_analysis {opcs opcname instname family
 	
 	# Difference in board delay
 	set min_dly [expr $min_dly - $board(minCK_DQS_skew)]
-	
 	
 	# Delay between the read command and write command 
 	set num_clocks_read_to_write [expr $burst_length/2 + 2 + $t(rd_to_wr_turnaround_oct)]
@@ -1466,7 +1463,7 @@ proc perform_flexible_bus_turnaround_time_analysis {opcs opcname instname family
 	
 }
 
-proc perform_resync_timing_analysis {opcs opcname inst fbasename family DQS_min_max io_std interface_type period pin_array_name timing_parameters_array_name summary_name MP_name IP_name board_name fpga_name SSN_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_perform_resync_timing_analysis {opcs opcname inst fbasename family DQS_min_max io_std interface_type period pin_array_name timing_parameters_array_name summary_name MP_name IP_name board_name fpga_name SSN_name} {
 
 	###############################################################################
 	# The resynchronization timing analysis concerns transferring read data that
@@ -1496,7 +1493,7 @@ proc perform_resync_timing_analysis {opcs opcname inst fbasename family DQS_min_
 	set reg_wr_address *${fbasename}_read_datapath:uread_datapath|read_buffering[*].read_subgroup[*].wraddress[*]
 	set reg_rd_address *${fbasename}_read_datapath:uread_datapath|read_buffering[*].read_subgroup[*].rdaddress[*]
 	
-	#######################################	
+	#######################################
 	# Paths
 	set max_DQS_to_fifo_paths  [get_path -from $dqs_pins -to $fifo -npaths $num_paths -nworst 1]
 	set min_DQS_to_fifo_paths  [get_path -from $dqs_pins -to $fifo -npaths $num_paths -min_path  -nworst 1]
@@ -1510,7 +1507,7 @@ proc perform_resync_timing_analysis {opcs opcname inst fbasename family DQS_min_
 	set max_rd_address_to_rd_data_paths [get_path -from $reg_rd_address -to $reg_in_rd_clk_domain -npaths $num_paths -nworst 1]
 	set min_rd_address_to_rd_data_paths [get_path -from $reg_rd_address -to $reg_in_rd_clk_domain -npaths $num_paths -min_path -nworst 1]
 	
-	set max_dqs_common_to_fifo [max_in_collection [get_path -from $dqs_pins -to $fifo -nworst 1] "arrival_time"]
+	set max_dqs_common_to_fifo [DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection [get_path -from $dqs_pins -to $fifo -nworst 1] "arrival_time"]
 	
 	#########################################
 	# Limit to one endpoint/startpoint
@@ -1629,7 +1626,7 @@ proc perform_resync_timing_analysis {opcs opcname inst fbasename family DQS_min_
 	# Other parameters
 	set prefix [ string map "| |*:" $inst ]
 	set prefix "*:$prefix"
-	set entity_names_on [ are_entity_names_on ]	
+	set entity_names_on [ DE4_QSYS_mem_if_ddr2_emif_p0_are_entity_names_on ]	
 	set fly_by_wire 0
 	set min_latency 1
 	set max_latency 2.5

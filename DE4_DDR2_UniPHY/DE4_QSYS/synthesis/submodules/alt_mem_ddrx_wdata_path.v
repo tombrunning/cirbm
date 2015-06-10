@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -12,6 +12,8 @@
 
 
 //altera message_off 10230 10036
+
+`timescale 1 ps / 1 ps
 
 module alt_mem_ddrx_wdata_path
 # (
@@ -70,6 +72,7 @@ module alt_mem_ddrx_wdata_path
     // notify TBP interface
     data_complete,
     data_rmw_complete,
+    data_rmw_fetch,
     data_partial_be,
     
     // AFI interface / buffer read interface
@@ -174,6 +177,7 @@ module alt_mem_ddrx_wdata_path
     // notify TBP interface
     output  [CFG_TBP_NUM-1:0]                       data_complete;
     output                                          data_rmw_complete;      // broadcast to TBP's
+    input                                           data_rmw_fetch;
     output                                          data_partial_be;
     
     // AFI interface / buffer read interface
@@ -359,13 +363,17 @@ module alt_mem_ddrx_wdata_path
     wire                                            rmwfifo_output_valid;
     reg                                             rmwfifo_output_valid_r;
     wire                                            rmwfifo_output_valid_pulse;
+    reg                                             rmwfifo_output_valid_handshake;
     wire    [CFG_LOCAL_DATA_WIDTH-1:0]              rmwfifo_output_data;
+    reg     [CFG_LOCAL_DATA_WIDTH-1:0]              rmwfifo_output_data_r;
     wire    [CFG_ECC_MULTIPLES- 1 : 0]              rmwfifo_output_ecc_dbe;
     wire    [CFG_ECC_MULTIPLES * CFG_ECC_CODE_WIDTH - 1 : 0] rmwfifo_output_ecc_code;
 
     reg     [CFG_LOCAL_DATA_WIDTH-1:0]              rmw_merged_data;
-    reg                                             rmw_correct_r;
-    reg                                             rmw_partial_r;
+    reg                                             rmw_correct_r1;
+    reg                                             rmw_partial_r1;
+    reg                                             rmw_correct_r2;
+    reg                                             rmw_partial_r2;
     wire                                            rmwfifo_ready; 
 
     // debug signals, for assertions
@@ -388,7 +396,7 @@ module alt_mem_ddrx_wdata_path
     assign wdatap_datawrite_be          = byte_en; // we need to replicate
 
     assign data_complete                = wdatap_tbp_data_ready;
-    assign data_rmw_complete            = rmwfifo_output_valid_pulse;       // broadcast to all TBP's
+    assign data_rmw_complete            = rmwfifo_output_valid_pulse | rmwfifo_output_valid_handshake;       // broadcast to all TBP's
     assign data_partial_be              = wdatap_tbp_data_partial_be;
     
     assign wdatap_dataread_valid               = doing_write & rdwr_data_valid & ~rmw_correct;
@@ -612,7 +620,8 @@ module alt_mem_ddrx_wdata_path
                 alt_mem_ddrx_buffer
                 # (
                     .ADDR_WIDTH                                 (CFG_BUFFER_ADDR_WIDTH),
-                    .DATA_WIDTH                                 (CFG_WR_DATA_WIDTH_PER_DQS_GROUP)
+                    .DATA_WIDTH                                 (CFG_WR_DATA_WIDTH_PER_DQS_GROUP),
+                    .REGISTER_OUTPUT                            (CFG_WDATA_REG)
                 )
                 wdatap_buffer_data_inst
                 (
@@ -634,7 +643,8 @@ module alt_mem_ddrx_wdata_path
                 alt_mem_ddrx_buffer
                 # (
                     .ADDR_WIDTH                                 (CFG_BUFFER_ADDR_WIDTH),
-                    .DATA_WIDTH                                 (CFG_WR_DM_WIDTH_PER_DQS_GROUP)
+                    .DATA_WIDTH                                 (CFG_WR_DM_WIDTH_PER_DQS_GROUP),
+                    .REGISTER_OUTPUT                            (CFG_WDATA_REG)
                 )
                 wdatap_buffer_be_inst
                 (
@@ -754,27 +764,63 @@ module alt_mem_ddrx_wdata_path
 
     // assume rmw data for 2 commands doesn't came back to back, causing rmwfifo_output_valid_pulse not to be generated for 2nd commands data
     assign rmwfifo_output_valid_pulse = rmwfifo_output_valid & ~rmwfifo_output_valid_r;
-
+    
+    // New data_rmw_complete logic, TBP/cmd_gen will have to assert data_rmw_fetch before data_rmw_complete de-asserts
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            rmwfifo_output_valid_handshake <= 1'b0;
+        end
+        else
+        begin
+            if (data_rmw_fetch)
+            begin
+                rmwfifo_output_valid_handshake <= 1'b0;
+            end
+            else if (rmwfifo_output_valid_pulse)
+            begin
+                rmwfifo_output_valid_handshake <= 1'b1;
+            end
+        end
+    end
+    
     always @ (posedge ctl_clk or negedge ctl_reset_n) 
     begin
         if (~ctl_reset_n)
         begin
             rmwfifo_output_valid_r  <= 1'b0;
-            rmw_correct_r           <= 1'b0;
-            rmw_partial_r           <= 1'b0;
+            rmw_correct_r1          <= 1'b0;
+            rmw_partial_r1          <= 1'b0;
+            rmw_correct_r2          <= 1'b0;
+            rmw_partial_r2          <= 1'b0;
         end
         else
         begin
             rmwfifo_output_valid_r  <= rmwfifo_output_valid;
-            rmw_correct_r           <= rmw_correct;
-            rmw_partial_r           <= rmw_partial;
+            rmw_correct_r1          <= rmw_correct;
+            rmw_partial_r1          <= rmw_partial;
+            rmw_correct_r2          <= rmw_correct_r1;
+            rmw_partial_r2          <= rmw_partial_r1;
+        end
+    end
+    
+    // RMW FIFO output register
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            rmwfifo_output_data_r <= 0;
+        end
+        else
+        begin
+            rmwfifo_output_data_r <= rmwfifo_output_data;
         end
     end
 
-
     assign rmwfifo_input = {rmwfifo_ecc_code, rmwfifo_ecc_dbe, rmwfifo_data};
     assign {rmwfifo_output_ecc_code, rmwfifo_output_ecc_dbe, rmwfifo_output_data} = rmwfifo_output;
-    assign rmwfifo_output_read = rmw_correct_r | (&wdatap_dataread_datavalid & rmw_partial_r); // wdatap_dataread_datavalid must be all high together in ECC case (afi_wlat same for all DQS group), limitation in 11.0sp1
+    assign rmwfifo_output_read = rmw_correct_r1 | (&wdatap_dataread_datavalid & rmw_partial_r1); // wdatap_dataread_datavalid must be all high together in ECC case (afi_wlat same for all DQS group), limitation in 11.0sp1
     assign err_rmwfifo_overflow = rmwfifo_data_valid & ~rmwfifo_ready;
 
     alt_mem_ddrx_fifo
@@ -816,13 +862,19 @@ module alt_mem_ddrx_wdata_path
                 else
                 begin
                     // data from rmwfifo
-                    rmw_merged_data [ ((wdatap_i + 1) * CFG_MEM_IF_DQ_PER_DQS) - 1 : (wdatap_i * CFG_MEM_IF_DQ_PER_DQS) ] = rmwfifo_output_data [ ((wdatap_i + 1) * CFG_MEM_IF_DQ_PER_DQS) - 1 : (wdatap_i * CFG_MEM_IF_DQ_PER_DQS) ];
+                    if (CFG_WDATA_REG)
+                    begin
+                        rmw_merged_data [ ((wdatap_i + 1) * CFG_MEM_IF_DQ_PER_DQS) - 1 : (wdatap_i * CFG_MEM_IF_DQ_PER_DQS) ] = rmwfifo_output_data_r [ ((wdatap_i + 1) * CFG_MEM_IF_DQ_PER_DQS) - 1 : (wdatap_i * CFG_MEM_IF_DQ_PER_DQS) ];
+                    end
+                    else
+                    begin
+                        rmw_merged_data [ ((wdatap_i + 1) * CFG_MEM_IF_DQ_PER_DQS) - 1 : (wdatap_i * CFG_MEM_IF_DQ_PER_DQS) ] = rmwfifo_output_data   [ ((wdatap_i + 1) * CFG_MEM_IF_DQ_PER_DQS) - 1 : (wdatap_i * CFG_MEM_IF_DQ_PER_DQS) ];
+                    end
                 end
             end
 
         end
     endgenerate
-
 
     //
     // wdata output mux
@@ -837,48 +889,35 @@ module alt_mem_ddrx_wdata_path
     generate
         if (CFG_WDATA_REG)
         begin
-            always @ (posedge ctl_clk or negedge ctl_reset_n)
+            always @ (*)
             begin
-                if (!ctl_reset_n)
+                if (cfg_enable_ecc | cfg_enable_no_dm)
                 begin
-                    wdatap_dataread_dm               <= 0;
-                    wdatap_dataread_data             <= 0;
-                    wdatap_dataread_rmw_partial_data <= 0;
-                    wdatap_dataread_rmw_correct_data <= 0;
-                    wdatap_dataread_rmw_partial      <= 0;
-                    wdatap_dataread_rmw_correct      <= 0;
-                end
-                else
-                begin
-                    if (cfg_enable_ecc | cfg_enable_no_dm)
+                    wdatap_dataread_data             = wdatap_dataread_buffer_data;
+                    wdatap_dataread_rmw_partial_data = rmw_merged_data;
+                    wdatap_dataread_rmw_correct_data = rmwfifo_output_data_r;
+                    wdatap_dataread_rmw_partial      = rmw_partial_r2;
+                    wdatap_dataread_rmw_correct      = rmw_correct_r2;
+                    
+                    if (rmw_correct_r2 | rmw_partial_r2)
                     begin
-                        wdatap_dataread_data             <= wdatap_dataread_buffer_data;
-                        wdatap_dataread_rmw_partial_data <= rmw_merged_data;
-                        wdatap_dataread_rmw_correct_data <= rmwfifo_output_data;
-                        wdatap_dataread_rmw_partial      <= rmw_partial_r;
-                        wdatap_dataread_rmw_correct      <= rmw_correct_r;
-                        
-                        if (rmw_correct_r | rmw_partial_r)
-                        begin
-                            wdatap_dataread_dm <= {(CFG_LOCAL_DM_WIDTH){1'b1}};
-                        end
-                        else
-                        begin
-                            wdatap_dataread_dm <= wdatap_dataread_buffer_dm;
-                        end
+                        wdatap_dataread_dm = {(CFG_LOCAL_DM_WIDTH){1'b1}};
                     end
                     else
                     begin
-                        wdatap_dataread_dm               <= wdatap_dataread_buffer_dm;
-                        wdatap_dataread_data             <= wdatap_dataread_buffer_data;
-                        wdatap_dataread_rmw_partial_data <= 0;
-                        wdatap_dataread_rmw_correct_data <= 0;
-                        wdatap_dataread_rmw_partial      <= 1'b0;
-                        wdatap_dataread_rmw_correct      <= 1'b0;
+                        wdatap_dataread_dm = wdatap_dataread_buffer_dm;
                     end
                 end
+                else
+                begin
+                    wdatap_dataread_dm               = wdatap_dataread_buffer_dm;
+                    wdatap_dataread_data             = wdatap_dataread_buffer_data;
+                    wdatap_dataread_rmw_partial_data = 0;
+                    wdatap_dataread_rmw_correct_data = 0;
+                    wdatap_dataread_rmw_partial      = 1'b0;
+                    wdatap_dataread_rmw_correct      = 1'b0;
+                end
             end
-            
             
             // ecc code overwrite
             // - is asserted when we don't want controller to re-calculate the ecc code
@@ -897,11 +936,11 @@ module alt_mem_ddrx_wdata_path
                     
                     if (cfg_enable_ecc_code_overwrites)
                     begin
-                        if (rmw_correct_r)
+                        if (rmw_correct_r1)
                         begin
                             wdatap_ecc_code_overwrite <= rmwfifo_output_ecc_dbe;
                         end
-                        else if (rmw_partial_r)
+                        else if (rmw_partial_r1)
                         begin
                             if ( (|wdatap_dataread_buffer_dm) | (~rmwfifo_output_valid) )
                             begin
@@ -933,10 +972,10 @@ module alt_mem_ddrx_wdata_path
                     wdatap_dataread_data             = wdatap_dataread_buffer_data;
                     wdatap_dataread_rmw_partial_data = rmw_merged_data;
                     wdatap_dataread_rmw_correct_data = rmwfifo_output_data;
-                    wdatap_dataread_rmw_partial      = rmw_partial_r;
-                    wdatap_dataread_rmw_correct      = rmw_correct_r;
+                    wdatap_dataread_rmw_partial      = rmw_partial_r1;
+                    wdatap_dataread_rmw_correct      = rmw_correct_r1;
                     
-                    if (rmw_correct_r | rmw_partial_r)
+                    if (rmw_correct_r1 | rmw_partial_r1)
                     begin
                         wdatap_dataread_dm = {(CFG_LOCAL_DM_WIDTH){1'b1}};
                     end
@@ -966,11 +1005,11 @@ module alt_mem_ddrx_wdata_path
                 
                 if (cfg_enable_ecc_code_overwrites)
                 begin
-                    if (rmw_correct_r)
+                    if (rmw_correct_r1)
                     begin
                         wdatap_ecc_code_overwrite = rmwfifo_output_ecc_dbe;
                     end
-                    else if (rmw_partial_r)
+                    else if (rmw_partial_r1)
                     begin
                         if ( (|wdatap_dataread_buffer_dm) | (~rmwfifo_output_valid) )
                         begin

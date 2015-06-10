@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -29,6 +29,7 @@ module alt_mem_ddrx_ecc_encoder_decoder_wrapper #
         
         CFG_ECC_ENC_REG                         =   0,
         CFG_ECC_DEC_REG                         =   0,
+		CFG_ECC_DECODER_REG						=	0,
         CFG_ECC_RDATA_REG                       =   0,
         
         CFG_PORT_WIDTH_INTERFACE_WIDTH          =   8,
@@ -450,27 +451,29 @@ output [CFG_LOCAL_ADDR_WIDTH            - 1 : 0] sts_corr_dropped_addr;
         for (i_drate = 0;i_drate < CFG_ECC_MULTIPLES;i_drate = i_drate + 1)
         begin : encoder_input_dm_mux_per_dm_drate
             
-            wire [CFG_LOCAL_DM_PER_WORD_WIDTH-1:0] int_encoder_input_dm = wdatap_dm [(i_drate + 1) * CFG_LOCAL_DM_PER_WORD_WIDTH - 1 : i_drate * CFG_LOCAL_DM_PER_WORD_WIDTH];
-            wire int_encoder_input_dm_all_zeros = ~(|int_encoder_input_dm);
-            
+          wire [CFG_LOCAL_DM_PER_WORD_WIDTH-1:0] int_encoder_input_dm = wdatap_dm [(i_drate + 1) * CFG_LOCAL_DM_PER_WORD_WIDTH - 1 : i_drate * CFG_LOCAL_DM_PER_WORD_WIDTH];
+          wire 																	 int_encoder_input_dm_all_zeros = ~(|int_encoder_input_dm);
+          reg [CFG_LOCAL_DM_PER_WORD_WIDTH + CFG_ECC_DM_PER_WORD_WIDTH - 1 : 0] int_encoder_input_dm_tmp;
+
             always @ (*)
             begin
-                if (cfg_enable_ecc)
+              if (cfg_enable_ecc)
                 begin
-                    if (int_encoder_input_dm_all_zeros)
+                  if (int_encoder_input_dm_all_zeros)
                     begin
-                        int_encoder_output_dm [ ((i_drate + 1) * CFG_ECC_DM_PER_WORD_WIDTH) - 1 : (i_drate * CFG_ECC_DM_PER_WORD_WIDTH)] = {{(CFG_ECC_DM_PER_WORD_WIDTH - CFG_LOCAL_DM_PER_WORD_WIDTH){1'b0}},int_encoder_input_dm};
+                      int_encoder_input_dm_tmp = { {CFG_ECC_DM_PER_WORD_WIDTH{1'b0}}, int_encoder_input_dm };
                     end
-                    else
+                  else
                     begin
-                        int_encoder_output_dm [ ((i_drate + 1) * CFG_ECC_DM_PER_WORD_WIDTH) - 1 : (i_drate * CFG_ECC_DM_PER_WORD_WIDTH)] = {{(CFG_ECC_DM_PER_WORD_WIDTH - CFG_LOCAL_DM_PER_WORD_WIDTH){1'b1}},int_encoder_input_dm};
+                      int_encoder_input_dm_tmp = { {CFG_ECC_DM_PER_WORD_WIDTH{1'b1}}, int_encoder_input_dm };
                     end
                 end
-                else
+              else
                 begin
-                    int_encoder_output_dm [ ((i_drate + 1) * CFG_ECC_DM_PER_WORD_WIDTH) - 1 : (i_drate * CFG_ECC_DM_PER_WORD_WIDTH)] = {{(CFG_ECC_DM_PER_WORD_WIDTH - CFG_LOCAL_DM_PER_WORD_WIDTH){1'b0}},int_encoder_input_dm};
+                  int_encoder_input_dm_tmp = { {CFG_ECC_DM_PER_WORD_WIDTH{1'b0}}, int_encoder_input_dm };
                 end
-            end
+              int_encoder_output_dm [ ((i_drate + 1) * CFG_ECC_DM_PER_WORD_WIDTH) - 1 : (i_drate * CFG_ECC_DM_PER_WORD_WIDTH)] = int_encoder_input_dm_tmp[CFG_ECC_DM_PER_WORD_WIDTH-1:0];
+            end // always @ begin
         end
     endgenerate
     
@@ -638,14 +641,20 @@ output [CFG_LOCAL_ADDR_WIDTH            - 1 : 0] sts_corr_dropped_addr;
         genvar m_drate;
         for (m_drate = 0;m_drate < CFG_ECC_MULTIPLES;m_drate = m_drate + 1)
         begin : encoder_inst_per_drate
-            wire [CFG_ENCODER_DATA_WIDTH - 1 : 0] input_data               = {{CFG_ENCODER_DATA_WIDTH - CFG_LOCAL_DATA_PER_WORD_WIDTH{1'b0}}, int_encoder_input_data             [(m_drate + 1) * CFG_LOCAL_DATA_PER_WORD_WIDTH - 1 : m_drate * CFG_LOCAL_DATA_PER_WORD_WIDTH]};
-            wire [CFG_ENCODER_DATA_WIDTH - 1 : 0] input_rmw_partial_data   = {{CFG_ENCODER_DATA_WIDTH - CFG_LOCAL_DATA_PER_WORD_WIDTH{1'b0}}, int_encoder_input_rmw_partial_data [(m_drate + 1) * CFG_LOCAL_DATA_PER_WORD_WIDTH - 1 : m_drate * CFG_LOCAL_DATA_PER_WORD_WIDTH]};
-            wire [CFG_ENCODER_DATA_WIDTH - 1 : 0] input_rmw_correct_data   = {{CFG_ENCODER_DATA_WIDTH - CFG_LOCAL_DATA_PER_WORD_WIDTH{1'b0}}, int_encoder_input_rmw_correct_data [(m_drate + 1) * CFG_LOCAL_DATA_PER_WORD_WIDTH - 1 : m_drate * CFG_LOCAL_DATA_PER_WORD_WIDTH]};
-            wire [CFG_ECC_CODE_WIDTH     - 1 : 0] input_ecc_code           = wdatap_ecc_code [(m_drate + 1) * CFG_ECC_CODE_WIDTH - 1 : m_drate * CFG_ECC_CODE_WIDTH];
-            wire                                  input_ecc_code_overwrite = wdatap_ecc_code_overwrite [m_drate];
-            wire [CFG_ENCODER_DATA_WIDTH - 1 : 0] output_data;
-            wire [CFG_ENCODER_DATA_WIDTH - 1 : 0] output_rmw_partial_data;
-            wire [CFG_ENCODER_DATA_WIDTH - 1 : 0] output_rmw_correct_data;
+          wire [CFG_ENCODER_DATA_WIDTH + CFG_LOCAL_DATA_PER_WORD_WIDTH - 1 : 0] input_data_tmp               = {{CFG_ENCODER_DATA_WIDTH{1'b0}}, int_encoder_input_data             [(m_drate + 1) * CFG_LOCAL_DATA_PER_WORD_WIDTH - 1 : m_drate * CFG_LOCAL_DATA_PER_WORD_WIDTH]};
+          wire [CFG_ENCODER_DATA_WIDTH - 1 : 0]  input_data               = input_data_tmp[CFG_ENCODER_DATA_WIDTH - 1 : 0];
+
+          wire [CFG_ENCODER_DATA_WIDTH + CFG_LOCAL_DATA_PER_WORD_WIDTH - 1 : 0]  input_rmw_partial_data_tmp   = {{CFG_ENCODER_DATA_WIDTH{1'b0}}, int_encoder_input_rmw_partial_data [(m_drate + 1) * CFG_LOCAL_DATA_PER_WORD_WIDTH - 1 : m_drate * CFG_LOCAL_DATA_PER_WORD_WIDTH]};
+          wire [CFG_ENCODER_DATA_WIDTH - 1 : 0]  input_rmw_partial_data   = input_rmw_partial_data_tmp[ CFG_ENCODER_DATA_WIDTH - 1 : 0 ];
+
+          wire [CFG_ENCODER_DATA_WIDTH + CFG_LOCAL_DATA_PER_WORD_WIDTH - 1 : 0] 	input_rmw_correct_data_tmp   = {{CFG_ENCODER_DATA_WIDTH{1'b0}}, int_encoder_input_rmw_correct_data [(m_drate + 1) * CFG_LOCAL_DATA_PER_WORD_WIDTH - 1 : m_drate * CFG_LOCAL_DATA_PER_WORD_WIDTH]};
+          wire [CFG_ENCODER_DATA_WIDTH - 1 : 0]  input_rmw_correct_data   = input_rmw_correct_data_tmp[ CFG_ENCODER_DATA_WIDTH - 1 : 0 ];
+
+          wire [CFG_ECC_CODE_WIDTH     - 1 : 0] 	input_ecc_code           = wdatap_ecc_code [(m_drate + 1) * CFG_ECC_CODE_WIDTH - 1 : m_drate * CFG_ECC_CODE_WIDTH];
+          wire 																		input_ecc_code_overwrite = wdatap_ecc_code_overwrite [m_drate];
+          wire [CFG_ENCODER_DATA_WIDTH - 1 : 0] 	output_data;
+          wire [CFG_ENCODER_DATA_WIDTH - 1 : 0] 	output_rmw_partial_data;
+          wire [CFG_ENCODER_DATA_WIDTH - 1 : 0] 	output_rmw_correct_data;
             
             always @ (*)
             begin
@@ -743,7 +752,8 @@ output [CFG_LOCAL_ADDR_WIDTH            - 1 : 0] sts_corr_dropped_addr;
             wire err_fatal;
             wire err_sbe;
             
-            wire [CFG_DECODER_DATA_WIDTH - 1 : 0] input_data  = {{CFG_DECODER_DATA_WIDTH - CFG_ECC_DATA_PER_WORD_WIDTH{1'b0}}, int_decoder_input_data [(n_drate + 1) * CFG_ECC_DATA_PER_WORD_WIDTH - 1 : n_drate * CFG_ECC_DATA_PER_WORD_WIDTH]};
+            wire [CFG_DECODER_DATA_WIDTH + CFG_ECC_DATA_PER_WORD_WIDTH - 1 : 0] input_data_tmp  = {{CFG_ECC_DATA_PER_WORD_WIDTH{1'b0}}, int_decoder_input_data [(n_drate + 1) * CFG_ECC_DATA_PER_WORD_WIDTH - 1 : n_drate * CFG_ECC_DATA_PER_WORD_WIDTH]};
+            wire [CFG_DECODER_DATA_WIDTH - 1 : 0] input_data  = input_data_tmp[ CFG_DECODER_DATA_WIDTH - 1 : 0 ];
             wire                                  input_data_valid = int_decoder_input_data_valid;
             wire [CFG_DECODER_DATA_WIDTH - 1 : 0] output_data;
             wire                                  output_data_valid;
@@ -758,6 +768,7 @@ output [CFG_LOCAL_ADDR_WIDTH            - 1 : 0] sts_corr_dropped_addr;
                 .CFG_DATA_WIDTH                (CFG_DECODER_DATA_WIDTH        ),
                 .CFG_ECC_CODE_WIDTH            (CFG_ECC_CODE_WIDTH            ),
                 .CFG_ECC_DEC_REG               (CFG_ECC_DEC_REG               ),
+				.CFG_ECC_DECODER_REG           (CFG_ECC_DECODER_REG           ),
                 .CFG_ECC_RDATA_REG             (CFG_ECC_RDATA_REG             ),
                 .CFG_MMR_DRAM_DATA_WIDTH       (CFG_MMR_DRAM_DATA_WIDTH       ),
                 .CFG_MMR_LOCAL_DATA_WIDTH      (CFG_MMR_LOCAL_DATA_WIDTH      ),
@@ -782,6 +793,7 @@ output [CFG_LOCAL_ADDR_WIDTH            - 1 : 0] sts_corr_dropped_addr;
             );
             
             // Error detection
+			/*
             always @ (*)
             begin
                 if (err_detected || err_sbe)
@@ -808,6 +820,12 @@ output [CFG_LOCAL_ADDR_WIDTH            - 1 : 0] sts_corr_dropped_addr;
                     int_dbe [n_drate] = 1'b0;
                 end
             end
+			*/
+			always @ (*)
+			begin
+				int_sbe [n_drate] = err_corrected | err_sbe;
+				int_dbe [n_drate] = err_fatal;				
+			end
         end
     endgenerate
     

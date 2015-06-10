@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -27,6 +27,8 @@ module rw_manager_core (
 	afi_dm,
 	afi_rdata,
 	afi_rdata_valid,
+	afi_rrank,
+	afi_wrank,
 
 	afi_odt,
 
@@ -50,6 +52,8 @@ module rw_manager_core (
 	parameter MEM_DQ_WIDTH				= "";
 	parameter MEM_DM_WIDTH				= "";
 	parameter MEM_ODT_WIDTH 			= "";
+	parameter MEM_NUMBER_OF_RANKS		= "";
+	
 	parameter AC_ODT_BIT				= "";
 	parameter AC_BUS_WIDTH				= "";
 	parameter AC_MASKED_BUS_WIDTH			= "";
@@ -70,17 +74,18 @@ module rw_manager_core (
 
 	parameter AC_ROM_INIT_FILE_NAME = "AC_ROM.hex";
 	parameter INST_ROM_INIT_FILE_NAME = "inst_ROM.hex";
+	
+	parameter USE_ALL_AFI_PHASES_FOR_COMMAND_ISSUE = 0;
 
+	localparam AC_ROM_DATA_WIDTH = AC_BUS_WIDTH + ((RATE == "Quarter") ? 2 : AFI_RATIO);
+	localparam AC_ROM_FIXED_DATA_WIDTH = 32;
 	
-	
-	localparam AC_ROM_DATA_WIDTH = AC_BUS_WIDTH + (RATE == "Quarter" ? 2 : AFI_RATIO);
 	localparam AC_ROM_ADDRESS_WIDTH = 6;
 	localparam INST_ROM_DATA_WIDTH = 20;
 	
         localparam INST_ROM_ADDRESS_WIDTH = 7;
 	localparam JUMP_COUNTER_WIDTH = 8;
 
-	
 	localparam GROUP_COUNTER_WIDTH = 8;
 	localparam NUMBER_OF_READ_DQ_PER_DQS = MEM_DQ_WIDTH / MEM_READ_DQS_WIDTH;
 	localparam NUMBER_OF_WRITE_DQ_PER_DQS = MEM_DQ_WIDTH / MEM_WRITE_DQS_WIDTH;
@@ -110,6 +115,8 @@ module rw_manager_core (
 	output [MEM_DQ_WIDTH * 2 * AFI_RATIO - 1:0] afi_wdata;
 	output [MEM_DM_WIDTH * 2 * AFI_RATIO - 1:0] afi_dm;
 	output [MEM_ODT_WIDTH * AFI_RATIO - 1:0] afi_odt;
+	output [MEM_WRITE_DQS_WIDTH * MEM_NUMBER_OF_RANKS * AFI_RATIO - 1:0] afi_wrank;
+	output [MEM_READ_DQS_WIDTH * MEM_NUMBER_OF_RANKS * AFI_RATIO - 1:0] afi_rrank;
 	input [MEM_DQ_WIDTH * 2 * AFI_RATIO - 1:0] afi_rdata;
 	input afi_rdata_valid;
 
@@ -129,6 +136,7 @@ module rw_manager_core (
 
 	reg di_buffer_clear;
 
+	wire [AC_ROM_FIXED_DATA_WIDTH - 1:0] ac_bus_from_rom;
 	wire [AC_ROM_DATA_WIDTH - 1:0] ac_bus_internal;
 	wire [GROUP_BUS_SIZE - 1 : 0] DI_mux;
 	wire [INST_ROM_DATA_WIDTH - 1:0] opcode;
@@ -172,12 +180,15 @@ module rw_manager_core (
 
 	wire [(INST_ROM_DATA_WIDTH-1):0] inst_ROM_wrdata;
 	wire [(INST_ROM_ADDRESS_WIDTH-1):0] inst_ROM_wraddress;
+	wire [AC_ROM_FIXED_DATA_WIDTH-1:0] ac_ROM_wrdata_to_rom;
 	wire [(AC_ROM_DATA_WIDTH-1):0] ac_ROM_wrdata;
 	wire [(AC_ROM_ADDRESS_WIDTH-1):0] ac_ROM_wraddress;
 
 	reg [31:0] di_status_word;
 
-	
+	wire csr_dout = 1'b0;
+
+
 	reg [AVL_DATA_WIDTH - 1:0] avl_writedata_afi;
 	reg [AVL_ADDRESS_WIDTH - 1:0] avl_address_afi;
 
@@ -205,7 +216,6 @@ module rw_manager_core (
 	end
 
 	
-	
 	assign inst_ROM_wrdata = avl_writedata_afi [(INST_ROM_DATA_WIDTH-1):0];
 
 	assign inst_ROM_wraddress = avl_address_afi[(INST_ROM_ADDRESS_WIDTH-1):0];
@@ -230,17 +240,13 @@ module rw_manager_core (
 		end
 	end
 
-	
 	assign read_datapath_input = (loopback_mode) ? do_data: DI_mux_r;
 	assign read_datapath_valid = (loopback_mode) ? r_wn_r : afi_rdata_valid_r;
-	
 	
 	assign ac_bus = ac_bus_internal[AC_BUS_WIDTH - 1:0];
 
 
-	
 	wire [NUMBER_OF_READ_DQ_PER_DQS - 1:0] processed_error_word;
-	
 	
 	genvar rank;
 	generate
@@ -250,10 +256,6 @@ module rw_manager_core (
 		end
 	endgenerate
 
-	
-	
-	
-	
 	always @ (*)
 	begin
 		di_status_word <= 0;
@@ -290,13 +292,12 @@ module rw_manager_core (
 
 	assign cmd_done = (state == RW_MGR_STATE_DONE);
 
-
+	reg [MEM_NUMBER_OF_RANKS - 1:0] active_rank;
 	reg [CS_MASK_WIDTH - 1:0] cs_mask;
 	reg [CS_MASK_WIDTH - 1:0] odt_0_mask;
 	reg [CS_MASK_WIDTH - 1:0] odt_1_mask;
 	reg cmd_reset_r;
 
-	
 	wire [3:0] cmd_opcode = avl_address_afi[11:8];
 	wire cmd_run_single_group = (cmd_opcode == 4'b0000) & cmd_write_afi; 
 	wire cmd_run_all_groups = (cmd_opcode == 4'b0001) & cmd_write_afi; 
@@ -308,14 +309,16 @@ module rw_manager_core (
 	wire inst_ROM_wren = (cmd_opcode == 4'b0110) & cmd_write_afi; 
 	wire ac_ROM_wren = (cmd_opcode == 4'b0111) & cmd_write_afi; 
 	wire cmd_reset = (cmd_opcode == 4'b1000) & cmd_write_afi; 
+	wire cmd_set_active_rank = (cmd_opcode == 4'b1001) & cmd_write_afi; 
 	wire cmd_load = (cmd_opcode != 4'b0000 && cmd_opcode != 4'b0001) & cmd_write_afi;
 	wire rw_soft_reset_n = afi_reset_n & ~cmd_reset_r /* synthesis keep = 1 */;
 
 	wire [GROUP_COUNTER_WIDTH - 1:0] cmd_run_group = avl_address_afi[GROUP_COUNTER_WIDTH - 1:0];
-	wire [INST_ROM_ADDRESS_WIDTH - 1:0] cmd_run_address = avl_writedata_afi[7:0];
+	wire [INST_ROM_ADDRESS_WIDTH - 1:0] cmd_run_address = avl_writedata_afi[INST_ROM_ADDRESS_WIDTH - 1:0];
 	wire [1:0] cmd_reg_select = avl_address_afi[1:0];
 	wire cmd_run = cmd_run_single_group | cmd_run_all_groups;
 	wire [7:0] cs_mask_setting = avl_writedata_afi[7:0];
+	wire [MEM_NUMBER_OF_RANKS-1:0] active_rank_setting = avl_writedata_afi[MEM_NUMBER_OF_RANKS-1:0];
 	wire [7:0] odt_0_mask_setting = avl_writedata_afi[15:8];
 	wire [7:0] odt_1_mask_setting = avl_writedata_afi[23:16];
 
@@ -324,8 +327,10 @@ module rw_manager_core (
 	assign afi_odt = odt_select ?
 		{AFI_RATIO{odt_1_mask[MEM_ODT_WIDTH - 1:0]}} : 
 		{AFI_RATIO{odt_0_mask[MEM_ODT_WIDTH - 1:0]}};
+		
+	assign afi_wrank = {AFI_RATIO{ {MEM_WRITE_DQS_WIDTH{active_rank}} }};
+	assign afi_rrank = {AFI_RATIO{ {MEM_READ_DQS_WIDTH{active_rank}} }};
 
-	
 	genvar rank2, rate;
 	generate
 		for(rate = 0; rate < AFI_RATIO; rate = rate + 1)
@@ -333,10 +338,17 @@ module rw_manager_core (
 			for(rank2 = 0; rank2 < MASK_WIDTH; rank2 = rank2 + 1)
 			begin : rank_counter
 				if (RATE == "Quarter") begin
+					if (USE_ALL_AFI_PHASES_FOR_COMMAND_ISSUE == 0) begin
 						if (rate % 2 == 0)
 							assign ac_masked_bus[rate * MASK_WIDTH + rank2] = 1'b1;
 						else
 							assign ac_masked_bus[rate * MASK_WIDTH + rank2] = ac_bus_internal[AC_BUS_WIDTH + rate/2] | cs_mask[rank2];
+					end else begin
+						if (rate == 0)
+							assign ac_masked_bus[rate * MASK_WIDTH + rank2] = ac_bus_internal[AC_BUS_WIDTH + 0] | cs_mask[rank2];
+						else
+							assign ac_masked_bus[rate * MASK_WIDTH + rank2] = ac_bus_internal[AC_BUS_WIDTH + 1] | cs_mask[rank2];
+					end
 				end
 				else begin
 						assign ac_masked_bus[rate * MASK_WIDTH + rank2] = ac_bus_internal[AC_BUS_WIDTH + rate] | cs_mask[rank2];
@@ -390,6 +402,9 @@ module rw_manager_core (
 			
 		end
 	endgenerate
+
+	assign ac_bus_internal = ac_bus_from_rom[AC_ROM_DATA_WIDTH-1:0];
+	assign ac_ROM_wrdata_to_rom = ac_ROM_wrdata;
 	
 	generate
 		begin
@@ -398,32 +413,34 @@ module rw_manager_core (
 					.ROM_INIT_FILE_NAME(AC_ROM_INIT_FILE_NAME)
 				)
 				ac_ROM_i (
-					.data(ac_ROM_wrdata),
+					.data(ac_ROM_wrdata_to_rom),
 					.wraddress(ac_ROM_wraddress),
 					.wren(ac_ROM_wren),
 					.rdaddress(ac_address),
 					.clock(afi_clk),
-					.q(ac_bus_internal)
+					.q(ac_bus_from_rom)
 				);
 			else
 				rw_manager_ac_ROM_no_ifdef_params #(
 					.ROM_INIT_FILE_NAME(AC_ROM_INIT_FILE_NAME)
 				)
 				ac_ROM_i (
-					.data(ac_ROM_wrdata),
+					.data(ac_ROM_wrdata_to_rom),
 					.wraddress(ac_ROM_wraddress),
 					.wren(ac_ROM_wren),
 					.rdaddress(ac_address),
 					.clock(afi_clk),
-					.q(ac_bus_internal)
+					.q(ac_bus_from_rom)
 				);
 		end
 	endgenerate
 
-
+	function [DI_ADDR_WIDTH-1:0] truncate_di_buffer_bits(input[31:0] di_buffer_input);
+		return di_buffer_input[DI_ADDR_WIDTH-1:0];
+	endfunction
 
 	wire [DI_ADDR_WIDTH-1:0] di_buffer_read_address;
-	assign di_buffer_read_address = avl_address_afi - 4;
+	assign di_buffer_read_address = truncate_di_buffer_bits(avl_address_afi - 4);
 
 	rw_manager_di_buffer_wrap di_buffer_wrap_i(
 		.clock(afi_clk),
@@ -504,11 +521,7 @@ module rw_manager_core (
 	assign jump_address = jump_address_jumplogic[INST_ROM_ADDRESS_WIDTH - 1:0];
 		
 
-	
-	
-	
 
-	
 	genvar w;
 	generate
 		for(w = 0; w < 2 * AFI_RATIO; w = w + 1)
@@ -524,10 +537,9 @@ module rw_manager_core (
 		end
 	endgenerate
 
-        assign next_PC = (state == RW_MGR_STATE_IDLE && cmd_run) ? cmd_run_address :
-                ((jump_taken) ? jump_address : PC + (return_code ? 1'b0 : 1'b1));
+	assign next_PC = (state == RW_MGR_STATE_IDLE && cmd_run) ? cmd_run_address :
+	                      ((jump_taken) ? jump_address : (return_code ? PC : (PC + 1'b1)));
 
-	
 	always @(posedge afi_clk or negedge afi_reset_n) begin
 		if(~afi_reset_n) begin
 			state <= RW_MGR_STATE_IDLE;
@@ -535,9 +547,10 @@ module rw_manager_core (
 			loopback_mode <= 1'b0;
 			di_buffer_write_address <= 0;
 			PC <= {INST_ROM_ADDRESS_WIDTH{1'b0}};
-			cs_mask <= {CS_MASK_WIDTH{1'b0}};
+			cs_mask <= {CS_MASK_WIDTH{1'b0}};			
 			odt_0_mask <= {CS_MASK_WIDTH{1'b0}};
 			odt_1_mask <= {CS_MASK_WIDTH{1'b0}};
+			active_rank <= {MEM_NUMBER_OF_RANKS{1'b0}};
 			cmd_reset_r <= 1'b0;
 			di_buffer_clear <= 1'b1;
 		end
@@ -546,7 +559,7 @@ module rw_manager_core (
 				PC <= {INST_ROM_ADDRESS_WIDTH{1'b0}};
 			end
 			else begin
-			PC <= next_PC;
+				PC <= next_PC;
 			end
 
 			cmd_reset_r <= cmd_reset;
@@ -565,6 +578,10 @@ module rw_manager_core (
 				cs_mask <= cs_mask_setting;
 				odt_0_mask <= odt_0_mask_setting[CS_MASK_WIDTH - 1:0];
 				odt_1_mask <= odt_1_mask_setting[CS_MASK_WIDTH - 1:0];
+			end
+			
+			if(cmd_set_active_rank) begin
+				active_rank <= active_rank_setting;
 			end
 
 			case(state)
@@ -601,7 +618,9 @@ module rw_manager_core (
 		end
 	end
 
+// synthesis translate_off
     assert property (@(posedge (state == RW_MGR_STATE_DONE)) 1);
+// synthesis translate_on
 
 endmodule
 

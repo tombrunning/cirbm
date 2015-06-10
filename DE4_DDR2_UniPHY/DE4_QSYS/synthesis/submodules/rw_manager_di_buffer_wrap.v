@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -39,13 +39,15 @@ module rw_manager_di_buffer_wrap(
 
 	wire [DATA_WIDTH-1:0] q_wire;
 	wire wren_gated;
-	
+
+	wire [ADDR_WIDTH + ADDR_WIDTH - WRITE_TO_READ_RATIO_2_EXPONENT - 1 : 0] rdaddress_tmp = {{ADDR_WIDTH{1'b0}}, rdaddress[ADDR_WIDTH-1 : WRITE_TO_READ_RATIO_2_EXPONENT]};
+
 	assign wren_gated = (wraddress >= NUM_WORDS) ? 1'b0 : wren;
-	
+
 	rw_manager_di_buffer rw_manager_di_buffer_i(
 		.clock(clock),
 		.data(data),
-		.rdaddress(rdaddress[ADDR_WIDTH-1 : WRITE_TO_READ_RATIO_2_EXPONENT]),
+		.rdaddress(rdaddress_tmp[ADDR_WIDTH-1 : 0]),
 		.wraddress(wraddress),
 		.wren(wren_gated),
 		.q(q_wire),
@@ -56,8 +58,11 @@ module rw_manager_di_buffer_wrap(
 	
 	generate
 		if(WRITE_TO_READ_RATIO_2_EXPONENT > 0) begin
+			
+			wire [WRITE_TO_READ_RATIO * READ_DATA_SIZE + DATA_WIDTH - 1 : 0] datain_tmp = {{(WRITE_TO_READ_RATIO * READ_DATA_SIZE){1'b0}}, q_wire};
+
 			rw_manager_datamux rw_manager_datamux_i(
-				.datain(q_wire),
+				.datain(datain_tmp[WRITE_TO_READ_RATIO*READ_DATA_SIZE-1:0]),
 				.sel(rdaddress[WRITE_TO_READ_RATIO_2_EXPONENT - 1 : 0]),
 				.dataout(q)
 			);

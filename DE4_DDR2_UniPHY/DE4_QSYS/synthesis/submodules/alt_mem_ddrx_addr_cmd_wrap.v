@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -15,6 +15,8 @@
 //altera message_off 10036
 
 `include "alt_mem_ddrx_define.iv"
+
+`timescale 1 ps / 1 ps
 
 module alt_mem_ddrx_addr_cmd_wrap
 # ( parameter
@@ -38,7 +40,7 @@ module alt_mem_ddrx_addr_cmd_wrap
     CFG_PORT_WIDTH_ADD_LAT          =   5,
     CFG_PORT_WIDTH_WRITE_ODT_CHIP   =   4,
     CFG_PORT_WIDTH_READ_ODT_CHIP    =   4,
-    CFG_PORT_WIDTH_OUTPUT_REGD      =   1
+    CFG_PORT_WIDTH_OUTPUT_REGD      =   2
 )
 (
     
@@ -193,16 +195,27 @@ module alt_mem_ddrx_addr_cmd_wrap
     reg     [(CFG_DWIDTH_RATIO/2) - 1:0]                               afi_rmw_correct                                       ;
     reg     [(CFG_DWIDTH_RATIO/2) - 1:0]                               afi_rmw_partial                                       ;
     
-    wire    [CFG_MEM_IF_CKE_WIDTH- 1:0]                                int_afi_cke                 [(CFG_DWIDTH_RATIO/2)-1:0];
+    wire    [CFG_MEM_IF_CKE_WIDTH - 1:0]                               int_afi_cke                 [(CFG_DWIDTH_RATIO/2)-1:0];
     wire    [CFG_MEM_IF_CHIP- 1:0]                                     int_afi_cs_n                [(CFG_DWIDTH_RATIO/2)-1:0];
     wire                                                               int_afi_ras_n               [(CFG_DWIDTH_RATIO/2)-1:0];
     wire                                                               int_afi_cas_n               [(CFG_DWIDTH_RATIO/2)-1:0];
     wire                                                               int_afi_we_n                [(CFG_DWIDTH_RATIO/2)-1:0];
     wire    [CFG_MEM_IF_BA_WIDTH - 1:0]                                int_afi_ba                  [(CFG_DWIDTH_RATIO/2)-1:0];
-    wire    [CFG_MEM_IF_ADDR_WIDTH:0]                                  int_afi_addr                [(CFG_DWIDTH_RATIO/2)-1:0];
+    wire    [CFG_MEM_IF_ADDR_WIDTH-1:0]                                int_afi_addr                [(CFG_DWIDTH_RATIO/2)-1:0];
     wire                                                               int_afi_rst_n               [(CFG_DWIDTH_RATIO/2)-1:0];
     wire                                                               int_afi_rmw_correct         [(CFG_DWIDTH_RATIO/2)-1:0];
     wire                                                               int_afi_rmw_partial         [(CFG_DWIDTH_RATIO/2)-1:0];
+    
+    reg     [CFG_MEM_IF_CKE_WIDTH - 1:0]                               int_afi_cke_r               [(CFG_DWIDTH_RATIO/2)-1:0];
+    reg     [CFG_MEM_IF_CHIP- 1:0]                                     int_afi_cs_n_r              [(CFG_DWIDTH_RATIO/2)-1:0];
+    reg                                                                int_afi_ras_n_r             [(CFG_DWIDTH_RATIO/2)-1:0];
+    reg                                                                int_afi_cas_n_r             [(CFG_DWIDTH_RATIO/2)-1:0];
+    reg                                                                int_afi_we_n_r              [(CFG_DWIDTH_RATIO/2)-1:0];
+    reg     [CFG_MEM_IF_BA_WIDTH - 1:0]                                int_afi_ba_r                [(CFG_DWIDTH_RATIO/2)-1:0];
+    reg     [CFG_MEM_IF_ADDR_WIDTH-1:0]                                int_afi_addr_r              [(CFG_DWIDTH_RATIO/2)-1:0];
+    reg                                                                int_afi_rst_n_r             [(CFG_DWIDTH_RATIO/2)-1:0];
+    reg                                                                int_afi_rmw_correct_r       [(CFG_DWIDTH_RATIO/2)-1:0];
+    reg                                                                int_afi_rmw_partial_r       [(CFG_DWIDTH_RATIO/2)-1:0];
     
     reg     [(CFG_MEM_IF_CKE_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]   phase_afi_cke               [CFG_AFI_INTF_PHASE_NUM-1:0];
     reg     [(CFG_MEM_IF_CHIP * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]        phase_afi_cs_n              [CFG_AFI_INTF_PHASE_NUM-1:0];
@@ -215,23 +228,23 @@ module alt_mem_ddrx_addr_cmd_wrap
     reg     [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            phase_afi_rmw_correct       [CFG_AFI_INTF_PHASE_NUM-1:0];
     reg     [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            phase_afi_rmw_partial       [CFG_AFI_INTF_PHASE_NUM-1:0];
     
-    wire    [(CFG_MEM_IF_CKE_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]   int_ddrx_afi_cke               [CFG_AFI_INTF_PHASE_NUM-1:0];
-    wire    [(CFG_MEM_IF_CHIP * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]        int_ddrx_afi_cs_n              [CFG_AFI_INTF_PHASE_NUM-1:0];
-    wire    [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_ras_n             [CFG_AFI_INTF_PHASE_NUM-1:0];
-    wire    [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_cas_n             [CFG_AFI_INTF_PHASE_NUM-1:0];
-    wire    [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_we_n              [CFG_AFI_INTF_PHASE_NUM-1:0];
-    wire    [(CFG_MEM_IF_BA_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]    int_ddrx_afi_ba                [CFG_AFI_INTF_PHASE_NUM-1:0];
-    wire    [(CFG_MEM_IF_ADDR_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]  int_ddrx_afi_addr              [CFG_AFI_INTF_PHASE_NUM-1:0];
-    wire    [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_rst_n             [CFG_AFI_INTF_PHASE_NUM-1:0];
-    reg     [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_rmw_correct       [CFG_AFI_INTF_PHASE_NUM-1:0];
-    reg     [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_rmw_partial       [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_MEM_IF_CKE_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]   int_ddrx_afi_cke            [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_MEM_IF_CHIP * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]        int_ddrx_afi_cs_n           [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_ras_n          [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_cas_n          [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_we_n           [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_MEM_IF_BA_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]    int_ddrx_afi_ba             [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_MEM_IF_ADDR_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]  int_ddrx_afi_addr           [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_rst_n          [CFG_AFI_INTF_PHASE_NUM-1:0];
+    reg     [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_rmw_correct    [CFG_AFI_INTF_PHASE_NUM-1:0];
+    reg     [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_ddrx_afi_rmw_partial    [CFG_AFI_INTF_PHASE_NUM-1:0];
     
-    wire    [(CFG_MEM_IF_CKE_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]   int_lpddr2_afi_cke               [CFG_AFI_INTF_PHASE_NUM-1:0];
-    wire    [(CFG_MEM_IF_CHIP * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]        int_lpddr2_afi_cs_n              [CFG_AFI_INTF_PHASE_NUM-1:0];
-    wire    [(CFG_MEM_IF_ADDR_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]  int_lpddr2_afi_addr              [CFG_AFI_INTF_PHASE_NUM-1:0];
-    wire    [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_lpddr2_afi_rst_n             [CFG_AFI_INTF_PHASE_NUM-1:0];
-    reg     [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_lpddr2_afi_rmw_correct       [CFG_AFI_INTF_PHASE_NUM-1:0];
-    reg     [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_lpddr2_afi_rmw_partial       [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_MEM_IF_CKE_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]   int_lpddr2_afi_cke          [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_MEM_IF_CHIP * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]        int_lpddr2_afi_cs_n         [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_MEM_IF_ADDR_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]  int_lpddr2_afi_addr         [CFG_AFI_INTF_PHASE_NUM-1:0];
+    wire    [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_lpddr2_afi_rst_n        [CFG_AFI_INTF_PHASE_NUM-1:0];
+    reg     [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_lpddr2_afi_rmw_correct  [CFG_AFI_INTF_PHASE_NUM-1:0];
+    reg     [(CFG_FR_DWIDTH_RATIO/2) - 1:0]                            int_lpddr2_afi_rmw_partial  [CFG_AFI_INTF_PHASE_NUM-1:0];
     
     wire    [(CFG_MEM_IF_CKE_WIDTH * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]   mux_afi_cke                 [CFG_AFI_INTF_PHASE_NUM-1:0];
     wire    [(CFG_MEM_IF_CHIP * (CFG_FR_DWIDTH_RATIO/2)) - 1:0]        mux_afi_cs_n                [CFG_AFI_INTF_PHASE_NUM-1:0];
@@ -319,6 +332,21 @@ module alt_mem_ddrx_addr_cmd_wrap
         begin : gen_afi_signals
             always @ (*) 
             begin
+                if (cfg_output_regd_for_afi_output == 2)
+                begin
+                    afi_cke         [((afi_n+1) * CFG_MEM_IF_CKE_WIDTH) -1 : (afi_n * CFG_MEM_IF_CKE_WIDTH)]  = int_afi_cke_r           [afi_n] ;
+                    afi_cs_n        [((afi_n+1) * CFG_MEM_IF_CHIP)      -1 : (afi_n * CFG_MEM_IF_CHIP)]       = int_afi_cs_n_r          [afi_n] ;
+                    afi_ras_n       [afi_n]                                                                   = int_afi_ras_n_r         [afi_n] ;
+                    afi_cas_n       [afi_n]                                                                   = int_afi_cas_n_r         [afi_n] ;
+                    afi_we_n        [afi_n]                                                                   = int_afi_we_n_r          [afi_n] ;
+                    afi_ba          [((afi_n+1) * CFG_MEM_IF_BA_WIDTH)  -1 : (afi_n * CFG_MEM_IF_BA_WIDTH)]   = int_afi_ba_r            [afi_n] ;
+                    afi_addr        [((afi_n+1) * CFG_MEM_IF_ADDR_WIDTH)-1 : (afi_n * CFG_MEM_IF_ADDR_WIDTH)] = int_afi_addr_r          [afi_n] ;
+                    afi_rst_n       [afi_n]                                                                   = int_afi_rst_n_r         [afi_n] ;
+                    afi_rmw_correct [afi_n]                                                                   = int_afi_rmw_correct_r   [afi_n] ;
+                    afi_rmw_partial [afi_n]                                                                   = int_afi_rmw_partial_r   [afi_n] ;
+                end
+                else
+                begin
                     afi_cke         [((afi_n+1) * CFG_MEM_IF_CKE_WIDTH) -1 : (afi_n * CFG_MEM_IF_CKE_WIDTH)]  = int_afi_cke           [afi_n] ;
                     afi_cs_n        [((afi_n+1) * CFG_MEM_IF_CHIP)      -1 : (afi_n * CFG_MEM_IF_CHIP)]       = int_afi_cs_n          [afi_n] ;
                     afi_ras_n       [afi_n]                                                                   = int_afi_ras_n         [afi_n] ;
@@ -327,9 +355,9 @@ module alt_mem_ddrx_addr_cmd_wrap
                     afi_ba          [((afi_n+1) * CFG_MEM_IF_BA_WIDTH)  -1 : (afi_n * CFG_MEM_IF_BA_WIDTH)]   = int_afi_ba            [afi_n] ;
                     afi_addr        [((afi_n+1) * CFG_MEM_IF_ADDR_WIDTH)-1 : (afi_n * CFG_MEM_IF_ADDR_WIDTH)] = int_afi_addr          [afi_n] ;
                     afi_rst_n       [afi_n]                                                                   = int_afi_rst_n         [afi_n] ;
-                    //afi_odt         [((afi_n+1) * CFG_MEM_IF_ODT_WIDTH) -1 : (afi_n * CFG_MEM_IF_ODT_WIDTH)]  = int_afi_odt           [afi_n] ;
                     afi_rmw_correct [afi_n]                                                                   = int_afi_rmw_correct   [afi_n] ;
                     afi_rmw_partial [afi_n]                                                                   = int_afi_rmw_partial   [afi_n] ;
+                end
             end
         end
         
@@ -399,6 +427,40 @@ module alt_mem_ddrx_addr_cmd_wrap
                 assign int_afi_rmw_partial [afi_j] = phase_afi_rmw_partial [afi_j / CFG_AFI_INTF_PHASE_NUM];
             end
         end
+        
+        for (afi_j = 0; afi_j < (CFG_DWIDTH_RATIO/2); afi_j = afi_j + 1) 
+        begin : gen_afi_signals_r
+            // Registered output
+            always @ (posedge ctl_clk or negedge ctl_reset_n)
+            begin
+                if (!ctl_reset_n)
+                begin
+                    int_afi_cke_r         [afi_j] <= 0;
+                    int_afi_cs_n_r        [afi_j] <= 0;
+                    int_afi_ras_n_r       [afi_j] <= 0;
+                    int_afi_cas_n_r       [afi_j] <= 0;
+                    int_afi_we_n_r        [afi_j] <= 0;
+                    int_afi_ba_r          [afi_j] <= 0;
+                    int_afi_addr_r        [afi_j] <= 0;
+                    int_afi_rst_n_r       [afi_j] <= 0;
+                    int_afi_rmw_correct_r [afi_j] <= 0;
+                    int_afi_rmw_partial_r [afi_j] <= 0;
+                end
+                else
+                begin
+                    int_afi_cke_r         [afi_j] <= int_afi_cke         [afi_j];
+                    int_afi_cs_n_r        [afi_j] <= int_afi_cs_n        [afi_j];
+                    int_afi_ras_n_r       [afi_j] <= int_afi_ras_n       [afi_j];
+                    int_afi_cas_n_r       [afi_j] <= int_afi_cas_n       [afi_j];
+                    int_afi_we_n_r        [afi_j] <= int_afi_we_n        [afi_j];
+                    int_afi_ba_r          [afi_j] <= int_afi_ba          [afi_j];
+                    int_afi_addr_r        [afi_j] <= int_afi_addr        [afi_j];
+                    int_afi_rst_n_r       [afi_j] <= int_afi_rst_n       [afi_j];
+                    int_afi_rmw_correct_r [afi_j] <= int_afi_rmw_correct [afi_j];
+                    int_afi_rmw_partial_r [afi_j] <= int_afi_rmw_partial [afi_j];
+                end
+            end
+        end
     endgenerate
     
     // phase_afi_* signal generation
@@ -449,10 +511,10 @@ module alt_mem_ddrx_addr_cmd_wrap
             begin
                 always @ (*)
                 begin
-                    int_bg_do_precharge_all     [afi_k] = ((afi_k % CFG_AFI_INTF_PHASE_NUM) == 1) ? bg_do_precharge_all   [(((afi_k+1)*CFG_MEM_IF_CHIP    )-1):(afi_k*CFG_MEM_IF_CHIP      )] : 0;
-                    int_bg_do_refresh           [afi_k] = ((afi_k % CFG_AFI_INTF_PHASE_NUM) == 1) ? bg_do_refresh         [(((afi_k+1)*CFG_MEM_IF_CHIP    )-1):(afi_k*CFG_MEM_IF_CHIP      )] : 0;
-                    int_bg_do_zq_cal            [afi_k] = ((afi_k % CFG_AFI_INTF_PHASE_NUM) == 1) ? bg_do_zq_cal          [(((afi_k+1)*CFG_MEM_IF_CHIP    )-1):(afi_k*CFG_MEM_IF_CHIP      )] : 0;
-                    int_bg_do_lmr               [afi_k] = ((afi_k % CFG_AFI_INTF_PHASE_NUM) == 1) ? bg_do_lmr             [afi_k                                                            ] : 0;
+                    int_bg_do_precharge_all     [afi_k] = ((afi_k % CFG_AFI_INTF_PHASE_NUM) == 1) ? bg_do_precharge_all   [(((afi_k+1)*CFG_MEM_IF_CHIP    )-1):(afi_k*CFG_MEM_IF_CHIP      )] : {CFG_MEM_IF_CHIP{1'b0}};
+                    int_bg_do_refresh           [afi_k] = ((afi_k % CFG_AFI_INTF_PHASE_NUM) == 1) ? bg_do_refresh         [(((afi_k+1)*CFG_MEM_IF_CHIP    )-1):(afi_k*CFG_MEM_IF_CHIP      )] : {CFG_MEM_IF_CHIP{1'b0}};
+                    int_bg_do_zq_cal            [afi_k] = ((afi_k % CFG_AFI_INTF_PHASE_NUM) == 1) ? bg_do_zq_cal          [(((afi_k+1)*CFG_MEM_IF_CHIP    )-1):(afi_k*CFG_MEM_IF_CHIP      )] : {CFG_MEM_IF_CHIP{1'b0}};
+                    int_bg_do_lmr               [afi_k] = ((afi_k % CFG_AFI_INTF_PHASE_NUM) == 1) ? bg_do_lmr             [afi_k                                                            ] : 1'b0;
                     
                     // We need to assign these command to all phase
                     // because these command might take one or more controller clock cycles
@@ -524,43 +586,44 @@ module alt_mem_ddrx_addr_cmd_wrap
             if (CFG_LPDDR2_ENABLED)
             begin
                 alt_mem_ddrx_lpddr2_addr_cmd  # (
-                    .CFG_PORT_WIDTH_OUTPUT_REGD     (CFG_PORT_WIDTH_OUTPUT_REGD        ),
-                    .CFG_MEM_IF_CHIP                (CFG_MEM_IF_CHIP                   ),
-                    .CFG_MEM_IF_CKE_WIDTH           (CFG_MEM_IF_CKE_WIDTH              ),
-                    .CFG_MEM_IF_ADDR_WIDTH          (CFG_MEM_IF_ADDR_WIDTH             ),
-                    .CFG_MEM_IF_ROW_WIDTH           (CFG_MEM_IF_ROW_WIDTH              ),
-                    .CFG_MEM_IF_COL_WIDTH           (CFG_MEM_IF_COL_WIDTH              ),
-                    .CFG_MEM_IF_BA_WIDTH            (CFG_MEM_IF_BA_WIDTH               ),
-                    .CFG_DWIDTH_RATIO               (CFG_FR_DWIDTH_RATIO               )
+                    .CFG_PORT_WIDTH_OUTPUT_REGD         (CFG_PORT_WIDTH_OUTPUT_REGD             ),
+                    .CFG_MEM_IF_CHIP                    (CFG_MEM_IF_CHIP                        ),
+                    .CFG_MEM_IF_CKE_WIDTH               (CFG_MEM_IF_CKE_WIDTH                   ),
+                    .CFG_MEM_IF_ADDR_WIDTH              (CFG_MEM_IF_ADDR_WIDTH                  ),
+                    .CFG_MEM_IF_ROW_WIDTH               (CFG_MEM_IF_ROW_WIDTH                   ),
+                    .CFG_MEM_IF_COL_WIDTH               (CFG_MEM_IF_COL_WIDTH                   ),
+                    .CFG_MEM_IF_BA_WIDTH                (CFG_MEM_IF_BA_WIDTH                    ),
+                    .CFG_DWIDTH_RATIO                   (CFG_FR_DWIDTH_RATIO                    )
                 ) alt_mem_ddrx_lpddr2_addr_cmd_inst (
-                    .ctl_clk                        (ctl_clk                           ),
-                    .ctl_reset_n                    (ctl_reset_n                       ),
-                    .ctl_cal_success                (ctl_cal_success                   ),
-                    .cfg_output_regd                (cfg_output_regd_for_afi_output    ),
-                    .do_write                       (int_bg_do_write           [afi_k] ),
-                    .do_read                        (int_bg_do_read            [afi_k] ),
-                    .do_auto_precharge              (int_bg_do_auto_precharge  [afi_k] ),
-                    .do_activate                    (int_bg_do_activate        [afi_k] ),
-                    .do_precharge                   (int_bg_do_precharge       [afi_k] ),
-                    .do_refresh                     (int_bg_do_refresh         [afi_k] ),
-                    .do_power_down                  (int_bg_do_power_down      [afi_k] ),
-                    .do_self_refresh                (int_bg_do_self_refresh    [afi_k] ),
-                    .do_lmr                         (int_bg_do_lmr             [afi_k] ),
-                    .do_precharge_all               (int_bg_do_precharge_all   [afi_k] ),
-                    .do_deep_pwrdwn                 (int_bg_do_deep_pdown      [afi_k] ),
-                    .do_burst_terminate             (int_bg_do_burst_terminate [afi_k] ),
-                    .do_lmr_read                    (int_bg_do_lmr_read                ),
-                    .do_refresh_1bank               (int_bg_do_refresh_1bank           ),
-                    .to_chip                        (int_bg_to_chip            [afi_k] ),
-                    .to_bank                        (int_bg_to_bank            [afi_k] ),
-                    .to_row                         (int_bg_to_row             [afi_k] ),
-                    .to_col                         (int_bg_to_col             [afi_k] ),
-                    .to_lmr                         (                                  ),
-                    .lmr_opcode                     (lmr_opcode[7:0]                   ),
-                    .afi_cke                        (int_lpddr2_afi_cke        [afi_k] ),
-                    .afi_cs_n                       (int_lpddr2_afi_cs_n       [afi_k] ),
-                    .afi_addr                       (int_lpddr2_afi_addr       [afi_k] ),
-                    .afi_rst_n                      (int_lpddr2_afi_rst_n      [afi_k] )
+                    .ctl_clk                            (ctl_clk                                ),
+                    .ctl_reset_n                        (ctl_reset_n                            ),
+                    .ctl_cal_success                    (ctl_cal_success                        ),
+                    .cfg_output_regd                    (cfg_output_regd_for_afi_output         ),
+                    .cfg_enable_chipsel_for_sideband    (cfg_enable_chipsel_for_sideband [afi_k]),
+                    .do_write                           (int_bg_do_write                 [afi_k]),
+                    .do_read                            (int_bg_do_read                  [afi_k]),
+                    .do_auto_precharge                  (int_bg_do_auto_precharge        [afi_k]),
+                    .do_activate                        (int_bg_do_activate              [afi_k]),
+                    .do_precharge                       (int_bg_do_precharge             [afi_k]),
+                    .do_refresh                         (int_bg_do_refresh               [afi_k]),
+                    .do_power_down                      (int_bg_do_power_down            [afi_k]),
+                    .do_self_refresh                    (int_bg_do_self_refresh          [afi_k]),
+                    .do_lmr                             (int_bg_do_lmr                   [afi_k]),
+                    .do_precharge_all                   (int_bg_do_precharge_all         [afi_k]),
+                    .do_deep_pwrdwn                     (int_bg_do_deep_pdown            [afi_k]),
+                    .do_burst_terminate                 (int_bg_do_burst_terminate       [afi_k]),
+                    .do_lmr_read                        (int_bg_do_lmr_read                     ),
+                    .do_refresh_1bank                   (int_bg_do_refresh_1bank                ),
+                    .to_chip                            (int_bg_to_chip                  [afi_k]),
+                    .to_bank                            (int_bg_to_bank                  [afi_k]),
+                    .to_row                             (int_bg_to_row                   [afi_k]),
+                    .to_col                             (int_bg_to_col                   [afi_k]),
+                    .to_lmr                             (                                       ),
+                    .lmr_opcode                         (lmr_opcode[7:0]                        ),
+                    .afi_cke                            (int_lpddr2_afi_cke              [afi_k]),
+                    .afi_cs_n                           (int_lpddr2_afi_cs_n             [afi_k]),
+                    .afi_addr                           (int_lpddr2_afi_addr             [afi_k]),
+                    .afi_rst_n                          (int_lpddr2_afi_rst_n            [afi_k])
                 );
             end
             else
@@ -607,8 +670,8 @@ module alt_mem_ddrx_addr_cmd_wrap
                 end
                 else
                 begin
-                    int_bg_do_rmw_correct_r[afi_k] <= int_bg_do_rmw_correct [afi_k];
-                    int_bg_do_rmw_partial_r[afi_k] <= int_bg_do_rmw_partial [afi_k];
+                    int_bg_do_rmw_correct_r[afi_k] <= int_bg_do_rmw_correct    [afi_k];
+                    int_bg_do_rmw_partial_r[afi_k] <= int_bg_do_rmw_partial    [afi_k];
                 end
             end
             
@@ -621,8 +684,8 @@ module alt_mem_ddrx_addr_cmd_wrap
                 end
                 else
                 begin
-                    phase_afi_rmw_correct[afi_k] = int_bg_do_rmw_correct [afi_k];
-                    phase_afi_rmw_partial[afi_k] = int_bg_do_rmw_partial [afi_k];
+                    phase_afi_rmw_correct[afi_k] = int_bg_do_rmw_correct    [afi_k];
+                    phase_afi_rmw_partial[afi_k] = int_bg_do_rmw_partial    [afi_k];
                 end
             end
             

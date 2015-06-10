@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -10,6 +10,9 @@
 // Altera or its authorized distributors.  Please refer to the applicable 
 // agreement for further details.
 
+
+
+`timescale 1 ps / 1 ps
 
 module DE4_QSYS_mem_if_ddr2_emif_p0_addr_cmd_datapath(
 	clk,
@@ -87,24 +90,7 @@ output	[AFI_CONTROL_WIDTH-1:0] phy_ddio_we_n;
 	wire [AFI_CONTROL_WIDTH-1:0] afi_cas_n_r = afi_cas_n;
 	wire [AFI_CONTROL_WIDTH-1:0] afi_we_n_r = afi_we_n;
 
-	
-	
-	
-	
-	
-	
-	
-	
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	wire [1:0] shift_fr_cycle = 
 		(NUM_AC_FR_CYCLE_SHIFTS == 0) ? 	2'b00 : (
 		(NUM_AC_FR_CYCLE_SHIFTS == 1) ? 	2'b01 : (

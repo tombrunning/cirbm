@@ -1,20 +1,8 @@
-// $Id: //acds/main/ip/sopc/components/primitives/altera_std_synchronizer/altera_std_synchronizer_bundle.v#1 $
+// $File: //acds/rel/13.0sp1/ip/sopc/components/altera_avalon_dc_fifo/altera_dcfifo_synchronizer_bundle.v $
 // $Revision: #1 $
-// $Date: 2008/09/23 $
-//----------------------------------------------------------------
-//
-// File: altera_dcfifo_synchronizer_bundle.v
-//
-// Abstract: Bundle of bit synchronizers. 
-//           WARNING: only use this to synchronize a bundle of 
-//           *independent* single bit signals or a Gray encoded 
-//           bus of signals. Also remember that pulses entering 
-//           the synchronizer will be swallowed upon a metastable
-//           condition if the pulse width is shorter than twice
-//           the synchronizing clock period.
-//
-// Copyright (C) Altera Corporation 2008, All Rights Reserved
-//----------------------------------------------------------------
+// $Date: 2013/03/07 $
+// $Author: swbranch $
+//-------------------------------------------------------------------------------
 
 `timescale 1 ns / 1 ns
 module altera_dcfifo_synchronizer_bundle(

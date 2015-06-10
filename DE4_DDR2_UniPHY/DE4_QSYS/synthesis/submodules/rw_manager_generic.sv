@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -14,7 +14,6 @@
 `timescale 1 ps / 1 ps
 
 module rw_manager_generic (
-	
 	avl_clk,
 	avl_reset_n,
 	avl_address,
@@ -24,7 +23,6 @@ module rw_manager_generic (
 	avl_readdata,
 	avl_waitrequest,
 
-	
 	afi_clk,
 	afi_reset_n,
 	afi_wdata,
@@ -32,14 +30,15 @@ module rw_manager_generic (
 	afi_odt,
 	afi_rdata,
 	afi_rdata_valid,
+	afi_wrank,
+	afi_rrank,
 
 	ac_masked_bus,
 	ac_bus,
-        csr_clk,
-        csr_ena,
-        csr_dout_phy,
-        csr_dout
-
+	csr_clk,
+	csr_ena,
+	csr_dout_phy,
+	csr_dout
 
 );
 
@@ -49,6 +48,7 @@ module rw_manager_generic (
 	parameter MEM_DQ_WIDTH				= "";
 	parameter MEM_DM_WIDTH				= "";
 	parameter MEM_ODT_WIDTH 			= "";
+	parameter MEM_NUMBER_OF_RANKS		= "";
 	parameter MASK_WIDTH				= "";
 	parameter AC_ODT_BIT				= "";
 	parameter AC_BUS_WIDTH				= "";
@@ -68,6 +68,8 @@ module rw_manager_generic (
 	parameter DEVICE_FAMILY = "";
 	parameter AC_ROM_INIT_FILE_NAME = "";
 	parameter INST_ROM_INIT_FILE_NAME = "";
+	
+	parameter USE_ALL_AFI_PHASES_FOR_COMMAND_ISSUE = 0;
 
 	input avl_clk;
 	input avl_reset_n;
@@ -86,6 +88,8 @@ module rw_manager_generic (
 	output [MEM_DQ_WIDTH * 2 * AFI_RATIO - 1:0] afi_wdata;
 	output [MEM_DM_WIDTH * 2 * AFI_RATIO - 1:0] afi_dm;
 	output [MEM_ODT_WIDTH * AFI_RATIO - 1:0] afi_odt;
+	output [MEM_WRITE_DQS_WIDTH * MEM_NUMBER_OF_RANKS * AFI_RATIO - 1:0] afi_wrank;
+	output [MEM_READ_DQS_WIDTH * MEM_NUMBER_OF_RANKS * AFI_RATIO - 1:0] afi_rrank;
 
 	input [MEM_DQ_WIDTH * 2 * AFI_RATIO - 1:0] afi_rdata;
 	input afi_rdata_valid;
@@ -197,6 +201,8 @@ module rw_manager_generic (
 		.afi_odt(afi_odt),
 		.afi_rdata(afi_rdata),
 		.afi_rdata_valid(afi_rdata_valid),
+		.afi_wrank(afi_wrank),
+		.afi_rrank(afi_rrank),
 		.ac_bus(ac_bus),
 		.ac_masked_bus(ac_masked_bus),
 		.cmd_read(cmd_read),
@@ -212,6 +218,7 @@ module rw_manager_generic (
 	defparam rw_mgr_core_inst.MEM_DQ_WIDTH = MEM_DQ_WIDTH;
 	defparam rw_mgr_core_inst.MEM_DM_WIDTH = MEM_DM_WIDTH;
 	defparam rw_mgr_core_inst.MEM_ODT_WIDTH = MEM_ODT_WIDTH;
+	defparam rw_mgr_core_inst.MEM_NUMBER_OF_RANKS = MEM_NUMBER_OF_RANKS;
 	defparam rw_mgr_core_inst.MASK_WIDTH = MASK_WIDTH;
 	defparam rw_mgr_core_inst.AC_ODT_BIT = AC_ODT_BIT;
 	defparam rw_mgr_core_inst.AC_BUS_WIDTH = AC_BUS_WIDTH;
@@ -228,8 +235,8 @@ module rw_manager_generic (
 	defparam rw_mgr_core_inst.AC_ROM_INIT_FILE_NAME = AC_ROM_INIT_FILE_NAME;
 	defparam rw_mgr_core_inst.INST_ROM_INIT_FILE_NAME = INST_ROM_INIT_FILE_NAME;
 	defparam rw_mgr_core_inst.MAX_DI_BUFFER_WORDS_LOG_2 = MAX_DI_BUFFER_WORDS_LOG_2;
+	defparam rw_mgr_core_inst.USE_ALL_AFI_PHASES_FOR_COMMAND_ISSUE = USE_ALL_AFI_PHASES_FOR_COMMAND_ISSUE;
 
-	
 	assign cmd_read = avl_rd_r & ~cmd_done_avl & (state == STATE_RW_EXEC);
 	assign cmd_write = avl_wr_r & ~cmd_done_avl & (state == STATE_RW_EXEC);
 

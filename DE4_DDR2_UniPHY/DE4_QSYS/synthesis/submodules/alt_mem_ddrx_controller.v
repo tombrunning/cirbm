@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -10,6 +10,9 @@
 // Altera or its authorized distributors.  Please refer to the applicable 
 // agreement for further details.
 
+
+
+`timescale 1 ps / 1 ps
 
 module alt_mem_ddrx_controller #
 	( parameter
@@ -46,6 +49,8 @@ module alt_mem_ddrx_controller #
         // Data path buffer & fifo parameters
         CFG_WRBUFFER_ADDR_WIDTH                             =   6,
         CFG_RDBUFFER_ADDR_WIDTH                             =   10,
+        CFG_MAX_PENDING_RD_CMD                              =   16,
+        CFG_MAX_PENDING_WR_CMD                              =   8,
         
         // MMR port width
         // cfg: general
@@ -53,7 +58,7 @@ module alt_mem_ddrx_controller #
         CFG_PORT_WIDTH_INTERFACE_WIDTH                      =   8,
         CFG_PORT_WIDTH_BURST_LENGTH                         =   5,
         CFG_PORT_WIDTH_DEVICE_WIDTH                         =   4,
-        CFG_PORT_WIDTH_OUTPUT_REGD                          =   1,
+        CFG_PORT_WIDTH_OUTPUT_REGD                          =   2,
         
         // cfg: address mapping signals
         CFG_PORT_WIDTH_ADDR_ORDER                           =   2,
@@ -123,6 +128,7 @@ module alt_mem_ddrx_controller #
         CFG_PORT_WIDTH_ENABLE_BURST_INTERRUPT               =   1,
         CFG_PORT_WIDTH_ENABLE_BURST_TERMINATE               =   1,
         CFG_ENABLE_CMD_SPLIT                                = 1'b1, // disable this (set to 0) when using the controller with hard MPFE
+        CFG_ENABLE_WDATA_PATH_LATENCY                       =   0,
         
         // cfg: ecc signals
         CFG_PORT_WIDTH_ENABLE_ECC                           =   1,
@@ -136,6 +142,7 @@ module alt_mem_ddrx_controller #
         CFG_PORT_WIDTH_CLR_INTR                             =   1,
         CFG_PORT_WIDTH_ENABLE_ECC_CODE_OVERWRITES           =   1,
         CFG_PORT_WIDTH_ENABLE_NO_DM                         =   1,
+		CFG_ECC_DECODER_REG									=	1,
         
         // cfg: odt
         CFG_PORT_WIDTH_WRITE_ODT_CHIP                       =   4,
@@ -151,9 +158,15 @@ module alt_mem_ddrx_controller #
         
         // PHY parameters
         CFG_WLAT_BUS_WIDTH                                  =   4,
+        CFG_RRANK_BUS_WIDTH                                 =   1,
+        CFG_WRANK_BUS_WIDTH                                 =   1,
+        CFG_USE_SHADOW_REGS                                 =   0,
         
         // controller read data return mode
-        CFG_RDATA_RETURN_MODE                               = "PASSTHROUGH"
+        CFG_RDATA_RETURN_MODE                               = "PASSTHROUGH",
+		CFG_ERRCMD_FIFO_REG									= 0,
+
+	CFG_ENABLE_BURST_MERGE 				    = 0
     )
     (
         // Clock and reset
@@ -194,6 +207,8 @@ module alt_mem_ddrx_controller #
         // Sideband signals
         local_refresh_req,
         local_refresh_chip,
+        local_zqcal_req,
+        local_zqcal_chip,
         local_deep_powerdn_chip,
         local_deep_powerdn_req,
         local_self_rfsh_req,
@@ -223,6 +238,8 @@ module alt_mem_ddrx_controller #
         afi_wdata_valid,
         afi_rdata_en,
         afi_rdata_en_full,
+        afi_rrank,
+        afi_wrank,
         afi_rdata,
         afi_rdata_valid,
         
@@ -345,7 +362,12 @@ module alt_mem_ddrx_controller #
 	    cfg_enable_dqs_tracking,  //enable DQS enable tracking support in controller
 	    afi_ctl_refresh_done, // Controller asserts this after tRFC is done, also acts as stall ack to phy
 	    afi_seq_busy, // Sequencer busy signal to controller, also acts as stall request to ctlr
-	    afi_ctl_long_idle // Controller asserts this after long period of no refresh, protocol is the same as rfsh_done
+	    afi_ctl_long_idle, // Controller asserts this after long period of no refresh, protocol is the same as rfsh_done
+
+        // Refresh controller
+        tbp_empty,
+        cmd_gen_busy,
+        sideband_in_refresh
 	
     );
 
@@ -354,7 +376,7 @@ localparam CFG_MEM_IF_DQ_PER_DQS                           = CFG_MEM_IF_DQ_WIDTH
 localparam CFG_INT_SIZE_WIDTH                              = (CFG_DWIDTH_RATIO == 2) ? 4 : ((CFG_DWIDTH_RATIO == 4) ? 3 : ((CFG_DWIDTH_RATIO == 8) ? 2 : 4));
 localparam CFG_CTL_QUEUE_DEPTH                             = 8;
 localparam CFG_ENABLE_QUEUE                                = 0;
-localparam CFG_ENABLE_BURST_MERGE                          = 0;
+//localparam CFG_ENABLE_BURST_MERGE                          = 0;
 localparam CFG_CMD_GEN_OUTPUT_REG                          = 1;                 // only in effect when CFG_ENABLE_QUEUE is set to '0'
 localparam CFG_CTL_ARBITER_TYPE                            = "ROWCOL";
 localparam CFG_AFI_INTF_PHASE_NUM                          = 2;
@@ -370,15 +392,13 @@ localparam CFG_REG_REQ                                     = 0;
 localparam CFG_RANK_TIMER_OUTPUT_REG                       = 1;
 localparam CFG_ECC_DEC_REG                                 = 1;
 localparam CFG_ECC_RDATA_REG                               = 1;
-localparam CFG_ECC_ENC_REG                                 = 1;                 // only one of CFG_ECC_ENC_REG / CFG_WDATA_REG can be set to '1'
-localparam CFG_WDATA_REG                                   = 0;                 // only one of CFG_ECC_ENC_REG / CFG_WDATA_REG can be set to '1'
+localparam CFG_ECC_ENC_REG                                 = 1;
+localparam CFG_WDATA_REG                                   = CFG_ENABLE_WDATA_PATH_LATENCY;
 localparam CFG_DISABLE_READ_REODERING                      = 0;
 localparam CFG_ENABLE_SHADOW_TBP                           = 0;
 localparam CFG_CTL_SHADOW_TBP_NUM                          = CFG_CTL_TBP_NUM;    // similar to TBP number
 
 // Datapath buffer & fifo size calculation
-localparam CFG_MAX_PENDING_RD_CMD                          = 16;                // temporary
-localparam CFG_MAX_PENDING_WR_CMD                          = 8;                 // temporary
 localparam CFG_MAX_PENDING_ERR_CMD                         = 8;                 // temporary
 
 localparam CFG_MAX_PENDING_RD_CMD_WIDTH                    = log2(CFG_MAX_PENDING_RD_CMD);
@@ -396,34 +416,36 @@ localparam CFG_DRAM_WLAT_GROUP                             = (CFG_WLAT_BUS_WIDTH
 localparam CFG_LOCAL_WLAT_GROUP                            = (CFG_WLAT_BUS_WIDTH <= 6) ? 1 : (((CFG_LOCAL_DATA_WIDTH / CFG_DWIDTH_RATIO) == CFG_MEM_IF_DQ_WIDTH) ? CFG_MEM_IF_DQS_WIDTH : CFG_MEM_IF_DQS_WIDTH - CFG_ECC_MULTIPLES_16_24_40_72); // Determine the wlat group for local data width (without ECC code)
 
 // Derived timing parameters width
-localparam T_PARAM_ACT_TO_RDWR_WIDTH                                  = 6;        // temporary
-localparam T_PARAM_ACT_TO_PCH_WIDTH                                   = 6;        // temporary
-localparam T_PARAM_ACT_TO_ACT_WIDTH                                   = 6;        // temporary
-localparam T_PARAM_RD_TO_RD_WIDTH                                     = 6;        // temporary
-localparam T_PARAM_RD_TO_RD_DIFF_CHIP_WIDTH                           = 6;        // temporary
-localparam T_PARAM_RD_TO_WR_WIDTH                                     = 6;        // temporary
-localparam T_PARAM_RD_TO_WR_BC_WIDTH                                  = 6;        // temporary
-localparam T_PARAM_RD_TO_WR_DIFF_CHIP_WIDTH                           = 6;        // temporary
-localparam T_PARAM_RD_TO_PCH_WIDTH                                    = 6;        // temporary
-localparam T_PARAM_RD_AP_TO_VALID_WIDTH                               = 6;        // temporary
-localparam T_PARAM_WR_TO_WR_WIDTH                                     = 6;        // temporary
-localparam T_PARAM_WR_TO_WR_DIFF_CHIP_WIDTH                           = 6;        // temporary
-localparam T_PARAM_WR_TO_RD_WIDTH                                     = 6;        // temporary
-localparam T_PARAM_WR_TO_RD_BC_WIDTH                                  = 6;        // temporary
-localparam T_PARAM_WR_TO_RD_DIFF_CHIP_WIDTH                           = 6;        // temporary
-localparam T_PARAM_WR_TO_PCH_WIDTH                                    = 6;        // temporary
-localparam T_PARAM_WR_AP_TO_VALID_WIDTH                               = 6;        // temporary
-localparam T_PARAM_PCH_TO_VALID_WIDTH                                 = 6;        // temporary
-localparam T_PARAM_PCH_ALL_TO_VALID_WIDTH                             = 6;        // temporary
-localparam T_PARAM_ACT_TO_ACT_DIFF_BANK_WIDTH                         = 6;        // temporary
-localparam T_PARAM_FOUR_ACT_TO_ACT_WIDTH                              = 6;        // temporary
-localparam T_PARAM_ARF_TO_VALID_WIDTH                                 = 8;        // temporary
-localparam T_PARAM_PDN_TO_VALID_WIDTH                                 = 6;        // temporary
-localparam T_PARAM_SRF_TO_VALID_WIDTH                                 = 10;       // temporary
-localparam T_PARAM_SRF_TO_ZQ_CAL_WIDTH                                = 10;       // temporary
-localparam T_PARAM_ARF_PERIOD_WIDTH                                   = 13;       // temporary
-localparam T_PARAM_PDN_PERIOD_WIDTH                                   = 16;       // temporary
-localparam T_PARAM_POWER_SAVING_EXIT_WIDTH                            = 6;        // temporary
+localparam T_PARAM_ACT_TO_RDWR_WIDTH                                  = (CFG_DWIDTH_RATIO == 8) ? 2  : (CFG_DWIDTH_RATIO == 4) ? 3  : 4;
+localparam T_PARAM_ACT_TO_PCH_WIDTH                                   = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_ACT_TO_ACT_WIDTH                                   = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_RD_TO_RD_WIDTH                                     = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_RD_TO_WR_WIDTH                                     = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_RD_TO_WR_BC_WIDTH                                  = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_RD_TO_PCH_WIDTH                                    = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_RD_AP_TO_VALID_WIDTH                               = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_WR_TO_WR_WIDTH                                     = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_WR_TO_RD_WIDTH                                     = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_WR_TO_RD_BC_WIDTH                                  = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_WR_TO_PCH_WIDTH                                    = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_WR_AP_TO_VALID_WIDTH                               = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;      
+localparam T_PARAM_PCH_TO_VALID_WIDTH                                 = (CFG_DWIDTH_RATIO == 8) ? 2  : (CFG_DWIDTH_RATIO == 4) ? 3  : 4;
+localparam T_PARAM_PCH_ALL_TO_VALID_WIDTH                             = (CFG_DWIDTH_RATIO == 8) ? 2  : (CFG_DWIDTH_RATIO == 4) ? 3  : 4;
+
+localparam T_PARAM_RD_TO_RD_DIFF_CHIP_WIDTH                           = (CFG_DWIDTH_RATIO == 8) ? 2  : (CFG_DWIDTH_RATIO == 4) ? 3  : 4;
+localparam T_PARAM_RD_TO_WR_DIFF_CHIP_WIDTH                           = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;
+localparam T_PARAM_WR_TO_WR_DIFF_CHIP_WIDTH                           = (CFG_DWIDTH_RATIO == 8) ? 2  : (CFG_DWIDTH_RATIO == 4) ? 3  : 4;
+localparam T_PARAM_WR_TO_RD_DIFF_CHIP_WIDTH                           = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;
+localparam T_PARAM_ACT_TO_ACT_DIFF_BANK_WIDTH                         = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;
+localparam T_PARAM_FOUR_ACT_TO_ACT_WIDTH                              = (CFG_DWIDTH_RATIO == 8) ? 4  : (CFG_DWIDTH_RATIO == 4) ? 5  : 6;
+localparam T_PARAM_ARF_TO_VALID_WIDTH                                 = (CFG_DWIDTH_RATIO == 8) ? 7  : (CFG_DWIDTH_RATIO == 4) ? 8  : 9;
+localparam T_PARAM_PDN_TO_VALID_WIDTH                                 = (CFG_DWIDTH_RATIO == 8) ? 2  : (CFG_DWIDTH_RATIO == 4) ? 3  : 4;
+localparam T_PARAM_SRF_TO_VALID_WIDTH                                 = (CFG_DWIDTH_RATIO == 8) ? 8  : (CFG_DWIDTH_RATIO == 4) ? 9  : 10;
+localparam T_PARAM_SRF_TO_ZQ_CAL_WIDTH                                = (CFG_DWIDTH_RATIO == 8) ? 7  : (CFG_DWIDTH_RATIO == 4) ? 8  : 9;
+localparam T_PARAM_ARF_PERIOD_WIDTH                                   = (CFG_DWIDTH_RATIO == 8) ? 11 : (CFG_DWIDTH_RATIO == 4) ? 12 : 13;
+localparam T_PARAM_PDN_PERIOD_WIDTH                                   = 16;
+localparam T_PARAM_POWER_SAVING_EXIT_WIDTH                            = (CFG_DWIDTH_RATIO == 8) ? 1  : (CFG_DWIDTH_RATIO == 4) ? 2  : 3;
+localparam T_PARAM_MEM_CLK_ENTRY_CYCLES_WIDTH                         = 4;
 
 localparam integer CFG_DATAID_ARRAY_DEPTH                             = 2**CFG_DATA_ID_WIDTH;
 localparam integer CFG_WRDATA_ID_WIDTH_SQRD                           = 2**CFG_WRDATA_ID_WIDTH;
@@ -466,6 +488,8 @@ output                                itf_rd_data_id_early_valid;
 // Sideband signals
 input                            local_refresh_req;
 input  [CFG_MEM_IF_CHIP - 1 : 0] local_refresh_chip;
+input                            local_zqcal_req;
+input  [CFG_MEM_IF_CHIP - 1 : 0] local_zqcal_chip;
 input                            local_deep_powerdn_req;
 input  [CFG_MEM_IF_CHIP-1:0]     local_deep_powerdn_chip;
 input                            local_self_rfsh_req;
@@ -495,6 +519,8 @@ output [CFG_MEM_IF_DQ_WIDTH * CFG_DWIDTH_RATIO        - 1 : 0] afi_wdata;
 output [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2) - 1 : 0] afi_wdata_valid;
 output [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2) - 1 : 0] afi_rdata_en;
 output [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2) - 1 : 0] afi_rdata_en_full;
+output [CFG_RRANK_BUS_WIDTH                           - 1 : 0] afi_rrank;
+output [CFG_WRANK_BUS_WIDTH                           - 1 : 0] afi_wrank;
 input  [CFG_MEM_IF_DQ_WIDTH * CFG_DWIDTH_RATIO        - 1 : 0] afi_rdata;
 input  [CFG_DWIDTH_RATIO / 2                          - 1 : 0] afi_rdata_valid;
 
@@ -619,20 +645,15 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_refresh_done;
 input   [CFG_MEM_IF_CHIP - 1 : 0] afi_seq_busy;
 output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
 
+output  tbp_empty;
+output  cmd_gen_busy;
+output  sideband_in_refresh;
+
 //==============================================================================
 //
 //  Wires
 //
 //==============================================================================
-    
-    // General
-    wire init_done                                                               = ctl_cal_success;
-    wire sts_cal_success                                                         = ctl_cal_success;
-    wire sts_cal_fail                                                            = ctl_cal_fail;
-    wire ctl_cal_req                                                             = cfg_cal_req;
-    wire ctl_init_req;
-    wire [CFG_MEM_IF_DQS_WIDTH*CFG_MEM_IF_CHIP-1: 0] ctl_cal_byte_lane_sel_n = 0;
-    
     // alt_mem_ddrx_input_if
     wire                                    itf_cmd_ready;
     wire                                    itf_wr_data_ready;
@@ -664,6 +685,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
     wire                                    local_init_done;
     wire                                    rfsh_req;
     wire [CFG_MEM_IF_CHIP          - 1 : 0] rfsh_chip;
+    wire                                    zqcal_req;
     wire                                    deep_powerdn_req;
     wire [CFG_MEM_IF_CHIP          - 1 : 0] deep_powerdn_chip;
     wire                                    self_rfsh_req;
@@ -671,6 +693,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
     
     // alt_mem_ddrx_cmd_gen
     wire                                  cmd_gen_load;
+    wire                                  cmd_gen_waiting_to_load;
     wire [CFG_MEM_IF_CS_WIDTH    - 1 : 0] cmd_gen_chipsel;
     wire [CFG_MEM_IF_BA_WIDTH    - 1 : 0] cmd_gen_bank;
     wire [CFG_MEM_IF_ROW_WIDTH   - 1 : 0] cmd_gen_row;
@@ -726,10 +749,11 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
     wire [CFG_CTL_TBP_NUM                                 - 1 : 0] tbp_priority;
     wire [CFG_CTL_TBP_NUM                                 - 1 : 0] tbp_rmw_correct;
     wire [CFG_CTL_TBP_NUM                                 - 1 : 0] tbp_rmw_partial;
-    wire [CFG_MEM_IF_CHIP                                 - 1 : 0] tbp_bank_active;
+    wire [CFG_MEM_IF_CHIP                                 - 1 : 0] tbp_bank_closed;
     wire [CFG_MEM_IF_CHIP                                 - 1 : 0] tbp_timer_ready;
     wire [CFG_CTL_TBP_NUM                                 - 1 : 0] tbp_load_index;
     wire [CFG_CTL_TBP_NUM                                 - 1 : 0] tbp_load;
+    wire                                                           data_rmw_fetch;
     
     // alt_mem_ddrx_arbiter
     wire [CFG_CTL_TBP_NUM                                 - 1 : 0] row_grant;
@@ -830,35 +854,37 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
     wire [CFG_AFI_IF_FR_ADDR_WIDTH                         - 1 : 0] lmr_opcode = 0;
     
     // alt_mem_ddrx_rdwr_data_tmg
-    wire [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2)  - 1 : 0] afi_rdata_en;
-    wire [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2)  - 1 : 0] afi_rdata_en_full;
-    wire [CFG_PORT_WIDTH_OUTPUT_REGD                     - 1 : 0] cfg_output_regd_for_afi_output;
-    wire [CFG_DRAM_WLAT_GROUP                            - 1 : 0] ecc_wdata_fifo_read;
-    wire [CFG_DRAM_WLAT_GROUP * CFG_DATA_ID_WIDTH        - 1 : 0] ecc_wdata_fifo_dataid;
-    wire [CFG_DRAM_WLAT_GROUP * CFG_DATAID_ARRAY_DEPTH   - 1 : 0] ecc_wdata_fifo_dataid_vector;
-    wire [CFG_DRAM_WLAT_GROUP                            - 1 : 0] ecc_wdata_fifo_rmw_correct;
-    wire [CFG_DRAM_WLAT_GROUP                            - 1 : 0] ecc_wdata_fifo_rmw_partial;
-    wire                                                          ecc_wdata_fifo_read_first;
-    wire [CFG_DATA_ID_WIDTH                              - 1 : 0] ecc_wdata_fifo_dataid_first;
-    wire [CFG_DATAID_ARRAY_DEPTH                         - 1 : 0] ecc_wdata_fifo_dataid_vector_first;
-    wire                                                          ecc_wdata_fifo_rmw_correct_first;
-    wire                                                          ecc_wdata_fifo_rmw_partial_first;
-    wire [CFG_DRAM_WLAT_GROUP                            - 1 : 0] ecc_wdata_fifo_first_vector;
-    wire                                                          ecc_wdata_fifo_read_last;
-    wire [CFG_DATA_ID_WIDTH                              - 1 : 0] ecc_wdata_fifo_dataid_last;
-    wire [CFG_DATAID_ARRAY_DEPTH                         - 1 : 0] ecc_wdata_fifo_dataid_vector_last;
-    wire                                                          ecc_wdata_fifo_rmw_correct_last;
-    wire                                                          ecc_wdata_fifo_rmw_partial_last;
-    wire [CFG_DRAM_WLAT_GROUP * CFG_WRDATA_ID_WIDTH      - 1 : 0] ecc_wdata_wrdataid;
-    wire [CFG_DRAM_WLAT_GROUP * CFG_WRDATA_ID_WIDTH_SQRD - 1 : 0] ecc_wdata_wrdataid_vector;
-    wire [CFG_WRDATA_ID_WIDTH                            - 1 : 0] ecc_wdata_wrdataid_first;
-    wire [CFG_WRDATA_ID_WIDTH_SQRD                       - 1 : 0] ecc_wdata_wrdataid_vector_first;
-    wire [CFG_WRDATA_ID_WIDTH                            - 1 : 0] ecc_wdata_wrdataid_last;
-    wire [CFG_WRDATA_ID_WIDTH_SQRD                       - 1 : 0] ecc_wdata_wrdataid_vector_last;
-    wire [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2)  - 1 : 0] afi_dqs_burst;
-    wire [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2)  - 1 : 0] afi_wdata_valid;
-    wire [CFG_MEM_IF_DQ_WIDTH  * CFG_DWIDTH_RATIO        - 1 : 0] afi_wdata;
-    wire [CFG_MEM_IF_DM_WIDTH  * CFG_DWIDTH_RATIO        - 1 : 0] afi_dm;
+    wire [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2)                   - 1 : 0] afi_rdata_en;
+    wire [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2)                   - 1 : 0] afi_rdata_en_full;
+    wire [CFG_PORT_WIDTH_OUTPUT_REGD                                      - 1 : 0] cfg_output_regd_for_afi_output;
+    wire [CFG_DRAM_WLAT_GROUP                                             - 1 : 0] ecc_wdata_fifo_read;
+    wire [CFG_DRAM_WLAT_GROUP * CFG_DATA_ID_WIDTH                         - 1 : 0] ecc_wdata_fifo_dataid;
+    wire [CFG_DRAM_WLAT_GROUP * CFG_DATAID_ARRAY_DEPTH                    - 1 : 0] ecc_wdata_fifo_dataid_vector;
+    wire [CFG_DRAM_WLAT_GROUP                                             - 1 : 0] ecc_wdata_fifo_rmw_correct;
+    wire [CFG_DRAM_WLAT_GROUP                                             - 1 : 0] ecc_wdata_fifo_rmw_partial;
+    wire                                                                           ecc_wdata_fifo_read_first;
+    wire [CFG_DATA_ID_WIDTH                                               - 1 : 0] ecc_wdata_fifo_dataid_first;
+    wire [CFG_DATAID_ARRAY_DEPTH                                          - 1 : 0] ecc_wdata_fifo_dataid_vector_first;
+    wire                                                                           ecc_wdata_fifo_rmw_correct_first;
+    wire                                                                           ecc_wdata_fifo_rmw_partial_first;
+    wire [CFG_DRAM_WLAT_GROUP                                             - 1 : 0] ecc_wdata_fifo_first_vector;
+    wire                                                                           ecc_wdata_fifo_read_last;
+    wire [CFG_DATA_ID_WIDTH                                               - 1 : 0] ecc_wdata_fifo_dataid_last;
+    wire [CFG_DATAID_ARRAY_DEPTH                                          - 1 : 0] ecc_wdata_fifo_dataid_vector_last;
+    wire                                                                           ecc_wdata_fifo_rmw_correct_last;
+    wire                                                                           ecc_wdata_fifo_rmw_partial_last;
+    wire [CFG_DRAM_WLAT_GROUP * CFG_WRDATA_ID_WIDTH                       - 1 : 0] ecc_wdata_wrdataid;
+    wire [CFG_DRAM_WLAT_GROUP * CFG_WRDATA_ID_WIDTH_SQRD                  - 1 : 0] ecc_wdata_wrdataid_vector;
+    wire [CFG_WRDATA_ID_WIDTH                                             - 1 : 0] ecc_wdata_wrdataid_first;
+    wire [CFG_WRDATA_ID_WIDTH_SQRD                                        - 1 : 0] ecc_wdata_wrdataid_vector_first;
+    wire [CFG_WRDATA_ID_WIDTH                                             - 1 : 0] ecc_wdata_wrdataid_last;
+    wire [CFG_WRDATA_ID_WIDTH_SQRD                                        - 1 : 0] ecc_wdata_wrdataid_vector_last;
+    wire [CFG_MEM_IF_CHIP * (CFG_DWIDTH_RATIO / 2) * CFG_MEM_IF_DQS_WIDTH - 1 : 0] int_afi_rrank;
+    wire [CFG_MEM_IF_CHIP * (CFG_DWIDTH_RATIO / 2) * CFG_MEM_IF_DQS_WIDTH - 1 : 0] int_afi_wrank;
+    wire [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2)                   - 1 : 0] afi_dqs_burst;
+    wire [CFG_MEM_IF_DQS_WIDTH * (CFG_DWIDTH_RATIO / 2)                   - 1 : 0] afi_wdata_valid;
+    wire [CFG_MEM_IF_DQ_WIDTH  * CFG_DWIDTH_RATIO                         - 1 : 0] afi_wdata;
+    wire [CFG_MEM_IF_DM_WIDTH  * CFG_DWIDTH_RATIO                         - 1 : 0] afi_dm;
     
     // alt_mem_ddrx_wdata_path
     wire proc_busy;
@@ -941,7 +967,9 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
     wire [CFG_MEM_IF_CHIP           - 1 : 0]   sb_do_deep_pdown;
     wire [CFG_MEM_IF_CHIP           - 1 : 0]   sb_do_zq_cal;
     wire [CFG_CTL_TBP_NUM           - 1 : 0]   sb_tbp_precharge_all;
-    wire [CFG_MEM_IF_CLK_PAIR_COUNT - 1 : 0]   ctl_mem_clk_disable;
+    wire [CFG_MEM_IF_CLK_PAIR_COUNT - 1 : 0]   ctl_sb_mem_clk_disable;
+    wire                                       ctl_sb_cal_req;
+    wire                                       ctl_sb_init_req;
     wire [CFG_MEM_IF_CHIP           - 1 : 0]   afi_ctl_refresh_done;
     wire [CFG_MEM_IF_CHIP           - 1 : 0]   afi_ctl_long_idle;
     
@@ -980,6 +1008,18 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
     wire [T_PARAM_ARF_PERIOD_WIDTH           - 1 : 0] t_param_arf_period;
     wire [T_PARAM_PDN_PERIOD_WIDTH           - 1 : 0] t_param_pdn_period;
     wire [T_PARAM_POWER_SAVING_EXIT_WIDTH    - 1 : 0] t_param_power_saving_exit;
+    wire [T_PARAM_MEM_CLK_ENTRY_CYCLES_WIDTH - 1 : 0] t_param_mem_clk_entry_cycles;
+    
+    // General
+    wire init_done                                                                           = ctl_cal_success;
+    wire sts_cal_success                                                                     = ctl_cal_success;
+    wire sts_cal_fail                                                                        = ctl_cal_fail;
+    wire ctl_cal_req                                                                         = cfg_cal_req | ctl_sb_cal_req;
+    wire ctl_init_req                                                                        = ctl_sb_init_req;
+    wire [CFG_MEM_IF_CLK_PAIR_COUNT            - 1 : 0] ctl_mem_clk_disable                  = ctl_sb_mem_clk_disable;
+    wire [CFG_MEM_IF_DQS_WIDTH*CFG_MEM_IF_CHIP - 1 : 0] ctl_cal_byte_lane_sel_n              = 0;
+    wire [CFG_MEM_IF_CHIP * (CFG_DWIDTH_RATIO / 2) * CFG_MEM_IF_DQS_WIDTH - 1 : 0] afi_rrank = CFG_USE_SHADOW_REGS ? int_afi_rrank : 0;
+    wire [CFG_MEM_IF_CHIP * (CFG_DWIDTH_RATIO / 2) * CFG_MEM_IF_DQS_WIDTH - 1 : 0] afi_wrank = CFG_USE_SHADOW_REGS ? int_afi_wrank : 0;
     
     // Log 2 function
     function integer log2;
@@ -1081,6 +1121,8 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .bg_do_rmw_partial         (bg_do_rmw_partial          ),
         .local_refresh_req         (local_refresh_req          ),
         .local_refresh_chip        (local_refresh_chip         ),
+        .local_zqcal_req           (local_zqcal_req            ),
+//        .local_zqcal_chip          (local_zqcal_chip           ),
         .local_deep_powerdn_req    (local_deep_powerdn_req     ),
         .local_deep_powerdn_chip   (local_deep_powerdn_chip    ),
         .local_self_rfsh_req       (local_self_rfsh_req        ),
@@ -1092,6 +1134,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .local_init_done           (local_init_done            ),
         .rfsh_req                  (rfsh_req                   ),
         .rfsh_chip                 (rfsh_chip                  ),
+        .zqcal_req                 (zqcal_req                  ),
         .deep_powerdn_req          (deep_powerdn_req           ),
         .deep_powerdn_chip         (deep_powerdn_chip          ),
         .self_rfsh_req             (self_rfsh_req              ),
@@ -1157,6 +1200,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .tbp_shadow_bank                    (tbp_shadow_bank                    ),
         .tbp_shadow_row                     (tbp_shadow_row                     ),
         .cmd_gen_load                       (cmd_gen_load                       ),
+        .cmd_gen_waiting_to_load            (cmd_gen_waiting_to_load            ),
         .cmd_gen_chipsel                    (cmd_gen_chipsel                    ),
         .cmd_gen_bank                       (cmd_gen_bank                       ),
         .cmd_gen_row                        (cmd_gen_row                        ),
@@ -1181,6 +1225,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .cmd_gen_same_shadow_chipsel_addr   (cmd_gen_same_shadow_chipsel_addr   ),
         .cmd_gen_same_shadow_bank_addr      (cmd_gen_same_shadow_bank_addr      ),
         .cmd_gen_same_shadow_row_addr       (cmd_gen_same_shadow_row_addr       ),
+        .cmd_gen_busy                       (cmd_gen_busy                       ),
         .cmd_gen_full                       (cmd_gen_full                       ),
         .cmd_valid                          (cmd_valid                          ),
         .cmd_address                        (cmd_address                        ),
@@ -1278,6 +1323,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .tbp_full                               (tbp_full                               ),
         .tbp_empty                              (tbp_empty                              ),
         .cmd_gen_load                           (cmd_gen_load                           ),
+        .cmd_gen_waiting_to_load                (cmd_gen_waiting_to_load                ),
         .cmd_gen_chipsel                        (cmd_gen_chipsel                        ),
         .cmd_gen_bank                           (cmd_gen_bank                           ),
         .cmd_gen_row                            (cmd_gen_row                            ),
@@ -1351,13 +1397,17 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .t_param_pch_to_valid                   (t_param_pch_to_valid                   ),
         .t_param_rd_ap_to_valid                 (t_param_rd_ap_to_valid                 ),
         .t_param_wr_ap_to_valid                 (t_param_wr_ap_to_valid                 ),
-        .tbp_bank_active                        (tbp_bank_active                        ),
+        .tbp_bank_closed                        (tbp_bank_closed                        ),
         .tbp_timer_ready                        (tbp_timer_ready                        ),
         .cfg_reorder_data                       (cfg_reorder_data                       ),
         .tbp_load                               (tbp_load                               ),
         .data_complete                          (data_complete                          ),
+        .data_rmw_complete                      (data_rmw_complete                      ),
+        .data_rmw_fetch                         (data_rmw_fetch                         ),
         .cfg_starve_limit                       (cfg_starve_limit                       ),
-        .cfg_type                               (cfg_type                               )
+        .cfg_type                               (cfg_type                               ),
+        .cfg_enable_ecc                         (cfg_enable_ecc                         ),
+        .cfg_enable_no_dm                       (cfg_enable_no_dm                       )
     );
     
 //==============================================================================
@@ -1722,6 +1772,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
     alt_mem_ddrx_rdwr_data_tmg #
     (
         .CFG_DWIDTH_RATIO                   (CFG_DWIDTH_RATIO                   ),
+        .CFG_MEM_IF_CHIP                    (CFG_MEM_IF_CHIP                    ),
         .CFG_MEM_IF_DQ_WIDTH                (CFG_MEM_IF_DQ_WIDTH                ),
         .CFG_MEM_IF_DQS_WIDTH               (CFG_MEM_IF_DQS_WIDTH               ),
         .CFG_MEM_IF_DM_WIDTH                (CFG_MEM_IF_DM_WIDTH                ),
@@ -1732,7 +1783,9 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .CFG_ECC_ENC_REG                    (CFG_ECC_ENC_REG                    ),
         .CFG_AFI_INTF_PHASE_NUM             (CFG_AFI_INTF_PHASE_NUM             ),
         .CFG_PORT_WIDTH_ENABLE_ECC          (CFG_PORT_WIDTH_ENABLE_ECC          ),
-        .CFG_PORT_WIDTH_OUTPUT_REGD         (CFG_PORT_WIDTH_OUTPUT_REGD         )
+        .CFG_PORT_WIDTH_OUTPUT_REGD         (CFG_PORT_WIDTH_OUTPUT_REGD         ),
+        .CFG_CTL_ARBITER_TYPE               (CFG_CTL_ARBITER_TYPE               ),
+        .CFG_USE_SHADOW_REGS                (CFG_USE_SHADOW_REGS                )
     )
     rdwr_data_tmg_inst
     (
@@ -1741,12 +1794,15 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .cfg_enable_ecc                     (cfg_enable_ecc                     ),
         .cfg_output_regd                    (cfg_output_regd                    ),
         .cfg_output_regd_for_afi_output     (cfg_output_regd_for_afi_output     ),
+        .bg_do_read                         (bg_do_read                         ),
+        .bg_do_write                        (bg_do_write                        ),
         .bg_doing_read                      (bg_doing_read                      ),
         .bg_doing_write                     (bg_doing_write                     ),
         .bg_rdwr_data_valid                 (bg_rdwr_data_valid                 ),
         .dataid                             (bg_dataid                          ),
-        .bg_do_rmw_correct                  (bg_do_rmw_correct                  ),      
-        .bg_do_rmw_partial                  (bg_do_rmw_partial                  ),      
+        .bg_do_rmw_correct                  (bg_do_rmw_correct                  ),
+        .bg_do_rmw_partial                  (bg_do_rmw_partial                  ),
+        .bg_to_chip                         (bg_to_chip                         ),
         .ecc_wdata                          (ecc_wdata                          ),
         .ecc_dm                             (ecc_dm                             ),
         .afi_wlat                           (afi_wlat                           ),
@@ -1768,6 +1824,8 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .ecc_wdata_fifo_dataid_vector_last  (ecc_wdata_fifo_dataid_vector_last  ),
         .ecc_wdata_fifo_rmw_correct_last    (ecc_wdata_fifo_rmw_correct_last    ),
         .ecc_wdata_fifo_rmw_partial_last    (ecc_wdata_fifo_rmw_partial_last    ),
+        .afi_rrank                          (int_afi_rrank                      ),
+        .afi_wrank                          (int_afi_wrank                      ),
         .afi_dqs_burst                      (afi_dqs_burst                      ),
         .afi_wdata_valid                    (afi_wdata_valid                    ),
         .afi_wdata                          (afi_wdata                          ),
@@ -1805,10 +1863,10 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         if (CFG_WRDATA_ID_WIDTH < CFG_DATA_ID_WIDTH)
         begin
             assign wdatap_free_id_dataid           = {{(CFG_DATA_ID_WIDTH-CFG_WRDATA_ID_WIDTH){1'b0}},wdatap_free_id_wrdataid};
-            assign ecc_wdata_wrdataid_first        = ecc_wdata_fifo_dataid_first;
-            assign ecc_wdata_wrdataid_vector_first = ecc_wdata_fifo_dataid_vector_first;
-            assign ecc_wdata_wrdataid_last         = ecc_wdata_fifo_dataid_last;
-            assign ecc_wdata_wrdataid_vector_last  = ecc_wdata_fifo_dataid_vector_last;
+            assign ecc_wdata_wrdataid_first        = ecc_wdata_fifo_dataid_first [CFG_WRDATA_ID_WIDTH - 1 : 0];
+            assign ecc_wdata_wrdataid_vector_first = ecc_wdata_fifo_dataid_vector_first [CFG_WRDATA_ID_WIDTH_SQRD -1 : 0];
+            assign ecc_wdata_wrdataid_last         = ecc_wdata_fifo_dataid_last [CFG_WRDATA_ID_WIDTH - 1 : 0];
+            assign ecc_wdata_wrdataid_vector_last  = ecc_wdata_fifo_dataid_vector_last [CFG_WRDATA_ID_WIDTH_SQRD - 1 : 0];
         end
         else    // (CFG_WRDATA_ID_WIDTH >= CFG_DATA_ID_WIDTH)
         begin
@@ -1824,10 +1882,15 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
             assign rdatap_free_id_dataid = {{(CFG_DATA_ID_WIDTH-CFG_RDDATA_ID_WIDTH){1'b0}},rdatap_free_id_rddataid};
             assign bg_rddataid           = bg_dataid[CFG_RDDATA_ID_WIDTH-1:0];
         end
-        else    // (CFG_RDDATA_ID_WIDTH >= CFG_DATA_ID_WIDTH)
+        else if(CFG_RDDATA_ID_WIDTH > CFG_DATA_ID_WIDTH)
         begin
             assign rdatap_free_id_dataid = rdatap_free_id_rddataid[CFG_DATA_ID_WIDTH-1:0];
             assign bg_rddataid           = {{(CFG_RDDATA_ID_WIDTH-CFG_DATA_ID_WIDTH){1'b0}},bg_dataid};
+        end
+        else // CFG_RDDATA_ID_WIDTH == CFG_DATA_ID_WIDTH
+        begin
+            assign rdatap_free_id_dataid = rdatap_free_id_rddataid[CFG_DATA_ID_WIDTH-1:0];
+            assign bg_rddataid           = bg_dataid;
         end
     end
     endgenerate
@@ -1880,6 +1943,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .byte_en                                    (byte_en                            ),
         .data_complete                              (data_complete                      ),
         .data_rmw_complete                          (data_rmw_complete                  ),
+        .data_rmw_fetch                             (data_rmw_fetch                     ),
         .data_partial_be                            (data_partial_be                    ),
         .doing_write                                (ecc_wdata_fifo_read                ),
         .dataid                                     (ecc_wdata_wrdataid                 ),
@@ -1953,7 +2017,8 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .CFG_PORT_WIDTH_COL_ADDR_WIDTH      (CFG_PORT_WIDTH_COL_ADDR_WIDTH      ),
         .CFG_PORT_WIDTH_ROW_ADDR_WIDTH      (CFG_PORT_WIDTH_ROW_ADDR_WIDTH      ),
         .CFG_PORT_WIDTH_BANK_ADDR_WIDTH     (CFG_PORT_WIDTH_BANK_ADDR_WIDTH     ),
-        .CFG_PORT_WIDTH_CS_ADDR_WIDTH       (CFG_PORT_WIDTH_CS_ADDR_WIDTH       )
+        .CFG_PORT_WIDTH_CS_ADDR_WIDTH       (CFG_PORT_WIDTH_CS_ADDR_WIDTH       ),
+		.CFG_ERRCMD_FIFO_REG				(CFG_ERRCMD_FIFO_REG				)
     )
     rdata_path_inst
     (
@@ -2035,6 +2100,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .CFG_ECC_CODE_WIDTH                     (CFG_ECC_CODE_WIDTH                 ),
         .CFG_ECC_ENC_REG                        (CFG_ECC_ENC_REG                    ),
         .CFG_ECC_DEC_REG                        (CFG_ECC_DEC_REG                    ),
+		.CFG_ECC_DECODER_REG					(CFG_ECC_DECODER_REG				),
         .CFG_ECC_RDATA_REG                      (CFG_ECC_RDATA_REG                  ),
         .CFG_PORT_WIDTH_INTERFACE_WIDTH         (CFG_PORT_WIDTH_INTERFACE_WIDTH     ),
         .CFG_PORT_WIDTH_ENABLE_ECC              (CFG_PORT_WIDTH_ENABLE_ECC          ),
@@ -2118,6 +2184,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .CFG_MEM_IF_CHIP                        (CFG_MEM_IF_CHIP                        ),
         .CFG_MEM_IF_BA_WIDTH                    (CFG_MEM_IF_BA_WIDTH                    ),
         .CFG_PORT_WIDTH_TCL                     (CFG_PORT_WIDTH_TCL                     ),
+        .CFG_PORT_WIDTH_CS_ADDR_WIDTH           (CFG_PORT_WIDTH_CS_ADDR_WIDTH           ),
         .CFG_MEM_IF_CLK_PAIR_COUNT              (CFG_MEM_IF_CLK_PAIR_COUNT              ),
         .CFG_RANK_TIMER_OUTPUT_REG              (CFG_RANK_TIMER_OUTPUT_REG              ),
         .T_PARAM_ARF_TO_VALID_WIDTH             (T_PARAM_ARF_TO_VALID_WIDTH             ),
@@ -2127,7 +2194,8 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .T_PARAM_SRF_TO_ZQ_CAL_WIDTH            (T_PARAM_SRF_TO_ZQ_CAL_WIDTH            ),
         .T_PARAM_PDN_TO_VALID_WIDTH             (T_PARAM_PDN_TO_VALID_WIDTH             ),
         .T_PARAM_PDN_PERIOD_WIDTH               (T_PARAM_PDN_PERIOD_WIDTH               ),
-        .T_PARAM_POWER_SAVING_EXIT_WIDTH        (T_PARAM_POWER_SAVING_EXIT_WIDTH        )
+        .T_PARAM_POWER_SAVING_EXIT_WIDTH        (T_PARAM_POWER_SAVING_EXIT_WIDTH        ),
+        .T_PARAM_MEM_CLK_ENTRY_CYCLES_WIDTH     (T_PARAM_MEM_CLK_ENTRY_CYCLES_WIDTH     )
     )
     sideband_inst
     (
@@ -2136,6 +2204,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .rfsh_req                               (rfsh_req                               ),
         .rfsh_chip                              (rfsh_chip                              ),
         .rfsh_ack                               (rfsh_ack                               ),
+        .zqcal_req                              (zqcal_req                              ),
         .self_rfsh_req                          (self_rfsh_req                          ),
         .self_rfsh_chip                         (self_rfsh_chip                         ),
         .self_rfsh_ack                          (self_rfsh_ack                          ),
@@ -2153,8 +2222,9 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .sb_do_deep_pdown                       (sb_do_deep_pdown                       ),
         .sb_do_zq_cal                           (sb_do_zq_cal                           ),
         .sb_tbp_precharge_all                   (sb_tbp_precharge_all                   ),
-        .ctl_mem_clk_disable                    (ctl_mem_clk_disable                    ),
-        .ctl_init_req                           (ctl_init_req                           ),
+        .ctl_mem_clk_disable                    (ctl_sb_mem_clk_disable                 ),
+        .ctl_cal_req                            (ctl_sb_cal_req                         ),
+        .ctl_init_req                           (ctl_sb_init_req                        ),
         .ctl_cal_success                        (ctl_cal_success                        ),
         .cmd_gen_chipsel                        (cmd_gen_chipsel                        ),
         .tbp_chipsel                            (tbp_chipsel                            ),
@@ -2167,19 +2237,22 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .t_param_pdn_to_valid                   (t_param_pdn_to_valid                   ),
         .t_param_pdn_period                     (t_param_pdn_period                     ),
         .t_param_power_saving_exit              (t_param_power_saving_exit              ),
+        .t_param_mem_clk_entry_cycles           (t_param_mem_clk_entry_cycles           ),
         .tbp_empty                              (tbp_empty                              ),
-        .tbp_bank_active                        (tbp_bank_active                        ),
+        .tbp_bank_closed                        (tbp_bank_closed                        ),
         .tbp_timer_ready                        (tbp_timer_ready                        ),
         .row_grant                              (or_row_grant                           ),
         .col_grant                              (or_col_grant                           ),
         .afi_ctl_refresh_done                   (afi_ctl_refresh_done                   ),
         .afi_seq_busy                           (afi_seq_busy                           ),
         .afi_ctl_long_idle                      (afi_ctl_long_idle                      ),
+        .cfg_cs_addr_width                      (cfg_cs_addr_width                      ),
         .cfg_enable_dqs_tracking                (cfg_enable_dqs_tracking                ),
         .cfg_user_rfsh                          (cfg_user_rfsh                          ),
         .cfg_type                               (cfg_type                               ),
         .cfg_tcl                                (cfg_tcl                                ),
-        .cfg_regdimm_enable                     (cfg_regdimm_enable                     )
+        .cfg_regdimm_enable                     (cfg_regdimm_enable                     ),
+        .sideband_in_refresh                    (sideband_in_refresh                    )
     );
     
 //==============================================================================
@@ -2291,6 +2364,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .CFG_PORT_WIDTH_PDN_EXIT_CYCLES                         (CFG_PORT_WIDTH_PDN_EXIT_CYCLES                         ),
         .CFG_PORT_WIDTH_AUTO_PD_CYCLES                          (CFG_PORT_WIDTH_AUTO_PD_CYCLES                          ),
         .CFG_PORT_WIDTH_POWER_SAVING_EXIT_CYCLES                (CFG_PORT_WIDTH_POWER_SAVING_EXIT_CYCLES                ),
+        .CFG_PORT_WIDTH_MEM_CLK_ENTRY_CYCLES                    (CFG_PORT_WIDTH_MEM_CLK_ENTRY_CYCLES                    ),
         .CFG_PORT_WIDTH_EXTRA_CTL_CLK_ACT_TO_RDWR               (CFG_PORT_WIDTH_EXTRA_CTL_CLK_ACT_TO_RDWR               ),
         .CFG_PORT_WIDTH_EXTRA_CTL_CLK_ACT_TO_PCH                (CFG_PORT_WIDTH_EXTRA_CTL_CLK_ACT_TO_PCH                ),
         .CFG_PORT_WIDTH_EXTRA_CTL_CLK_ACT_TO_ACT                (CFG_PORT_WIDTH_EXTRA_CTL_CLK_ACT_TO_ACT                ),
@@ -2345,7 +2419,8 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .T_PARAM_SRF_TO_ZQ_CAL_WIDTH                            (T_PARAM_SRF_TO_ZQ_CAL_WIDTH                            ),
         .T_PARAM_ARF_PERIOD_WIDTH                               (T_PARAM_ARF_PERIOD_WIDTH                               ),
         .T_PARAM_PDN_PERIOD_WIDTH                               (T_PARAM_PDN_PERIOD_WIDTH                               ),
-        .T_PARAM_POWER_SAVING_EXIT_WIDTH                        (T_PARAM_POWER_SAVING_EXIT_WIDTH                        )
+        .T_PARAM_POWER_SAVING_EXIT_WIDTH                        (T_PARAM_POWER_SAVING_EXIT_WIDTH                        ),
+        .T_PARAM_MEM_CLK_ENTRY_CYCLES_WIDTH                     (T_PARAM_MEM_CLK_ENTRY_CYCLES_WIDTH                     )
     )
     timing_param_inst
     (
@@ -2373,6 +2448,7 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .cfg_pdn_exit_cycles                                    (cfg_pdn_exit_cycles                                    ),
         .cfg_auto_pd_cycles                                     (cfg_auto_pd_cycles                                     ),
         .cfg_power_saving_exit_cycles                           (cfg_power_saving_exit_cycles                           ),
+        .cfg_mem_clk_entry_cycles                               (cfg_mem_clk_entry_cycles                               ),
         .cfg_extra_ctl_clk_act_to_rdwr                          (cfg_extra_ctl_clk_act_to_rdwr                          ),
         .cfg_extra_ctl_clk_act_to_pch                           (cfg_extra_ctl_clk_act_to_pch                           ),
         .cfg_extra_ctl_clk_act_to_act                           (cfg_extra_ctl_clk_act_to_act                           ),
@@ -2427,7 +2503,8 @@ output  [CFG_MEM_IF_CHIP - 1 : 0] afi_ctl_long_idle;
         .t_param_srf_to_zq_cal                                  (t_param_srf_to_zq_cal                                  ),
         .t_param_arf_period                                     (t_param_arf_period                                     ),
         .t_param_pdn_period                                     (t_param_pdn_period                                     ),
-        .t_param_power_saving_exit                              (t_param_power_saving_exit                              )
+        .t_param_power_saving_exit                              (t_param_power_saving_exit                              ),
+        .t_param_mem_clk_entry_cycles                           (t_param_mem_clk_entry_cycles                           )
     );
     
 endmodule

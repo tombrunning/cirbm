@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -11,10 +11,23 @@
 // agreement for further details.
 
 
-// $Id: //acds/rel/11.1sp2/ip/merlin/altera_merlin_router/altera_merlin_router.sv.terp#1 $
+// (C) 2001-2013 Altera Corporation. All rights reserved.
+// Your use of Altera Corporation's design tools, logic functions and other 
+// software and tools, and its AMPP partner logic functions, and any output 
+// files any of the foregoing (including device programming or simulation 
+// files), and any associated documentation or information are expressly subject 
+// to the terms and conditions of the Altera Program License Subscription 
+// Agreement, Altera MegaCore Function License Agreement, or other applicable 
+// license agreement, including, without limitation, that your use is for the 
+// sole purpose of programming logic devices manufactured by Altera and sold by 
+// Altera or its authorized distributors.  Please refer to the applicable 
+// agreement for further details.
+
+
+// $Id: //acds/rel/13.0sp1/ip/merlin/altera_merlin_router/altera_merlin_router.sv.terp#1 $
 // $Revision: #1 $
-// $Date: 2011/11/10 $
-// $Author: max $
+// $Date: 2013/03/07 $
+// $Author: swbranch $
 
 // -------------------------------------------------------
 // Merlin Router
@@ -31,21 +44,41 @@
 
 module DE4_QSYS_addr_router_001_default_decode
   #(
-     parameter DEFAULT_CHANNEL = 2,
+     parameter DEFAULT_CHANNEL = 5,
+               DEFAULT_WR_CHANNEL = -1,
+               DEFAULT_RD_CHANNEL = -1,
                DEFAULT_DESTID = 2 
    )
-  (output [94 - 92 : 0] default_destination_id,
-   output [5-1 : 0] default_src_channel
+  (output [98 - 96 : 0] default_destination_id,
+   output [6-1 : 0] default_wr_channel,
+   output [6-1 : 0] default_rd_channel,
+   output [6-1 : 0] default_src_channel
   );
 
   assign default_destination_id = 
-    DEFAULT_DESTID[94 - 92 : 0];
+    DEFAULT_DESTID[98 - 96 : 0];
+
   generate begin : default_decode
-    if (DEFAULT_CHANNEL == -1)
+    if (DEFAULT_CHANNEL == -1) begin
       assign default_src_channel = '0;
-    else
-      assign default_src_channel = 5'b1 << DEFAULT_CHANNEL;
-  end endgenerate
+    end
+    else begin
+      assign default_src_channel = 6'b1 << DEFAULT_CHANNEL;
+    end
+  end
+  endgenerate
+
+  generate begin : default_decode_rw
+    if (DEFAULT_RD_CHANNEL == -1) begin
+      assign default_wr_channel = '0;
+      assign default_rd_channel = '0;
+    end
+    else begin
+      assign default_wr_channel = 6'b1 << DEFAULT_WR_CHANNEL;
+      assign default_rd_channel = 6'b1 << DEFAULT_RD_CHANNEL;
+    end
+  end
+  endgenerate
 
 endmodule
 
@@ -62,7 +95,7 @@ module DE4_QSYS_addr_router_001
     // Command Sink (Input)
     // -------------------
     input                       sink_valid,
-    input  [96-1 : 0]    sink_data,
+    input  [109-1 : 0]    sink_data,
     input                       sink_startofpacket,
     input                       sink_endofpacket,
     output                      sink_ready,
@@ -71,8 +104,8 @@ module DE4_QSYS_addr_router_001
     // Command Source (Output)
     // -------------------
     output                          src_valid,
-    output reg [96-1    : 0] src_data,
-    output reg [5-1 : 0] src_channel,
+    output reg [109-1    : 0] src_data,
+    output reg [6-1 : 0] src_channel,
     output                          src_startofpacket,
     output                          src_endofpacket,
     input                           src_ready
@@ -83,10 +116,12 @@ module DE4_QSYS_addr_router_001
     // -------------------------------------------------------
     localparam PKT_ADDR_H = 66;
     localparam PKT_ADDR_L = 36;
-    localparam PKT_DEST_ID_H = 94;
-    localparam PKT_DEST_ID_L = 92;
-    localparam ST_DATA_W = 96;
-    localparam ST_CHANNEL_W = 5;
+    localparam PKT_DEST_ID_H = 98;
+    localparam PKT_DEST_ID_L = 96;
+    localparam PKT_PROTECTION_H = 102;
+    localparam PKT_PROTECTION_L = 100;
+    localparam ST_DATA_W = 109;
+    localparam ST_CHANNEL_W = 6;
     localparam DECODER_TYPE = 0;
 
     localparam PKT_TRANS_WRITE = 69;
@@ -97,28 +132,28 @@ module DE4_QSYS_addr_router_001
 
 
 
-
     // -------------------------------------------------------
     // Figure out the number of bits to mask off for each slave span
     // during address decoding
     // -------------------------------------------------------
-    localparam PAD0 = log2ceil(32'h40000000 - 32'h0);
-    localparam PAD1 = log2ceil(32'h40000400 - 32'h40000000);
-    localparam PAD2 = log2ceil(32'h41040000 - 32'h41020000);
-    localparam PAD3 = log2ceil(32'h41041000 - 32'h41040800);
-    localparam PAD4 = log2ceil(32'h41041008 - 32'h41041000);
-
+    localparam PAD0 = log2ceil(64'h40000000 - 64'h0); 
+    localparam PAD1 = log2ceil(64'h40000400 - 64'h40000000); 
+    localparam PAD2 = log2ceil(64'h41040000 - 64'h41020000); 
+    localparam PAD3 = log2ceil(64'h41041000 - 64'h41040800); 
+    localparam PAD4 = log2ceil(64'h41041020 - 64'h41041000); 
+    localparam PAD5 = log2ceil(64'h41041028 - 64'h41041020); 
     // -------------------------------------------------------
     // Work out which address bits are significant based on the
     // address range of the slaves. If the required width is too
     // large or too small, we use the address field width instead.
     // -------------------------------------------------------
-    localparam ADDR_RANGE = 32'h41041008;
+    localparam ADDR_RANGE = 64'h41041028;
     localparam RANGE_ADDR_WIDTH = log2ceil(ADDR_RANGE);
     localparam OPTIMIZED_ADDR_H = (RANGE_ADDR_WIDTH > PKT_ADDR_W) ||
                                   (RANGE_ADDR_WIDTH == 0) ?
                                         PKT_ADDR_H :
                                         PKT_ADDR_L + RANGE_ADDR_WIDTH - 1;
+
     localparam RG = RANGE_ADDR_WIDTH-1;
 
       wire [PKT_ADDR_W-1 : 0] address = sink_data[OPTIMIZED_ADDR_H : PKT_ADDR_L];
@@ -132,63 +167,74 @@ module DE4_QSYS_addr_router_001
     assign src_endofpacket   = sink_endofpacket;
 
     wire [PKT_DEST_ID_W-1:0] default_destid;
-    wire [5-1 : 0] default_src_channel;
+    wire [6-1 : 0] default_src_channel;
+
 
 
 
 
     DE4_QSYS_addr_router_001_default_decode the_default_decode(
       .default_destination_id (default_destid),
-      .default_src_channel (default_src_channel)
+      .default_wr_channel   (),
+      .default_rd_channel   (),
+      .default_src_channel  (default_src_channel)
     );
 
     always @* begin
         src_data    = sink_data;
         src_channel = default_src_channel;
-
         src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = default_destid;
+
         // --------------------------------------------------
         // Address Decoder
         // Sets the channel and destination ID based on the address
         // --------------------------------------------------
 
-        // ( 0x0 .. 0x40000000 )
-        if ( {address[RG:PAD0],{PAD0{1'b0}}} == 'h0 ) begin
-            src_channel = 5'b00100;
+    // ( 0x0 .. 0x40000000 )
+    if ( {address[RG:PAD0],{PAD0{1'b0}}} == 31'h0   ) begin
+            src_channel = 6'b100000;
             src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 2;
-        end
-
-        // ( 0x40000000 .. 0x40000400 )
-        if ( {address[RG:PAD1],{PAD1{1'b0}}} == 'h40000000 ) begin
-            src_channel = 5'b10000;
-            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 4;
-        end
-
-        // ( 0x41020000 .. 0x41040000 )
-        if ( {address[RG:PAD2],{PAD2{1'b0}}} == 'h41020000 ) begin
-            src_channel = 5'b00010;
-            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 1;
-        end
-
-        // ( 0x41040800 .. 0x41041000 )
-        if ( {address[RG:PAD3],{PAD3{1'b0}}} == 'h41040800 ) begin
-            src_channel = 5'b00001;
-            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 0;
-        end
-
-        // ( 0x41041000 .. 0x41041008 )
-        if ( {address[RG:PAD4],{PAD4{1'b0}}} == 'h41041000 ) begin
-            src_channel = 5'b01000;
-            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 3;
-        end
     end
+
+    // ( 0x40000000 .. 0x40000400 )
+    if ( {address[RG:PAD1],{PAD1{1'b0}}} == 31'h40000000   ) begin
+            src_channel = 6'b001000;
+            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 3;
+    end
+
+    // ( 0x41020000 .. 0x41040000 )
+    if ( {address[RG:PAD2],{PAD2{1'b0}}} == 31'h41020000   ) begin
+            src_channel = 6'b000010;
+            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 5;
+    end
+
+    // ( 0x41040800 .. 0x41041000 )
+    if ( {address[RG:PAD3],{PAD3{1'b0}}} == 31'h41040800   ) begin
+            src_channel = 6'b000001;
+            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 4;
+    end
+
+    // ( 0x41041000 .. 0x41041020 )
+    if ( {address[RG:PAD4],{PAD4{1'b0}}} == 31'h41041000   ) begin
+            src_channel = 6'b010000;
+            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 0;
+    end
+
+    // ( 0x41041020 .. 0x41041028 )
+    if ( {address[RG:PAD5],{PAD5{1'b0}}} == 31'h41041020   ) begin
+            src_channel = 6'b000100;
+            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 1;
+    end
+
+end
+
 
     // --------------------------------------------------
     // Ceil(log2()) function
     // --------------------------------------------------
     function integer log2ceil;
-        input reg[63:0] val;
-        reg [63:0] i;
+        input reg[65:0] val;
+        reg [65:0] i;
 
         begin
             i = 1;

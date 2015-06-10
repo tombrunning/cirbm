@@ -1,4 +1,4 @@
-# (C) 2001-2012 Altera Corporation. All rights reserved.
+# (C) 2001-2013 Altera Corporation. All rights reserved.
 # Your use of Altera Corporation's design tools, logic functions and other 
 # software and tools, and its AMPP partner logic functions, and any output 
 # files any of the foregoing (including device programming or simulation 
@@ -144,18 +144,3 @@ set board(DQ_DQS_skew) 0.0
 set board(intra_addr_ctrl_skew) 0.02
 set board(addresscmd_CK_skew) 0.6
 
-set pll_dll_master true
-if { [ string compare $pll_dll_master "false" ] == 0 } {
-	# In PLL/DLL slave mode, master corename and instname must be specified by user here
-	set ::master_corename "_MASTER_CORE_"
-	set ::master_instname "_MASTER_INST_"
-	
-	if { [ string compare $::master_corename "_MASTER_CORE_" ] == 0 } {
-		set script_name [ info script ]	
-		post_message -type critical_warning "master_corename variable hasn't been set in $script_name"
-	}
-	if { [ string compare $::master_instname "_MASTER_INST_" ] == 0 } {
-		set script_name [ info script ]
-		post_message -type critical_warning "master_instname variable hasn't been set in $script_name"
-	}
-}

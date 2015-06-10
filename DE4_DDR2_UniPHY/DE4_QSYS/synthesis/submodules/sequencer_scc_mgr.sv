@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -23,6 +23,8 @@
 // This component allows the NIOS to control the delay chains in the IOs.
 //
 
+`timescale 1 ps / 1 ps
+
 // altera message_off 10230
 module sequencer_scc_mgr (
 	// Avalon Interface
@@ -45,41 +47,47 @@ module sequencer_scc_mgr (
 	scc_dm_ena,
 	scc_upd,
 	
+	scc_sr_dqsenable_delayctrl,
+	scc_sr_dqsdisablen_delayctrl,
+	scc_sr_multirank_delayctrl,
+	
 	capture_strobe_tracking,
 	afi_init_req,
 	afi_cal_req
 );
 
 	parameter AVL_DATA_WIDTH                = 32;
-	parameter AVL_ADDR_WIDTH		= 13;
+	parameter AVL_ADDR_WIDTH                = 13;
 
 	parameter MEM_IF_READ_DQS_WIDTH	        = 1;
-	parameter MEM_IF_WRITE_DQS_WIDTH	= 1;
+	parameter MEM_IF_WRITE_DQS_WIDTH        = 1;
 	parameter MEM_IF_DQ_WIDTH               = 36;
 	parameter MEM_IF_DM_WIDTH               = 4;
-
+	parameter MEM_NUMBER_OF_RANKS           = 1;
+	
 	parameter DLL_DELAY_CHAIN_LENGTH        = 8;
 	parameter FAMILY                        = "STRATIXIII";
 	parameter USE_DQS_TRACKING              = 0;
-	parameter DUAL_WRITE_CLOCK		= 0;
-
+	parameter USE_SHADOW_REGS               = 0;
+	parameter DUAL_WRITE_CLOCK              = 0;
+	
 
 	localparam MAX_FAMILY_NAME_LEN          = 30;
 
 	function integer get_dqs_sdata_bits(input [8*MAX_FAMILY_NAME_LEN-1:0] family);
-		if (family == "STRATIXV") return 101;
+		if (family == "STRATIXV" || family == "ARRIAVGZ") return 101;
 		else if (family == "ARRIAV" || family == "CYCLONEV") return 30;
 		else return 46;
 	endfunction
 		
 	function integer get_io_sdata_bits(input [8*MAX_FAMILY_NAME_LEN-1:0] family);
-		if (family == "STRATIXV") return 40;
+		if (family == "STRATIXV" || family == "ARRIAVGZ") return 40;
 		else if (family == "ARRIAV" || family == "CYCLONEV") return 25;
 		else return 11;
 	endfunction
 		
 	function integer get_datawidth(input [8*MAX_FAMILY_NAME_LEN-1:0] family);
-		if (family == "STRATIXV") return 40;
+		if (family == "STRATIXV" || family == "ARRIAVGZ") return 42;
 		else if (family == "ARRIAV" || family == "CYCLONEV") return 19;
 		else return 24;
 	endfunction
@@ -96,7 +104,12 @@ module sequencer_scc_mgr (
 	localparam MEM_DQS_PER_DM   = (MEM_IF_DM_WIDTH < MEM_IF_WRITE_DQS_WIDTH) ? (MEM_IF_WRITE_DQS_WIDTH / MEM_IF_DM_WIDTH) : 1;
 
 	localparam RFILE_DEPTH      = log2(MEM_DQ_PER_DQS + 1 + MEM_DM_PER_DQS + MEM_IF_READ_DQS_WIDTH - 1) + 1;
-
+	localparam RFILE_ADDR_WIDTH = 6;
+	localparam RFILE_USED_DEPTH = (RFILE_DEPTH > RFILE_ADDR_WIDTH) ? RFILE_DEPTH : RFILE_ADDR_WIDTH;
+	
+	localparam SCC_UPD_WIDTH	= (USE_SHADOW_REGS == 1) ? MEM_IF_READ_DQS_WIDTH : 1;
+	localparam SAMPLE_COUNTER_WIDTH = 14;
+	
 	typedef enum integer {
 		SCC_SCAN_DQS		= 'b0000,
 		SCC_SCAN_DQS_IO		= 'b0001,
@@ -121,10 +134,13 @@ module sequencer_scc_mgr (
 	output [MEM_IF_READ_DQS_WIDTH - 1:0] scc_dqs_io_ena;
 	output [MEM_IF_DQ_WIDTH - 1:0] scc_dq_ena;
 	output [MEM_IF_DM_WIDTH - 1:0] scc_dm_ena;
-	output scc_upd;
+	output [SCC_UPD_WIDTH - 1:0] scc_upd;
 	
+	output [7:0] scc_sr_dqsenable_delayctrl;
+	output [7:0] scc_sr_dqsdisablen_delayctrl;
+	output [7:0] scc_sr_multirank_delayctrl;
+
 	input [MEM_IF_READ_DQS_WIDTH - 1:0] capture_strobe_tracking;
-	
 	input afi_init_req;
 	input afi_cal_req;
 
@@ -138,14 +154,14 @@ module sequencer_scc_mgr (
 	reg [MEM_IF_READ_DQS_WIDTH - 1:0] scc_dqs_io_ena;
 	reg [MEM_IF_DQ_WIDTH - 1:0] scc_dq_ena;
 	reg [MEM_IF_DM_WIDTH - 1:0] scc_dm_ena;
-	reg scc_upd;
+	reg [SCC_UPD_WIDTH - 1:0] scc_upd;
 
 	reg scc_data_c;
 	reg [MEM_IF_READ_DQS_WIDTH - 1:0] scc_dqs_ena_c;
 	reg [MEM_IF_READ_DQS_WIDTH - 1:0] scc_dqs_io_ena_c;
 	reg [MEM_IF_DQ_WIDTH - 1:0] scc_dq_ena_c;
 	reg [MEM_IF_DM_WIDTH - 1:0] scc_dm_ena_c;
-	reg scc_upd_c;	
+	reg [SCC_UPD_WIDTH - 1:0] scc_upd_c;	
 
 	// IO config register
 	
@@ -199,14 +215,15 @@ module sequencer_scc_mgr (
 	reg [7:0] scc_shift_cnt_curr;
 	reg [7:0] scc_shift_cnt_next;
 	
-	
 	reg    [DATAWIDTH-1:0]    datain;
+	wire    [DATAWIDTH-1:0]    dataout_sr0;
+	wire    [DATAWIDTH-1:0]    dataout_sr1;
 	wire    [DATAWIDTH-1:0]    dataout;
-	wire   [5:0]    write_addr;
-	wire   [5:0]    read_addr;
+	wire   [RFILE_ADDR_WIDTH-1:0]    write_addr;
+	wire   [RFILE_ADDR_WIDTH-1:0]    read_addr;
 	reg    [3:0]    group;
-	reg    [5:0]    pin;
-	wire    write_en;
+	wire    write_en_sr0;
+	wire    write_en_sr1;
 
 	reg [DATAWIDTH-1:0] scc_dataout;
 
@@ -214,12 +231,16 @@ module sequencer_scc_mgr (
 	wire avl_cmd_group_counter;
 	wire [3:0] avl_cmd_section;
 	wire avl_cmd_rfile_group_not_io;
-	wire [5:0] avl_cmd_rfile_addr;
+	wire [RFILE_ADDR_WIDTH-1:0] avl_cmd_rfile_addr;
 
+	wire avl_cmd_rank;
+	reg [MEM_NUMBER_OF_RANKS - 1:0] avl_active_rank;
+	wire avl_active_shadow_reg;
+	
 	wire avl_cmd_scan;
 	wire avl_cmd_scan_begin;
 	wire avl_cmd_scan_end;
-	wire [5:0] avl_cmd_scan_addr;
+	wire [RFILE_ADDR_WIDTH-1:0] avl_cmd_scan_addr;
 
 	reg avl_doing_scan;
 	reg scc_doing_scan;
@@ -233,7 +254,7 @@ module sequencer_scc_mgr (
 	
 	wire track_opr_check;
 	wire avl_cmd_counter_access;
-	wire avl_cmd_do_sample;
+
 	wire avl_cmd_afi_req;
 
 	wire [AVL_DATA_WIDTH-1:0] shifted_dataout;
@@ -248,58 +269,59 @@ module sequencer_scc_mgr (
 	
 	integer i;
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	assign sel_scc = 1'b1;
-
-	integer scan_offsets[0:3] = '{ 0, MEM_IF_READ_DQS_WIDTH + MEM_DQ_PER_DQS, MEM_IF_READ_DQS_WIDTH, MEM_IF_READ_DQS_WIDTH + MEM_DQ_PER_DQS + 1 };
+	integer scan_offsets;
 
 	assign avl_cmd_section = avl_address[9:6];
 	assign avl_cmd_group_counter = (sel_scc && (avl_cmd_section == 4'b0000));
-	
 	assign avl_cmd_rfile_group_not_io = ~(avl_address[9] == 1'b1 || avl_address[9:6] == 4'b0111) | (avl_address[9:6] == 4'b1010);
 
-	assign avl_cmd_rfile = (sel_scc && (avl_address[9:7] != 3'b111) && (avl_cmd_section != 4'b0000));
+	assign avl_cmd_rfile = (sel_scc && (avl_address[9:7] != 3'b111) && avl_cmd_section != 4'b0000 && avl_cmd_section != 4'hd);
 	assign avl_cmd_rfile_begin = (avl_read || avl_write) && (avl_cmd_rfile || avl_cmd_group_counter) && ~(|avl_cmd_rfile_latency);
 	assign avl_cmd_rfile_end = avl_cmd_rfile_latency[0];
 	assign avl_cmd_rfile_addr = {'0, (avl_cmd_rfile_group_not_io ? 0 : MEM_IF_READ_DQS_WIDTH) + avl_address[5:0]};
 
-	assign avl_cmd_scan = (sel_scc && avl_cmd_section == 4'he);
+	assign avl_cmd_rank = (sel_scc && avl_cmd_section == 4'he && avl_address[4] == 1'b1);
+	
+	assign avl_cmd_scan = (sel_scc && avl_cmd_section == 4'he && ~avl_cmd_rank);
 	assign avl_cmd_scan_begin = (avl_read || avl_write) && avl_cmd_scan && ~(avl_doing_scan) && ~(avl_done);
 	assign avl_cmd_scan_end = avl_doing_scan && avl_done;
-	assign avl_cmd_scan_addr = {'0, scan_offsets[avl_address[1:0]] + ((avl_writedata[7:0] == 8'hFF) ? 0 : avl_writedata[5:0])};
-	
+	assign avl_cmd_scan_addr = {'0, scan_offsets + ((avl_writedata[7:0] == 8'hFF) ? 0 : avl_writedata[5:0])};
+
+	always_comb begin
+		case(avl_address[1:0])
+			3:  scan_offsets = (MEM_IF_READ_DQS_WIDTH + MEM_DQ_PER_DQS + 1);
+			2:  scan_offsets = (MEM_IF_READ_DQS_WIDTH);
+			1:  scan_offsets = (MEM_IF_READ_DQS_WIDTH + MEM_DQ_PER_DQS);
+			default:  scan_offsets = '0;
+		endcase
+	end
+
 	assign track_opr_check = (avl_address[5:0] == 6'b111111) ? 1'b1 : 0; 
 	assign avl_cmd_counter_access = sel_scc && avl_cmd_section == 4'hF && !track_opr_check;
-	assign avl_cmd_do_sample = (avl_write && sel_scc && avl_cmd_section == 4'hF && track_opr_check && avl_cmd_trk_afi_end);
-
 	assign avl_cmd_afi_req = (sel_scc && avl_cmd_section == 4'hd);
 
-	assign avl_waitrequest = (~avl_reset_n) || ((avl_read || avl_write) && ~avl_cmd_rfile_end && ~avl_cmd_scan_end && ~avl_cmd_trk_afi_end);
+	assign avl_waitrequest = (~avl_reset_n) || ((avl_read || avl_write) && ~avl_cmd_rfile_end && ~avl_cmd_scan_end && ~avl_cmd_trk_afi_end && ~avl_cmd_rank);
 	always_comb begin
-	    if (avl_cmd_counter_access)
-	        avl_readdata    =    read_sample_counter;
-	    else
-	        begin
-	            if (avl_cmd_afi_req)
-	                avl_readdata    =    {avl_cal_req_r3,avl_init_req_r3};
-	            else
-	                begin
-	                    if (avl_cmd_rfile)
-	                        avl_readdata    =    shifted_dataout;
-	                    else
-	                        avl_readdata    =    group_counter;
-	                end
-	        end
+		if (avl_cmd_rank) begin
+			avl_readdata[AVL_DATA_WIDTH - 1:MEM_NUMBER_OF_RANKS] = '0;
+			avl_readdata[MEM_NUMBER_OF_RANKS - 1:0] = avl_active_rank;
+		end else begin
+			if (avl_cmd_counter_access)
+				avl_readdata    =    read_sample_counter;
+			else
+				begin
+					if (avl_cmd_afi_req)
+						avl_readdata    =    {avl_cal_req_r3,avl_init_req_r3};
+					else
+						begin
+							if (avl_cmd_rfile)
+								avl_readdata    =    shifted_dataout;
+							else
+								avl_readdata    =    group_counter;
+						end
+				end
+		end
 	end
 
 	// Assert that the SCC manager only receives broadcast or single bit scan requests for DQS and DM I/Os.
@@ -314,28 +336,150 @@ module sequencer_scc_mgr (
 
 		
 	typedef bit [13:0] t_setting_mask;
+	typedef bit [DATAWIDTH+1:0] t_setting_shifted_mask;
 
 	integer unsigned setting_offsets[1:12];
+	t_setting_shifted_mask setting_masks_lshift [1:12];
 	t_setting_mask setting_masks [1:12];
 
 	generate
-		if (FAMILY == "STRATIXV")
-		begin
-			assign setting_offsets[1:9] = '{ 'd0, 'd12, 'd17, 'd25, 'd30, 'd36, 'd0, 'd6, 'd12 };
-			assign setting_masks [1:9] = '{ 'b0111111111111, 'b011111, 'b011111111, 'b011111, 'b0111111, 'b0111111, 'b0111111, 'b0111111, 'b0111111111111 };
-		end
-		else if (FAMILY == "ARRIAV" || FAMILY == "CYCLONEV")
-		begin			
-      		  	assign setting_offsets[1:12] = '{ 'd0, 'd5, 'd8, 'd13, 'd13, 'd18, 'd0, 'd5, 'd5 , 'd18, 'd10, 'd11};
-	        	assign setting_masks [1:12] = '{ 'b011111, 'b0111, 'b011111, 'b0, 'b011111, 'b0, 'b011111, 'b0, 'b011111, 'b01, 'b01, 'b0111 };
-		end
-		else
-	        begin
-			assign setting_offsets[1:9] = '{ 'd0, 'd4, 'd8, 'd12, 'd17, 'd21, 'd0, 'd4, 'd7 };
-			assign setting_masks [1:9] = '{ 'b01111, 'b01111, 'b01111, 'b11111, 'b01111, 'b00111, 'b01111, 'b00111, 'b01111 };
-	        end
-	endgenerate
+		if (FAMILY == "STRATIXV" || FAMILY == "ARRIAVGZ")
+			begin
+				assign setting_offsets[1] = 'd0;
+				assign setting_offsets[2] = 'd12;
+				assign setting_offsets[3] = 'd17;
+				assign setting_offsets[4] = 'd25;
+				assign setting_offsets[5] = 'd30;
+				assign setting_offsets[6] = 'd36;
+				assign setting_offsets[7] = 'd0;
+				assign setting_offsets[8] = 'd6;
+				assign setting_offsets[9] = 'd12;
+				assign setting_offsets[10] = 'd0;
+				assign setting_offsets[11] = 'd0;
+				assign setting_offsets[12] = 'd0;
 
+				assign setting_masks_lshift [1] = 'b0111111111111;
+				assign setting_masks_lshift [2] = 'b011111000000000000;
+				assign setting_masks_lshift [3] = 'b01111111100000000000000000;
+				assign setting_masks_lshift [4] = 'b0111110000000000000000000000000;
+				assign setting_masks_lshift [5] = 37'b0111111000000000000000000000000000000;
+				assign setting_masks_lshift [6] = 43'b0111111000000000000000000000000000000000000;
+				assign setting_masks_lshift [7] = 'b0111111;
+				assign setting_masks_lshift [8] = 'b0111111000000;
+				assign setting_masks_lshift [9] = 'b0111111111111000000000000;
+				assign setting_masks_lshift [10] = 'b0;
+				assign setting_masks_lshift [11] = 'b0;
+				assign setting_masks_lshift [12] = 'b0;
+
+				assign setting_masks [1] = 'b0111111111111;
+				assign setting_masks [2] = 'b011111;
+				assign setting_masks [3] = 'b011111111;
+				assign setting_masks [4] = 'b011111;
+				assign setting_masks [5] = 'b0111111;
+				assign setting_masks [6] = 'b0111111;
+				assign setting_masks [7] = 'b0111111;
+				assign setting_masks [8] = 'b0111111;
+				assign setting_masks [9] = 'b0111111111111;
+				assign setting_masks [10] = 'b0;
+				assign setting_masks [11] = 'b0;
+				assign setting_masks [12] = 'b0;
+			end 
+		else if (FAMILY == "ARRIAV" || FAMILY == "CYCLONEV")
+			begin
+				assign setting_offsets[1] = 'd0;
+				assign setting_offsets[2] = 'd5;
+				assign setting_offsets[3] = 'd8;
+				assign setting_offsets[4] = 'd13;
+				assign setting_offsets[5] = 'd13;
+				assign setting_offsets[6] = 'd18;
+				assign setting_offsets[7] = 'd0;
+				assign setting_offsets[8] = 'd5;
+				assign setting_offsets[9] = 'd5;
+				assign setting_offsets[10] = 'd18;
+				assign setting_offsets[11] = 'd10;
+				assign setting_offsets[12] = 'd11;
+
+				assign setting_masks_lshift [1] = 'b011111;
+				assign setting_masks_lshift [2] = 'b011100000;
+				assign setting_masks_lshift [3] = 'b01111100000000;
+				assign setting_masks_lshift [4] = 'b0;
+				assign setting_masks_lshift [5] = 'b0111110000000000000;
+				assign setting_masks_lshift [6] = 'b0;
+				assign setting_masks_lshift [7] = 'b011111;
+				assign setting_masks_lshift [8] = 'b0;
+				assign setting_masks_lshift [9] = 'b01111100000;
+				assign setting_masks_lshift [10] = 'b01000000000000000000;
+				assign setting_masks_lshift [11] = 'b010000000000;
+				assign setting_masks_lshift [12] = 'b011100000000000;
+
+				assign setting_masks [1] =  'b011111;
+				assign setting_masks [2] =  'b0111;
+				assign setting_masks [3] =  'b011111;
+				assign setting_masks [4] =  'b0;
+				assign setting_masks [5] =  'b011111;
+				assign setting_masks [6] =  'b0;
+				assign setting_masks [7] =  'b011111;
+				assign setting_masks [8] =  'b0;
+				assign setting_masks [9] =  'b011111;
+				assign setting_masks [10] =  'b01;
+				assign setting_masks [11] =  'b01;
+				assign setting_masks [12] =  'b0111;
+			end 
+		else
+	    begin
+				assign setting_offsets[1] = 'd0;
+				assign setting_offsets[2] = 'd4;
+				assign setting_offsets[3] = 'd8;
+				assign setting_offsets[4] = 'd12;
+				assign setting_offsets[5] = 'd17;
+				assign setting_offsets[6] = 'd21;
+				assign setting_offsets[7] = 'd0;
+				assign setting_offsets[8] = 'd4;
+				assign setting_offsets[9] = 'd7;
+				assign setting_offsets[10] = 'd0;
+				assign setting_offsets[11] = 'd0;
+				assign setting_offsets[12] = 'd0;
+
+				assign setting_masks_lshift [1] = 'b01111;
+				assign setting_masks_lshift [2] = 'b011110000;
+				assign setting_masks_lshift [3] = 'b0111100000000;
+				assign setting_masks_lshift [4] = 'b11111000000000000;
+				assign setting_masks_lshift [5] = 'b0111100000000000000000;
+				assign setting_masks_lshift [6] = 'b00111000000000000000000000;
+				assign setting_masks_lshift [7] = 'b01111;
+				assign setting_masks_lshift [8] = 'b001110000;
+				assign setting_masks_lshift [9] = 'b011110000000;
+				assign setting_masks_lshift [10] = 'b0;
+				assign setting_masks_lshift [11] = 'b0;
+				assign setting_masks_lshift [12] = 'b0;
+
+				assign setting_masks [1] = 'b01111;
+				assign setting_masks [2] = 'b01111;
+				assign setting_masks [3] = 'b01111;
+				assign setting_masks [4] = 'b11111;
+				assign setting_masks [5] = 'b01111;
+				assign setting_masks [6] = 'b00111;
+				assign setting_masks [7] = 'b01111;
+				assign setting_masks [8] = 'b00111;
+				assign setting_masks [9] = 'b01111;
+				assign setting_masks [10] = 'b0;
+				assign setting_masks [11] = 'b0;
+				assign setting_masks [12] = 'b0;
+	    end 
+	endgenerate
+	
+	always_ff @(posedge avl_clk or negedge avl_reset_n)
+	begin
+		if (~avl_reset_n)
+		begin
+			avl_active_rank <= '0;
+		end
+		else begin
+			if (avl_cmd_rank && avl_write) begin
+				avl_active_rank <= avl_writedata[MEM_NUMBER_OF_RANKS - 1:0];
+			end
+		end
+	end
 	
 	always_ff @(posedge avl_clk or negedge avl_reset_n)
 	begin
@@ -350,35 +494,54 @@ module sequencer_scc_mgr (
 		end
 	end
 
-	
 	assign read_addr = avl_cmd_scan ? avl_cmd_scan_addr : avl_cmd_rfile_addr;
 	assign write_addr = avl_cmd_rfile_addr;
-	assign write_en = avl_cmd_rfile && avl_write && avl_cmd_rfile_latency[1];
 
-	
-	
-	assign datain = (dataout & ('1 ^ (setting_masks[avl_cmd_section] << setting_offsets[avl_cmd_section]))) | ((setting_masks[avl_cmd_section] & avl_writedata) << setting_offsets[avl_cmd_section]);
+	assign datain = (dataout & (~setting_masks_lshift[avl_cmd_section])) | ((setting_masks[avl_cmd_section] & avl_writedata) << setting_offsets[avl_cmd_section]);
 
-	
 	assign shifted_dataout = (dataout >> setting_offsets[avl_cmd_section]) & setting_masks[avl_cmd_section];
 
 	// config data storage
 	
 	
-	
-	
-	
 	sequencer_scc_reg_file #(
-        .WIDTH  (DATAWIDTH),
-		.DEPTH  (RFILE_DEPTH)
+    .WIDTH  (DATAWIDTH),
+		.DEPTH  (RFILE_USED_DEPTH)
 	) sequencer_scc_reg_file_inst (
         .clock      (avl_clk    ),
         .data       (datain     ),
         .rdaddress  (read_addr  ),
         .wraddress  (write_addr ),
-        .wren       (write_en   ),
-        .q          (dataout    )
+        .wren       (write_en_sr0),
+        .q          (dataout_sr0)
     );
+	
+	generate
+		if (USE_SHADOW_REGS == 1) begin
+		
+			sequencer_scc_reg_file #(
+				.WIDTH  (DATAWIDTH),
+				.DEPTH  (RFILE_USED_DEPTH)
+			) sequencer_scc_reg_file_inst1 (
+				.clock      (avl_clk    ),
+				.data       (datain     ),
+				.rdaddress  (read_addr  ),
+				.wraddress  (write_addr ),
+				.wren       (write_en_sr1),
+				.q          (dataout_sr1)
+			);	
+			
+			assign avl_active_shadow_reg = | avl_active_rank[MEM_NUMBER_OF_RANKS - 1 : MEM_NUMBER_OF_RANKS / 2];
+			
+			assign write_en_sr0 = avl_cmd_rfile && avl_write && avl_cmd_rfile_latency[1] && (avl_active_shadow_reg == 1'b0);
+			assign write_en_sr1 = avl_cmd_rfile && avl_write && avl_cmd_rfile_latency[1] && (avl_active_shadow_reg == 1'b1);
+			assign dataout = (avl_active_shadow_reg == 1'b0 ? dataout_sr0 : dataout_sr1);
+			
+		end else begin
+			assign write_en_sr0 = avl_cmd_rfile && avl_write && avl_cmd_rfile_latency[1];
+			assign dataout = dataout_sr0;
+		end
+	endgenerate 
 	
 	always_ff @(posedge avl_clk or negedge avl_reset_n)
 	begin
@@ -389,12 +552,10 @@ module sequencer_scc_mgr (
 		else begin
 			if (avl_cmd_group_counter && avl_write)
 			begin
-				
 				group_counter <= avl_writedata;
 			end
 		end
 	end
-	
 	
 	always_ff @(posedge scc_clk or negedge scc_reset_n)
 	    begin
@@ -413,7 +574,7 @@ module sequencer_scc_mgr (
 	
 	// family specific decoder
 	generate
-		if (FAMILY == "STRATIXV")
+		if (FAMILY == "STRATIXV" || FAMILY == "ARRIAVGZ")
 		begin
 			sequencer_scc_sv_wrapper # (
 				.DATAWIDTH              (DATAWIDTH              ),
@@ -423,15 +584,22 @@ module sequencer_scc_mgr (
 				.DLL_DELAY_CHAIN_LENGTH (DLL_DELAY_CHAIN_LENGTH ),
 				.DUAL_WRITE_CLOCK	(DUAL_WRITE_CLOCK)
 			) sequencer_scc_family_wrapper (
-				.reset_n_scc_clk    (scc_reset_n        ),	
-				.scc_clk            (scc_clk            ),
-				.scc_dataout        (scc_dataout        ),
-				.scc_io_cfg         (scc_io_cfg         ),
-				.scc_dqs_cfg        (scc_dqs_cfg        )
+				.reset_n_scc_clk              (scc_reset_n                  ),	
+				.scc_clk                      (scc_clk                      ),
+				.scc_dataout                  (scc_dataout                  ),
+				.scc_io_cfg                   (scc_io_cfg                   ),
+				.scc_dqs_cfg                  (scc_dqs_cfg                  ),
+				.scc_sr_dqsenable_delayctrl   (scc_sr_dqsenable_delayctrl   ),
+				.scc_sr_dqsdisablen_delayctrl (scc_sr_dqsdisablen_delayctrl ),
+				.scc_sr_multirank_delayctrl   (scc_sr_multirank_delayctrl   )
 			);
 	        end
 		else if (FAMILY == "ARRIAV" || FAMILY == "CYCLONEV")
 		begin
+			assign scc_sr_dqsenable_delayctrl = '0;
+			assign scc_sr_dqsdisablen_delayctrl = '0;
+			assign scc_sr_multirank_delayctrl = '0;
+					
 			sequencer_scc_acv_wrapper # (
 				.DATAWIDTH              (DATAWIDTH              ),
 				.IO_SDATA_BITS          (IO_SDATA_BITS          ),
@@ -448,6 +616,11 @@ module sequencer_scc_mgr (
 	        end
 		else
 	        begin
+			
+			assign scc_sr_dqsenable_delayctrl = '0;
+			assign scc_sr_dqsdisablen_delayctrl = '0;
+			assign scc_sr_multirank_delayctrl = '0;
+						
 			sequencer_scc_siii_wrapper # (
 				.DATAWIDTH              (DATAWIDTH              ),
 				.IO_SDATA_BITS          (IO_SDATA_BITS          ),
@@ -548,7 +721,7 @@ module sequencer_scc_mgr (
 		scc_dqs_io_ena_c = '0;
 		scc_dq_ena_c = '0;
 		scc_dm_ena_c = '0;
-		scc_upd_c = 0;
+		scc_upd_c = '0;
 		scc_done = 0;
 
 		case (scc_state_curr)
@@ -562,7 +735,16 @@ module sequencer_scc_mgr (
 					scc_shift_cnt_next = DQS_SDATA_BITS - 1;
 				end else if (scc_go_update) begin
 					scc_state_next = STATE_SCC_DONE;
-					scc_upd_c = 1;
+					if (USE_SHADOW_REGS == 1) begin
+						if (scc_group_counter == 8'b11111111) begin
+							scc_upd_c = '1;
+						end else begin
+							scc_upd_c = '0;
+							scc_upd_c[scc_group_counter] = 1'b1;
+						end
+					end else begin
+						scc_upd_c = '1;
+					end
 				end
 			end
 		end
@@ -571,15 +753,13 @@ module sequencer_scc_mgr (
 
 			if (scc_go_group) begin
 				scc_dqs_ena_c = (scc_go_ena_r == SCC_SCAN_DQS) ? scc_ena_addr_decode : '0;
-				if (FAMILY == "STRATIXV")
+				if (FAMILY == "STRATIXV" || FAMILY == "ARRIAVGZ" )
 				begin		
-					
 					scc_data_c = scc_dqs_cfg_curr[0];
 					scc_dqs_cfg_next = scc_dqs_cfg_curr >> 1;
 				end
 				else
 				begin
-					
 					scc_data_c = scc_dqs_cfg_curr[DQS_SDATA_BITS - 1];
 					scc_dqs_cfg_next = scc_dqs_cfg_curr << 1;
 				end
@@ -589,7 +769,7 @@ module sequencer_scc_mgr (
 				scc_dqs_io_ena_c = (scc_go_ena_r == SCC_SCAN_DQS_IO) ? scc_ena_addr_decode : '0;
 				scc_dq_ena_c = (scc_go_ena_r == SCC_SCAN_DQ_IO) ? scc_ena_addr_decode : '0;
 				scc_dm_ena_c = (scc_go_ena_r == SCC_SCAN_DM_IO) ? scc_ena_addr_decode : '0;
-				if (FAMILY == "STRATIXV")
+				if (FAMILY == "STRATIXV" || FAMILY == "ARRIAVGZ")
 				begin	
 					scc_data_c = scc_io_cfg_curr[0];
 					scc_io_cfg_next = scc_io_cfg_curr >> 1;
@@ -621,19 +801,25 @@ module sequencer_scc_mgr (
 	            avl_cmd_trk_afi_end    <=    1'b0;
 	        else
 	            begin
-	                if (sel_scc && (avl_cmd_section == 4'hF || avl_cmd_section == 4'hd) && (avl_write || avl_read))
+	                if (sel_scc && (avl_cmd_section == 4'hF || avl_cmd_section == 4'hd) && (avl_write || avl_read) && ~avl_cmd_trk_afi_end)
 	                    avl_cmd_trk_afi_end    <=    1'b1;
 	                else
 	                    avl_cmd_trk_afi_end    <=    1'b0;
 	            end
 	    end
-	
+
 	generate
-        if (USE_DQS_TRACKING == 1)
+	wire avl_cmd_do_sample;
+	if (USE_DQS_TRACKING == 1)
+	    begin
+		assign avl_cmd_do_sample = (avl_write && sel_scc && avl_cmd_section == 4'hF && track_opr_check && avl_cmd_trk_afi_end);
+       	    end
+
+	if (USE_DQS_TRACKING == 1)
             begin
                 reg    [MEM_IF_READ_DQS_WIDTH - 1:0] capture_strobe_tracking_r;
-                reg signed [AVL_DATA_WIDTH - 1:0] sample_counter [MEM_IF_READ_DQS_WIDTH - 1:0];
-                assign read_sample_counter  =   sample_counter[avl_address[5:0]];
+                reg signed [SAMPLE_COUNTER_WIDTH - 1:0] sample_counter [MEM_IF_READ_DQS_WIDTH - 1:0];
+                assign read_sample_counter  =   {{(AVL_DATA_WIDTH-SAMPLE_COUNTER_WIDTH){sample_counter[avl_address[5:0]][SAMPLE_COUNTER_WIDTH - 1]}},sample_counter[avl_address[5:0]]};
                 
                 always_ff @(posedge avl_clk, negedge avl_reset_n)
 	                begin
@@ -662,14 +848,14 @@ module sequencer_scc_mgr (
 	                                    begin
 	                                        if (capture_strobe_tracking_r[i])
 	                                            begin
-	                                                if (!sample_counter[i][AVL_DATA_WIDTH-1] && &sample_counter[i][AVL_DATA_WIDTH-2:0])
+	                                                if (!sample_counter[i][SAMPLE_COUNTER_WIDTH-1] && &sample_counter[i][SAMPLE_COUNTER_WIDTH-2:0])
 	                                                    sample_counter[i]    <=    sample_counter[i];
 	                                                else
 	                                                    sample_counter[i]    <=    sample_counter[i] + 1'b1;
 	                                            end
 	                                        else if (!capture_strobe_tracking_r[i])
 	                                            begin
-	                                                if (sample_counter[i][AVL_DATA_WIDTH-1] && ~(|sample_counter[i][AVL_DATA_WIDTH-2:0]))
+	                                                if (sample_counter[i][SAMPLE_COUNTER_WIDTH-1] && ~(|sample_counter[i][SAMPLE_COUNTER_WIDTH-2:0]))
 	                                                    sample_counter[i]    <=    sample_counter[i];
 	                                                else
 	                                                    sample_counter[i]    <=    sample_counter[i] - 1'b1;

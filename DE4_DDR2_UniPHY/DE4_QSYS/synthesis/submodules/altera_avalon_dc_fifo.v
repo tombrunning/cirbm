@@ -1,16 +1,8 @@
-// ---------------------------------------------------------------------
-// Legal Notice: (C)2007 Altera Corporation. All rights reserved.  Your
-// use of Altera Corporation's design tools, logic functions and other
-// software and tools, and its AMPP partner logic functions, and any
-// output files any of the foregoing (including device programming or
-// simulation files), and any associated documentation or information are
-// expressly subject to the terms and conditions of the Altera Program
-// License Subscription Agreement or other applicable license agreement,
-// including, without limitation, that your use is for the sole purpose
-// of programming logic devices manufactured by Altera and sold by Altera
-// or its authorized distributors.  Please refer to the applicable
-// agreement for further details.
-//
+// $File: //acds/rel/13.0sp1/ip/sopc/components/altera_avalon_dc_fifo/altera_avalon_dc_fifo.v $
+// $Revision: #1 $
+// $Date: 2013/03/07 $
+// $Author: swbranch $
+//-------------------------------------------------------------------------------
 // Description: Dual clocked single channel FIFO with fill levels and status
 // information.
 // ---------------------------------------------------------------------
@@ -18,7 +10,7 @@
 `timescale 1 ns / 100 ps
 
 //altera message_off 10036 10858 10230 10030 10034
-module altera_avalon_dc_fifo (
+module altera_avalon_dc_fifo(
     
     in_clk,
     in_reset_n,
@@ -90,6 +82,8 @@ module altera_avalon_dc_fifo (
     parameter STREAM_ALMOST_FULL  = 0;
     parameter STREAM_ALMOST_EMPTY = 0;
 
+    parameter BACKPRESSURE_DURING_RESET = 0;
+
     // experimental, internal parameter
     parameter USE_SPACE_AVAIL_IF  = 0;
 
@@ -115,18 +109,18 @@ module altera_avalon_dc_fifo (
     input in_valid;
     input in_startofpacket;
     input in_endofpacket;
-    input [EMPTY_WIDTH - 1 : 0] in_empty;
-    input [ERROR_WIDTH - 1 : 0] in_error;
-    input [CHANNEL_WIDTH - 1: 0] in_channel;
+    input [((EMPTY_WIDTH > 0)   ? EMPTY_WIDTH - 1   : 0) : 0] in_empty;
+    input [((ERROR_WIDTH > 0)   ? ERROR_WIDTH - 1   : 0) : 0] in_error;
+    input [((CHANNEL_WIDTH > 0) ? CHANNEL_WIDTH - 1 : 0) : 0] in_channel;
     output in_ready;
 
     output [DATA_WIDTH - 1 : 0] out_data;
     output reg out_valid;
     output out_startofpacket;
     output out_endofpacket;
-    output [EMPTY_WIDTH - 1 : 0] out_empty;
-    output [ERROR_WIDTH - 1 : 0] out_error;
-    output [CHANNEL_WIDTH - 1: 0] out_channel;
+    output [((EMPTY_WIDTH > 0)   ? EMPTY_WIDTH - 1   : 0) : 0] out_empty;
+    output [((ERROR_WIDTH > 0)   ? ERROR_WIDTH - 1   : 0) : 0] out_error;
+    output [((CHANNEL_WIDTH > 0) ? CHANNEL_WIDTH - 1 : 0) : 0] out_channel;
     input out_ready;
 
     input in_csr_address;
@@ -151,8 +145,8 @@ module altera_avalon_dc_fifo (
     // ---------------------------------------------------------------------
     // Memory Pointers
     // ---------------------------------------------------------------------
-    reg [PAYLOAD_WIDTH - 1 : 0] mem [DEPTH - 1 : 0];
-
+    (* ramstyle="no_rw_check" *) reg [PAYLOAD_WIDTH - 1 : 0] mem [DEPTH - 1 : 0];
+    
     wire [ADDR_WIDTH - 1 : 0] mem_wr_ptr;
     wire [ADDR_WIDTH - 1 : 0] mem_rd_ptr;
 
@@ -167,10 +161,10 @@ module altera_avalon_dc_fifo (
     wire [ADDR_WIDTH : 0] next_out_rd_ptr;
     wire [ADDR_WIDTH : 0] next_in_rd_ptr;
 
-    reg  [ADDR_WIDTH : 0] in_wr_ptr_gray	/*synthesis ALTERA_ATTRIBUTE = "SUPPRESS_DA_RULE_INTERNAL=D102" */;
+    reg  [ADDR_WIDTH : 0] in_wr_ptr_gray     /*synthesis ALTERA_ATTRIBUTE = "SUPPRESS_DA_RULE_INTERNAL=D102" */;
     wire [ADDR_WIDTH : 0] out_wr_ptr_gray;    
 
-    reg  [ADDR_WIDTH : 0] out_rd_ptr_gray	/*synthesis ALTERA_ATTRIBUTE = "SUPPRESS_DA_RULE_INTERNAL=D102" */;
+    reg  [ADDR_WIDTH : 0] out_rd_ptr_gray    /*synthesis ALTERA_ATTRIBUTE = "SUPPRESS_DA_RULE_INTERNAL=D102" */;
     wire [ADDR_WIDTH : 0] in_rd_ptr_gray;
 
     reg full;
@@ -193,6 +187,8 @@ module altera_avalon_dc_fifo (
 
     reg [23 : 0] almost_empty_threshold;
     reg [23 : 0] almost_full_threshold;
+
+    reg          sink_in_reset;
     
     // --------------------------------------------------
     // Define Payload
@@ -315,10 +311,14 @@ module altera_avalon_dc_fifo (
     end
 
     always @(posedge in_clk or negedge in_reset_n) begin
-        if (!in_reset_n)
+        if (!in_reset_n) begin
             full <= 0;
-        else
+            sink_in_reset <= 1'b1;
+        end
+        else begin
             full <= (next_in_rd_ptr[ADDR_WIDTH - 1 : 0] == next_in_wr_ptr[ADDR_WIDTH - 1 : 0]) && (next_in_rd_ptr[ADDR_WIDTH] != next_in_wr_ptr[ADDR_WIDTH]);
+            sink_in_reset <= 1'b0;
+        end
     end
 
 
@@ -336,15 +336,13 @@ module altera_avalon_dc_fifo (
             in_wr_ptr_gray <= bin2gray(in_wr_ptr);
     end
 
-    altera_dcfifo_synchronizer_bundle write_crosser (
+    altera_dcfifo_synchronizer_bundle #(.WIDTH(ADDR_WIDTH+1), .DEPTH(WR_SYNC_DEPTH)) 
+      write_crosser (
         .clk(out_clk),
         .reset_n(out_reset_n),
         .din(in_wr_ptr_gray),
         .dout(out_wr_ptr_gray)
     );
-
-    defparam write_crosser.WIDTH = ADDR_WIDTH + 1;
-    defparam write_crosser.DEPTH = WR_SYNC_DEPTH;
 
     assign next_out_wr_ptr = gray2bin(out_wr_ptr_gray);
 
@@ -360,22 +358,20 @@ module altera_avalon_dc_fifo (
             out_rd_ptr_gray <= bin2gray(out_rd_ptr);
     end
 
-    altera_dcfifo_synchronizer_bundle read_crosser (
+    altera_dcfifo_synchronizer_bundle #(.WIDTH(ADDR_WIDTH+1), .DEPTH(RD_SYNC_DEPTH)) 
+      read_crosser (
         .clk(in_clk),
         .reset_n(in_reset_n),
         .din(out_rd_ptr_gray),
         .dout(in_rd_ptr_gray)
     );
 
-    defparam read_crosser.WIDTH = ADDR_WIDTH + 1;
-    defparam read_crosser.DEPTH = RD_SYNC_DEPTH;
-
     assign next_in_rd_ptr = gray2bin(in_rd_ptr_gray);
 
     // ---------------------------------------------------------------------
     // Avalon ST Signals
     // ---------------------------------------------------------------------
-    assign in_ready = !full;
+    assign in_ready = BACKPRESSURE_DURING_RESET ? !(full || sink_in_reset) : !full;
     assign internal_out_valid = !empty;
 
     // --------------------------------------------------

@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -17,12 +17,11 @@
 
 `timescale 1 ps / 1 ps
 
-(* altera_attribute = "-name IP_TOOL_NAME common; -name IP_TOOL_VERSION 11.1; -name FITTER_ADJUST_HC_SHORT_PATH_GUARDBAND 100; -name ALLOW_SYNCH_CTRL_USAGE OFF; -name AUTO_CLOCK_ENABLE_RECOGNITION OFF; -name AUTO_SHIFT_REGISTER_RECOGNITION OFF" *)
+(* altera_attribute = "-name IP_TOOL_NAME common; -name IP_TOOL_VERSION 13.0; -name FITTER_ADJUST_HC_SHORT_PATH_GUARDBAND 100; -name ALLOW_SYNCH_CTRL_USAGE OFF; -name AUTO_CLOCK_ENABLE_RECOGNITION OFF; -name AUTO_SHIFT_REGISTER_RECOGNITION OFF" *)
 
 
 module DE4_QSYS_mem_if_ddr2_emif_pll0 (
 	global_reset_n,
-	reset_request_n, 
 	pll_ref_clk,
 	pll_mem_clk,
 	pll_write_clk,
@@ -42,7 +41,6 @@ module DE4_QSYS_mem_if_ddr2_emif_pll0 (
 parameter DEVICE_FAMILY = "Stratix IV";
 
 // choose between abstract (fast) and regular model
-//FIXME BEN: this default needs to change depending on sim vs synth filesets
 `ifndef ALTERA_ALT_MEM_IF_PHY_FAST_SIM_MODEL
   `define ALTERA_ALT_MEM_IF_PHY_FAST_SIM_MODEL 0
 `endif
@@ -153,14 +151,13 @@ output	pll_write_clk_pre_phy_clk;
 output	pll_addr_cmd_clk;
 output	pll_avl_clk;
 output	pll_config_clk;
-output	pll_locked;
+output	pll_locked;    // When 0, PLL is out of lock
+                       // should be used to reset system level afi_clk domain logic
 
 
 
 // Reset Interface, AFI 2.0
 input   global_reset_n;		// Resets (active-low) the whole system (all PHY logic + PLL)
-output	reset_request_n;	// When 1, PLL is out of lock
-							// should be used to reset system level afi_clk domain logic
 
 
 
@@ -168,11 +165,8 @@ output	reset_request_n;	// When 1, PLL is out of lock
 // PLL Interface
 output	afi_clk;
 output	afi_half_clk;
-wire	pll_afi_half_clk;
 
 
-wire	pll_dqs_ena_clk;
-wire	seq_clk;
 wire	pll_mem_clk_pre_phy_clk;
 
 
@@ -193,16 +187,10 @@ generate
 if (FAST_SIM_MODEL)
 begin
 
-	
-	
-	
 
 `ifndef SIMGEN
 	// synthesis translate_off
 `endif
-	
-	
-	
 	
 	wire fbout;
 
@@ -210,7 +198,6 @@ begin
 	wire [NUM_PLL-1:0] pll_clks;
 	
 
-	
 	altera_pll #(
 	      .reference_clock_frequency(REF_CLK_FREQ),
 	      .sim_additional_refclk_cycles_to_lock(4), 
@@ -236,11 +223,9 @@ begin
 	      .output_clock_frequency6(CONFIG_CLK_FREQ),
 	      .phase_shift6(CONFIG_CLK_PHASE),
 	      .duty_cycle6(50),
-		     
 	      .output_clock_frequency7(AFI_CLK_FREQ),
 	      .phase_shift7("0 ps"),
 	      .duty_cycle7(50),
-		     
 	      .output_clock_frequency8(AFI_CLK_FREQ),
 	      .phase_shift8("0 ps"),
 	      .duty_cycle8(50),
@@ -256,13 +241,6 @@ begin
 		.locked(pll_locked)
 	);
 
-	
-	
-	
-	
-	
-	
-	
 	wire delayed_pll_locked_pre;
 	wire delayed_pll_locked;
 `ifndef SIMGEN
@@ -271,14 +249,10 @@ begin
 	DE4_QSYS_mem_if_ddr2_emif_pll0_sim_delay #(.delay(1)) sim_delay_inst(.o(delayed_pll_locked_pre), .i(pll_locked));
 `endif
 
-	
-	
 	reg default_pll_clk_value = 1'b0;
 	
 	initial
 	begin
-		
-		
 		repeat (6) @(negedge pll_ref_clk);
 		default_pll_clk_value = 1'bx;
 		repeat (2) @(negedge pll_ref_clk);
@@ -292,7 +266,6 @@ begin
 	assign pll_mem_clk_pre_phy_clk = delayed_pll_locked ? pll_clks[1] : default_pll_clk_value;
 	assign pll_write_clk_pre_phy_clk = delayed_pll_locked ? pll_clks[2] : default_pll_clk_value;
 	assign pll_addr_cmd_clk = delayed_pll_locked ? pll_clks[3] : default_pll_clk_value;
-	assign pll_afi_half_clk = delayed_pll_locked ? pll_clks[4] : default_pll_clk_value;
 		
 	assign pll_avl_clk = delayed_pll_locked ? pll_clks[5] : default_pll_clk_value;
 	assign pll_config_clk = delayed_pll_locked ? pll_clks[6] : default_pll_clk_value;
@@ -316,7 +289,6 @@ end
 else 
 begin
 
-	
 
 	wire [NUM_PLL-1:0] pll_clks;
 	wire [1:0] inclk;
@@ -388,10 +360,6 @@ begin
 	defparam upll_memphy.clk3_duty_cycle = 50;
 	defparam upll_memphy.clk3_multiply_by = PLL_ADDR_CMD_CLK_MULT;
 	defparam upll_memphy.clk3_phase_shift = PLL_ADDR_CMD_CLK_PHASE_PS;
-	defparam upll_memphy.clk4_divide_by = PLL_AFI_HALF_CLK_DIV;
-	defparam upll_memphy.clk4_duty_cycle = 50;
-	defparam upll_memphy.clk4_multiply_by = PLL_AFI_HALF_CLK_MULT;
-	defparam upll_memphy.clk4_phase_shift = PLL_AFI_HALF_CLK_PHASE_PS;
 	defparam upll_memphy.clk5_divide_by = PLL_NIOS_CLK_DIV;
 	defparam upll_memphy.clk5_duty_cycle = 50;
 	defparam upll_memphy.clk5_multiply_by = PLL_NIOS_CLK_MULT;
@@ -455,10 +423,8 @@ begin
 	assign pll_mem_clk_pre_phy_clk = pll_clks[1];
 	assign pll_write_clk_pre_phy_clk = pll_clks[2];
 	assign pll_addr_cmd_clk = pll_clks[3];
-	assign pll_afi_half_clk = pll_clks[4];
 	assign pll_avl_clk = pll_clks[5];
 	assign pll_config_clk = pll_clks[6];
-	
 	
 	assign pll_mem_clk = pll_mem_clk_pre_phy_clk;	
 	assign pll_write_clk = pll_write_clk_pre_phy_clk;	
@@ -474,13 +440,9 @@ endgenerate
 	// pll_afi_half_clk: quad-rate clock, 0 degree phase shift
 	// the purpose of these clock settings is so that address/command/write data are centred aligned with the output clock(s) to memory 
 
-
-	assign pll_dqs_ena_clk = pll_write_clk;
-	assign seq_clk = pll_afi_clk;
-
 	assign afi_clk = pll_afi_clk;
 
-	assign afi_half_clk = pll_afi_half_clk;
+	assign afi_half_clk = 1'b0;
 
 
 endmodule

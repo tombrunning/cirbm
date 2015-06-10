@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -12,7 +12,7 @@
 
 
 
-//altera message_off 10036
+//altera message_off 10036 10230
 
 `timescale 1 ps / 1 ps
 module alt_mem_ddrx_ddr3_odt_gen
@@ -90,17 +90,21 @@ module alt_mem_ddrx_ddr3_odt_gen
     reg         diff_modulo_three;
     
     reg     int_odt_l_int;
-    reg     int_odt_l_int_r;
+    reg     int_odt_l_int_r1;
+    reg     int_odt_l_int_r2;
     
     reg     premux_odt_h;
     reg     premux_odt_h_r;
     reg     int_odt_h_int;
-    reg     int_odt_h_int_r;
+    reg     int_odt_h_int_r1;
+    reg     int_odt_h_int_r2;
     
     reg     int_odt_i_1_int;
     reg     int_odt_i_2_int;
-    reg     int_odt_i_1_int_r;
-    reg     int_odt_i_2_int_r;
+    reg     int_odt_i_1_int_r1;
+    reg     int_odt_i_2_int_r1;
+    reg     int_odt_i_1_int_r2;
+    reg     int_odt_i_2_int_r2;
     
     wire    int_odt_l;
     wire    int_odt_h;
@@ -418,41 +422,51 @@ module alt_mem_ddrx_ddr3_odt_gen
         begin
             if (!ctl_reset_n)
                 begin
-                    int_odt_h_int_r   <= 1'b0;
-                    int_odt_l_int_r   <= 1'b0;
-                    int_odt_i_1_int_r <= 1'b0;
-                    int_odt_i_2_int_r <= 1'b0;
+                    int_odt_h_int_r1   <= 1'b0;
+                    int_odt_l_int_r1   <= 1'b0;
+                    int_odt_i_1_int_r1 <= 1'b0;
+                    int_odt_i_2_int_r1 <= 1'b0;
+                    
+                    int_odt_h_int_r2   <= 1'b0;
+                    int_odt_l_int_r2   <= 1'b0;
+                    int_odt_i_1_int_r2 <= 1'b0;
+                    int_odt_i_2_int_r2 <= 1'b0;
                 end
             else
                 begin
-                    int_odt_h_int_r   <= int_odt_h_int;
-                    int_odt_l_int_r   <= int_odt_l_int;
-                    int_odt_i_1_int_r <= int_odt_i_1_int;
-                    int_odt_i_2_int_r <= int_odt_i_2_int;
+                    int_odt_h_int_r1   <= int_odt_h_int;
+                    int_odt_l_int_r1   <= int_odt_l_int;
+                    int_odt_i_1_int_r1 <= int_odt_i_1_int;
+                    int_odt_i_2_int_r1 <= int_odt_i_2_int;
+                    
+                    int_odt_h_int_r2   <= int_odt_h_int_r1;
+                    int_odt_l_int_r2   <= int_odt_l_int_r1;
+                    int_odt_i_1_int_r2 <= int_odt_i_1_int_r1;
+                    int_odt_i_2_int_r2 <= int_odt_i_2_int_r1;
                 end
         end
     
     generate
         if (CFG_DWIDTH_RATIO == 2) // full rate
             begin
-                assign  int_odt_h   = (cfg_output_regd) ? int_odt_h_int_r : int_odt_h_int;
-                assign  int_odt_l   = (cfg_output_regd) ? int_odt_h_int_r : int_odt_h_int;
+                assign  int_odt_h   = (cfg_output_regd == 2) ? int_odt_h_int_r2 : ((cfg_output_regd == 1) ? int_odt_h_int_r1 : int_odt_h_int);
+                assign  int_odt_l   = (cfg_output_regd == 2) ? int_odt_h_int_r2 : ((cfg_output_regd == 1) ? int_odt_h_int_r1 : int_odt_h_int);
                 assign  int_odt_i_1 = 1'b0;
                 assign  int_odt_i_2 = 1'b0;
             end
         else if (CFG_DWIDTH_RATIO == 4) // half rate
             begin
-                assign  int_odt_h   = (cfg_output_regd) ? int_odt_h_int_r : int_odt_h_int;
-                assign  int_odt_l   = (cfg_output_regd) ? int_odt_l_int_r : int_odt_l_int;
+                assign  int_odt_h   = (cfg_output_regd == 2) ? int_odt_h_int_r2 : ((cfg_output_regd == 1) ? int_odt_h_int_r1 : int_odt_h_int);
+                assign  int_odt_l   = (cfg_output_regd == 2) ? int_odt_l_int_r2 : ((cfg_output_regd == 1) ? int_odt_l_int_r1 : int_odt_l_int);
                 assign  int_odt_i_1 = 1'b0;
                 assign  int_odt_i_2 = 1'b0;
             end
         else if (CFG_DWIDTH_RATIO == 8) // quarter rate
             begin
-                assign  int_odt_h   = (cfg_output_regd) ? int_odt_h_int_r   : int_odt_h_int;
-                assign  int_odt_l   = (cfg_output_regd) ? int_odt_l_int_r   : int_odt_l_int;
-                assign  int_odt_i_1 = (cfg_output_regd) ? int_odt_i_1_int_r : int_odt_i_1_int;
-                assign  int_odt_i_2 = (cfg_output_regd) ? int_odt_i_2_int_r : int_odt_i_2_int;
+                assign  int_odt_h   = (cfg_output_regd == 2) ? int_odt_h_int_r2   : ((cfg_output_regd == 1) ? int_odt_h_int_r1   : int_odt_h_int  );
+                assign  int_odt_l   = (cfg_output_regd == 2) ? int_odt_l_int_r2   : ((cfg_output_regd == 1) ? int_odt_l_int_r1   : int_odt_l_int  );
+                assign  int_odt_i_1 = (cfg_output_regd == 2) ? int_odt_i_1_int_r2 : ((cfg_output_regd == 1) ? int_odt_i_1_int_r1 : int_odt_i_1_int);
+                assign  int_odt_i_2 = (cfg_output_regd == 2) ? int_odt_i_2_int_r2 : ((cfg_output_regd == 1) ? int_odt_i_2_int_r1 : int_odt_i_2_int);
             end
     endgenerate
     

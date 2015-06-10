@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -12,7 +12,7 @@
 
 
 
-//altera message_off 10230 10036
+//altera message_off 10230 10036 10762
 
 `timescale 1 ps / 1 ps
 
@@ -195,6 +195,17 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
     reg less_than_4_wr_to_wr_diff_chip;
     reg less_than_4_wr_to_rd_diff_chip;
     
+    reg more_than_2_rd_to_rd;
+    reg more_than_2_rd_to_wr;
+    reg more_than_2_wr_to_wr;
+    reg more_than_2_wr_to_rd;
+    reg more_than_2_rd_to_wr_bc;
+    reg more_than_2_wr_to_rd_bc;
+    reg more_than_2_rd_to_rd_diff_chip;
+    reg more_than_2_rd_to_wr_diff_chip;
+    reg more_than_2_wr_to_wr_diff_chip;
+    reg more_than_2_wr_to_rd_diff_chip;
+    
     reg more_than_3_rd_to_rd;
     reg more_than_3_rd_to_wr;
     reg more_than_3_wr_to_wr;
@@ -242,6 +253,17 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
     reg less_than_x1_wr_to_wr_diff_chip;
     reg less_than_x1_wr_to_rd_diff_chip;
     
+    reg more_than_x0_rd_to_rd;
+    reg more_than_x0_rd_to_wr;
+    reg more_than_x0_wr_to_wr;
+    reg more_than_x0_wr_to_rd;
+    reg more_than_x0_rd_to_wr_bc;
+    reg more_than_x0_wr_to_rd_bc;
+    reg more_than_x0_rd_to_rd_diff_chip;
+    reg more_than_x0_rd_to_wr_diff_chip;
+    reg more_than_x0_wr_to_wr_diff_chip;
+    reg more_than_x0_wr_to_rd_diff_chip;
+    
     // Input
     reg                               int_do_activate;
     reg                               int_do_precharge;
@@ -267,9 +289,9 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
     wire [ACTIVATE_COMMAND_WIDTH - 1 : 0] act_tfaw_cmd_count [CFG_MEM_IF_CHIP - 1 : 0];
     
     // Read/Write Monitor
-    localparam IDLE               = 32'h49444C45;
-    localparam WR                 = 32'h20205752;
-    localparam RD                 = 32'h20205244;
+    localparam IDLE               = 2'b00;
+    localparam WR                 = 2'b01;
+    localparam RD                 = 2'b10;
     localparam RDWR_COUNTER_WIDTH = (T_PARAM_RD_TO_WR_WIDTH > T_PARAM_WR_TO_RD_WIDTH) ? T_PARAM_RD_TO_WR_WIDTH : T_PARAM_WR_TO_RD_WIDTH;
     
     reg  [CFG_INT_SIZE_WIDTH               - 1 : 0] max_local_burst_size;
@@ -474,11 +496,11 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                         begin
                             if (int_to_chip_c [chip_addr]) // to same chip addr as compared to current TBP
                             begin
-                                if (int_do_burst_chop && more_than_3_wr_to_rd_bc)
+                                if (int_do_burst_chop && more_than_x0_wr_to_rd_bc)
                                 begin
                                     int_can_read [x_cs] <= 1'b0;
                                 end
-                                else if (!int_do_burst_chop && more_than_3_wr_to_rd)
+                                else if (!int_do_burst_chop && more_than_x0_wr_to_rd)
                                 begin
                                     int_can_read [x_cs] <= 1'b0;
                                 end
@@ -496,7 +518,7 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                         begin
                             if (int_to_chip_c [chip_addr]) // to same chip addr as compared to current TBP
                             begin
-                                if (more_than_3_rd_to_rd)
+                                if (more_than_x0_rd_to_rd)
                                 begin
                                     int_can_read [x_cs] <= 1'b0;
                                 end
@@ -533,11 +555,11 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                         begin
                             if (int_to_chip_c [chip_addr]) // to same chip addr as compared to current TBP
                             begin
-                                if (int_do_burst_chop && more_than_3_rd_to_wr_bc)
+                                if (int_do_burst_chop && more_than_x0_rd_to_wr_bc)
                                 begin
                                     int_can_write [x_cs] <= 1'b0;
                                 end
-                                else if (!int_do_burst_chop && more_than_3_rd_to_wr)
+                                else if (!int_do_burst_chop && more_than_x0_rd_to_wr)
                                 begin
                                     int_can_write [x_cs] <= 1'b0;
                                 end
@@ -555,7 +577,7 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                         begin
                             if (int_to_chip_c [chip_addr]) // to same chip addr as compared to current TBP
                             begin
-                                if (more_than_3_wr_to_wr)
+                                if (more_than_x0_wr_to_wr)
                                 begin
                                     int_can_write [x_cs] <= 1'b0;
                                 end
@@ -1295,6 +1317,156 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
     begin
         if (!ctl_reset_n)
         begin
+            more_than_2_rd_to_rd <= 1'b0;
+        end
+        else
+        begin
+            if (t_param_rd_to_rd >= 2)
+                more_than_2_rd_to_rd <= 1'b1;
+            else
+                more_than_2_rd_to_rd <= 1'b0;
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            more_than_2_rd_to_wr <= 1'b0;
+        end
+        else
+        begin
+            if (t_param_rd_to_wr >= 2)
+                more_than_2_rd_to_wr <= 1'b1;
+            else
+                more_than_2_rd_to_wr <= 1'b0;
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            more_than_2_wr_to_wr <= 1'b0;
+        end
+        else
+        begin
+            if (t_param_wr_to_wr >= 2)
+                more_than_2_wr_to_wr <= 1'b1;
+            else
+                more_than_2_wr_to_wr <= 1'b0;
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            more_than_2_wr_to_rd <= 1'b0;
+        end
+        else
+        begin
+            if (t_param_wr_to_rd >= 2)
+                more_than_2_wr_to_rd <= 1'b1;
+            else
+                more_than_2_wr_to_rd <= 1'b0;
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            more_than_2_rd_to_wr_bc <= 1'b0;
+        end
+        else
+        begin
+            if (t_param_rd_to_wr_bc >= 2)
+                more_than_2_rd_to_wr_bc <= 1'b1;
+            else
+                more_than_2_rd_to_wr_bc <= 1'b0;
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            more_than_2_wr_to_rd_bc <= 1'b0;
+        end
+        else
+        begin
+            if (t_param_wr_to_rd_bc >= 2)
+                more_than_2_wr_to_rd_bc <= 1'b1;
+            else
+                more_than_2_wr_to_rd_bc <= 1'b0;
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            more_than_2_rd_to_rd_diff_chip <= 1'b0;
+        end
+        else
+        begin
+            if (t_param_rd_to_rd_diff_chip >= 2)
+                more_than_2_rd_to_rd_diff_chip <= 1'b1;
+            else
+                more_than_2_rd_to_rd_diff_chip <= 1'b0;
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            more_than_2_rd_to_wr_diff_chip <= 1'b0;
+        end
+        else
+        begin
+            if (t_param_rd_to_wr_diff_chip >= 2)
+                more_than_2_rd_to_wr_diff_chip <= 1'b1;
+            else
+                more_than_2_rd_to_wr_diff_chip <= 1'b0;
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            more_than_2_wr_to_wr_diff_chip <= 1'b0;
+        end
+        else
+        begin
+            if (t_param_wr_to_wr_diff_chip >= 2)
+                more_than_2_wr_to_wr_diff_chip <= 1'b1;
+            else
+                more_than_2_wr_to_wr_diff_chip <= 1'b0;
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            more_than_2_wr_to_rd_diff_chip <= 1'b0;
+        end
+        else
+        begin
+            if (t_param_wr_to_rd_diff_chip >= 2)
+                more_than_2_wr_to_rd_diff_chip <= 1'b1;
+            else
+                more_than_2_wr_to_rd_diff_chip <= 1'b0;
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
             more_than_3_rd_to_rd <= 1'b0;
         end
         else
@@ -1525,6 +1697,20 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                     less_than_x1_wr_to_rd_diff_chip    = less_than_3_wr_to_rd_diff_chip;
                 end
             end
+            
+            always @ (*)
+            begin
+                more_than_x0_rd_to_rd           = more_than_3_rd_to_rd;
+                more_than_x0_rd_to_wr           = more_than_3_rd_to_wr;
+                more_than_x0_wr_to_wr           = more_than_3_wr_to_wr;
+                more_than_x0_wr_to_rd           = more_than_3_wr_to_rd;
+                more_than_x0_rd_to_wr_bc        = more_than_3_rd_to_wr_bc;
+                more_than_x0_wr_to_rd_bc        = more_than_3_wr_to_rd_bc;
+                more_than_x0_rd_to_rd_diff_chip = more_than_3_rd_to_rd_diff_chip;
+                more_than_x0_rd_to_wr_diff_chip = more_than_3_rd_to_wr_diff_chip;
+                more_than_x0_wr_to_wr_diff_chip = more_than_3_wr_to_wr_diff_chip;
+                more_than_x0_wr_to_rd_diff_chip = more_than_3_wr_to_rd_diff_chip;
+            end
         end
         else
         begin
@@ -1608,6 +1794,20 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                     less_than_x1_wr_to_rd_diff_chip    = less_than_2_wr_to_rd_diff_chip;
                 end
             end
+            
+            always @ (*)
+            begin
+                more_than_x0_rd_to_rd           = more_than_2_rd_to_rd;
+                more_than_x0_rd_to_wr           = more_than_2_rd_to_wr;
+                more_than_x0_wr_to_wr           = more_than_2_wr_to_wr;
+                more_than_x0_wr_to_rd           = more_than_2_wr_to_rd;
+                more_than_x0_rd_to_wr_bc        = more_than_2_rd_to_wr_bc;
+                more_than_x0_wr_to_rd_bc        = more_than_2_wr_to_rd_bc;
+                more_than_x0_rd_to_rd_diff_chip = more_than_2_rd_to_rd_diff_chip;
+                more_than_x0_rd_to_wr_diff_chip = more_than_2_rd_to_wr_diff_chip;
+                more_than_x0_wr_to_wr_diff_chip = more_than_2_wr_to_wr_diff_chip;
+                more_than_x0_wr_to_rd_diff_chip = more_than_2_wr_to_rd_diff_chip;
+            end
         end
     end
     endgenerate
@@ -1665,6 +1865,13 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
             // Shift in -> n, n-1, n-2, n-3.......4, 3 -> Shift out
             // Shift in '1' when there is an activate else shift in '0'
             // Shift out every clock cycles
+            
+            always @ (*)
+            begin
+            	act_tfaw_shift_reg [2] <= 1'b0;
+            	act_tfaw_shift_reg [1] <= 1'b0;
+            	act_tfaw_shift_reg [0] <= 1'b0;
+            end
             
             // Shift register [3]
             always @ (posedge ctl_clk or negedge ctl_reset_n)
@@ -1876,6 +2083,46 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
         end
     end
     
+    always @ (*)
+    begin
+        if (int_do_burst_chop)
+        begin
+            effective_rd_to_wr_combi           = t_param_rd_to_wr_bc;
+            effective_rd_to_wr_diff_chip_combi = t_param_rd_to_wr_diff_chip;
+            effective_wr_to_rd_combi           = t_param_wr_to_rd_bc;
+            effective_wr_to_rd_diff_chip_combi = t_param_wr_to_rd_diff_chip;
+        end
+        else if (int_do_burst_terminate)
+        begin
+            if (t_param_rd_to_wr > (max_local_burst_size - int_effective_size))
+                effective_rd_to_wr_combi           = t_param_rd_to_wr           - (max_local_burst_size - int_effective_size);
+            else
+                effective_rd_to_wr_combi           = 1'b1;
+            
+            if (t_param_rd_to_wr_diff_chip > (max_local_burst_size - int_effective_size))
+                effective_rd_to_wr_diff_chip_combi = t_param_rd_to_wr_diff_chip - (max_local_burst_size - int_effective_size);
+            else
+                effective_rd_to_wr_diff_chip_combi = 1'b1;
+            
+            if (t_param_wr_to_rd > (max_local_burst_size - int_effective_size))
+                effective_wr_to_rd_combi           = t_param_wr_to_rd           - (max_local_burst_size - int_effective_size);
+            else
+                effective_wr_to_rd_combi           = 1'b1;
+            
+            if (t_param_wr_to_rd_diff_chip > (max_local_burst_size - int_effective_size))
+                effective_wr_to_rd_diff_chip_combi = t_param_wr_to_rd_diff_chip - (max_local_burst_size - int_effective_size);
+            else
+                effective_wr_to_rd_diff_chip_combi = 1'b1;
+        end
+        else
+        begin
+            effective_rd_to_wr_combi           = effective_rd_to_wr;
+            effective_rd_to_wr_diff_chip_combi = effective_rd_to_wr_diff_chip;
+            effective_wr_to_rd_combi           = effective_wr_to_rd;
+            effective_wr_to_rd_diff_chip_combi = effective_wr_to_rd_diff_chip;
+        end
+    end
+    
     always @ (posedge ctl_clk or negedge ctl_reset_n)
     begin
         if (!ctl_reset_n)
@@ -1887,35 +2134,10 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
         end
         else
         begin
-            if (int_do_burst_chop)
-            begin
-                effective_rd_to_wr           <= t_param_rd_to_wr_bc;
-                effective_rd_to_wr_diff_chip <= t_param_rd_to_wr_diff_chip;
-                effective_wr_to_rd           <= t_param_wr_to_rd_bc;
-                effective_wr_to_rd_diff_chip <= t_param_wr_to_rd_diff_chip;
-            end
-            else if (int_do_burst_terminate)
-            begin
-                if (t_param_rd_to_wr > (max_local_burst_size - int_effective_size))
-                    effective_rd_to_wr           <= t_param_rd_to_wr           - (max_local_burst_size - int_effective_size);
-                else
-                    effective_rd_to_wr           <= 1'b1;
-                
-                if (t_param_rd_to_wr_diff_chip > (max_local_burst_size - int_effective_size))
-                    effective_rd_to_wr_diff_chip <= t_param_rd_to_wr_diff_chip - (max_local_burst_size - int_effective_size);
-                else
-                    effective_rd_to_wr_diff_chip <= 1'b1;
-                
-                if (t_param_wr_to_rd > (max_local_burst_size - int_effective_size))
-                    effective_wr_to_rd           <= t_param_wr_to_rd           - (max_local_burst_size - int_effective_size);
-                else
-                    effective_wr_to_rd           <= 1'b1;
-                
-                if (t_param_wr_to_rd_diff_chip > (max_local_burst_size - int_effective_size))
-                    effective_wr_to_rd_diff_chip <= t_param_wr_to_rd_diff_chip - (max_local_burst_size - int_effective_size);
-                else
-                    effective_wr_to_rd_diff_chip <= 1'b1;
-            end
+            effective_rd_to_wr           <= effective_rd_to_wr_combi;
+            effective_rd_to_wr_diff_chip <= effective_rd_to_wr_diff_chip_combi;
+            effective_wr_to_rd           <= effective_wr_to_rd_combi;
+            effective_wr_to_rd_diff_chip <= effective_wr_to_rd_diff_chip_combi;
         end
     end
     
@@ -1926,7 +2148,7 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
         genvar s_cs;
         for (s_cs = 0;s_cs < CFG_MEM_IF_CHIP;s_cs = s_cs + 1)
         begin : rdwr_monitor_per_chip
-            reg [31                     : 0] rdwr_state;
+            reg [1                      : 0] rdwr_state;
             reg [RDWR_COUNTER_WIDTH - 1 : 0] read_cnt_this_chip;
             reg [RDWR_COUNTER_WIDTH - 1 : 0] write_cnt_this_chip;
             reg [RDWR_COUNTER_WIDTH - 1 : 0] read_cnt_diff_chip;
@@ -2061,7 +2283,7 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                 begin
                     if (int_do_read || int_do_write)
                         doing_burst_terminate <= 1'b0;
-                    else if (int_do_burst_terminate)
+                    else if (int_do_burst_terminate && int_to_chip_c [s_cs]) // to current chip only
                         doing_burst_terminate <= 1'b1;
                 end
             end
@@ -2293,7 +2515,7 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                     end
                     else
                     begin
-                        if (read_cnt_this_chip >= (effective_rd_to_wr - 1'b1))
+                        if (read_cnt_this_chip >= (effective_rd_to_wr_combi - 1'b1))
                         begin
                             compare_rd_cnt_this_chip_greater_eq_than_effective_rd_to_wr           <= 1'b1;
                         end
@@ -2319,7 +2541,7 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                     end
                     else
                     begin
-                        if (read_cnt_diff_chip >= (effective_rd_to_wr_diff_chip - 1'b1))
+                        if (read_cnt_diff_chip >= (effective_rd_to_wr_diff_chip_combi - 1'b1))
                         begin
                             compare_rd_cnt_diff_chip_greater_eq_than_effective_rd_to_wr_diff_chip <= 1'b1;
                         end
@@ -2345,7 +2567,7 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                     end
                     else
                     begin
-                        if (write_cnt_this_chip >= (effective_wr_to_rd - 1'b1))
+                        if (write_cnt_this_chip >= (effective_wr_to_rd_combi - 1'b1))
                         begin
                             compare_wr_cnt_this_chip_greater_eq_than_effective_wr_to_rd           <= 1'b1;
                         end
@@ -2371,7 +2593,7 @@ output [CFG_CTL_TBP_NUM                            - 1 : 0] can_write;
                     end
                     else
                     begin
-                        if (write_cnt_diff_chip >= (effective_wr_to_rd_diff_chip - 1'b1))
+                        if (write_cnt_diff_chip >= (effective_wr_to_rd_diff_chip_combi - 1'b1))
                         begin
                             compare_wr_cnt_diff_chip_greater_eq_than_effective_wr_to_rd_diff_chip <= 1'b1;
                         end

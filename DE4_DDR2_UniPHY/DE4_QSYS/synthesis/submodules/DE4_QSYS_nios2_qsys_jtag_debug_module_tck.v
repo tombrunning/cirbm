@@ -1,4 +1,4 @@
-//Legal Notice: (C)2012 Altera Corporation. All rights reserved.  Your
+//Legal Notice: (C)2015 Altera Corporation. All rights reserved.  Your
 //use of Altera Corporation's design tools, logic functions and other
 //software and tools, and its AMPP partner logic functions, and any
 //output files any of the foregoing (including device programming or
@@ -96,8 +96,8 @@ module DE4_QSYS_nios2_qsys_jtag_debug_module_tck (
   reg     [ 37: 0] sr /* synthesis ALTERA_ATTRIBUTE = "SUPPRESS_DA_RULE_INTERNAL=\"D101,D103,R101\""  */;
   wire             st_ready_test_idle;
   wire             tdo;
-  wire             unxcomplemented_resetxx0;
   wire             unxcomplemented_resetxx1;
+  wire             unxcomplemented_resetxx2;
   always @(posedge tck)
     begin
       if (vs_cdr)
@@ -192,27 +192,27 @@ module DE4_QSYS_nios2_qsys_jtag_debug_module_tck (
 
   assign tdo = sr[0];
   assign st_ready_test_idle = jtag_state_rti;
-  assign unxcomplemented_resetxx0 = jrst_n;
-  altera_std_synchronizer the_altera_std_synchronizer
-    (
-      .clk (tck),
-      .din (debugack),
-      .dout (debugack_sync),
-      .reset_n (unxcomplemented_resetxx0)
-    );
-
-  defparam the_altera_std_synchronizer.depth = 2;
-
   assign unxcomplemented_resetxx1 = jrst_n;
   altera_std_synchronizer the_altera_std_synchronizer1
     (
       .clk (tck),
-      .din (monitor_ready),
-      .dout (monitor_ready_sync),
+      .din (debugack),
+      .dout (debugack_sync),
       .reset_n (unxcomplemented_resetxx1)
     );
 
   defparam the_altera_std_synchronizer1.depth = 2;
+
+  assign unxcomplemented_resetxx2 = jrst_n;
+  altera_std_synchronizer the_altera_std_synchronizer2
+    (
+      .clk (tck),
+      .din (monitor_ready),
+      .dout (monitor_ready_sync),
+      .reset_n (unxcomplemented_resetxx2)
+    );
+
+  defparam the_altera_std_synchronizer2.depth = 2;
 
   always @(posedge tck or negedge jrst_n)
     begin

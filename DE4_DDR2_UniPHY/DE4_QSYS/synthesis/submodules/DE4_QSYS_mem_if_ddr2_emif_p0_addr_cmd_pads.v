@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -10,6 +10,9 @@
 // Altera or its authorized distributors.  Please refer to the applicable 
 // agreement for further details.
 
+
+
+`timescale 1 ps / 1 ps
 
 module DE4_QSYS_mem_if_ddr2_emif_p0_addr_cmd_pads(
     reset_n,
@@ -57,7 +60,9 @@ parameter AFI_CHIP_SELECT_WIDTH     = "";
 parameter AFI_CLK_EN_WIDTH 			= ""; 
 parameter AFI_ODT_WIDTH 			= ""; 
 parameter AFI_CONTROL_WIDTH         = ""; 
-parameter DLL_WIDTH = "";
+parameter DLL_WIDTH                 = "";
+parameter REGISTER_C2P              = "";
+parameter IS_HHP_HPS                = "";
 
 input	reset_n;
 input	reset_n_afi_clk;
@@ -99,6 +104,7 @@ output  [MEM_CK_WIDTH-1:0]	phy_mem_ck_n;
 
 wire	[MEM_ADDRESS_WIDTH-1:0]	address_l;
 wire	[MEM_ADDRESS_WIDTH-1:0]	address_h;
+wire	adc_ldc_ck;
 wire	[MEM_CHIP_SELECT_WIDTH-1:0] cs_n_l;
 wire	[MEM_CHIP_SELECT_WIDTH-1:0] cs_n_h;
 wire	[MEM_CLK_EN_WIDTH-1:0] cke_l;
@@ -106,14 +112,41 @@ wire	[MEM_CLK_EN_WIDTH-1:0] cke_h;
 
 
 
-wire   [AFI_ADDRESS_WIDTH-1:0] phy_ddio_address_hr = phy_ddio_address;	
-wire   [AFI_BANK_WIDTH-1:0] phy_ddio_bank_hr = phy_ddio_bank;
-wire   [AFI_CHIP_SELECT_WIDTH-1:0] phy_ddio_cs_n_hr = phy_ddio_cs_n;
-wire   [AFI_CLK_EN_WIDTH-1:0] phy_ddio_cke_hr = phy_ddio_cke;
-wire   [AFI_ODT_WIDTH-1:0] phy_ddio_odt_hr = phy_ddio_odt;
-wire   [AFI_CONTROL_WIDTH-1:0] phy_ddio_ras_n_hr = phy_ddio_ras_n;
-wire   [AFI_CONTROL_WIDTH-1:0] phy_ddio_cas_n_hr = phy_ddio_cas_n;
-wire   [AFI_CONTROL_WIDTH-1:0] phy_ddio_we_n_hr = phy_ddio_we_n;
+reg   [AFI_ADDRESS_WIDTH-1:0] phy_ddio_address_hr;
+reg   [AFI_BANK_WIDTH-1:0] phy_ddio_bank_hr;
+reg   [AFI_CHIP_SELECT_WIDTH-1:0] phy_ddio_cs_n_hr;
+reg   [AFI_CLK_EN_WIDTH-1:0] phy_ddio_cke_hr;
+reg   [AFI_ODT_WIDTH-1:0] phy_ddio_odt_hr;
+reg   [AFI_CONTROL_WIDTH-1:0] phy_ddio_ras_n_hr;
+reg   [AFI_CONTROL_WIDTH-1:0] phy_ddio_cas_n_hr;
+reg   [AFI_CONTROL_WIDTH-1:0] phy_ddio_we_n_hr;
+
+generate
+if (REGISTER_C2P == "false") begin
+	always @(*) begin
+		phy_ddio_address_hr = phy_ddio_address;	
+		phy_ddio_bank_hr = phy_ddio_bank;
+		phy_ddio_cs_n_hr = phy_ddio_cs_n;
+		phy_ddio_cke_hr = phy_ddio_cke;
+		phy_ddio_odt_hr = phy_ddio_odt;
+		phy_ddio_ras_n_hr = phy_ddio_ras_n;
+		phy_ddio_cas_n_hr = phy_ddio_cas_n;
+		phy_ddio_we_n_hr = phy_ddio_we_n;
+	end
+end else begin
+	always @(posedge phy_ddio_addr_cmd_clk) begin
+		phy_ddio_address_hr <= phy_ddio_address;	
+		phy_ddio_bank_hr <= phy_ddio_bank;
+		phy_ddio_cs_n_hr <= phy_ddio_cs_n;
+		phy_ddio_cke_hr <= phy_ddio_cke;
+		phy_ddio_odt_hr <= phy_ddio_odt;
+		phy_ddio_ras_n_hr <= phy_ddio_ras_n;
+		phy_ddio_cas_n_hr <= phy_ddio_cas_n;
+		phy_ddio_we_n_hr <= phy_ddio_we_n;
+	end
+end
+endgenerate	
+
 
 
 
@@ -347,6 +380,8 @@ wire	[MEM_CONTROL_WIDTH-1:0] phy_ddio_we_n_h;
   wire	[MEM_CK_WIDTH-1:0] mem_ck;
 
 
+localparam USE_ADDR_CMD_CPS_FOR_MEM_CK = "true";
+
 generate
 genvar clock_width;
     for (clock_width=0; clock_width<MEM_CK_WIDTH; clock_width=clock_width+1)
@@ -359,10 +394,10 @@ genvar clock_width;
     altddio_out umem_ck_pad(
     	.aclr       (1'b0),
     	.aset       (1'b0),
-    	.datain_h   (1'b1),
+    	.datain_h   (enable_mem_clk[clock_width]),
     	.datain_l   (1'b0),
     	.dataout    (mem_ck[clock_width]),
-    	.oe         (enable_mem_clk[clock_width]),
+    	.oe     	(1'b1),
     	.outclock   (mem_ck_source[clock_width]),
     	.outclocken (1'b1)
     );

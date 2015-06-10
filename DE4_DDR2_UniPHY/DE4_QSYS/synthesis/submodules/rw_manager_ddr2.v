@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -11,8 +11,10 @@
 // agreement for further details.
 
 
+
+`timescale 1 ps / 1 ps
+
 module rw_manager_ddr2 (
-	
 	avl_clk,
 	avl_reset_n,
 	avl_address,
@@ -22,7 +24,6 @@ module rw_manager_ddr2 (
 	avl_readdata,
 	avl_waitrequest,
 
-	
 	afi_clk,
 	afi_reset_n,
 	afi_addr,
@@ -138,10 +139,12 @@ module rw_manager_ddr2 (
 		.afi_odt(afi_odt),
 		.afi_rdata(afi_rdata),
 		.afi_rdata_valid(afi_rdata_valid),
-                .csr_clk(csr_clk),
-                .csr_ena(csr_ena),
-                .csr_dout_phy(csr_dout_phy),
-                .csr_dout(csr_dout)
+		.afi_rrank(),
+		.afi_wrank(),
+		.csr_clk(csr_clk),
+		.csr_ena(csr_ena),
+		.csr_dout_phy(csr_dout_phy),
+		.csr_dout(csr_dout)
 	);
 	defparam rw_mgr_inst.AVL_DATA_WIDTH = AVL_DATA_WIDTH;
 	defparam rw_mgr_inst.AVL_ADDRESS_WIDTH = AVL_ADDR_WIDTH;
@@ -154,6 +157,7 @@ module rw_manager_ddr2 (
 	defparam rw_mgr_inst.AFI_RATIO = AFI_RATIO;
 	defparam rw_mgr_inst.MEM_READ_DQS_WIDTH = MEM_READ_DQS_WIDTH;
 	defparam rw_mgr_inst.MEM_WRITE_DQS_WIDTH = MEM_WRITE_DQS_WIDTH;
+	defparam rw_mgr_inst.MEM_NUMBER_OF_RANKS = MEM_NUMBER_OF_RANKS;
 	defparam rw_mgr_inst.RATE = RATE;
 	defparam rw_mgr_inst.HCX_COMPAT_MODE = HCX_COMPAT_MODE;
 	defparam rw_mgr_inst.DEVICE_FAMILY = DEVICE_FAMILY;
@@ -169,32 +173,24 @@ module rw_manager_ddr2 (
 
 generate
 begin
+	wire [MEM_ADDRESS_WIDTH-1:0] afi_address_half;
+	assign afi_address_half = ac_bus[12:0];
+	assign afi_addr = {AFI_RATIO{afi_address_half}};
+	assign afi_ba = {AFI_RATIO{ac_bus[MEM_BANK_WIDTH - 1 + 13:13]}};
+	assign afi_ras_n = {(MEM_CONTROL_WIDTH * AFI_RATIO){ac_bus[16]}};
+	assign afi_cas_n = {(MEM_CONTROL_WIDTH * AFI_RATIO){ac_bus[17]}};
+	assign afi_we_n = {(MEM_CONTROL_WIDTH * AFI_RATIO){ac_bus[18]}};
+
 	if (AFI_RATIO == 2) begin
-		
-		wire [MEM_ADDRESS_WIDTH-1:0] afi_address_half;
-		assign afi_address_half = ac_bus[12:0];
-		assign afi_addr = {AFI_RATIO{afi_address_half}};
-		assign afi_ba = {AFI_RATIO{ac_bus[MEM_BANK_WIDTH - 1 + 13:13]}};
-		assign afi_ras_n = {(MEM_CONTROL_WIDTH * AFI_RATIO){ac_bus[16]}};
-		assign afi_cas_n = {(MEM_CONTROL_WIDTH * AFI_RATIO){ac_bus[17]}};
-		assign afi_we_n = {(MEM_CONTROL_WIDTH * AFI_RATIO){ac_bus[18]}};
 		assign afi_dqs_burst = {{(MEM_WRITE_DQS_WIDTH * AFI_RATIO / 2){ac_bus[20]}}, {(MEM_WRITE_DQS_WIDTH * AFI_RATIO / 2){ac_bus[19]}}};
-		assign afi_rdata_en_full[0] = ac_bus[21];
-		assign afi_rdata_en[0] = ac_bus[22];
+		assign afi_rdata_en_full = {AFI_RATIO{ac_bus[21]}};
+		assign afi_rdata_en = {AFI_RATIO{ac_bus[22]}};
 		assign afi_wdata_valid = {MEM_WRITE_DQS_WIDTH * AFI_RATIO{ac_bus[23]}};
 		assign afi_cke = {(MEM_CLK_EN_WIDTH * AFI_RATIO){ac_bus[25]}};
 	end else begin
-		
-		wire [MEM_ADDRESS_WIDTH-1:0] afi_address_half;
-		assign afi_address_half = ac_bus[12:0];
-		assign afi_addr = {AFI_RATIO{afi_address_half}};
-		assign afi_ba = {AFI_RATIO{ac_bus[MEM_BANK_WIDTH - 1 + 13:13]}};
-		assign afi_ras_n = {(MEM_CONTROL_WIDTH * AFI_RATIO){ac_bus[16]}};
-		assign afi_cas_n = {(MEM_CONTROL_WIDTH * AFI_RATIO){ac_bus[17]}};
-		assign afi_we_n = {(MEM_CONTROL_WIDTH * AFI_RATIO){ac_bus[18]}};
 		assign afi_dqs_burst = {(MEM_WRITE_DQS_WIDTH * AFI_RATIO){ac_bus[19]}};
-		assign afi_rdata_en_full[0] = ac_bus[20];
-		assign afi_rdata_en[0] = ac_bus[21];
+		assign afi_rdata_en_full = {AFI_RATIO{ac_bus[20]}};
+		assign afi_rdata_en = {AFI_RATIO{ac_bus[21]}};
 		assign afi_wdata_valid = {MEM_WRITE_DQS_WIDTH * AFI_RATIO{ac_bus[22]}};
 		assign afi_cke = {(MEM_CLK_EN_WIDTH * AFI_RATIO){ac_bus[24]}};
 	end

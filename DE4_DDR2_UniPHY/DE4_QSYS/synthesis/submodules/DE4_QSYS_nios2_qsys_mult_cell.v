@@ -1,4 +1,4 @@
-//Legal Notice: (C)2012 Altera Corporation. All rights reserved.  Your
+//Legal Notice: (C)2015 Altera Corporation. All rights reserved.  Your
 //use of Altera Corporation's design tools, logic functions and other
 //software and tools, and its AMPP partner logic functions, and any
 //output files any of the foregoing (including device programming or
@@ -26,8 +26,6 @@ module DE4_QSYS_nios2_qsys_mult_cell (
                                         E_src1_mul_cell,
                                         E_src2_mul_cell,
                                         M_en,
-                                        M_mul_cell_rotate,
-                                        M_mul_cell_shift_right,
                                         clk,
                                         reset_n,
 
@@ -36,22 +34,20 @@ module DE4_QSYS_nios2_qsys_mult_cell (
                                      )
 ;
 
-  output  [ 31: 0] A_mul_cell_result;
+  output  [ 63: 0] A_mul_cell_result;
   input            A_en;
   input            E_ctrl_mul_shift_src1_signed;
   input            E_ctrl_mul_shift_src2_signed;
   input   [ 31: 0] E_src1_mul_cell;
   input   [ 31: 0] E_src2_mul_cell;
   input            M_en;
-  input            M_mul_cell_rotate;
-  input            M_mul_cell_shift_right;
   input            clk;
   input            reset_n;
 
-  wire    [ 31: 0] A_mul_cell_result;
+  wire    [ 63: 0] A_mul_cell_result;
   wire             mul_clr;
   assign mul_clr = ~reset_n;
-  altmult_add the_altmult_add
+  altera_mult_add the_altmult_add
     (
       .aclr0 (mul_clr),
       .aclr1 (mul_clr),
@@ -62,8 +58,6 @@ module DE4_QSYS_nios2_qsys_mult_cell (
       .ena0 (M_en),
       .ena1 (A_en),
       .result (A_mul_cell_result),
-      .rotate (M_mul_cell_rotate),
-      .shift_right (M_mul_cell_shift_right),
       .signa (E_ctrl_mul_shift_src1_signed),
       .signb (E_ctrl_mul_shift_src2_signed)
     );
@@ -78,22 +72,17 @@ module DE4_QSYS_nios2_qsys_mult_cell (
            the_altmult_add.input_register_b0 = "CLOCK0",
            the_altmult_add.input_source_a0 = "DATAA",
            the_altmult_add.input_source_b0 = "DATAB",
-           the_altmult_add.intended_device_family = "STRATIXIV",
-           the_altmult_add.lpm_type = "altmult_add",
+           the_altmult_add.lpm_type = "altera_mult_add",
            the_altmult_add.multiplier1_direction = "ADD",
            the_altmult_add.multiplier_register0 = "UNREGISTERED",
            the_altmult_add.number_of_multipliers = 1,
            the_altmult_add.output_aclr = "ACLR1",
            the_altmult_add.output_register = "CLOCK1",
-           the_altmult_add.rotate_output_aclr = "ACLR1",
-           the_altmult_add.rotate_output_register = "CLOCK1",
-           the_altmult_add.rotate_pipeline_register = "UNREGISTERED",
-           the_altmult_add.rotate_register = "UNREGISTERED",
-           the_altmult_add.shift_mode = "VARIABLE",
-           the_altmult_add.shift_right_output_aclr = "ACLR1",
-           the_altmult_add.shift_right_output_register = "CLOCK1",
-           the_altmult_add.shift_right_pipeline_register = "UNREGISTERED",
-           the_altmult_add.shift_right_register = "UNREGISTERED",
+           the_altmult_add.port_addnsub1 = "PORT_UNUSED",
+           the_altmult_add.port_addnsub3 = "PORT_UNUSED",
+           the_altmult_add.port_signa = "PORT_USED",
+           the_altmult_add.port_signb = "PORT_USED",
+           the_altmult_add.selected_device_family = "STRATIXIV",
            the_altmult_add.signed_aclr_a = "ACLR0",
            the_altmult_add.signed_aclr_b = "ACLR0",
            the_altmult_add.signed_pipeline_register_a = "UNREGISTERED",
@@ -102,7 +91,7 @@ module DE4_QSYS_nios2_qsys_mult_cell (
            the_altmult_add.signed_register_b = "CLOCK0",
            the_altmult_add.width_a = 32,
            the_altmult_add.width_b = 32,
-           the_altmult_add.width_result = 32;
+           the_altmult_add.width_result = 64;
 
 
 endmodule

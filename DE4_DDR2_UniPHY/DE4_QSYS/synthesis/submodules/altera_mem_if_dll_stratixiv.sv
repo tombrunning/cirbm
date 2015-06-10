@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -17,11 +17,14 @@
 
 `timescale 1 ps / 1 ps
 
-(* altera_attribute = "-name IP_TOOL_NAME altera_mem_if_dll; -name IP_TOOL_VERSION 11.1; -name FITTER_ADJUST_HC_SHORT_PATH_GUARDBAND 100; -name ALLOW_SYNCH_CTRL_USAGE OFF; -name AUTO_CLOCK_ENABLE_RECOGNITION OFF; -name AUTO_SHIFT_REGISTER_RECOGNITION OFF" *)
+(* altera_attribute = "-name IP_TOOL_NAME altera_mem_if_dll; -name IP_TOOL_VERSION 13.0; -name FITTER_ADJUST_HC_SHORT_PATH_GUARDBAND 100; -name ALLOW_SYNCH_CTRL_USAGE OFF; -name AUTO_CLOCK_ENABLE_RECOGNITION OFF; -name AUTO_SHIFT_REGISTER_RECOGNITION OFF" *)
 
 
 module altera_mem_if_dll_stratixiv (
 	clk,
+
+
+    dll_pll_locked,
 	dll_delayctrl
 );
 
@@ -34,16 +37,19 @@ parameter DLL_OFFSET_CTRL_WIDTH = 0;
 
 
 input                                clk;  // DLL input clock
+input                                dll_pll_locked;
 output  [DLL_DELAY_CTRL_WIDTH-1:0]   dll_delayctrl;
 
 
 wire  wire_dll_wys_m_offsetdelayctrlclkout;
 wire  [DLL_DELAY_CTRL_WIDTH-1:0]   wire_dll_wys_m_offsetdelayctrlout;
+wire  dll_aload; 
 
+assign dll_aload = ~dll_pll_locked; 
 
-	
 	stratixiv_dll dll_wys_m(
 		.clk(clk),
+		.aload(dll_aload),
 		.delayctrlout(dll_delayctrl),
 		.dqsupdate(),
 		.offsetdelayctrlclkout(wire_dll_wys_m_offsetdelayctrlclkout),
@@ -53,7 +59,6 @@ wire  [DLL_DELAY_CTRL_WIDTH-1:0]   wire_dll_wys_m_offsetdelayctrlout;
 		// synopsys translate_off
 		`endif
 		,
-		.aload(1'b0),
 		.upndnin(1'b1),
 		.upndninclkena(1'b1)
 		`ifndef FORMAL_VERIFICATION
@@ -71,6 +76,7 @@ wire  [DLL_DELAY_CTRL_WIDTH-1:0]   wire_dll_wys_m_offsetdelayctrlout;
 	defparam dll_wys_m.jitter_reduction = "true";
 	defparam dll_wys_m.static_delay_ctrl = DELAY_CHAIN_LENGTH;
 	defparam dll_wys_m.lpm_type = "stratixiv_dll";
+
 
 
  

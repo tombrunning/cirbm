@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -11,9 +11,13 @@
 // agreement for further details.
 
 
+// altera message_off 10034 10036 10030 10858
+
 `timescale 1 ps / 1 ps
 
+(* altera_attribute = "-name MESSAGE_DISABLE 12010; -name MESSAGE_DISABLE 12161" *)
 module altdq_dqs2_ddio_3reg_stratixiv (
+
 	dll_delayctrl_in,
 	dll_offsetdelay_in,
 	capture_strobe_in,
@@ -28,6 +32,15 @@ module altdq_dqs2_ddio_3reg_stratixiv (
 	strobe_io,
 	strobe_n_io,
 	
+        external_ddio_capture_clock,
+        external_fifo_capture_clock,
+
+	corerankselectwritein,
+	corerankselectreadin,
+	coredqsenabledelayctrlin,
+	coredqsdisablendelayctrlin,
+	coremultirankdelayctrlin,
+	
 	reset_n_core_clock_in,
 	core_clock_in,
 	fr_clock_in,
@@ -41,20 +54,21 @@ module altdq_dqs2_ddio_3reg_stratixiv (
 	parallelterminationcontrol_in,
 	seriesterminationcontrol_in,
 
-	
 	read_data_in,
 	write_data_out,
 	read_write_data_io,
 		
-	
 	write_oe_in,
 	read_data_out,
 	write_data_in,
 	extra_write_data_in,
 	extra_write_data_out,
 	capture_strobe_tracking,
-
 	
+	lfifo_rden,
+	vfifo_qvld,
+	rfifo_reset_n,
+
 	config_data_in,
 	config_dqs_ena,
 	config_io_ena,
@@ -88,6 +102,8 @@ parameter DQS_PHASE_SHIFT = 9000;
 parameter DQS_ENABLE_PHASE_SETTING = 2;
 parameter USE_DYNAMIC_CONFIG = "true";
 parameter INVERT_CAPTURE_STROBE = "false";
+parameter SWAP_CAPTURE_STROBE_POLARITY = "false";
+parameter EXTRA_OUTPUTS_USE_SEPARATE_GROUP = "false";
 parameter USE_TERMINATION_CONTROL = "false";
 parameter USE_OCT_ENA_IN_FOR_OCT = "false";
 parameter USE_DQS_ENABLE = "false";
@@ -107,11 +123,14 @@ parameter EXTRA_OUTPUT_WIDTH = 0;
 parameter PREAMBLE_TYPE = "none";
 parameter USE_DATA_OE_FOR_OCT = "false";
 parameter DQS_ENABLE_WIDTH = 1;
+parameter EMIF_UNALIGNED_PREAMBLE_SUPPORT = "false";
 
 parameter USE_2X_FF = "false";
 parameter USE_DQS_TRACKING = "false";
 parameter DUAL_WRITE_CLOCK = "false";
 parameter USE_HARD_FIFOS = "false";
+
+parameter USE_SHADOW_REGS = "false";
 
 localparam rate_mult_in = (USE_HALF_RATE_INPUT == "true") ? 4 : 2;
 localparam rate_mult_out = (USE_HALF_RATE_OUTPUT == "true") ? 4 : 2;
@@ -134,9 +153,19 @@ parameter CALIBRATION_SUPPORT = "false";
 
 parameter ALTERA_ALTDQ_DQS2_FAST_SIM_MODEL = 0;
 
-localparam DELAY_CHAIN_WIDTH = 4;
+parameter DELAY_CHAIN_WIDTH = 0;
+
+parameter DQS_ENABLE_AFTER_T7 = "true";
+
+parameter USE_CAPTURE_REG_EXTERNAL_CLOCKING = "false";
+parameter USE_READ_FIFO_EXTERNAL_CLOCKING = "false";
 
 localparam OUTPUT_ALIGNMENT_DELAY = "two_cycle";
+
+localparam PINS_PER_DQS_CONFIG = 6;
+localparam NUM_STROBES = (DIFFERENTIAL_CAPTURE_STROBE == "true" || SEPARATE_CAPTURE_STROBE == "true") ? 2 : 1;
+localparam DQS_CONFIGS = (PIN_WIDTH + EXTRA_OUTPUT_WIDTH + NUM_STROBES) / PINS_PER_DQS_CONFIG;
+
 
 input [DLL_WIDTH-1:0] dll_delayctrl_in;
 input [DLL_WIDTH-1:0] dll_offsetdelay_in;
@@ -167,7 +196,16 @@ input [1:0] oct_ena_in;
 inout strobe_io;
 inout strobe_n_io;
 
-output [fpga_width_in-1:0] read_data_out;
+input external_ddio_capture_clock;
+input external_fifo_capture_clock;
+
+input corerankselectreadin;
+input [1:0] corerankselectwritein;
+input [DELAY_CHAIN_WIDTH-1:0] coredqsenabledelayctrlin;
+input [DELAY_CHAIN_WIDTH-1:0] coredqsdisablendelayctrlin;
+input [DELAY_CHAIN_WIDTH-1:0] coremultirankdelayctrlin;
+
+output [fpga_width_out-1:0] read_data_out;
 input [fpga_width_out-1:0] write_data_in;
 
 input [WRITE_OE_WIDTH-1:0] write_oe_in;
@@ -191,6 +229,10 @@ input [EXTRA_OUTPUT_WIDTH-1:0] config_extra_io_ena;
 input config_dqs_io_ena;
 input config_clock_in;
 
+input lfifo_rden;
+input vfifo_qvld;
+input rfifo_reset_n;
+
 wire [DLL_WIDTH-1:0] dll_delay_value;
 assign dll_delay_value = dll_delayctrl_in;
 
@@ -211,13 +253,9 @@ wire [DELAY_CHAIN_WIDTH-1:0] dqsn_outputdelaysetting1_dlc;
 wire [DELAY_CHAIN_WIDTH-1:0] dqsn_outputdelaysetting2_dlc;
 
 
-
 generate
 if (USE_DYNAMIC_CONFIG =="true" && (USE_OUTPUT_STROBE == "true" || PIN_TYPE =="input" || PIN_TYPE == "bidir"))
 begin
-	
-	
-
 	stratixiv_io_config dqs_io_config_1 (
 			.datain(config_data_in),  
 			.clk(config_clock_in),
@@ -227,12 +265,12 @@ begin
 			.outputdelaysetting1(dqs_outputdelaysetting1),
 			.outputdelaysetting2(dqs_outputdelaysetting2),
 			.padtoinputregisterdelaysetting(dqs_inputdelaysetting),
-		
+			
+
 
 			.dataout()
 		);
 
-	
 	assign dqs_outputdelaysetting1_dlc = dqs_outputdelaysetting1;
 	assign dqs_outputdelaysetting2_dlc = dqs_outputdelaysetting2;
 
@@ -245,11 +283,12 @@ begin
 			.outputdelaysetting1(dqsn_outputdelaysetting1),
 			.outputdelaysetting2(dqsn_outputdelaysetting2),
 			.padtoinputregisterdelaysetting(dqsn_inputdelaysetting),
+			
+
 
 			.dataout()
 		);
 
-	
 	assign dqsn_outputdelaysetting1_dlc = dqsn_outputdelaysetting1;
 	assign dqsn_outputdelaysetting2_dlc = dqsn_outputdelaysetting2;
 
@@ -311,10 +350,6 @@ endgenerate
 
 
 
-localparam PINS_PER_DQS_CONFIG = 6;
-localparam NUM_STROBES = (DIFFERENTIAL_CAPTURE_STROBE == "true" || SEPARATE_CAPTURE_STROBE == "true") ? 2 : 1;
-localparam DQS_CONFIGS = (PIN_WIDTH + EXTRA_OUTPUT_WIDTH + NUM_STROBES) / PINS_PER_DQS_CONFIG;
-
 wire dividerphasesetting [DQS_CONFIGS:0];
 wire dqoutputphaseinvert [DQS_CONFIGS:0];
 wire [3:0] dqoutputphasesetting [DQS_CONFIGS:0];
@@ -324,6 +359,7 @@ wire [3:0] resyncinputphasesetting [DQS_CONFIGS:0];
 wire [2:0] dqsenabledelaysetting [DQS_CONFIGS:0];
 wire [2:0] dqsinputphasesetting [DQS_CONFIGS:0];
 wire [3:0] dqsenablectrlphasesetting [DQS_CONFIGS:0];
+
 wire dqsbusoutfinedelaysetting [DQS_CONFIGS:0];
 wire dqsenablectrlphaseinvert [DQS_CONFIGS:0];
 wire dqsenablefinedelaysetting [DQS_CONFIGS:0];
@@ -355,8 +391,7 @@ begin
 	genvar c_num; 
 	for (c_num = 0; c_num <= DQS_CONFIGS; c_num = c_num + 1)
 	begin :dqs_config_gen
-			
-		stratixiv_dqs_config   dqs_config_inst
+			stratixiv_dqs_config   dqs_config_inst
 		( 
 		.clk(config_clock_in),
 		.datain(config_data_in),
@@ -365,15 +400,12 @@ begin
 		.update(config_update),
 
 
-		
- 		.dqoutputphaseinvert(dqoutputphaseinvert[c_num]), 
+		.dqoutputphaseinvert(dqoutputphaseinvert[c_num]), 
 		.dqoutputphasesetting(dqoutputphasesetting[c_num]), 
-		
 		.dqsenablectrlphaseinvert(dqsenablectrlphaseinvert[c_num]), 
 		.dqsenablectrlphasesetting(dqsenablectrlphasesetting[c_num]), 
 		.dqsenabledelaysetting(dqsenabledelaysetting[c_num]), 
 
-		
 		.dqsinputphasesetting(dqsinputphasesetting[c_num]), 
 		.dqsoutputphaseinvert(dqsoutputphaseinvert[c_num]), 
 		.dqsoutputphasesetting(dqsoutputphasesetting[c_num]), 
@@ -388,13 +420,18 @@ begin
 		.octdelaysetting2(octdelaysetting2[c_num]),
 		.resyncinputphaseinvert(resyncinputphaseinvert[c_num]), 
 		.resyncinputphasesetting(resyncinputphasesetting[c_num]), 
+
+
+
 		.dqsbusoutdelaysetting(dqsbusoutdelaysetting[c_num]) 
 		);
+		
 		
 		assign dqsbusoutdelaysetting_dlc[c_num] = dqsbusoutdelaysetting[c_num];
 		assign dqsenabledelaysetting_dlc[c_num] = dqsenabledelaysetting[c_num];
 		assign octdelaysetting1_dlc[c_num] = octdelaysetting1[c_num];
 		assign octdelaysetting2_dlc[c_num] = octdelaysetting2[c_num];
+		
 	end
 end
 endgenerate
@@ -415,20 +452,19 @@ end
 endgenerate
 
 wire zero_phase_clock;
-wire dq_zero_phase_clock;
-wire dqs_zero_phase_clock;
 wire dq_dr_clock;
 wire dqs_dr_clock;
 wire dq_shifted_clock;
-wire dqs_shifted_clock;
+wire dm_shifted_clock;
 wire write_strobe_clock;
 
+
 assign zero_phase_clock = fr_clock_in;
-assign dq_zero_phase_clock = fr_clock_in;
-assign dqs_zero_phase_clock = fr_clock_in;
 assign dq_shifted_clock = fr_clock_in;
-assign dqs_shifted_clock = fr_clock_in;
+assign dm_shifted_clock = fr_clock_in;
 assign write_strobe_clock = write_strobe_clock_in;
+
+
 
 
 
@@ -439,55 +475,51 @@ begin
 	assign capture_strobe_out = dqsbusout;
 	wire dqsin;
 	
-	if (DIFFERENTIAL_CAPTURE_STROBE == "true")
+	wire capture_strobe_ibuf_i;
+	wire capture_strobe_ibuf_ibar;
+
+	if (USE_BIDIR_STROBE == "true")
 	begin
-		if (USE_BIDIR_STROBE == "true")
-		begin
-			stratixiv_io_ibuf 
-			#(
-				.differential_mode(DIFFERENTIAL_CAPTURE_STROBE),
-				.bus_hold("false")
-			) strobe_in (
-				.i(strobe_io),
-				.ibar (strobe_n_io),
-				.o(dqsin)
-			);
-		end
-		else
-		begin
-			stratixiv_io_ibuf 
-			#(
-				.differential_mode(DIFFERENTIAL_CAPTURE_STROBE),
-				.bus_hold("false")
-			) strobe_in (					      
-				.i(capture_strobe_in),
-				.ibar (capture_strobe_n_in),
-				.o(dqsin)
-			);
+		if (SWAP_CAPTURE_STROBE_POLARITY == "true") begin
+			assign capture_strobe_ibuf_i = strobe_n_io;
+			assign capture_strobe_ibuf_ibar = strobe_io;
+		end else begin
+			assign capture_strobe_ibuf_i = strobe_io;
+			assign capture_strobe_ibuf_ibar = strobe_n_io;
 		end
 	end
 	else
 	begin
-		if (USE_BIDIR_STROBE == "true")
-		begin
-			stratixiv_io_ibuf
-			#(
-				.bus_hold("false")
-			) strobe_in (					      
-				.i(strobe_io),
-				.o(dqsin)
+		if (SWAP_CAPTURE_STROBE_POLARITY == "true") begin
+			assign capture_strobe_ibuf_i = capture_strobe_n_in;
+			assign capture_strobe_ibuf_ibar = capture_strobe_in;
+		end else begin
+			assign capture_strobe_ibuf_i = capture_strobe_in;
+			assign capture_strobe_ibuf_ibar = capture_strobe_n_in;
+		end		
+	end		
+	
+	if (DIFFERENTIAL_CAPTURE_STROBE == "true")
+	begin
+		stratixiv_io_ibuf 
+		#(
+			.differential_mode(DIFFERENTIAL_CAPTURE_STROBE),
+			.bus_hold("false")
+		) strobe_in (
+			.i(capture_strobe_ibuf_i),
+			.ibar(capture_strobe_ibuf_ibar),
+			.o(dqsin)
 		);
-		end
-		else
-		begin
-			stratixiv_io_ibuf 
-			#(
-				.bus_hold("false")
-			) strobe_in (					      
-				.i(capture_strobe_in),
-				.o(dqsin)
+	end
+	else
+	begin
+		stratixiv_io_ibuf
+		#(
+			.bus_hold("false")
+		) strobe_in (					      
+			.i(capture_strobe_ibuf_i),
+			.o(dqsin)
 		);
-		end
 	end
 
 	wire capture_strobe_ena_fr;
@@ -498,7 +530,7 @@ begin
 				.half_rate_mode("true"),
 				.use_new_clocking_model("true"),
 				.async_mode("none")
-			) hr_to_fr_ena (					      
+			) hr_to_fr_ena (
 					.datainhi(capture_strobe_ena[1]),
 					.datainlo(capture_strobe_ena[0]),
 					.dataout(capture_strobe_ena_fr),
@@ -513,7 +545,6 @@ begin
 	end
 
 
-
 	wire dqsbusout_preena;
 	wire dqsbusout_predelay;
 	wire dqs_enable_predelay;
@@ -521,9 +552,6 @@ begin
 
 	if (USE_DYNAMIC_CONFIG == "true")
 	begin
-		
- 		
-		
 
 		stratixiv_dqs_delay_chain
 		#(
@@ -538,7 +566,6 @@ begin
 			.dqsin(dqsin),
 			.delayctrlin(dll_delay_value),
 			.dqsbusout(dqsbusout_predelay),
-			
 			.phasectrlin(dqsinputphasesetting[0])
 		);
 
@@ -615,27 +642,13 @@ begin
 		wire dqsn_enable_predelay;
 		wire dqsn_enable;
 
-		
-		if (USE_BIDIR_STROBE == "true")
-		begin
-			stratixiv_io_ibuf strobe_n_in (
-				.i(strobe_n_io),
-				.o(dqsnin)
-			);
-		end
-		else
-		begin
-			stratixiv_io_ibuf strobe_n_in (
-				.i(capture_strobe_n_in),
-				.o(dqsnin)
-			);
-		end
+		stratixiv_io_ibuf strobe_n_in (
+			.i(capture_strobe_ibuf_ibar),
+			.o(dqsnin)
+		);
 		
 		if (USE_DYNAMIC_CONFIG == "true")
 		begin
-			
-	 		
-			
 
 			stratixiv_dqs_delay_chain
 			#(
@@ -719,7 +732,6 @@ begin
 		end
 	end
 								
-	
 end
 endgenerate
 
@@ -743,24 +755,65 @@ begin
 	
 	if (USE_HALF_RATE_OUTPUT == "true")
 	begin
-		
-		
-		
 	
 		if (USE_BIDIR_STROBE == "true")
 		begin		
-			wire clk_gate;
+			wire clk_gate_hi;
+			wire clk_gate_lo;
 			
 			if (PREAMBLE_TYPE == "low")
 			begin
-				assign clk_gate = output_strobe_ena[0];
+				if (EMIF_UNALIGNED_PREAMBLE_SUPPORT != "true")
+				begin
+					assign clk_gate_hi = output_strobe_ena[0];
+					assign clk_gate_lo = output_strobe_ena[0];
+				end 
+				else
+				begin 
+					reg [1:0] os_ena_reg;
+					reg [1:0] os_ena_preamble;
+
+					always @(posedge core_clock_in)  
+					begin
+						os_ena_reg[1:0] <= output_strobe_ena[1:0];
+					end
+
+					always @(*)
+					begin
+						case ({os_ena_reg[0], os_ena_reg[1],
+							   output_strobe_ena[0], output_strobe_ena[1]}) 
+							4'b00_00: os_ena_preamble[1:0] <= 2'b00;
+							4'b00_01: os_ena_preamble[1:0] <= 2'b00; 
+							4'b00_10: os_ena_preamble[1:0] <= 2'b00; 
+							4'b00_11: os_ena_preamble[1:0] <= 2'b01; 
+
+							4'b01_00: os_ena_preamble[1:0] <= 2'b00;
+							4'b01_01: os_ena_preamble[1:0] <= 2'b00; 
+							4'b01_10: os_ena_preamble[1:0] <= 2'b10;
+							4'b01_11: os_ena_preamble[1:0] <= 2'b11;
+
+							4'b10_00: os_ena_preamble[1:0] <= 2'b00;
+							4'b10_01: os_ena_preamble[1:0] <= 2'b00; 
+							4'b10_10: os_ena_preamble[1:0] <= 2'b00; 
+							4'b10_11: os_ena_preamble[1:0] <= 2'b01; 
+
+							4'b11_00: os_ena_preamble[1:0] <= 2'b00;
+							4'b11_01: os_ena_preamble[1:0] <= 2'b00; 
+							4'b11_10: os_ena_preamble[1:0] <= 2'b10;
+							4'b11_11: os_ena_preamble[1:0] <= 2'b11;
+
+							default:  os_ena_preamble[1:0] <= 2'b00;
+						endcase
+					end
+
+					assign clk_gate_hi = os_ena_preamble[0];
+					assign clk_gate_lo = os_ena_preamble[1];
+				end 
 			end
 			else
 			begin
-				
-				
-				
-				assign clk_gate = 1'b1;
+				assign clk_gate_hi = 1'b1;
+				assign clk_gate_lo = 1'b1;
 			end
 			
 			stratixiv_ddio_out
@@ -769,8 +822,8 @@ begin
 				.use_new_clocking_model("true"),
 				.async_mode("none")	
 			) hr_to_fr_os_hi (
-					.datainhi(clk_gate),
-					.datainlo(clk_gate),
+					.datainhi(clk_gate_hi),
+					.datainlo(clk_gate_lo),
 					.dataout(fr_os_hi),
 					.clkhi (hr_clock_in),
 					.clklo (hr_clock_in),
@@ -808,14 +861,7 @@ begin
 		else 
 		begin
 			wire clk_gate;
-			
-			
-			
-			
-			
-			
-			
-			
+			assign fr_os_oe = 1'b0;			
 			if (USE_OUTPUT_STROBE_RESET == "true") begin
 				reg clk_h /* synthesis dont_merge */;
 				always @(posedge core_clock_in or negedge reset_n_core_clock_in)
@@ -831,7 +877,6 @@ begin
 			end
 			
 			if (USE_LDC_AS_LOW_SKEW_CLOCK == "true") begin
-				
 				wire hr_to_fr_os_hi_in = (OUTPUT_DQS_PHASE_SETTING == 4) ? 1'b0 : clk_gate;
 				wire hr_to_fr_os_lo_in = (OUTPUT_DQS_PHASE_SETTING == 4) ? clk_gate : 1'b0;
 								
@@ -839,8 +884,6 @@ begin
 					assign fr_os_hi = hr_to_fr_os_hi_in;
 					assign fr_os_lo = hr_to_fr_os_lo_in;
 				end else begin
-					
-					
 					stratixiv_ddio_out
 					#(
 						.half_rate_mode("true"),
@@ -870,7 +913,6 @@ begin
 					);
 				end			
 			end else begin
-				
 				wire gnd_lut /* synthesis keep = 1*/;
 				assign gnd_lut = 1'b0;
 				assign fr_os_lo = gnd_lut;
@@ -895,11 +937,7 @@ begin
 	else
 	begin
 		
-		
-		
-		
 		wire fr_os_hi_in;
-		
 		wire gnd_lut /* synthesis keep = 1*/;
 		assign gnd_lut = 1'b0;
 		wire fr_os_lo_in = gnd_lut;
@@ -912,10 +950,8 @@ begin
 			if (PREAMBLE_TYPE == "low")
 			begin
 				reg os_ena_reg1;
-				
 				initial
 					os_ena_reg1 = 0;
-				
 				always @(posedge core_clock_in)
 					os_ena_reg1 <= output_strobe_ena[0];
 	
@@ -923,10 +959,6 @@ begin
 			end
 			else
 			begin
-				
-				
-				
-				
 				wire vcc_lut /* synthesis keep = 1*/;
 				assign vcc_lut = 1'b1;
 				assign fr_os_hi_in = vcc_lut;
@@ -934,13 +966,7 @@ begin
 		end
 		else
 		begin
-			
-			
-			
-			
-			
-			
-			
+			assign fr_os_oe = 1'b0;
 			if (USE_OUTPUT_STROBE_RESET == "true") begin
 				reg clk_h /* synthesis dont_merge */;
 				always @(posedge core_clock_in or negedge reset_n_core_clock_in)
@@ -957,7 +983,6 @@ begin
 		end		
 		
 		if (USE_LDC_AS_LOW_SKEW_CLOCK == "true" && OUTPUT_DQS_PHASE_SETTING == 4) begin
-			
 			assign fr_os_hi = fr_os_lo_in;
 			assign fr_os_lo = fr_os_hi_in;
 		end else begin
@@ -990,7 +1015,6 @@ begin
 			.clkena (1'b1),
 			.delayctrlin(dll_delay_value),
 			.phaseinvertctrl (dqsoutputphaseinvert[0]),
-			
 			.enaoutputcycledelay (enaoctcycledelaysetting[0]),
 			.enaphasetransferreg (enaoctphasetransferreg[0]),
 	
@@ -1020,7 +1044,6 @@ begin
 			.clkena (1'b1),
 			.delayctrlin(dll_delay_value),
 			.phaseinvertctrl (dqsoutputphaseinvert[0]),
-			
 			.enaoutputcycledelay (enaoctcycledelaysetting[0]),
 			.enaphasetransferreg (enaoctphasetransferreg[0]),
 	
@@ -1057,9 +1080,8 @@ begin
 	end
 	else
 	begin
-		
 		reg oe_reg /* synthesis dont_merge altera_attribute="FAST_OUTPUT_ENABLE_REGISTER=on" */;
-		reg oct_reg /* synthesis altera_attribute="FAST_OCT_REGISTER=on" */;
+			reg oct_reg /* synthesis altera_attribute="FAST_OCT_REGISTER=on" */;
 		
 		initial 
 		begin
@@ -1166,14 +1188,12 @@ begin
 		assign delayed_os_oct = aligned_os_oct;
 		assign delayed_os_oe = aligned_os_oe;
 	end
-
-	wire diff_oe;
-	wire diff_oe_bar;
 	wire diff_dtc;
 	wire diff_dtc_bar;
 
 	if (DIFFERENTIAL_OUTPUT_STROBE=="true")
 	begin
+
 		wire aligned_os_oe_bar;
 		wire aligned_os_oct_bar;
 		
@@ -1283,10 +1303,9 @@ begin
 		else
 		begin
 
-			
 			reg oe_bar_reg /* synthesis dont_merge altera_attribute="FAST_OUTPUT_ENABLE_REGISTER=on" */;
-			reg oct_bar_reg /* synthesis altera_attribute="FAST_OCT_REGISTER=on" */;
-			
+				reg oct_bar_reg /* synthesis altera_attribute="FAST_OCT_REGISTER=on" */;
+
 			initial
 			begin
 				oe_bar_reg = 0;
@@ -1349,6 +1368,7 @@ begin
 		
 			stratixiv_io_obuf
 			#(
+			  	.sim_dynamic_termination_control_is_connected("true"),
 				.bus_hold("false"),
 				.open_drain_output("false")
 			) obuf_os_bar_0
@@ -1376,7 +1396,7 @@ begin
 				.bus_hold("false"),
 				.open_drain_output("false")
 			) obuf_os_bar_0
-			( 
+			(
 				.i(os_bar),
 				.o(output_strobe_n_out),
 				.obar(),
@@ -1386,9 +1406,7 @@ begin
 	end
 	else
 	begin
-		
 		assign os = os_delayed2;
-		assign diff_oe = delayed_os_oe;
 	end
 
 
@@ -1396,6 +1414,7 @@ begin
 	begin
 		stratixiv_io_obuf
 		#(
+		  	.sim_dynamic_termination_control_is_connected("true"),
 			.bus_hold("false"),
 			.open_drain_output("false")
 		) obuf_os_0
@@ -1406,6 +1425,7 @@ begin
 			.parallelterminationcontrol	(parallelterminationcontrol_in),
 			.oe(~delayed_os_oe),
 			.dynamicterminationcontrol	(delayed_os_oct),
+
 			.seriesterminationcontrol	(seriesterminationcontrol_in)
 		);
 	end
@@ -1416,7 +1436,7 @@ begin
 			.bus_hold("false"),
 			.open_drain_output("false")
 		) obuf_os_0			  
-			( 
+			(
 			.i(os),
 			.o(output_strobe_out),
 			.obar(),
@@ -1436,15 +1456,14 @@ wire [PIN_WIDTH-1:0] aligned_oct;
 generate
 	if (PIN_TYPE == "output" || PIN_TYPE == "bidir")
 	begin
-		reg oct_reg /* synthesis altera_attribute="FAST_OCT_REGISTER=on" */;
 		
+			reg oct_reg /* synthesis altera_attribute="FAST_OCT_REGISTER=on" */;
+
 		if (USE_OUTPUT_PHASE_ALIGNMENT == "false")
 		begin
 			wire fr_oct;
 			if (USE_HALF_RATE_OUTPUT == "false")
-			begin
 				assign fr_oct = fr_term;
-			end
 			initial
 			begin
 				oct_reg = 0;
@@ -1479,8 +1498,6 @@ generate
 				end
 				else
 			  	begin
-					
-					
 					assign hr_data_t0 = write_data_in [opin_num + 1*PIN_WIDTH];
 					assign hr_data_t1 = write_data_in [opin_num + 0*PIN_WIDTH];
 					assign hr_data_t2 = write_data_in [opin_num + 3*PIN_WIDTH];
@@ -1492,7 +1509,7 @@ generate
 					.half_rate_mode("true"),
 					.use_new_clocking_model("true"),
 					.async_mode("none")
-				) hr_to_fr_hi (			  
+				) hr_to_fr_hi (	
 					.datainhi(hr_data_t2),
 					.datainlo(hr_data_t0),
 					.dataout(fr_data_hi),
@@ -1519,7 +1536,6 @@ generate
 				#(
 				.half_rate_mode("true"),
 				.use_new_clocking_model("true")
-				
 				) hr_to_fr_oe (
 					.datainhi(~write_oe_in [opin_num + PIN_WIDTH]),
 					.datainlo(~write_oe_in [opin_num + 0]),
@@ -1559,7 +1575,6 @@ generate
 					.use_phasectrlin(USE_DYNAMIC_CONFIG),
 					.use_phasectrl_clock("true"),
 					.use_delayed_clock("true"),
-					
 					.operation_mode("ddio_out"),
 					.delay_buffer_mode("high"),
 					.power_up("low"),
@@ -1588,7 +1603,6 @@ generate
 				.use_phasectrlin(USE_DYNAMIC_CONFIG),
 				.use_phasectrl_clock("true"),
 				.use_delayed_clock("true"),
-				
 				.delay_buffer_mode("high"),
 				.power_up("low"),
 				.async_mode("none"),
@@ -1640,7 +1654,9 @@ generate
 			else
 			begin
 				reg oe_reg /* synthesis dont_merge altera_attribute="FAST_OUTPUT_ENABLE_REGISTER=on" */;
-				reg oct_reg_hr /* synthesis altera_attribute="FAST_OCT_REGISTER=on" */;
+					reg oct_reg_hr /* synthesis altera_attribute="FAST_OCT_REGISTER=on" */;
+
+
 			
 				stratixiv_ddio_out
 				#(
@@ -1657,7 +1673,6 @@ generate
 					.muxsel (dq_shifted_clock)
 				);
 
-				
 				initial
 				begin
 					oe_reg = 0;
@@ -1685,6 +1700,36 @@ endgenerate
 generate
 if (PIN_TYPE == "input" || PIN_TYPE == "bidir")
 begin
+	wire rden;
+	wire plus2_out; 
+	wire wren_clk;
+	wire wren;
+	wire external_read_fifo_writeclk;
+	if (USE_READ_FIFO_EXTERNAL_CLOCKING == "true") begin
+		wire [3:0] delayed_external_fifo_capture_clocks;
+		stratixv_leveling_delay_chain
+		#(
+			.physical_clock_source("resync")
+		) external_read_fifo_clock_ldc (
+			.clkin (external_fifo_capture_clock),
+			.delayctrlin (dll_delay_value),
+			.clkout(delayed_external_fifo_capture_clocks)
+		);
+
+		stratixv_clk_phase_select
+		#(
+			.use_phasectrlin("false"),
+		  	.phase_setting(0),
+			.physical_clock_source("rsc_0p")
+		) external_read_fifo_clock_zero_select (
+			.clkin (delayed_external_fifo_capture_clocks),
+			.clkout (external_read_fifo_writeclk),
+			.powerdown (),
+			.phasectrlin (),
+			.phaseinvertctrl()
+		);
+	end 
+
 	genvar ipin_num;
 	for (ipin_num = 0; ipin_num < PIN_WIDTH; ipin_num = ipin_num + 1)
 	begin :input_path_gen
@@ -1694,19 +1739,23 @@ begin
 		wire dqsbusout_to_ddio_in;
 		wire dqsnbusout_to_ddio_in;
 		
-		if (INVERT_CAPTURE_STROBE == "true") begin
-			assign dqsbusout_to_ddio_in = ~dqsbusout;
-			if (SEPARATE_CAPTURE_STROBE == "true") begin
-				assign dqsnbusout_to_ddio_in = ~dqsnbusout;
-			end
+		if (USE_CAPTURE_REG_EXTERNAL_CLOCKING == "true") begin
+			assign dqsbusout_to_ddio_in = external_ddio_capture_clock;
 		end else begin
-			assign dqsbusout_to_ddio_in = dqsbusout;
-			if (SEPARATE_CAPTURE_STROBE == "true") begin
-				assign dqsnbusout_to_ddio_in = dqsnbusout;
+			if (INVERT_CAPTURE_STROBE == "true") begin
+				assign dqsbusout_to_ddio_in = ~dqsbusout;
+				if (SEPARATE_CAPTURE_STROBE == "true") begin
+					assign dqsnbusout_to_ddio_in = ~dqsnbusout;
+				end
+			end else begin
+				assign dqsbusout_to_ddio_in = dqsbusout;
+				if (SEPARATE_CAPTURE_STROBE == "true") begin
+					assign dqsnbusout_to_ddio_in = dqsnbusout;
+				end
 			end
 		end
 		
-		if (SEPARATE_CAPTURE_STROBE == "true") begin
+		if (SEPARATE_CAPTURE_STROBE == "true" && USE_CAPTURE_REG_EXTERNAL_CLOCKING == "false") begin
 			stratixiv_ddio_in
 			#(
 				.use_clkn("true"),
@@ -1738,8 +1787,6 @@ begin
 			stratixiv_input_phase_alignment
 			#(
 				.use_phasectrlin("false"),
-				
-				
 				.phase_setting(0)
 			) data_alignment_hi(			  
 				.datain(sdr_data[1]),
@@ -1751,8 +1798,6 @@ begin
 			stratixiv_input_phase_alignment
 			#(
 				.use_phasectrlin("false"),
-				
-				
 				.phase_setting(0)
 			) data_alignment_lo(
 				.datain(sdr_data[0]),
@@ -1766,18 +1811,36 @@ begin
 			assign aligned_input = sdr_data;
 		end
 		
-		if (USE_HALF_RATE_INPUT == "true")
+		if (USE_HARD_FIFOS == "true" && USE_HALF_RATE_OUTPUT == "true")
 		begin
-		/*
-			stratixiv_half_rate_input half_rate (
-				.datain (aligned_input),
-				.clk (hr_clock_in),
-				.dataout ({fpga_data_in_hi[ipin_num], fpga_data_in_lo[ipin_num],fpga_data_in_hi_hr[ipin_num],fpga_data_in_lo_hr[ipin_num]})
-			);
-			*/
+			
+			wire writeclk;
+			if (USE_READ_FIFO_EXTERNAL_CLOCKING == "true") begin
+				assign writeclk = external_read_fifo_writeclk;
+			end else begin
+				assign writeclk = (dqsbusout_to_ddio_in === 1'b0) ? 1'b1 : 1'b0;
+			end 
+			
+			wire [3:0] read_fifo_out;
+			
+			if (REVERSE_READ_WORDS == "true")
+			begin
+				assign read_data_out [ipin_num] = read_fifo_out [0];
+				assign read_data_out [PIN_WIDTH +ipin_num] = read_fifo_out [1];
+				assign read_data_out [PIN_WIDTH*2 +ipin_num] = read_fifo_out [2];
+				assign read_data_out [PIN_WIDTH*3 +ipin_num] = read_fifo_out [3];
+			end
+			else	
+			begin
+				assign read_data_out [ipin_num] = read_fifo_out [2];
+				assign read_data_out [PIN_WIDTH +ipin_num] = read_fifo_out [3];
+				assign read_data_out [PIN_WIDTH*2 +ipin_num] = read_fifo_out [0];
+				assign read_data_out [PIN_WIDTH*3 +ipin_num] = read_fifo_out [1];
+			end
 		end
-		else
+		else 
 		begin
+		
 			if (REVERSE_READ_WORDS == "true")
 			begin
 				assign read_data_out [ipin_num] = aligned_input [1];
@@ -1820,20 +1883,18 @@ generate
 		wire [DELAY_CHAIN_WIDTH-1:0] dq_inputdelaysetting_dlc;
 		
 		
-		
 		if (USE_DYNAMIC_CONFIG == "true")
 		begin
-		stratixiv_io_config config_1 (
-		    .datain(config_data_in),          
-		    .clk(config_clock_in),
-		    .ena(config_io_ena[pin_num]),
-		    .update(config_update),       
-		    .outputdelaysetting1(dq_outputdelaysetting1),
-		    .outputdelaysetting2(dq_outputdelaysetting2),    
-		    .padtoinputregisterdelaysetting(dq_inputdelaysetting),
-		    .dataout()
-		);
-		
+			stratixiv_io_config config_1 (
+				.datain(config_data_in),          
+				.clk(config_clock_in),
+				.ena(config_io_ena[pin_num]),
+				.update(config_update),       
+				.outputdelaysetting1(dq_outputdelaysetting1),
+				.outputdelaysetting2(dq_outputdelaysetting2),    
+				.padtoinputregisterdelaysetting(dq_inputdelaysetting),
+				.dataout()
+			);
 		assign dq_outputdelaysetting1_dlc = dq_outputdelaysetting1;
 		assign dq_outputdelaysetting2_dlc = dq_outputdelaysetting2;
 		assign dq_inputdelaysetting_dlc = dq_inputdelaysetting;
@@ -1841,7 +1902,6 @@ generate
 	
 		if (PIN_TYPE == "input" || PIN_TYPE == "bidir")
 		begin
-			
 			wire raw_input;
 			wire raw_input_delay;
 			if (USE_DYNAMIC_CONFIG == "true")
@@ -1877,7 +1937,7 @@ generate
 		
 		if (PIN_TYPE == "output" || PIN_TYPE == "bidir")
 		begin
-		
+			
 			wire predelayed_data;
 			wire predelayed_oe;
 	
@@ -1901,7 +1961,6 @@ generate
 
 			if (USE_DYNAMIC_CONFIG == "true")
 			begin
-				
 				wire delayed_data_1;
 				wire delayed_oe_1;
 				wire delayed_oct_1;
@@ -1955,7 +2014,6 @@ generate
 		
 			if (PIN_TYPE == "output")
 			begin
-				
 				stratixiv_io_obuf data_out (
 					.i (delayed_data_out),
 					.o (write_data_out [pin_num]),
@@ -1966,8 +2024,11 @@ generate
 			end
 			else if (PIN_TYPE == "bidir")
 			begin
-				
-				stratixiv_io_obuf data_out (
+				stratixiv_io_obuf
+				#(
+				  	.sim_dynamic_termination_control_is_connected("true")
+				) 
+				data_out (
 					.oe (~delayed_oe),
 					.i (delayed_data_out),
 					.o (read_write_data_io [pin_num]),
@@ -1978,27 +2039,22 @@ generate
 				
 				/* synthesis translate_off */
 				
-				
-				
-				assert property (@(posedge delayed_oe) (~delayed_oe === 1'b1) |-> (delayed_oct === 1'b0 || reset_n_core_clock_in === 1'b0)) 
-					else $fatal("OE being turned on while dynamic OCT ctrl is not in write mode");
-
-				assert property (@(negedge delayed_oe) (~delayed_oe === 1'b0) |-> (delayed_oct === 1'b0 || reset_n_core_clock_in === 1'b0)) 
-					else $fatal("OE being turned off while dynamic OCT ctrl is not in write mode, violating postamble requirement");
-				
 				if (DUAL_WRITE_CLOCK == "true")	begin
-					assert property (@(posedge fr_data_clock_in or negedge fr_data_clock_in) (~delayed_oe === 1'b1) |-> (delayed_oct === 1'b0 || reset_n_core_clock_in === 1'b0)) 
-						else $fatal("OE enabled but dynamic OCT ctrl is not in write mode");
+					assert property (@(posedge fr_data_clock_in or negedge fr_data_clock_in) (~delayed_oe === 1'b1) |-> (##[0:1] delayed_oct === 1'b0 || reset_n_core_clock_in === 1'b0)) 
+						else $fatal(1, "OE enabled but dynamic OCT ctrl is not in write mode");
 				end else begin
-					assert property (@(posedge fr_clock_in or negedge fr_clock_in) (~delayed_oe === 1'b1) |-> (delayed_oct === 1'b0 || reset_n_core_clock_in === 1'b0)) 
-						else $fatal("OE enabled but dynamic OCT ctrl is not in write mode");
+					assert property (@(posedge fr_clock_in or negedge fr_clock_in) (~delayed_oe === 1'b1) |-> (##[0:1] delayed_oct === 1'b0 || reset_n_core_clock_in === 1'b0)) 
+						else $fatal(1, "OE enabled but dynamic OCT ctrl is not in write mode");
 				end
 				
+`ifndef BOARD_DELAY_MODEL
 				assert property (@(posedge capture_strobe_out or negedge capture_strobe_out) (~delayed_oe === 1'b0 && read_write_data_io[pin_num] !== 1'bz) |-> (delayed_oct === 1'b1 || reset_n_core_clock_in === 1'b0)) 
-					else $fatal("Read data comes back but dynamic OCT ctrl is not in read mode");
+					else $fatal(1, "Read data comes back but dynamic OCT ctrl is not in read mode");
+`endif
 					
 				/* synthesis translate_on */					
-			end
+			end 
+
 		end
 	end
 endgenerate
@@ -2027,8 +2083,6 @@ generate
 			end
 			else
 		  	begin
-				
-				
 				assign hr_data_t0 = extra_write_data_in [epin_num + 2*EXTRA_OUTPUT_WIDTH];
 				assign hr_data_t1 = extra_write_data_in [epin_num + 0*EXTRA_OUTPUT_WIDTH];
 				assign hr_data_t2 = extra_write_data_in [epin_num + 3*EXTRA_OUTPUT_WIDTH];
@@ -2040,7 +2094,7 @@ generate
 				.half_rate_mode("true"),
 				.use_new_clocking_model("true"),
 				.async_mode("none")
-			) hr_to_fr_hi (							    
+			) hr_to_fr_hi (		
 				.datainhi(hr_data_t2),
 				.datainlo(hr_data_t0),
 				.dataout(fr_data_hi),
@@ -2077,7 +2131,6 @@ generate
 				.use_phasectrlin(USE_DYNAMIC_CONFIG),
 				.use_phasectrl_clock("true"),
 				.use_delayed_clock("true"),
-				
 				.operation_mode("ddio_out"),
 				.delay_buffer_mode("high"),
 				.power_up("low"),
@@ -2113,13 +2166,14 @@ generate
 				.datainhi(fr_data_hi),
 				.datainlo(fr_data_lo),
 				.dataout(aligned_data),
-				.clkhi (dq_shifted_clock),
-				.clklo (dq_shifted_clock),
-				.muxsel (dq_shifted_clock)
+				.clkhi (dm_shifted_clock),
+				.clklo (dm_shifted_clock),
+				.muxsel (dm_shifted_clock)
 			);
 		end
 		
 		wire delayed_data_out;
+		
 		wire [3:0] dq_outputdelaysetting1;
 		wire [3:0] dq_outputdelaysetting2;
 		wire [3:0] dq_inputdelaysetting;
@@ -2159,7 +2213,6 @@ generate
 				.dataout()
 			);
 		
-			
 			assign dq_outputdelaysetting1_dlc = dq_outputdelaysetting1;
 			assign dq_outputdelaysetting2_dlc = dq_outputdelaysetting2;
 			assign dq_inputdelaysetting_dlc = dq_inputdelaysetting;

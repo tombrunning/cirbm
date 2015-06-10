@@ -1,4 +1,4 @@
-# (C) 2001-2012 Altera Corporation. All rights reserved.
+# (C) 2001-2013 Altera Corporation. All rights reserved.
 # Your use of Altera Corporation's design tools, logic functions and other 
 # software and tools, and its AMPP partner logic functions, and any output 
 # files any of the foregoing (including device programming or simulation 
@@ -68,7 +68,7 @@ set debug 0
 set_time_format -unit ns -decimal_places 3
 
 # Determine if entity names are on
-set entity_names_on [ are_entity_names_on ]
+set entity_names_on [ DE4_QSYS_mem_if_ddr2_emif_p0_are_entity_names_on ]
 
 	##################
 	#                #
@@ -80,10 +80,8 @@ set entity_names_on [ are_entity_names_on ]
 
 	# This is the peak-to-peak jitter on the whole read capture path
 	set DQSpathjitter [expr [get_io_standard_node_delay -dst DQDQS_JITTER -io_standard $io_standard -parameters [list IO $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_io_interface_type] -in_fitter]/1000.0]
-	
 	set DQSpathjitter_setup_prop [expr [get_io_standard_node_delay -dst DQDQS_JITTER_DIVISION -io_standard $io_standard -parameters [list IO $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_io_interface_type] -in_fitter]/100.0]
 
-	
 	set tJITper [expr [get_io_standard_node_delay -dst MEM_CK_PERIOD_JITTER -io_standard $io_standard  -parameters [list IO $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_io_interface_type] -in_fitter -period $t(CK)]/2000.0]
 
 	##################
@@ -95,36 +93,36 @@ set entity_names_on [ are_entity_names_on ]
 	# These parameters are used to make constraints more readeable
 
 	# Half of memory clock cycle
-	set half_period [ round_3dp [ expr $t(CK) / 2.0 ] ]
+	set half_period [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [ expr $t(CK) / 2.0 ] ]
 
 	# Half of reference clock
-	set ref_half_period [ round_3dp [ expr $t(refCK) / 2.0 ] ]
+	set ref_half_period [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [ expr $t(refCK) / 2.0 ] ]
 
 	# Minimum delay on data output pins
-	set t(wru_output_min_delay_external) [expr $t(DH) + $board(intra_DQS_group_skew) + $ISI(DQ)/2 + $ISI(DQS)/2]
+	set t(wru_output_min_delay_external) [expr $t(DH) + $board(intra_DQS_group_skew) + $ISI(DQ)/2 + $ISI(DQS)/2 - $board(DQ_DQS_skew)]
 	set t(wru_output_min_delay_internal) [expr $t(WL_DCD) + $t(WL_JITTER) + $t(WL_PSE) + $SSN(rel_pullin_o)]
-	set data_output_min_delay [ round_3dp [ expr - $t(wru_output_min_delay_external) - $t(wru_output_min_delay_internal)]]
+	set data_output_min_delay [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [ expr - $t(wru_output_min_delay_external) - $t(wru_output_min_delay_internal)]]
 
 	# Maximum delay on data output pins
-	set t(wru_output_max_delay_external) [expr $t(DS) + $board(intra_DQS_group_skew) + $ISI(DQ)/2 + $ISI(DQS)/2]
+	set t(wru_output_max_delay_external) [expr $t(DS) + $board(intra_DQS_group_skew) + $ISI(DQ)/2 + $ISI(DQS)/2 + $board(DQ_DQS_skew)]
 	set t(wru_output_max_delay_internal) [expr $t(WL_DCD) + $t(WL_JITTER) + $t(WL_PSE) + $SSN(rel_pushout_o)]
-	set data_output_max_delay [ round_3dp [ expr $t(wru_output_max_delay_external) + $t(wru_output_max_delay_internal)]]
+	set data_output_max_delay [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [ expr $t(wru_output_max_delay_external) + $t(wru_output_max_delay_internal)]]
 
 	# Maximum delay on data input pins
-	set t(rdu_input_max_delay_external) [expr $t(DQSQ) + $board(intra_DQS_group_skew)]
+	set t(rdu_input_max_delay_external) [expr $t(DQSQ) + $board(intra_DQS_group_skew) + $board(DQ_DQS_skew)]
 	set t(rdu_input_max_delay_internal) [expr $DQSpathjitter*$DQSpathjitter_setup_prop + $SSN(rel_pushout_i)]
-	set data_input_max_delay [ round_3dp [ expr $t(rdu_input_max_delay_external) + $t(rdu_input_max_delay_internal) ]]
+	set data_input_max_delay [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [ expr $t(rdu_input_max_delay_external) + $t(rdu_input_max_delay_internal) ]]
 
 	# Minimum delay on data input pins
-	set t(rdu_input_min_delay_external) [expr $board(intra_DQS_group_skew)]
+	set t(rdu_input_min_delay_external) [expr $board(intra_DQS_group_skew) - $board(DQ_DQS_skew)]
 	set t(rdu_input_min_delay_internal) [expr $t(DCD) + $DQSpathjitter*(1.0-$DQSpathjitter_setup_prop) + $SSN(rel_pullin_i)]
-	set data_input_min_delay [ round_3dp [ expr - $t(rdu_input_min_delay_external) - $t(rdu_input_min_delay_internal) ]]
+	set data_input_min_delay [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [ expr - $t(rdu_input_min_delay_external) - $t(rdu_input_min_delay_internal) ]]
 
 	# Minimum delay on address and command paths
-	set ac_min_delay [ round_3dp [ expr - $t(IH) -$fpga(tPLL_JITTER) - $fpga(tPLL_PSERR) - $board(intra_addr_ctrl_skew) + $board(addresscmd_CK_skew) - $ISI(addresscmd_hold) ]]
+	set ac_min_delay [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [ expr - $t(IH) -$fpga(tPLL_JITTER) - $fpga(tPLL_PSERR) - $board(intra_addr_ctrl_skew) + $board(addresscmd_CK_skew) - $ISI(addresscmd_hold) ]]
 
 	# Maximum delay on address and command paths
-	set ac_max_delay [ round_3dp [ expr $t(IS) +$fpga(tPLL_JITTER) + $fpga(tPLL_PSERR) + $board(intra_addr_ctrl_skew) + $board(addresscmd_CK_skew) + $ISI(addresscmd_setup) ]]
+	set ac_max_delay [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [ expr $t(IS) +$fpga(tPLL_JITTER) + $fpga(tPLL_PSERR) + $board(intra_addr_ctrl_skew) + $board(addresscmd_CK_skew) + $ISI(addresscmd_setup) ]]
 
 if { $debug } {
 	post_message -type info "SDC: Computed Parameters:"
@@ -200,7 +198,6 @@ foreach { inst } $instances {
 	set pll_ac_clock $pins(pll_ac_clock)
 	set pll_ck_clock $pins(pll_ck_clock)
 	set pll_write_clock $pins(pll_write_clock)
-	set pll_afi_half_clock $pins(pll_afi_half_clock)
 	set pll_avl_clock $pins(pll_avl_clock)
 	set pll_config_clock $pins(pll_config_clock)
 
@@ -238,8 +235,8 @@ foreach { inst } $instances {
 		set t(rdu_input_max_delay_external) [expr $t(rdu_input_max_delay_external)]
 		set t(rdu_input_max_delay_internal) [expr $t(rdu_input_max_delay_internal) + $fpga(tDQS_PSERR)]
 
-		set final_data_input_max_delay [ round_3dp [ expr $data_input_max_delay + $fpga(tDQS_PSERR) ]]
-		set final_data_input_min_delay [ round_3dp [ expr $data_input_min_delay - $t(CK) / 2.0 + $t(QH_time) - $fpga(tDQS_PSERR) - $tJITper]]
+		set final_data_input_max_delay [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [ expr $data_input_max_delay + $fpga(tDQS_PSERR) ]]
+		set final_data_input_min_delay [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [ expr $data_input_min_delay - $t(CK) / 2.0 + $t(QH_time) - $fpga(tDQS_PSERR) - $tJITper]]
 
 
 	if { $debug } {
@@ -274,19 +271,17 @@ foreach { inst } $instances {
 	# ------------------ #
 
 	# PLL Clock Names
-	set local_pll_afi_clk "${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_pll_afi_clk"
-	set local_pll_mem_clk "${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_pll_mem_clk"
-	set local_pll_addr_cmd_clk "${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_pll_addr_cmd_clk"
-	set local_pll_write_clk "${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_pll_write_clk"
-	set local_pll_afi_half_clk "${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_pll_afi_half_clk"
-	set local_pll_avl_clock "${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_pll_avl_clock"
-	set local_pll_config_clock "${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_pll_config_clock"
+	set local_pll_afi_clk [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name_pre_vseries $pll_afi_clock "afi_clk"]
+	set local_pll_mem_clk [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name_pre_vseries $pll_ck_clock "mem_clk"]
+	set local_pll_addr_cmd_clk [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name_pre_vseries $pll_ac_clock "addr_cmd_clk"]
+	set local_pll_write_clk [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name_pre_vseries $pll_write_clock "write_clk"]
+	set local_pll_avl_clock [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name_pre_vseries $pll_avl_clock "avl_clk"]
+	set local_pll_config_clock [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name_pre_vseries $pll_config_clock "config_clk"]
 
 	if { [get_collection_size [get_clocks -nowarn "$local_pll_afi_clk"]] > 0 } { remove_clock "$local_pll_afi_clk" }
 	if { [get_collection_size [get_clocks -nowarn "$local_pll_mem_clk"]] > 0 } { remove_clock "$local_pll_mem_clk" }
 	if { [get_collection_size [get_clocks -nowarn "$local_pll_addr_cmd_clk"]] > 0 } { remove_clock "$local_pll_addr_cmd_clk" }
 	if { [get_collection_size [get_clocks -nowarn "$local_pll_write_clk"]] > 0 } { remove_clock "$local_pll_write_clk" }
-	if { [get_collection_size [get_clocks -nowarn "$local_pll_afi_half_clk"]] > 0 } { remove_clock "$local_pll_afi_half_clk" }
 	if { [get_collection_size [get_clocks -nowarn "$local_pll_avl_clock"]] > 0 } { remove_clock "$local_pll_avl_clock" }
 	if { [get_collection_size [get_clocks -nowarn "$local_pll_config_clock"]] > 0 } { remove_clock "$local_pll_config_clock" }
 
@@ -307,7 +302,6 @@ foreach { inst } $instances {
 	create_generated_clock -add -name "$local_pll_addr_cmd_clk" -source $pll_ref_clock -multiply_by $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(3) -divide_by $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(3) -phase $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(3) $pll_ac_clock
 	set write_clk_phase $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(2)
 	create_generated_clock -add -name "$local_pll_write_clk" -source $pll_ref_clock -multiply_by $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(2) -divide_by $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(2) -phase $write_clk_phase $pll_write_clock
-	create_generated_clock -add -name "$local_pll_afi_half_clk" -source $pll_ref_clock -multiply_by $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(4) -divide_by $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(4) -phase $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(4) $pll_afi_half_clock
 	set avl_pll_clk_i $pll_i
 	if {[string compare -nocase $pll_afi_clock $pll_avl_clock]==0} {
 		set local_pll_avl_clock $local_pll_afi_clk
@@ -317,6 +311,13 @@ foreach { inst } $instances {
 	incr pll_i
 	create_generated_clock -add -name "$local_pll_config_clock" -source $pll_ref_clock -multiply_by $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult($pll_i) -divide_by $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div($pll_i) -phase $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase($pll_i) $pll_config_clock
 	incr pll_i
+
+	if {$fit_flow} {
+		if {[string compare -nocase $pll_avl_clock $pll_afi_clock] != 0} {
+			set_clock_uncertainty -from [get_clocks $local_pll_avl_clock] -to [get_clocks $local_pll_afi_clk] -add -hold 0.100
+			set_clock_uncertainty -from [get_clocks $local_pll_afi_clk] -to [get_clocks $local_pll_avl_clock] -add -hold 0.050
+		}
+	}
 
 
 
@@ -335,7 +336,7 @@ foreach { inst } $instances {
 	foreach { ckn_pin } $ckn_pins {
 		create_generated_clock -multiply_by 1 -invert -source $pll_ck_clock -master_clock "$local_pll_mem_clk" $ckn_pin -name $ckn_pin
 	}
-
+	
 	# ------------------- #
 	# -                 - #
 	# --- READ CLOCKS --- #
@@ -364,7 +365,7 @@ foreach { inst } $instances {
 	# -                     - #
 	# ----------------------- #
 
-	create_generated_clock -add -name "${inst}|memphy_leveling_clk" -master_clock [get_clocks $local_pll_write_clk] -source $pll_write_clock -phase $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_leveling_capture_phase [ get_pins $leveling_pins ]
+	create_generated_clock -add -name "${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk" -master_clock [get_clocks $local_pll_write_clk] -source $pll_write_clock -phase $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_leveling_capture_phase [ get_pins $leveling_pins ]
 
 	# -------------------- #
 	# -                  - #
@@ -377,10 +378,10 @@ foreach { inst } $instances {
 		array set dqs_out_clock $dqs_out_clock_struct
 		# Set DQS phase to the ideal 90 degrees and let the calibration scripts take care of
 		# properly adjust the margins
-		create_generated_clock -multiply_by 1 -master_clock [get_clocks "${inst}|memphy_leveling_clk"] -source $dqs_out_clock(src) -phase 90 $dqs_out_clock(dst) -name $dqs_out_clock(dst)_OUT -add
+		create_generated_clock -multiply_by 1 -master_clock [get_clocks "${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk"] -source $dqs_out_clock(src) -phase 90 $dqs_out_clock(dst) -name $dqs_out_clock(dst)_OUT -add
 
 			# Clock Uncertainty is accounted for by the ...pathjitter parameters
-			set_clock_uncertainty -from [get_clocks ${inst}|memphy_leveling_clk] -to [ get_clocks $dqs_out_clock(dst)_OUT ] 0
+			set_clock_uncertainty -from [get_clocks ${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk] -to [ get_clocks $dqs_out_clock(dst)_OUT ] 0
 	}
 
 	# This is the DQS#clock for Data Write analysis (micro model)
@@ -388,10 +389,10 @@ foreach { inst } $instances {
 		array set dqsn_out_clock $dqsn_out_clock_struct
 		# Set DQS#phase to the ideal 90 degrees and let the calibration scripts take care of
 		# properly adjust the margins
-		create_generated_clock -multiply_by 1 -master_clock [get_clocks "${inst}|memphy_leveling_clk"] -source $dqsn_out_clock(src) -phase 90 $dqsn_out_clock(dst) -name $dqsn_out_clock(dst)_OUT -add
+		create_generated_clock -multiply_by 1 -master_clock [get_clocks "${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk"] -source $dqsn_out_clock(src) -phase 90 $dqsn_out_clock(dst) -name $dqsn_out_clock(dst)_OUT -add
 
 			# Clock Uncertainty is accounted for by the ...pathjitter parameters
-			set_clock_uncertainty -from [get_clocks ${inst}|memphy_leveling_clk] -to [ get_clocks $dqsn_out_clock(dst)_OUT ] 0
+			set_clock_uncertainty -from [get_clocks ${inst}|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk] -to [ get_clocks $dqsn_out_clock(dst)_OUT ] 0
 	}
 
 
@@ -409,7 +410,6 @@ foreach { inst } $instances {
 
 		foreach { dqs_pin } $dqs_pins { dq_pins } $q_groups {
 			foreach { dq_pin } $dq_pins {
-				
 				set_max_delay -from [get_ports $dq_pin] -to $read_capture_ddio 0
 				set_min_delay -from [get_ports $dq_pin] -to $read_capture_ddio [expr 0-$half_period]
 
@@ -423,7 +423,7 @@ foreach { inst } $instances {
 
 	# Constraint to increase resynchronization timing margin
 	if {(($::quartus(nameofexecutable) eq "quartus_fit"))} {
-		set_max_delay -from $pins(fifo_rdaddress_reg) -to $pins(fifo_rddata_reg) [round_3dp [expr $t(CK)/2.0]]
+		set_max_delay -from $pins(fifo_rdaddress_reg) -to $pins(fifo_rddata_reg) [DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [expr $t(CK)/2.0]]
 		set_min_delay -from $pins(fifo_rdaddress_reg) -to $pins(fifo_rddata_reg) 0
 	}
 
@@ -505,17 +505,14 @@ foreach { inst } $instances {
 	#                        #
 	##########################
 
-	
-	
-	
-	
 
-	set_multicycle_path -from [get_registers ${prefix}|*s0|*sequencer_phy_mgr_inst|phy_mux_sel] -to [remove_from_collection [get_keepers *] [get_registers ${prefix}|*s0|*sequencer_phy_mgr_inst|phy_mux_sel]] -setup 3
-	set_multicycle_path -from [get_registers ${prefix}|*s0|*sequencer_phy_mgr_inst|phy_mux_sel] -to [remove_from_collection [get_keepers *] [get_registers ${prefix}|*s0|*sequencer_phy_mgr_inst|phy_mux_sel]] -hold 2
+	set_multicycle_path -from [get_registers ${prefix}|*s0|*sequencer_phy_mgr_inst|phy_mux_sel] -to [remove_from_collection [get_keepers *] [get_registers -nowarn [list ${prefix}|*s0|*sequencer_phy_mgr_inst|phy_mux_sel ${prefix}|*p0|*altdq_dqs2_inst|oct_*reg*]]] -setup 3
+	set_multicycle_path -from [get_registers ${prefix}|*s0|*sequencer_phy_mgr_inst|phy_mux_sel] -to [remove_from_collection [get_keepers *] [get_registers -nowarn [list ${prefix}|*s0|*sequencer_phy_mgr_inst|phy_mux_sel ${prefix}|*p0|*altdq_dqs2_inst|oct_*reg*]]] -hold 2
 
-	
-	
-	
+	if { [get_collection_size [get_registers -nowarn ${prefix}|*p0|*umemphy|*uio_pads|*uaddr_cmd_pads|*clock_gen[*].umem_ck_pad|*]] > 0 } {
+		set_multicycle_path -to [get_registers ${prefix}|*p0|*umemphy|*uio_pads|*uaddr_cmd_pads|*clock_gen[*].umem_ck_pad|*] -end -setup 4
+		set_multicycle_path -to [get_registers ${prefix}|*p0|*umemphy|*uio_pads|*uaddr_cmd_pads|*clock_gen[*].umem_ck_pad|*] -end -hold 4
+	}
 	
 	# Set multicycle path between address command clock and mem clock when COMMAND_PHASE is > 90 degrees or < -90 degrees
 	if {(270 - $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(3)) > 90 || ($::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(3) - 270) > 90} {
@@ -525,23 +522,12 @@ foreach { inst } $instances {
 		}
 	}
 
+
 	##########################
 	#                        #
 	# FALSE PATH CONSTRAINTS #
 	#                        #
 	##########################
-
-	# Cut paths from DQS_OUT to DQS_IN
-	foreach { dqs_pin } $dqs_pins {
-		set_false_path -from ${dqs_pin}_OUT -to ${dqs_pin}_IN
-		set_false_path -from ${dqs_pin}_IN -to ${dqs_pin}_OUT
-	}
-
-	# Cut paths from DQSN_OUT to DQS_IN
-	foreach { dqsn_pin } $dqsn_pins { dqs_pin } $dqs_pins {
-		set_false_path -from ${dqsn_pin}_OUT -to ${dqs_pin}_IN
-		set_false_path -from ${dqs_pin}_IN -to ${dqsn_pin}_OUT
-	}
 
 	# Cut calibrated paths from DQS enable clock to DQS
 	set_false_path -from $pins(dqs_enable_ctrl_reg) -to $pins(dqs_enable_reg)
@@ -557,33 +543,21 @@ foreach { inst } $instances {
 		array set dqs_in_clock $dqs_in_clock_struct
 		array set dqsn_out_clock $dqsn_out_clock_struct
 
-		# Cut paths between DQS_OUT and Div Clock
-		set_false_path -from [ get_clocks $dqs_in_clock(dqs_pin)_OUT ] -to [ get_clocks $dqs_in_clock(div_name) ]
-		set_false_path -from [ get_clocks $dqs_in_clock(div_name) ] -to [ get_clocks $dqs_in_clock(dqs_pin)_OUT ]
-
-		
-		set_false_path -from [ get_clocks $dqsn_out_clock(dst)_OUT ] -to [ get_clocks $dqs_in_clock(div_name)  ]
-		set_false_path -from [ get_clocks $dqs_in_clock(div_name)  ] -to [ get_clocks $dqsn_out_clock(dst)_OUT ]
+		set_clock_groups -physically_exclusive	-group "$dqs_in_clock(dqs_pin)_IN $dqs_in_clock(div_name)" -group "$dqs_in_clock(dqs_pin)_OUT $dqsn_out_clock(dst)_OUT"
 
 		# Cut paths between AFI Clock and Div Clock
 		set_false_path -from [ get_clocks $local_pll_afi_clk ] -to [ get_clocks $dqs_in_clock(div_name) ]
 		if { [get_collection_size [get_clocks -nowarn  $pll_afi_clock]] > 0 } {
 			set_false_path -from [ get_clocks $pll_afi_clock ] -to [ get_clocks $dqs_in_clock(div_name) ]
 		}
-		set_false_path -from [ get_clocks $local_pll_afi_half_clk ] -to [ get_clocks $dqs_in_clock(div_name) ]
-		if { [get_collection_size [get_clocks -nowarn  $pll_afi_half_clock]] > 0 } {
-			set_false_path -from [ get_clocks $pll_afi_half_clock ] -to [ get_clocks $dqs_in_clock(div_name) ]
-		}
+
 
 		# Cut reset path to clock divider (reset signal controlled by the sequencer)
 		set_false_path -from [ get_clocks $local_pll_afi_clk ] -to $dqs_in_clock(div_pin)
 		if { [get_collection_size [get_clocks -nowarn  $pll_afi_clock]] > 0 } {
 			set_false_path -from [ get_clocks $pll_afi_clock ] -to $dqs_in_clock(div_pin)
 		}
-		set_false_path -from [ get_clocks $local_pll_afi_half_clk ] -to $dqs_in_clock(div_pin)
-		if { [get_collection_size [get_clocks -nowarn  $pll_afi_half_clock]] > 0 } {
-			set_false_path -from [ get_clocks $pll_afi_half_clock ] -to $dqs_in_clock(div_pin)
-		}
+
 
 		# Cut reset path from sequencer to the clock divider
 		set_false_path -from $seq_reset_reg -to $dqs_in_clock(div_pin)
@@ -597,36 +571,18 @@ foreach { inst } $instances {
 
 
 
-	
-	
-	
-
 	# The paths between DQS_ENA_CLK and DQS_IN are calibrated, so they must not be analyzed
 	set_false_path -from [get_clocks $local_pll_write_clk] -to [get_clocks {*_IN}]
 
-	
-	
 
-	# Cut paths between the afi_half and avl clocks
-	set_false_path -from [get_clocks $local_pll_avl_clock] -to [get_clocks $local_pll_afi_half_clk]
-	set_false_path -from [get_clocks $local_pll_afi_half_clk] -to [get_clocks $local_pll_avl_clock]
-
-	# The following registers serve as anchors for the pin_map.tcl
-	# script and are not used by the IP during memory operation
-	set_false_path -from $pins(afi_half_ck_pins) -to $pins(afi_half_ck_pins)
 
 	set tCK_AFI [ expr $t(CK) * 2.0 ]
-	
-	
-	
-	
 	
 	set capture_reg ${prefix}*read_data_out*
 
 	# Add clock (DQS) uncertainty applied from the DDIO registers to registers in the core
 	set_max_delay -from [get_registers $capture_reg] -to $fifo_wrdata_reg -0.05
-	set_min_delay -from [get_registers $capture_reg] -to $fifo_wrdata_reg [ round_3dp [expr -$t(CK) + 0.20 ]]
-	
+	set_min_delay -from [get_registers $capture_reg] -to $fifo_wrdata_reg [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp [expr -$t(CK) + 0.20 ]]
 
 }
 

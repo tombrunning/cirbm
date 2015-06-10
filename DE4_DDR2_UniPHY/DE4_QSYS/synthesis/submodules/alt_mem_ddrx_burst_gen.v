@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -241,6 +241,8 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
     reg  [2                                                   : 0] int_address_left;
     reg                                                            int_do_row_req;
     reg                                                            int_do_col_req;
+    reg                                                            int_do_sideband_req;
+    reg                                                            int_do_auto_precharge;
     reg                                                            int_do_rd_req;
     reg                                                            int_do_wr_req;
     reg  [CFG_AFI_INTF_PHASE_NUM                          - 1 : 0] int_do_burst_chop;
@@ -254,11 +256,15 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
     reg  [2                                                   : 0] address_left;
     reg                                                            do_row_req;
     reg                                                            do_col_req;
+    reg                                                            do_sideband_req;
+    reg                                                            do_auto_precharge;
     reg                                                            do_rd_req;
     reg                                                            do_wr_req;
     reg  [CFG_AFI_INTF_PHASE_NUM                          - 1 : 0] do_burst_chop;
     reg  [CFG_AFI_INTF_PHASE_NUM                          - 1 : 0] do_rmw_correct;
     reg  [CFG_AFI_INTF_PHASE_NUM                          - 1 : 0] do_rmw_partial;
+    
+    reg                                                            doing_auto_precharge;
     
     reg  [3 : 0] max_local_burst_size;
     reg  [3 : 0] max_local_burst_size_divide_2;
@@ -285,6 +291,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
     // Burst terminate logic
     reg                              int_allow_terminate;
     reg                              int_do_burst_terminate;
+    reg                              int_do_burst_terminate_r;
     reg [CFG_INT_SIZE_WIDTH - 1 : 0] int_effective_size;
     reg                              int_do_req;
     reg                              doing_burst_terminate;
@@ -299,6 +306,12 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
     // Data ID
     reg  [CFG_DATA_ID_WIDTH - 1 : 0] delayed_dataid;
     reg  [CFG_DATA_ID_WIDTH - 1 : 0] combined_dataid;
+    
+    // Chip address
+    reg  [(CFG_AFI_INTF_PHASE_NUM * CFG_MEM_IF_CS_WIDTH)  - 1 : 0] rdwr_to_chipsel;
+    reg  [(CFG_AFI_INTF_PHASE_NUM * CFG_MEM_IF_CHIP)      - 1 : 0] rdwr_to_chip;
+    reg  [(CFG_AFI_INTF_PHASE_NUM * CFG_MEM_IF_CS_WIDTH)  - 1 : 0] modified_to_chipsel;
+    reg  [(CFG_AFI_INTF_PHASE_NUM * CFG_MEM_IF_CHIP)      - 1 : 0] modified_to_chip;
     
     // Column address
     reg  [(CFG_AFI_INTF_PHASE_NUM * CFG_MEM_IF_COL_WIDTH) - 1 : 0] modified_to_col;
@@ -389,8 +402,8 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
                     bg_do_deep_pdown      <= arb_do_deep_pdown;
                     bg_do_zq_cal          <= arb_do_zq_cal;
                     bg_do_lmr             <= arb_do_lmr;
-                    bg_to_chip            <= arb_to_chip;
-                    bg_to_chipsel         <= arb_to_chipsel;
+                    bg_to_chip            <= modified_to_chip;
+                    bg_to_chipsel         <= modified_to_chipsel;
                     bg_to_bank            <= arb_to_bank;
                     bg_to_row             <= arb_to_row;
                     bg_localid            <= arb_localid;
@@ -423,8 +436,8 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
                 bg_do_deep_pdown      = arb_do_deep_pdown;
                 bg_do_zq_cal          = arb_do_zq_cal;
                 bg_do_lmr             = arb_do_lmr;
-                bg_to_chip            = arb_to_chip;
-                bg_to_chipsel         = arb_to_chipsel;
+                bg_to_chip            = modified_to_chip;
+                bg_to_chipsel         = modified_to_chipsel;
                 bg_to_bank            = arb_to_bank;
                 bg_to_row             = arb_to_row;
                 bg_localid            = arb_localid;
@@ -469,9 +482,55 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
         bg_do_burst_terminate_combi = do_burst_terminate;
         bg_do_activate_combi        = arb_do_activate;
         bg_do_precharge_combi       = arb_do_precharge;
-        bg_to_chip_combi            = arb_to_chip;
+        bg_to_chip_combi            = modified_to_chip;
         bg_effective_size_combi     = effective_size;
         bg_interrupt_ready_combi    = interrupt_ready;
+    end
+    
+    generate
+        genvar i;
+        for (i = 0;i < CFG_AFI_INTF_PHASE_NUM;i = i + 1)
+        begin : afi_phase_loop
+            // Registered chip/chipsel address for read/write request
+            always @ (posedge ctl_clk or negedge ctl_reset_n)
+            begin
+                if (!ctl_reset_n)
+                begin
+                    rdwr_to_chip    [(i + 1) * CFG_MEM_IF_CHIP     - 1 : i * CFG_MEM_IF_CHIP    ] <= 0;
+                    rdwr_to_chipsel [(i + 1) * CFG_MEM_IF_CS_WIDTH - 1 : i * CFG_MEM_IF_CS_WIDTH] <= 0;
+                end
+                else
+                begin
+                    if (arb_do_read[i] || arb_do_write[i])
+                    begin
+                        rdwr_to_chip    [(i + 1) * CFG_MEM_IF_CHIP     - 1 : i * CFG_MEM_IF_CHIP    ] <= arb_to_chip    [(i + 1) * CFG_MEM_IF_CHIP     - 1 : i * CFG_MEM_IF_CHIP    ];
+                        rdwr_to_chipsel [(i + 1) * CFG_MEM_IF_CS_WIDTH - 1 : i * CFG_MEM_IF_CS_WIDTH] <= arb_to_chipsel [(i + 1) * CFG_MEM_IF_CS_WIDTH - 1 : i * CFG_MEM_IF_CS_WIDTH];
+                    end
+                end
+            end
+        end
+    endgenerate
+    
+    always @ (*)
+    begin
+        if (do_burst_terminate)
+        begin
+            if (CFG_DWIDTH_RATIO != 2)
+            begin
+                modified_to_chip = rdwr_to_chip | arb_to_chip;
+            end
+            else
+            begin
+                modified_to_chip = rdwr_to_chip;
+            end
+            
+            modified_to_chipsel = rdwr_to_chipsel;
+        end
+        else
+        begin
+            modified_to_chip    = arb_to_chip;
+            modified_to_chipsel = arb_to_chipsel;
+        end
     end
 //--------------------------------------------------------------------------------------------------------
 //
@@ -617,11 +676,23 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
         int_do_col_req = (|arb_do_write) | (|arb_do_read);
     end
     
+    // Sideband request
+    always @ (*)
+    begin
+        int_do_sideband_req = (|arb_do_precharge_all) | (|arb_do_refresh) | (|arb_do_self_refresh) | (|arb_do_power_down) | (|arb_do_deep_pdown) | (|arb_do_zq_cal) | (|arb_do_lmr);
+    end
+    
     // Read and write request
     always @ (*)
     begin
         int_do_rd_req = |arb_do_read;
         int_do_wr_req = |arb_do_write;
+    end
+    
+    // Auto precharge
+    always @ (*)
+    begin
+        int_do_auto_precharge = |arb_do_auto_precharge;
     end
     
     // Burst chop
@@ -651,11 +722,33 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
         to_col              = int_to_col;
         do_row_req          = int_do_row_req;
         do_col_req          = int_do_col_req;
+        do_sideband_req     = int_do_sideband_req;
         do_rd_req           = int_do_rd_req;
         do_wr_req           = int_do_wr_req;
+        do_auto_precharge   = int_do_auto_precharge;
         do_burst_chop       = int_do_burst_chop;
         do_rmw_correct      = int_do_rmw_correct;
         do_rmw_partial      = int_do_rmw_partial;
+    end
+    
+    // Keep track of auto-precharge signal
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            doing_auto_precharge <= 1'b0;
+        end
+        else
+        begin
+            if (do_col_req && do_auto_precharge)
+            begin
+                doing_auto_precharge <= 1'b1;
+            end
+            else if (do_col_req && !do_auto_precharge)
+            begin
+                doing_auto_precharge <= 1'b0;
+            end
+        end
     end
     
     //----------------------------------------------------------------------------------------------------
@@ -774,7 +867,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
         begin
             if (do_col_req)
             begin
-                if (do_burst_chop)
+                if (do_burst_chop[0]) // Arbiter will make sure to broadcast burst chop info to both bits (0 & 1)
                 begin
                     if (max_local_burst_size_divide_2 <= 2)
                         max_burst_left <= 0;
@@ -905,7 +998,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
             combined_do_rmw_correct = do_rmw_correct;
             combined_do_rmw_partial = do_rmw_partial;
         end
-        else if (delayed_doing)
+        else if (delayed_doing & ~terminate_doing)
         begin
             combined_do_rmw_correct = delayed_do_rmw_correct;
             combined_do_rmw_partial = delayed_do_rmw_partial;
@@ -1069,23 +1162,33 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
             begin
                 if (n_prefetch <= 1) // allow interrupt at any clock cycle
                 begin
-                    if (do_col_req && ((col_address == 0 && size > 1) || col_address != 0))
+                    if (do_col_req && (((col_address == 0 && size > 1) || col_address != 0) || do_auto_precharge) && (CFG_REG_GRANT && max_local_burst_size > 2)) // only disable interrupt for native size larger than 2 (larger than BL4 in FR), only in CFG grant mode since we only can issue WRRD-NOP-WRRD in this mode
                         int_allow_interrupt <= 1'b0;
-                    else if (address_left == 0 && burst_left == 0)
+                    else if (!doing_auto_precharge && address_left == 0 && burst_left == 0)
+                        int_allow_interrupt <= 1'b1;
+                    else if (max_burst_left <= 1'b1)
                         int_allow_interrupt <= 1'b1;
                 end
                 else if (n_prefetch == 2)
                 begin
                     if (do_col_req)
                         int_allow_interrupt <= 1'b0;
-                    else if (address_left == 0 && burst_left == 0 && max_burst_left [0] == 0)
+                    else if (!doing_auto_precharge && address_left == 0 && burst_left == 0 && ((CFG_REG_GRANT && max_burst_left [0] == 1'b1) || (!CFG_REG_GRANT && max_burst_left [0] == 1'b0)))
+                        int_allow_interrupt <= 1'b1;
+                    else if (int_allow_interrupt && max_burst_left > 1'b1 && ((CFG_REG_GRANT && max_burst_left [0] != 1'b1) || (!CFG_REG_GRANT && max_burst_left [0] != 1'b0))) // so that we don't allow interrupt at odd bursts
+                        int_allow_interrupt <= 1'b0;
+                    else if (max_burst_left <= 1'b1)
                         int_allow_interrupt <= 1'b1;
                 end
                 else if (n_prefetch == 4)
                 begin
                     if (do_col_req)
                         int_allow_interrupt <= 1'b0;
-                    else if (address_left == 0 && burst_left == 0 && max_burst_left [1 : 0] == 0)
+                    else if (!doing_auto_precharge && address_left == 0 && burst_left == 0 && ((CFG_REG_GRANT && max_burst_left [1 : 0] == 2'b11) || (!CFG_REG_GRANT && max_burst_left [1 : 0] == 2'b00)))
+                        int_allow_interrupt <= 1'b1;
+                    else if (int_allow_interrupt && max_burst_left > 1'b1 && ((CFG_REG_GRANT && max_burst_left [1 : 0] != 2'b11) || (!CFG_REG_GRANT && max_burst_left [1 : 0] != 2'b00))) // so that we don't allow interrupt at odd bursts
+                        int_allow_interrupt <= 1'b0;
+                    else if (max_burst_left <= 1'b1)
                         int_allow_interrupt <= 1'b1;
                 end
             end
@@ -1140,9 +1243,9 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
     // Assign to output ports
     always @ (*)
     begin
-        if (cfg_enable_burst_interrupt)
+        if (cfg_enable_burst_interrupt && (cfg_type == `MMR_TYPE_LPDDR1 || cfg_type == `MMR_TYPE_LPDDR2))
         begin
-            interrupt_ready = ~int_interrupt_enable_ready;
+            interrupt_ready =  int_interrupt_enable_ready;
         end
         else
         begin
@@ -1183,7 +1286,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
                         int_allow_terminate    <= 1'b0;
                         int_do_burst_terminate <= 1'b0;
                     end
-                    else if (do_col_req && col_address == 0 && size == 1'b1)
+                    else if (do_col_req && !do_auto_precharge && col_address == 0 && size == 1'b1 && (CFG_REG_GRANT && max_local_burst_size > 2)) // only allow terminate for native size larger than 2 in non-registered mode
                     begin
                         int_allow_terminate    <= 1'b1;
                         
@@ -1192,7 +1295,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
                         else
                             int_do_burst_terminate <= 1'b0;
                     end
-                    else if (address_left == 0 && burst_left == 0 && max_burst_left > 0)
+                    else if (!doing_auto_precharge && address_left == 0 && burst_left == 0 && ((CFG_REG_GRANT && max_burst_left > 1) || (!CFG_REG_GRANT && max_burst_left > 0)))
                     begin
                         int_allow_terminate <= 1'b1;
                         
@@ -1214,7 +1317,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
                         int_allow_terminate    <= 1'b0;
                         int_do_burst_terminate <= 1'b0;
                     end
-                    else if (address_left == 0 && burst_left == 0 && max_burst_left > 0 && (max_burst_left [0] == 0 || int_allow_terminate == 1'b1))
+                    else if (!doing_auto_precharge && address_left == 0 && burst_left == 0 && ((CFG_REG_GRANT && max_burst_left > 1) || (!CFG_REG_GRANT && max_burst_left > 0)) && ((CFG_REG_GRANT && max_burst_left [0] == 1'b1) || (!CFG_REG_GRANT && max_burst_left [0] == 1'b0) || int_allow_terminate == 1'b1))
                     begin
                         int_allow_terminate <= 1'b1;
                         
@@ -1236,7 +1339,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
                         int_allow_terminate    <= 1'b0;
                         int_do_burst_terminate <= 1'b0;
                     end
-                    else if (address_left == 0 && burst_left == 0 && max_burst_left > 0 && (max_burst_left [1 : 0] == 0 || int_allow_terminate == 1'b1))
+                    else if (!doing_auto_precharge && address_left == 0 && burst_left == 0 && ((CFG_REG_GRANT && max_burst_left > 1) || (!CFG_REG_GRANT && max_burst_left > 0)) && ((CFG_REG_GRANT && max_burst_left [1 : 0] == 2'b11) || (!CFG_REG_GRANT && max_burst_left [1 : 0] == 2'b00) || int_allow_terminate == 1'b1))
                     begin
                         int_allow_terminate <= 1'b1;
                         
@@ -1256,6 +1359,19 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
             begin
                 int_allow_terminate <= 1'b0;
             end
+        end
+    end
+    
+    // Registered version of do burst terminate
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            int_do_burst_terminate_r <= 1'b0;
+        end
+        else
+        begin
+            int_do_burst_terminate_r <= int_do_burst_terminate;
         end
     end
     
@@ -1287,7 +1403,9 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
         end
         else
         begin
-            if (address_left == 0 && burst_left == 0 && max_burst_left > 0 && ((|do_burst_terminate) == 1'b1 || doing_burst_terminate == 1'b1))
+            if (do_col_req) // reset to "0" after another new column command is detected
+                doing_burst_terminate <= 1'b0;
+            else if (address_left == 0 && burst_left == 0 && max_burst_left > 0 && ((|do_burst_terminate) == 1'b1 || doing_burst_terminate == 1'b1))
                 doing_burst_terminate <= 1'b1;
             else
                 doing_burst_terminate <= 1'b0;
@@ -1296,9 +1414,9 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
     
     always @ (*)
     begin
-        if (cfg_enable_burst_terminate)
+        if (cfg_enable_burst_terminate && (cfg_type == `MMR_TYPE_LPDDR1 || cfg_type == `MMR_TYPE_LPDDR2))
         begin
-            terminate_doing = (|do_burst_terminate) | doing_burst_terminate;
+            terminate_doing = (|do_burst_terminate) | (doing_burst_terminate & !do_col_req);
         end
         else
         begin
@@ -1313,9 +1431,9 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
     always @ (*)
     begin
         if (CFG_DWIDTH_RATIO == 2)
-            int_do_req = do_col_req | do_row_req;
+            int_do_req = do_col_req | do_row_req | do_sideband_req; // sideband request might interfere with burst terminate command as well
         else
-            int_do_req = do_col_req;
+            int_do_req = do_col_req | do_sideband_req;              // sideband request might interfere with burst terminate command as well
     end
     
     generate
@@ -1326,7 +1444,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
             begin
                 do_burst_terminate = 0;
                 
-                if (cfg_enable_burst_terminate)
+                if (cfg_enable_burst_terminate && (cfg_type == `MMR_TYPE_LPDDR1 || cfg_type == `MMR_TYPE_LPDDR2))
                 begin
                     if (int_do_req)
                     begin
@@ -1334,7 +1452,8 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
                     end
                     else
                     begin
-                        do_burst_terminate [AFI_INTF_HIGH_PHASE] = int_do_burst_terminate;
+                        // Use delayed version of burst terminate in REG_GRANT mode so that it won't terminate before interrupt can occur
+                        do_burst_terminate [AFI_INTF_HIGH_PHASE] = (CFG_REG_GRANT) ? int_do_burst_terminate_r : int_do_burst_terminate;
                     end
                 end
                 else
@@ -1349,7 +1468,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
             begin
                 do_burst_terminate = 0;
                 
-                if (cfg_enable_burst_terminate)
+                if (cfg_enable_burst_terminate && (cfg_type == `MMR_TYPE_LPDDR1 || cfg_type == `MMR_TYPE_LPDDR2))
                 begin
                     if (int_do_req)
                     begin
@@ -1357,7 +1476,8 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
                     end
                     else
                     begin
-                        do_burst_terminate [AFI_INTF_LOW_PHASE] = int_do_burst_terminate;
+                        // Use delayed version of burst terminate in REG_GRANT mode so that it won't terminate before interrupt can occur
+                        do_burst_terminate [AFI_INTF_LOW_PHASE] =  (CFG_REG_GRANT) ? int_do_burst_terminate_r : int_do_burst_terminate;
                     end
                 end
                 else
@@ -1372,7 +1492,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] bg_effective_si
     // Effective size output ports
     always @ (*)
     begin
-        if (cfg_enable_burst_terminate)
+        if (cfg_enable_burst_terminate && (cfg_type == `MMR_TYPE_LPDDR1 || cfg_type == `MMR_TYPE_LPDDR2))
         begin
             effective_size = int_effective_size;
         end

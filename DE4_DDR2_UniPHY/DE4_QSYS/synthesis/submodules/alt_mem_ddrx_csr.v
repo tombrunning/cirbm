@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -39,7 +39,7 @@ module alt_mem_ddrx_csr #
         
         // timing parameter width
         CAS_WR_LAT_BUS_WIDTH        = 4,       // max will be 8 in DDR3
-        ADD_LAT_BUS_WIDTH           = 3,       // max will be 6 in DDR2
+        ADD_LAT_BUS_WIDTH           = 4,       // max will be 6 in DDR2
         TCL_BUS_WIDTH               = 4,       // max will be 11 in DDR3
         BL_BUS_WIDTH                = 5,       // 
         TRRD_BUS_WIDTH              = 4,       // 2 - 8
@@ -1102,14 +1102,64 @@ generate
             read_csr_register_126 [23 : 16] = csr_bl;
         end
     end
-    
+
+        /*------------------------------------------------------------------------------
+        
+           0x134 Controller Status and Control Register - Advanced Features
+        
+        ------------------------------------------------------------------------------*/
+        reg          csr_reorder_data;
+        reg [7 : 0]  csr_starve_limit;
+        
+        // assign value back to top
+        assign cfg_reorder_data = csr_reorder_data;
+        assign cfg_starve_limit = csr_starve_limit;
+        
+        // register arrays to store CSR informations
+        always @ (posedge ctl_clk or negedge ctl_rst_n)
+        begin
+            if (!ctl_rst_n)
+            begin
+                csr_reorder_data    <= CFG_REORDER_DATA;
+                csr_starve_limit    <= CFG_STARVE_LIMIT;  // reset to default value
+            end
+            else
+            begin
+                // write request
+                if (!int_mask_avalon_mm_write && int_write_req && int_addr == 8'h34)
+                begin
+                    if (int_be [0])
+                    begin
+                        csr_reorder_data <= int_wdata [ 0];
+                    end
+                    
+                    if (int_be [2])
+                    begin
+                        csr_starve_limit <= int_wdata [23 :  16];
+                    end
+                    
+                end
+            end
+        end
+        
+        // assigning read datas back to 32 bit bus
+        always @ (*)
+        begin
+            // first, set all to zeros
+            read_csr_register_134 = 0;
+            
+            // then we set individual bits
+            read_csr_register_134 [ 0 ]       = csr_reorder_data;
+            read_csr_register_134 [ 23 : 16 ] = csr_starve_limit;
+        end    
+	
     if (!CTL_ECC_CSR_ENABLED)
     begin
-        assign cfg_enable_ecc              = 1'b1; // default value
-        assign cfg_enable_auto_corr    = 1'b1; // default value
+        assign cfg_enable_ecc              = 1'b0; // default value
+        assign cfg_enable_auto_corr    = 1'b0; // default value
         assign cfg_gen_sbe             = 0;
         assign cfg_gen_dbe             = 0;
-        assign cfg_enable_intr         = 1'b1; // default value
+        assign cfg_enable_intr         = 1'b0; // default value
         assign cfg_mask_sbe_intr       = 0;
         assign cfg_mask_dbe_intr       = 0;
         assign cfg_clr_intr               = 0;
@@ -1296,8 +1346,7 @@ generate
         begin
             // then we set individual bits
             read_csr_register_132 = csr_error_addr;
-        end
-
+        end    
 
         /*------------------------------------------------------------------------------
         
@@ -1328,61 +1377,7 @@ generate
         begin
             // then we set individual bits
             read_csr_register_133 = csr_corr_dropped_addr;
-        end
-
-
-
-
-        /*------------------------------------------------------------------------------
-        
-           0x134 Controller Status and Control Register - Advanced Features
-        
-        ------------------------------------------------------------------------------*/
-        reg          csr_reorder_data;
-        reg [7 : 0]  csr_starve_limit;
-        
-        // assign value back to top
-        assign cfg_reorder_data = csr_reorder_data;
-        assign cfg_starve_limit = csr_starve_limit;
-        
-        // register arrays to store CSR informations
-        always @ (posedge ctl_clk or negedge ctl_rst_n)
-        begin
-            if (!ctl_rst_n)
-            begin
-                csr_reorder_data    <= CFG_REORDER_DATA;
-                csr_starve_limit    <= CFG_STARVE_LIMIT;  // reset to default value
-            end
-            else
-            begin
-                // write request
-                if (!int_mask_avalon_mm_write && int_write_req && int_addr == 8'h34)
-                begin
-                    if (int_be [0])
-                    begin
-                        csr_reorder_data <= int_wdata [ 0];
-                    end
-                    
-                    if (int_be [2])
-                    begin
-                        csr_starve_limit <= int_wdata [23 :  16];
-                    end
-                    
-                end
-            end
-        end
-        
-        // assigning read datas back to 32 bit bus
-        always @ (*)
-        begin
-            // first, set all to zeros
-            read_csr_register_134 = 0;
-            
-            // then we set individual bits
-            read_csr_register_134 [ 0 ]       = csr_reorder_data;
-            read_csr_register_134 [ 23 : 16 ] = csr_starve_limit;
-        end
-        
+        end		
     end
 endgenerate
 

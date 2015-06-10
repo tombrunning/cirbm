@@ -1,4 +1,4 @@
-//Legal Notice: (C)2012 Altera Corporation. All rights reserved.  Your
+//Legal Notice: (C)2015 Altera Corporation. All rights reserved.  Your
 //use of Altera Corporation's design tools, logic functions and other
 //software and tools, and its AMPP partner logic functions, and any
 //output files any of the foregoing (including device programming or
@@ -85,30 +85,30 @@ module DE4_QSYS_nios2_qsys_jtag_debug_module_sysclk (
   wire             take_no_action_break_c;
   wire             take_no_action_ocimem_a;
   wire             take_no_action_tracemem_a;
-  wire             unxunused_resetxx2;
   wire             unxunused_resetxx3;
+  wire             unxunused_resetxx4;
   reg              update_jdo_strobe /* synthesis ALTERA_ATTRIBUTE = "SUPPRESS_DA_RULE_INTERNAL=\"D101,D103\""  */;
-  assign unxunused_resetxx2 = 1'b1;
-  altera_std_synchronizer the_altera_std_synchronizer2
-    (
-      .clk (clk),
-      .din (vs_udr),
-      .dout (sync_udr),
-      .reset_n (unxunused_resetxx2)
-    );
-
-  defparam the_altera_std_synchronizer2.depth = 2;
-
   assign unxunused_resetxx3 = 1'b1;
   altera_std_synchronizer the_altera_std_synchronizer3
     (
       .clk (clk),
-      .din (vs_uir),
-      .dout (sync_uir),
+      .din (vs_udr),
+      .dout (sync_udr),
       .reset_n (unxunused_resetxx3)
     );
 
   defparam the_altera_std_synchronizer3.depth = 2;
+
+  assign unxunused_resetxx4 = 1'b1;
+  altera_std_synchronizer the_altera_std_synchronizer4
+    (
+      .clk (clk),
+      .din (vs_uir),
+      .dout (sync_uir),
+      .reset_n (unxunused_resetxx4)
+    );
+
+  defparam the_altera_std_synchronizer4.depth = 2;
 
   always @(posedge clk)
     begin
@@ -120,51 +120,51 @@ module DE4_QSYS_nios2_qsys_jtag_debug_module_sysclk (
     end
 
 
-  assign take_action_ocimem_a = enable_action_strobe && (ir == 2'b00) && 
+  assign take_action_ocimem_a = enable_action_strobe && (ir == 2'b00) && 
     ~jdo[35] && jdo[34];
 
-  assign take_no_action_ocimem_a = enable_action_strobe && (ir == 2'b00) && 
+  assign take_no_action_ocimem_a = enable_action_strobe && (ir == 2'b00) && 
     ~jdo[35] && ~jdo[34];
 
-  assign take_action_ocimem_b = enable_action_strobe && (ir == 2'b00) && 
+  assign take_action_ocimem_b = enable_action_strobe && (ir == 2'b00) && 
     jdo[35];
 
-  assign take_action_tracemem_a = enable_action_strobe && (ir == 2'b01) &&
-    ~jdo[37] && 
+  assign take_action_tracemem_a = enable_action_strobe && (ir == 2'b01) &&
+    ~jdo[37] && 
     jdo[36];
 
-  assign take_no_action_tracemem_a = enable_action_strobe && (ir == 2'b01) &&
-    ~jdo[37] && 
+  assign take_no_action_tracemem_a = enable_action_strobe && (ir == 2'b01) &&
+    ~jdo[37] && 
     ~jdo[36];
 
-  assign take_action_tracemem_b = enable_action_strobe && (ir == 2'b01) &&
+  assign take_action_tracemem_b = enable_action_strobe && (ir == 2'b01) &&
     jdo[37];
 
-  assign take_action_break_a = enable_action_strobe && (ir == 2'b10) && 
-    ~jdo[36] && 
+  assign take_action_break_a = enable_action_strobe && (ir == 2'b10) && 
+    ~jdo[36] && 
     jdo[37];
 
-  assign take_no_action_break_a = enable_action_strobe && (ir == 2'b10) && 
-    ~jdo[36] && 
+  assign take_no_action_break_a = enable_action_strobe && (ir == 2'b10) && 
+    ~jdo[36] && 
     ~jdo[37];
 
-  assign take_action_break_b = enable_action_strobe && (ir == 2'b10) && 
-    jdo[36] && ~jdo[35] &&
+  assign take_action_break_b = enable_action_strobe && (ir == 2'b10) && 
+    jdo[36] && ~jdo[35] &&
     jdo[37];
 
-  assign take_no_action_break_b = enable_action_strobe && (ir == 2'b10) && 
-    jdo[36] && ~jdo[35] &&
+  assign take_no_action_break_b = enable_action_strobe && (ir == 2'b10) && 
+    jdo[36] && ~jdo[35] &&
     ~jdo[37];
 
-  assign take_action_break_c = enable_action_strobe && (ir == 2'b10) && 
-    jdo[36] &&  jdo[35] &&
+  assign take_action_break_c = enable_action_strobe && (ir == 2'b10) && 
+    jdo[36] &&  jdo[35] &&
     jdo[37];
 
-  assign take_no_action_break_c = enable_action_strobe && (ir == 2'b10) && 
-    jdo[36] &&  jdo[35] &&
+  assign take_no_action_break_c = enable_action_strobe && (ir == 2'b10) && 
+    jdo[36] &&  jdo[35] &&
     ~jdo[37];
 
-  assign take_action_tracectrl = enable_action_strobe && (ir == 2'b11) &&  
+  assign take_action_tracectrl = enable_action_strobe && (ir == 2'b11) &&  
     jdo[15];
 
   always @(posedge clk)

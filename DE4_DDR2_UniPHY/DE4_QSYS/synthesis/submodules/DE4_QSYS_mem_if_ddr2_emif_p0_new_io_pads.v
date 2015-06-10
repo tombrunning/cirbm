@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -11,6 +11,8 @@
 // agreement for further details.
 
 
+
+`timescale 1 ps / 1 ps
 
 // altera message_off 10036
 module DE4_QSYS_mem_if_ddr2_emif_p0_new_io_pads(
@@ -61,6 +63,9 @@ module DE4_QSYS_mem_if_ddr2_emif_p0_new_io_pads(
 	scc_dqs_io_ena,
 	scc_dq_ena,
 	scc_dm_ena,
+	scc_sr_dqsenable_delayctrl,
+	scc_sr_dqsdisablen_delayctrl,
+	scc_sr_multirank_delayctrl,
 	scc_upd,
     enable_mem_clk,
 	capture_strobe_tracking
@@ -69,6 +74,7 @@ module DE4_QSYS_mem_if_ddr2_emif_p0_new_io_pads(
 
 parameter DEVICE_FAMILY = "";
 parameter REGISTER_C2P = "";
+parameter LDC_MEM_CK_CPS_PHASE = "";
 
 parameter OCT_SERIES_TERM_CONTROL_WIDTH = "";  
 parameter OCT_PARALLEL_TERM_CONTROL_WIDTH = ""; 
@@ -94,6 +100,7 @@ parameter AFI_DATA_MASK_WIDTH       = "";
 parameter AFI_CONTROL_WIDTH         = ""; 
 parameter AFI_DATA_WIDTH            = ""; 
 parameter AFI_DQS_WIDTH             = ""; 
+parameter AFI_RATE_RATIO            = ""; 
 
 parameter DLL_DELAY_CTRL_WIDTH  = "";
 
@@ -106,9 +113,13 @@ parameter ALTDQDQS_DELAYED_CLOCK_PHASE_SETTING = "";
 
 parameter FAST_SIM_MODEL            = "";
 
+
+parameter IS_HHP_HPS = "";
+
 localparam DOUBLE_MEM_DQ_WIDTH = MEM_DQ_WIDTH * 2;
 localparam HALF_AFI_DATA_WIDTH = AFI_DATA_WIDTH / 2;
 localparam HALF_AFI_DQS_WIDTH = AFI_DQS_WIDTH / 2;
+
 
 
 input	reset_n_afi_clk;
@@ -167,10 +178,15 @@ input	[MEM_READ_DQS_WIDTH - 1:0] scc_dqs_ena;
 input	[MEM_READ_DQS_WIDTH - 1:0] scc_dqs_io_ena;
 input	[MEM_DQ_WIDTH - 1:0] scc_dq_ena;
 input	[MEM_DM_WIDTH - 1:0] scc_dm_ena;
+input   [7:0] scc_sr_dqsenable_delayctrl;
+input   [7:0] scc_sr_dqsdisablen_delayctrl;
+input   [7:0] scc_sr_multirank_delayctrl;
 
-input	scc_upd;
+input [0:0] scc_upd;
 input   [MEM_CK_WIDTH-1:0] enable_mem_clk;
 output	[MEM_READ_DQS_WIDTH - 1:0] capture_strobe_tracking;
+
+assign capture_strobe_tracking = 1'd0;
 
 wire	[MEM_DQ_WIDTH-1:0] mem_phy_dq;
 wire	[DLL_DELAY_CTRL_WIDTH-1:0] read_bidir_dll_phy_delayctrl;
@@ -191,14 +207,16 @@ reg [AFI_DQS_WIDTH-1:0] phy_ddio_oct_ena_int;
 generate
 if (REGISTER_C2P == "false") begin
 	always @(*) begin	
-		phy_ddio_dq_int <= phy_ddio_dq;
-		phy_ddio_wrdata_en_int <= phy_ddio_wrdata_en;
-		phy_ddio_wrdata_mask_int <= phy_ddio_wrdata_mask;	
-		phy_ddio_dqs_en_int <= phy_ddio_dqs_en;
-		phy_ddio_oct_ena_int <= phy_ddio_oct_ena;
+		phy_ddio_dq_int = phy_ddio_dq;
+		phy_ddio_wrdata_en_int = phy_ddio_wrdata_en;
+		phy_ddio_wrdata_mask_int = phy_ddio_wrdata_mask;	
+		phy_ddio_dqs_en_int = phy_ddio_dqs_en;
+		phy_ddio_oct_ena_int = phy_ddio_oct_ena;
 	end
+	
 end else begin
-	always @(posedge pll_afi_clk) begin	
+
+	always @(posedge pll_afi_clk) begin
 		phy_ddio_dq_int <= phy_ddio_dq;
 		phy_ddio_wrdata_en_int <= phy_ddio_wrdata_en;
 		phy_ddio_wrdata_mask_int <= phy_ddio_wrdata_mask;	
@@ -207,6 +225,8 @@ end else begin
 	end
 end
 endgenerate	
+
+
 
 	DE4_QSYS_mem_if_ddr2_emif_p0_addr_cmd_pads uaddr_cmd_pads(
 		.reset_n				(reset_n_addr_cmd_clk),
@@ -252,56 +272,17 @@ endgenerate
 	defparam uaddr_cmd_pads.AFI_ODT_WIDTH           = AFI_ODT_WIDTH; 
 	defparam uaddr_cmd_pads.AFI_CONTROL_WIDTH       = AFI_CONTROL_WIDTH; 
 	defparam uaddr_cmd_pads.DLL_WIDTH               = DLL_DELAY_CTRL_WIDTH; 
+	defparam uaddr_cmd_pads.REGISTER_C2P            = REGISTER_C2P;
+	defparam uaddr_cmd_pads.IS_HHP_HPS              = IS_HHP_HPS;
 		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	localparam NUM_OF_DQDQS = MEM_WRITE_DQS_WIDTH;
 	localparam DQDQS_DATA_WIDTH = MEM_DQ_WIDTH / NUM_OF_DQDQS;
 	localparam DQDQS_DDIO_PHY_DQ_WIDTH = DDIO_PHY_DQ_WIDTH / NUM_OF_DQDQS;
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	localparam DQDQS_DM_WIDTH = MEM_DM_WIDTH / MEM_WRITE_DQS_WIDTH;
 		
-	
-	
-	
-	
 	localparam NUM_OF_DQDQS_WITH_DM = MEM_WRITE_DQS_WIDTH;		
-	
-	wire	[HALF_AFI_DQS_WIDTH-1:0]	phy_ddio_oe_l;   
-	wire	[HALF_AFI_DQS_WIDTH-1:0]	phy_ddio_oe_h;
-	assign phy_ddio_oe_l = phy_ddio_wrdata_en_int[HALF_AFI_DQS_WIDTH-1:0];
-	assign phy_ddio_oe_h = phy_ddio_wrdata_en_int[AFI_DQS_WIDTH-1:HALF_AFI_DQS_WIDTH];
 
-	
-	
-	
-	
 	generate
 	genvar i;
 	for (i=0; i<NUM_OF_DQDQS; i=i+1)
@@ -309,19 +290,26 @@ endgenerate
 		wire dqs_busout;
 
 		// The phy_ddio_dq_int bus is the write data for all DQS groups in one
-		// AFI cycle. The bus is ordered by time slow and subordered by 
-		// DQS group:
+		// AFI cycle. The bus is ordered by time slot and subordered by DQS group:
 		//
 		// FR: D1_T1, D0_T1, D1_T0, D0_T0
 		// HR: D1_T3, D0_T3, D1_T2, D0_T2, D1_T1, D0_T1, D1_T0, D0_T0
 		//
-		// The following extracts write data targeting the current DQS
-		// group.
+		// Extract the write data targeting the current DQS group
 		wire [DQDQS_DATA_WIDTH-1:0] phy_ddio_dq_t0 = phy_ddio_dq_int [DQDQS_DATA_WIDTH*(i+1+0*NUM_OF_DQDQS)-1 : DQDQS_DATA_WIDTH*(i+0*NUM_OF_DQDQS)];
 		wire [DQDQS_DATA_WIDTH-1:0] phy_ddio_dq_t1 = phy_ddio_dq_int [DQDQS_DATA_WIDTH*(i+1+1*NUM_OF_DQDQS)-1 : DQDQS_DATA_WIDTH*(i+1*NUM_OF_DQDQS)];
 		wire [DQDQS_DATA_WIDTH-1:0] phy_ddio_dq_t2 = phy_ddio_dq_int [DQDQS_DATA_WIDTH*(i+1+2*NUM_OF_DQDQS)-1 : DQDQS_DATA_WIDTH*(i+2*NUM_OF_DQDQS)];
 		wire [DQDQS_DATA_WIDTH-1:0] phy_ddio_dq_t3 = phy_ddio_dq_int [DQDQS_DATA_WIDTH*(i+1+3*NUM_OF_DQDQS)-1 : DQDQS_DATA_WIDTH*(i+3*NUM_OF_DQDQS)];
 
+		// Extract the OE signal targeting the current DQS group
+		wire [DQDQS_DATA_WIDTH-1:0] phy_ddio_wrdata_en_t0 = {DQDQS_DATA_WIDTH{phy_ddio_wrdata_en_int[i]}};
+		wire [DQDQS_DATA_WIDTH-1:0] phy_ddio_wrdata_en_t1 = {DQDQS_DATA_WIDTH{phy_ddio_wrdata_en_int[i+MEM_WRITE_DQS_WIDTH]}};
+
+		// Extract the dynamic OCT control signal targeting the current DQS group
+		wire phy_ddio_oct_ena_t0 = phy_ddio_oct_ena_int[i];
+		wire phy_ddio_oct_ena_t1 = phy_ddio_oct_ena_int[i+MEM_WRITE_DQS_WIDTH];
+
+		// Extract the write data mask signal targeting the current DQS group
 		wire [DQDQS_DM_WIDTH-1:0] phy_ddio_wrdata_mask_t0;
 		wire [DQDQS_DM_WIDTH-1:0] phy_ddio_wrdata_mask_t1;
 		wire [DQDQS_DM_WIDTH-1:0] phy_ddio_wrdata_mask_t2;
@@ -332,11 +320,9 @@ endgenerate
 		assign phy_ddio_wrdata_mask_t3 = phy_ddio_wrdata_mask_int [DQDQS_DM_WIDTH*(i+1+3*NUM_OF_DQDQS_WITH_DM)-1 : DQDQS_DM_WIDTH*(i+3*NUM_OF_DQDQS_WITH_DM)];
 
 
+
 			DE4_QSYS_mem_if_ddr2_emif_p0_altdqdqs ubidir_dq_dqs (
 				.write_strobe_clock_in (1'b0),
-				
-				
-				
 				.reset_n_core_clock_in (reset_n_core_clk),
 				.core_clock_in (core_clk),
 				.fr_clock_in (pll_write_clk),
@@ -354,28 +340,27 @@ endgenerate
 				
 				.write_data_in ({phy_ddio_dq_t3, phy_ddio_dq_t2, phy_ddio_dq_t1, phy_ddio_dq_t0}),
 
-				.write_oe_in ({ {DQDQS_DATA_WIDTH{phy_ddio_oe_h[i]}}, {DQDQS_DATA_WIDTH{phy_ddio_oe_l[i]}} }),
+				.write_oe_in ({phy_ddio_wrdata_en_t1, phy_ddio_wrdata_en_t0}),
 
 				.strobe_io (mem_dqs[i]),
 				.strobe_n_io (mem_dqs_n[i]),
 				.output_strobe_ena ({phy_ddio_dqs_en_int[i+NUM_OF_DQDQS], phy_ddio_dqs_en_int[i]}),
-				.oct_ena_in ({phy_ddio_oct_ena_int[i+NUM_OF_DQDQS], phy_ddio_oct_ena_int[i]}),
+				.oct_ena_in ({phy_ddio_oct_ena_t1, phy_ddio_oct_ena_t0}),
 				.capture_strobe_ena ({dqs_enable_ctrl[i+NUM_OF_DQDQS], dqs_enable_ctrl[i]}),
 				.extra_write_data_out (phy_mem_dm[i]),
 				.config_data_in (scc_data),
 				.config_dqs_ena (scc_dqs_ena[i]),
 				.config_io_ena (scc_dq_ena[(DQDQS_DATA_WIDTH*(i+1)-1) : DQDQS_DATA_WIDTH*i]),
-					.config_dqs_io_ena (scc_dqs_io_ena[i]),
-				.config_update (scc_upd),
+				.config_dqs_io_ena (scc_dqs_io_ena[i]),
+				.config_update (scc_upd[0]),
 				.config_clock_in (scc_clk),
 				.config_extra_io_ena (scc_dm_ena[i]),
+
 				.dll_delayctrl_in (dll_phy_delayctrl)	
 				);
 			defparam ubidir_dq_dqs.ALTERA_ALTDQ_DQS2_FAST_SIM_MODEL = FAST_SIM_MODEL;
 						
 			
-		
-		
 		assign read_capture_clk[i] = ~dqs_busout;
 	end
 	endgenerate

@@ -1,4 +1,4 @@
-//Legal Notice: (C)2012 Altera Corporation. All rights reserved.  Your
+//Legal Notice: (C)2015 Altera Corporation. All rights reserved.  Your
 //use of Altera Corporation's design tools, logic functions and other
 //software and tools, and its AMPP partner logic functions, and any
 //output files any of the foregoing (including device programming or
@@ -59,7 +59,7 @@ module DE4_QSYS_led (
     end
 
 
-  assign readdata = {{{32- 8}{1'b0}},read_mux_out};
+  assign readdata = {32'b0 | read_mux_out};
   assign out_port = data_out;
 
 endmodule

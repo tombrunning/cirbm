@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -236,13 +236,20 @@ endmodule //alt_mem_ddrx_ecc_decoder_32_decode
 `timescale 1 ps / 1 ps
 //synopsys translate_on
 module  alt_mem_ddrx_ecc_decoder_32_altecc_decoder
-	( 
+	(
+	clk,
+	reset_n,
 	data,
 	err_corrected,
 	err_detected,
 	err_fatal,
 	err_sbe,
 	q) /* synthesis synthesis_clearbox=1 */;
+	
+	parameter CFG_ECC_DECODER_REG = 0;
+	
+	input			clk;
+	input			reset_n;
 	input   [38:0]  data;
 	output   err_corrected;
 	output   err_detected;
@@ -303,44 +310,71 @@ module  alt_mem_ddrx_ecc_decoder_32_altecc_decoder
 	wire  syn_bit;
 	wire  syn_e;
 	wire  [4:0]  syn_t;
-	wire  [6:0]  syndrome;
-
+	wire  [6:0]  syndrome_wire;
+	reg   [6:0]  syndrome;
+	reg	  [38:0] data_reg;
+	
+	generate
+		if (CFG_ECC_DECODER_REG == 1)
+		begin
+			always @ (posedge clk or negedge reset_n)
+			begin
+				if (!reset_n)
+				begin
+					syndrome	<= {7{1'b0}};
+					data_reg	<= {39{1'b0}};
+				end else
+				begin
+					syndrome	<= syndrome_wire;
+					data_reg	<= data_wire;
+				end
+			end	
+		end else
+		begin
+			always @ (*)
+			begin
+				syndrome	= syndrome_wire;
+				data_reg	= data_wire;				
+			end
+		end
+	endgenerate
+	
 	alt_mem_ddrx_ecc_decoder_32_decode   error_bit_decoder
 	( 
 	.data(syndrome[5:0]),
 	.eq(wire_error_bit_decoder_eq));
-	assign		wire_mux21_0_dataout = (syndrome[6] == 1'b1) ? (decode_output[3] ^ data_wire[0]) : data_wire[0];
-	assign		wire_mux21_1_dataout = (syndrome[6] == 1'b1) ? (decode_output[5] ^ data_wire[1]) : data_wire[1];
-	assign		wire_mux21_10_dataout = (syndrome[6] == 1'b1) ? (decode_output[15] ^ data_wire[10]) : data_wire[10];
-	assign		wire_mux21_11_dataout = (syndrome[6] == 1'b1) ? (decode_output[17] ^ data_wire[11]) : data_wire[11];
-	assign		wire_mux21_12_dataout = (syndrome[6] == 1'b1) ? (decode_output[18] ^ data_wire[12]) : data_wire[12];
-	assign		wire_mux21_13_dataout = (syndrome[6] == 1'b1) ? (decode_output[19] ^ data_wire[13]) : data_wire[13];
-	assign		wire_mux21_14_dataout = (syndrome[6] == 1'b1) ? (decode_output[20] ^ data_wire[14]) : data_wire[14];
-	assign		wire_mux21_15_dataout = (syndrome[6] == 1'b1) ? (decode_output[21] ^ data_wire[15]) : data_wire[15];
-	assign		wire_mux21_16_dataout = (syndrome[6] == 1'b1) ? (decode_output[22] ^ data_wire[16]) : data_wire[16];
-	assign		wire_mux21_17_dataout = (syndrome[6] == 1'b1) ? (decode_output[23] ^ data_wire[17]) : data_wire[17];
-	assign		wire_mux21_18_dataout = (syndrome[6] == 1'b1) ? (decode_output[24] ^ data_wire[18]) : data_wire[18];
-	assign		wire_mux21_19_dataout = (syndrome[6] == 1'b1) ? (decode_output[25] ^ data_wire[19]) : data_wire[19];
-	assign		wire_mux21_2_dataout = (syndrome[6] == 1'b1) ? (decode_output[6] ^ data_wire[2]) : data_wire[2];
-	assign		wire_mux21_20_dataout = (syndrome[6] == 1'b1) ? (decode_output[26] ^ data_wire[20]) : data_wire[20];
-	assign		wire_mux21_21_dataout = (syndrome[6] == 1'b1) ? (decode_output[27] ^ data_wire[21]) : data_wire[21];
-	assign		wire_mux21_22_dataout = (syndrome[6] == 1'b1) ? (decode_output[28] ^ data_wire[22]) : data_wire[22];
-	assign		wire_mux21_23_dataout = (syndrome[6] == 1'b1) ? (decode_output[29] ^ data_wire[23]) : data_wire[23];
-	assign		wire_mux21_24_dataout = (syndrome[6] == 1'b1) ? (decode_output[30] ^ data_wire[24]) : data_wire[24];
-	assign		wire_mux21_25_dataout = (syndrome[6] == 1'b1) ? (decode_output[31] ^ data_wire[25]) : data_wire[25];
-	assign		wire_mux21_26_dataout = (syndrome[6] == 1'b1) ? (decode_output[33] ^ data_wire[26]) : data_wire[26];
-	assign		wire_mux21_27_dataout = (syndrome[6] == 1'b1) ? (decode_output[34] ^ data_wire[27]) : data_wire[27];
-	assign		wire_mux21_28_dataout = (syndrome[6] == 1'b1) ? (decode_output[35] ^ data_wire[28]) : data_wire[28];
-	assign		wire_mux21_29_dataout = (syndrome[6] == 1'b1) ? (decode_output[36] ^ data_wire[29]) : data_wire[29];
-	assign		wire_mux21_3_dataout = (syndrome[6] == 1'b1) ? (decode_output[7] ^ data_wire[3]) : data_wire[3];
-	assign		wire_mux21_30_dataout = (syndrome[6] == 1'b1) ? (decode_output[37] ^ data_wire[30]) : data_wire[30];
-	assign		wire_mux21_31_dataout = (syndrome[6] == 1'b1) ? (decode_output[38] ^ data_wire[31]) : data_wire[31];
-	assign		wire_mux21_4_dataout = (syndrome[6] == 1'b1) ? (decode_output[9] ^ data_wire[4]) : data_wire[4];
-	assign		wire_mux21_5_dataout = (syndrome[6] == 1'b1) ? (decode_output[10] ^ data_wire[5]) : data_wire[5];
-	assign		wire_mux21_6_dataout = (syndrome[6] == 1'b1) ? (decode_output[11] ^ data_wire[6]) : data_wire[6];
-	assign		wire_mux21_7_dataout = (syndrome[6] == 1'b1) ? (decode_output[12] ^ data_wire[7]) : data_wire[7];
-	assign		wire_mux21_8_dataout = (syndrome[6] == 1'b1) ? (decode_output[13] ^ data_wire[8]) : data_wire[8];
-	assign		wire_mux21_9_dataout = (syndrome[6] == 1'b1) ? (decode_output[14] ^ data_wire[9]) : data_wire[9];
+	assign		wire_mux21_0_dataout = (syndrome[6] == 1'b1) ? (decode_output[3] ^ data_reg[0]) : data_reg[0];
+	assign		wire_mux21_1_dataout = (syndrome[6] == 1'b1) ? (decode_output[5] ^ data_reg[1]) : data_reg[1];
+	assign		wire_mux21_10_dataout = (syndrome[6] == 1'b1) ? (decode_output[15] ^ data_reg[10]) : data_reg[10];
+	assign		wire_mux21_11_dataout = (syndrome[6] == 1'b1) ? (decode_output[17] ^ data_reg[11]) : data_reg[11];
+	assign		wire_mux21_12_dataout = (syndrome[6] == 1'b1) ? (decode_output[18] ^ data_reg[12]) : data_reg[12];
+	assign		wire_mux21_13_dataout = (syndrome[6] == 1'b1) ? (decode_output[19] ^ data_reg[13]) : data_reg[13];
+	assign		wire_mux21_14_dataout = (syndrome[6] == 1'b1) ? (decode_output[20] ^ data_reg[14]) : data_reg[14];
+	assign		wire_mux21_15_dataout = (syndrome[6] == 1'b1) ? (decode_output[21] ^ data_reg[15]) : data_reg[15];
+	assign		wire_mux21_16_dataout = (syndrome[6] == 1'b1) ? (decode_output[22] ^ data_reg[16]) : data_reg[16];
+	assign		wire_mux21_17_dataout = (syndrome[6] == 1'b1) ? (decode_output[23] ^ data_reg[17]) : data_reg[17];
+	assign		wire_mux21_18_dataout = (syndrome[6] == 1'b1) ? (decode_output[24] ^ data_reg[18]) : data_reg[18];
+	assign		wire_mux21_19_dataout = (syndrome[6] == 1'b1) ? (decode_output[25] ^ data_reg[19]) : data_reg[19];
+	assign		wire_mux21_2_dataout = (syndrome[6] == 1'b1) ? (decode_output[6] ^ data_reg[2]) : data_reg[2];
+	assign		wire_mux21_20_dataout = (syndrome[6] == 1'b1) ? (decode_output[26] ^ data_reg[20]) : data_reg[20];
+	assign		wire_mux21_21_dataout = (syndrome[6] == 1'b1) ? (decode_output[27] ^ data_reg[21]) : data_reg[21];
+	assign		wire_mux21_22_dataout = (syndrome[6] == 1'b1) ? (decode_output[28] ^ data_reg[22]) : data_reg[22];
+	assign		wire_mux21_23_dataout = (syndrome[6] == 1'b1) ? (decode_output[29] ^ data_reg[23]) : data_reg[23];
+	assign		wire_mux21_24_dataout = (syndrome[6] == 1'b1) ? (decode_output[30] ^ data_reg[24]) : data_reg[24];
+	assign		wire_mux21_25_dataout = (syndrome[6] == 1'b1) ? (decode_output[31] ^ data_reg[25]) : data_reg[25];
+	assign		wire_mux21_26_dataout = (syndrome[6] == 1'b1) ? (decode_output[33] ^ data_reg[26]) : data_reg[26];
+	assign		wire_mux21_27_dataout = (syndrome[6] == 1'b1) ? (decode_output[34] ^ data_reg[27]) : data_reg[27];
+	assign		wire_mux21_28_dataout = (syndrome[6] == 1'b1) ? (decode_output[35] ^ data_reg[28]) : data_reg[28];
+	assign		wire_mux21_29_dataout = (syndrome[6] == 1'b1) ? (decode_output[36] ^ data_reg[29]) : data_reg[29];
+	assign		wire_mux21_3_dataout = (syndrome[6] == 1'b1) ? (decode_output[7] ^ data_reg[3]) : data_reg[3];
+	assign		wire_mux21_30_dataout = (syndrome[6] == 1'b1) ? (decode_output[37] ^ data_reg[30]) : data_reg[30];
+	assign		wire_mux21_31_dataout = (syndrome[6] == 1'b1) ? (decode_output[38] ^ data_reg[31]) : data_reg[31];
+	assign		wire_mux21_4_dataout = (syndrome[6] == 1'b1) ? (decode_output[9] ^ data_reg[4]) : data_reg[4];
+	assign		wire_mux21_5_dataout = (syndrome[6] == 1'b1) ? (decode_output[10] ^ data_reg[5]) : data_reg[5];
+	assign		wire_mux21_6_dataout = (syndrome[6] == 1'b1) ? (decode_output[11] ^ data_reg[6]) : data_reg[6];
+	assign		wire_mux21_7_dataout = (syndrome[6] == 1'b1) ? (decode_output[12] ^ data_reg[7]) : data_reg[7];
+	assign		wire_mux21_8_dataout = (syndrome[6] == 1'b1) ? (decode_output[13] ^ data_reg[8]) : data_reg[8];
+	assign		wire_mux21_9_dataout = (syndrome[6] == 1'b1) ? (decode_output[14] ^ data_reg[9]) : data_reg[9];
 	assign
 		data_bit = data_t[31],
 		data_t = {(data_t[30] | decode_output[38]), (data_t[29] | decode_output[37]), (data_t[28] | decode_output[36]), (data_t[27] | decode_output[35]), (data_t[26] | decode_output[34]), (data_t[25] | decode_output[33]), (data_t[24] | decode_output[31]), (data_t[23] | decode_output[30]), (data_t[22] | decode_output[29]), (data_t[21] | decode_output[28]), (data_t[20] | decode_output[27]), (data_t[19] | decode_output[26]), (data_t[18] | decode_output[25]), (data_t[17] | decode_output[24]), (data_t[16] | decode_output[23]), (data_t[15] | decode_output[22]), (data_t[14] | decode_output[21]), (data_t[13] | decode_output[20]), (data_t[12] | decode_output[19]), (data_t[11] | decode_output[18]), (data_t[10] | decode_output[17]), (data_t[9] | decode_output[15]), (data_t[8] | decode_output[14]), (data_t[7] | decode_output[13]), (data_t[6] | decode_output[12]), (data_t[5] | decode_output[11]), (data_t[4] | decode_output[10]), (data_t[3] | decode_output[9]), (data_t[2] | decode_output[7]), (data_t[1] | decode_output[6]), (data_t[0] | decode_output[5]), decode_output[3]},
@@ -367,7 +401,7 @@ module  alt_mem_ddrx_ecc_decoder_32_altecc_decoder
 		syn_bit = syn_t[4],
 		syn_e = syndrome[6],
 		syn_t = {(syn_t[3] | syndrome[5]), (syn_t[2] | syndrome[4]), (syn_t[1] | syndrome[3]), (syn_t[0] | syndrome[2]), (syndrome[0] | syndrome[1])},
-		syndrome = {parity_final_wire[37], parity_06_wire[5], parity_05_wire[0], parity_04_wire[1], parity_03_wire[4], parity_02_wire[9], parity_01_wire[18]};
+		syndrome_wire = {parity_final_wire[37], parity_06_wire[5], parity_05_wire[0], parity_04_wire[1], parity_03_wire[4], parity_02_wire[9], parity_01_wire[18]};
 endmodule //alt_mem_ddrx_ecc_decoder_32_altecc_decoder
 //VALID FILE
 
@@ -375,14 +409,23 @@ endmodule //alt_mem_ddrx_ecc_decoder_32_altecc_decoder
 // synopsys translate_off
 `timescale 1 ps / 1 ps
 // synopsys translate_on
-module alt_mem_ddrx_ecc_decoder_32 (
+module alt_mem_ddrx_ecc_decoder_32
+# (
+	parameter
+		CFG_ECC_DECODER_REG = 1
+) 
+(
+	clk,
+	reset_n,
 	data,
 	err_corrected,
 	err_detected,
 	err_fatal,
     err_sbe,
 	q)/* synthesis synthesis_clearbox = 1 */;
-
+	
+	input			clk;
+	input			reset_n;
 	input	[38:0]  data;
 	output	  err_corrected;
 	output	  err_detected;
@@ -401,7 +444,13 @@ module alt_mem_ddrx_ecc_decoder_32 (
 	wire  err_sbe = sub_wire4;
 	wire [31:0] q = sub_wire3[31:0];
 
-	alt_mem_ddrx_ecc_decoder_32_altecc_decoder	alt_mem_ddrx_ecc_decoder_32_altecc_decoder_component (
+	alt_mem_ddrx_ecc_decoder_32_altecc_decoder	
+	# (
+		.CFG_ECC_DECODER_REG	(CFG_ECC_DECODER_REG)
+	)
+	alt_mem_ddrx_ecc_decoder_32_altecc_decoder_component (
+				.clk (clk),
+				.reset_n (reset_n),
 				.data (data),
 				.err_detected (sub_wire0),
 				.err_fatal (sub_wire1),

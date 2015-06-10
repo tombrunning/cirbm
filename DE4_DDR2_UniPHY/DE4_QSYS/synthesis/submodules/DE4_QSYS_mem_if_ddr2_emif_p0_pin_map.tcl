@@ -1,4 +1,4 @@
-# (C) 2001-2012 Altera Corporation. All rights reserved.
+# (C) 2001-2013 Altera Corporation. All rights reserved.
 # Your use of Altera Corporation's design tools, logic functions and other 
 # software and tools, and its AMPP partner logic functions, and any output 
 # files any of the foregoing (including device programming or simulation 
@@ -32,7 +32,7 @@ set script_dir [file dirname [info script]]
 source [file join $script_dir DE4_QSYS_mem_if_ddr2_emif_p0_parameters.tcl]
 load_package sdc_ext
 
-proc find_all_pins { mystring } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_find_all_pins { mystring } {
 	set allpins [get_pins -compatibility_mode $mystring ]
 
 	foreach_in_collection pin $allpins {
@@ -42,7 +42,192 @@ proc find_all_pins { mystring } {
 	}
 }
 
-proc find_all_keepers { mystring } {
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_index_in_collection { col j } {
+	set i 0
+	foreach_in_collection path $col {
+		if {$i == $j} {
+			return $path
+		}
+		set i [expr $i + 1]
+	}
+	return ""
+}
+
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_to_pin_name_mapping {} {
+	set result [list]
+	set clocks_collection [get_clocks]
+	foreach_in_collection clock $clocks_collection { 
+		set clock_name [get_clock_info -name $clock] 
+		set clock_target [get_clock_info -targets $clock]
+		set first_index [DE4_QSYS_mem_if_ddr2_emif_p0_index_in_collection $clock_target 0]
+		set catch_exception [catch {get_pin_info -name $first_index} pin_name]
+		if {$catch_exception == 0} {
+			lappend result [list $clock_name $pin_name]
+		}
+	}
+	return $result
+}              
+
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name { pin_name } {
+	set table [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_to_pin_name_mapping]
+	foreach entry $table {
+		if {[string compare [lindex [lindex [split $entry] 1] 0] $pin_name] == 0} {
+			return [lindex $entry 0]
+		}
+	}
+	return ""
+}
+
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name_vseries {pin_name suffix} {
+	set name [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name $pin_name]
+	if {[string compare -nocase $name ""] == 0} {
+		set pll_clock $pin_name
+		regsub {~PLL_OUTPUT_COUNTER\|divclk$} $pll_clock "" pll_clock
+		regsub {_phy$} $pll_clock "" pll_clock
+		regsub {[0-9]+$} $pll_clock "" pll_clock
+		set pll_clock "${pll_clock}_${suffix}"
+	} else {
+		set pll_clock $name
+	}
+	return $pll_clock
+}
+
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name_pre_vseries {pin_name suffix} {
+	set name [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name $pin_name]
+	if {[string compare -nocase $name ""] == 0} {
+		set pll_clock $pin_name
+		regsub {upll_memphy\|auto_generated\|pll1\|clk\[[0-9]+\]$} $pll_clock "pll" pll_clock
+		set pll_clock "${pll_clock}_${suffix}"
+	} else {
+		set pll_clock $name
+	}
+	return $pll_clock
+}
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_or_add_clock_vseries_from_virtual_refclk {args} {
+	array set opts { /
+		-suffix "" /
+		-target "" /
+		-period "" /
+		-phase 0 }
+
+	array set opts $args
+	
+	set clock_name [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name $opts(-target)]
+
+	
+	if {[string compare -nocase $clock_name ""] == 0} {
+		set clock_name $opts(-target)
+		set suffix $opts(-suffix)
+		
+		regsub {~PLL_OUTPUT_COUNTER\|divclk$} $clock_name "" clock_name
+		regsub {_phy$} $clock_name "" clock_name
+		regsub {[0-9]+$} $clock_name "" clock_name
+		set clock_name "${clock_name}_${suffix}"
+		set re [expr $opts(-period) * $opts(-phase)/360]
+		set fe [expr $opts(-period) * $opts(-phase)/360 + $opts(-period)/2]
+		
+		create_clock \
+			-name $clock_name \
+			-period $opts(-period) \
+			-waveform [ list $re $fe ] \
+			$opts(-target)
+	}
+	
+	return $clock_name
+}
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_or_add_clock_vseries {args} {
+	array set opts { /
+		-suffix "" /
+		-target "" /
+		-source "" /
+		-multiply_by 1 /
+		-divide_by 1 /
+		-phase 0 }
+
+	array set opts $args
+	set target $opts(-target)
+
+	set clock_name [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name $opts(-target)]
+	
+	if {[string compare -nocase $clock_name ""] == 0} {
+		set clock_name $opts(-target)
+		set suffix $opts(-suffix)
+		
+		regsub {~PLL_OUTPUT_COUNTER\|divclk$} $clock_name "" clock_name
+		regsub {_phy$} $clock_name "" clock_name
+		regsub {[0-9]+$} $clock_name "" clock_name
+		regsub -all {\\} $clock_name "" clock_name
+		set clock_name "${clock_name}_${suffix}"
+		set source_name "\{$opts(-source)\}"
+
+		create_generated_clock \
+			-name ${clock_name} \
+			-source ${source_name} \
+			-multiply_by $opts(-multiply_by) \
+			-divide_by $opts(-divide_by) \
+			-phase $opts(-phase) \
+			$target
+	}
+	
+	return $clock_name
+}
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_or_add_clock_pre_vseries {args} {
+	array set opts { /
+		-suffix "" /
+		-target "" /
+		-source "" /
+		-multiply_by 1 /
+		-divide_by 1 /
+		-phase 0 }
+
+	array set opts $args
+	
+	set clock_name [DE4_QSYS_mem_if_ddr2_emif_p0_get_clock_name_from_pin_name $opts(-target)]
+	
+	if {[string compare -nocase $clock_name ""] == 0} {
+		set clock_name $opts(-target)
+		set suffix $opts(-suffix)
+		
+		regsub {upll_memphy\|auto_generated\|pll1\|clk\[[0-9]+\]$} $clock_name "pll" clock_name
+		set clock_name "${clock_name}_${suffix}"
+		
+		create_generated_clock \
+			-name $clock_name \
+			-source $opts(-source) \
+			-multiply_by $opts(-multiply_by) \
+			-divide_by $opts(-divide_by) \
+			-phase $opts(-phase) \
+			$opts(-target)
+	}
+	
+	return $clock_name
+}
+
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_source_clock_pin_name {node_name} {
+
+	set nodename ""
+	set nodes [get_nodes $node_name]
+	DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth [DE4_QSYS_mem_if_ddr2_emif_p0_index_in_collection $nodes 0] DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pll_clk clock results_array 10
+	if {[array size results_array] == 1} {
+		set pin_id [lindex [array names results_array] 0]
+		if {[string compare -nocase $pin_id ""] != 0} {
+			set nodename [get_node_info -name $pin_id]
+		}
+	}
+	return $nodename
+}
+
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_find_all_keepers { mystring } {
 	set allkeepers [get_keepers $mystring ]
 
 	foreach_in_collection keeper $allkeepers {
@@ -52,11 +237,11 @@ proc find_all_keepers { mystring } {
 	}
 }
 
-proc round_3dp { x } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp { x } {
 	return [expr { round($x * 1000) / 1000.0  } ]
 }
 
-proc get_timequest_name {hier_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_timequest_name {hier_name} {
 	set sta_name ""
 	for {set inst_start [string first ":" $hier_name]} {$inst_start != -1} {} {
 		incr inst_start
@@ -72,27 +257,19 @@ proc get_timequest_name {hier_name} {
 	return $sta_name
 }
 
-proc are_entity_names_on { } {
-	
+proc DE4_QSYS_mem_if_ddr2_emif_p0_are_entity_names_on { } {
 	set entity_names_on 1
 
-	
-	
-	
-	
-	
-	
 
-	
 	return [set_project_mode -is_show_entity]	
 }
 
-proc get_core_instance_list {corename} {
-	set full_instance_list [get_core_full_instance_list $corename]
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_core_instance_list {corename} {
+	set full_instance_list [DE4_QSYS_mem_if_ddr2_emif_p0_get_core_full_instance_list $corename]
 	set instance_list [list]
 
 	foreach inst $full_instance_list {
-		set sta_name [get_timequest_name $inst]
+		set sta_name [DE4_QSYS_mem_if_ddr2_emif_p0_get_timequest_name $inst]
 		if {[lsearch $instance_list [escape_brackets $sta_name]] == -1} {
 			lappend instance_list $sta_name
 		}
@@ -100,31 +277,19 @@ proc get_core_instance_list {corename} {
 	return $instance_list
 }
 
-proc get_core_full_instance_list {corename} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_core_full_instance_list {corename} {
 	set allkeepers [get_keepers * ]
 
-	
 	set_project_mode -always_show_entity_name on
 
 	set instance_list [list]
 
 	set inst_regexp {(^.*}
-	append inst_regexp ${corename}
-	
-	
-	
-	
-	
-	
-	
-	regsub {_p0$} $inst_regexp {_?[0-9]*} inst_regexp
 	append inst_regexp {:[A-Za-z0-9\.\\_\[\]\-\$():]+)\|}
 	append inst_regexp ${corename}
 	append inst_regexp {:[A-Za-z0-9\.\\_\[\]\-\$():]+\|}
-	
-	
 	append inst_regexp "${corename}_memphy"
-	append inst_regexp {:[A-Za-z0-9\.\\_\[\]\-\$():]+}
+	append inst_regexp {:umemphy}
 
 	foreach_in_collection keeper $allkeepers {
 		set name [ get_node_info -name $keeper ]
@@ -147,7 +312,8 @@ proc get_core_full_instance_list {corename} {
 	return $instance_list
 }
 
-proc traverse_fanin_up_to_depth { node_id match_command edge_type results_array_name depth} {
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth { node_id match_command edge_type results_array_name depth} {
 	upvar 1 $results_array_name results
 
 	if {$depth < 0} {
@@ -161,13 +327,12 @@ proc traverse_fanin_up_to_depth { node_id match_command edge_type results_array_
 		if {$match_command == "" || [eval $match_command $fanin_id] != 0} {
 			set results($fanin_id) 1
 		} elseif {$depth == 0} {
-			
 		} else {
-			traverse_fanin_up_to_depth $fanin_id $match_command $edge_type results [expr {$depth - 1}]
+			DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth $fanin_id $match_command $edge_type results [expr {$depth - 1}]
 		}
 	}
 }
-proc is_node_type_pll_inclk { node_id } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pll_inclk { node_id } {
 	set cell_id [get_node_info -cell $node_id]
 	
 	if {$cell_id == ""} {
@@ -177,7 +342,6 @@ proc is_node_type_pll_inclk { node_id } {
 		if {$atom_type == "PLL"} {
 			set node_name [get_node_info -name $node_id]
 			set fanin_edges [get_node_info -clock_edges $node_id]
-			
 			if {([string match "*|inclk" $node_name] || [string match "*|inclk\\\[0\\\]" $node_name]) && [llength $fanin_edges] > 0} {
 				set result 1
 			} else {
@@ -190,7 +354,7 @@ proc is_node_type_pll_inclk { node_id } {
 	return $result
 }
 
-proc is_node_type_pin { node_id } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pin { node_id } {
 	set node_type [get_node_info -type $node_id]
 	if {$node_type == "port"} {
 		set result 1
@@ -200,10 +364,10 @@ proc is_node_type_pin { node_id } {
 	return $result
 }
 
-proc get_input_clk_id { pll_output_node_id } {
-	if {[is_node_type_pll_clk $pll_output_node_id]} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_input_clk_id { pll_output_node_id } {
+	if {[DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pll_clk $pll_output_node_id]} {
 		array set results_array [list]
-		traverse_fanin_up_to_depth $pll_output_node_id is_node_type_pll_inclk clock results_array 1
+		DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth $pll_output_node_id DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pll_inclk clock results_array 1
 		if {[array size results_array] == 1} {
 			# Found PLL inclk, now find the input pin
 			set pll_inclk_id [lindex [array names results_array] 0]
@@ -211,21 +375,21 @@ proc get_input_clk_id { pll_output_node_id } {
 			# If fed by a pin, it should be fed by a dedicated input pin,
 			# and not a global clock network.  Limit the search depth to
 			# prevent finding pins fed by global clock (only allow io_ibuf pins)
-			traverse_fanin_up_to_depth $pll_inclk_id is_node_type_pin clock results_array 3
+			DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth $pll_inclk_id DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pin clock results_array 3
 			if {[array size results_array] == 1} {
 				# Fed by a dedicated input pin
 				set pin_id [lindex [array names results_array] 0]
 				set result $pin_id
 			} else {
-				traverse_fanin_up_to_depth $pll_inclk_id is_node_type_pll_clk clock pll_clk_results_array 1
-				traverse_fanin_up_to_depth $pll_inclk_id is_node_type_pll_clk clock pll_clk_results_array2 2
+				DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth $pll_inclk_id DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pll_clk clock pll_clk_results_array 1
+				DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth $pll_inclk_id DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pll_clk clock pll_clk_results_array2 2
 				if {[array size pll_clk_results_array] == 1} {
 					#  Fed by a neighboring PLL via cascade path.
 					#  Should be okay as long as that PLL has its input clock
 					#  fed by a dedicated input.  If there isn't, TimeQuest will give its own warning about undefined clocks.
 					set source_pll_clk_id [lindex [array names pll_clk_results_array] 0]
 					set source_pll_clk [get_node_info -name $source_pll_clk_id]
-					set result [get_input_clk_id $source_pll_clk_id]
+					set result [DE4_QSYS_mem_if_ddr2_emif_p0_get_input_clk_id $source_pll_clk_id]
 					if {$result != -1} {
 						post_message -type info "Please ensure source clock is defined for PLL with output $source_pll_clk"
 					} else {
@@ -239,14 +403,14 @@ proc get_input_clk_id { pll_output_node_id } {
 					set source_pll_clk_id [lindex [array names pll_clk_results_array2] 0]
 					set source_pll_clk [get_node_info -name $source_pll_clk_id]
 					post_message -type critical_warning "PLL clock [get_node_info -name $pll_output_node_id] not driven by a dedicated clock pin or neighboring PLL source.  To ensure minimum jitter on memory interface clock outputs, the PLL clock source should be a dedicated PLL input clock pin or an output of the neighboring PLL, and not go through a global clock network. Timing analyses may not be valid."
-					set result [get_input_clk_id $source_pll_clk_id]
+					set result [DE4_QSYS_mem_if_ddr2_emif_p0_get_input_clk_id $source_pll_clk_id]
 				
 				} else {
 					#  If you got here it's because there's a buffer between the PLL input and the PIN. Issue a warning
 					#  but keep searching for the pin anyways, otherwise all the timing constraining scripts will
 					#  crash
 					post_message -type critical_warning "PLL clock [get_node_info -name $pll_output_node_id] not driven by a dedicated clock pin or neighboring PLL source.  To ensure minimum jitter on memory interface clock outputs, the PLL clock source should be a dedicated PLL input clock pin or an output of the neighboring PLL. Timing analyses may not be valid."
-					traverse_fanin_up_to_depth $pll_inclk_id is_node_type_pin clock results_array 9
+					DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth $pll_inclk_id DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pin clock results_array 9
 					if {[array size results_array] == 1} {
 						set pin_id [lindex [array names results_array] 0]
 						set result $pin_id
@@ -261,12 +425,12 @@ proc get_input_clk_id { pll_output_node_id } {
 			set result -1
 		}
 	} else {
-		error "Internal error: get_input_clk_id only works on PLL output clocks"
+		error "Internal error: DE4_QSYS_mem_if_ddr2_emif_p0_get_input_clk_id only works on PLL output clocks"
 	}
 	return $result
 }
 
-proc is_node_type_pll_clk { node_id } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pll_clk { node_id } {
 	set cell_id [get_node_info -cell $node_id]
 	
 	if {$cell_id == ""} {
@@ -287,7 +451,7 @@ proc is_node_type_pll_clk { node_id } {
 	return $result
 }
 
-proc get_pll_clock { dest_id_list node_type clock_id_name search_depth} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock { dest_id_list node_type clock_id_name search_depth} {
 	if {$clock_id_name != ""} {
 		upvar 1 $clock_id_name clock_id
 	}
@@ -295,7 +459,7 @@ proc get_pll_clock { dest_id_list node_type clock_id_name search_depth} {
 
 	array set clk_array [list]
 	foreach node_id $dest_id_list {
-		traverse_fanin_up_to_depth $node_id is_node_type_pll_clk clock clk_array $search_depth
+		DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth $node_id DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_pll_clk clock clk_array $search_depth
 	}
 	if {[array size clk_array] == 1} {
 		set clock_id [lindex [array names clk_array] 0]
@@ -305,19 +469,18 @@ proc get_pll_clock { dest_id_list node_type clock_id_name search_depth} {
 		set clk ""
 	} else {
 		set clk ""
-		
 	}
 
 	return $clk
 }
 
-proc get_pll_clock_name { clock_id } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name { clock_id } {
 	set clock_name [get_node_info -name $clock_id]
 
 	return $clock_name
 }
 
-proc get_pll_clock_name_for_acf { clock_id pll_output_wire_name } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name_for_acf { clock_id pll_output_wire_name } {
 	set clock_name [get_node_info -name $clock_id]
 	set lp0 [string last "|" $clock_name]
 	set lp1 [string last "|" $clock_name [expr $lp0 - 1]]
@@ -325,7 +488,7 @@ proc get_pll_clock_name_for_acf { clock_id pll_output_wire_name } {
 	return $clock_name
 }
 
-proc get_output_clock_id { ddio_output_pin_list pin_type msg_list_name {max_search_depth 13} } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_id { ddio_output_pin_list pin_type msg_list_name {max_search_depth 13} } {
 	upvar 1 $msg_list_name msg_list
 	set output_clock_id -1
 	
@@ -340,11 +503,11 @@ proc get_output_clock_id { ddio_output_pin_list pin_type msg_list_name {max_sear
 	} else {
 		lappend msg_list "warning" "Could not find all $pin_type pins"
 	}
-	get_pll_clock $output_id_list $pin_type output_clock_id $max_search_depth
+	DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock $output_id_list $pin_type output_clock_id $max_search_depth
 	return $output_clock_id
 }
 
-proc get_output_clock_id2 { ddio_output_pin_list pin_type msg_list_name {max_search_depth 20} } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_id2 { ddio_output_pin_list pin_type msg_list_name {max_search_depth 20} } {
 	upvar 1 $msg_list_name msg_list
 	set output_clock_id -1
 	
@@ -359,11 +522,11 @@ proc get_output_clock_id2 { ddio_output_pin_list pin_type msg_list_name {max_sea
 	} else {
 		lappend msg_list "warning" "Could not find all $pin_type pins"
 	}
-	get_pll_clock $output_id_list $pin_type output_clock_id $max_search_depth
+	DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock $output_id_list $pin_type output_clock_id $max_search_depth
 	return $output_clock_id
 }
 
-proc is_node_type_clkbuf { node_id } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_clkbuf { node_id } {
 	set cell_id [get_node_info -cell $node_id]
 	if {$cell_id == ""} {
 		set result 0
@@ -378,7 +541,7 @@ proc is_node_type_clkbuf { node_id } {
 	return $result
 }
 
-proc get_clkbuf_clock { dest_id_list node_type clock_id_name search_depth} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_clkbuf_clock { dest_id_list node_type clock_id_name search_depth} {
 	if {$clock_id_name != ""} {
 		upvar 1 $clock_id_name clock_id
 	}
@@ -386,7 +549,7 @@ proc get_clkbuf_clock { dest_id_list node_type clock_id_name search_depth} {
 
 	array set clk_array [list]
 	foreach node_id $dest_id_list {
-		traverse_fanin_up_to_depth $node_id is_node_type_clkbuf clock clk_array $search_depth
+		DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth $node_id DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_clkbuf clock clk_array $search_depth
 	}
 	if {[array size clk_array] == 1} {
 		set clock_id [lindex [array names clk_array] 0]
@@ -400,7 +563,7 @@ proc get_clkbuf_clock { dest_id_list node_type clock_id_name search_depth} {
 	return $clk
 }
 
-proc get_output_clock_clkbuf_id { ddio_output_pin_list pin_type msg_list_name {max_search_depth 13} } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_clkbuf_id { ddio_output_pin_list pin_type msg_list_name {max_search_depth 13} } {
 	upvar 1 $msg_list_name msg_list
 	set output_clock_id -1
 	
@@ -415,12 +578,12 @@ proc get_output_clock_clkbuf_id { ddio_output_pin_list pin_type msg_list_name {m
 	} else {
 		lappend msg_list "warning" "Could not find all $pin_type pins"
 	}
-	get_clkbuf_clock $output_id_list $pin_type output_clock_id $max_search_depth
+	DE4_QSYS_mem_if_ddr2_emif_p0_get_clkbuf_clock $output_id_list $pin_type output_clock_id $max_search_depth
 	return $output_clock_id
 }
 
 
-proc is_node_type_clk_phase_select { node_id } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_clk_phase_select { node_id } {
 	set cell_id [get_node_info -cell $node_id]
 	if {$cell_id == ""} {
 		set result 0
@@ -435,7 +598,7 @@ proc is_node_type_clk_phase_select { node_id } {
 	return $result
 }
 
-proc get_clk_phase_select_clock { dest_id_list node_type clock_id_name search_depth} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_clk_phase_select_clock { dest_id_list node_type clock_id_name search_depth} {
 	if {$clock_id_name != ""} {
 		upvar 1 $clock_id_name clock_id
 	}
@@ -443,7 +606,7 @@ proc get_clk_phase_select_clock { dest_id_list node_type clock_id_name search_de
 
 	array set clk_array [list]
 	foreach node_id $dest_id_list {
-		traverse_fanin_up_to_depth $node_id is_node_type_clk_phase_select clock clk_array $search_depth
+		DE4_QSYS_mem_if_ddr2_emif_p0_traverse_fanin_up_to_depth $node_id DE4_QSYS_mem_if_ddr2_emif_p0_is_node_type_clk_phase_select clock clk_array $search_depth
 	}
 	if {[array size clk_array] == 1} {
 		set clock_id [lindex [array names clk_array] 0]
@@ -457,7 +620,7 @@ proc get_clk_phase_select_clock { dest_id_list node_type clock_id_name search_de
 	return $clk
 }
 
-proc get_output_clock_clk_phase_select_id { ddio_output_pin_list pin_type msg_list_name {max_search_depth 20} } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_clk_phase_select_id { ddio_output_pin_list pin_type msg_list_name {max_search_depth 20} } {
 	upvar 1 $msg_list_name msg_list
 	set output_clock_id -1
 	
@@ -472,7 +635,7 @@ proc get_output_clock_clk_phase_select_id { ddio_output_pin_list pin_type msg_li
 	} else {
 		lappend msg_list "warning" "Could not find all $pin_type pins"
 	}
-	get_clk_phase_select_clock $output_id_list $pin_type output_clock_id $max_search_depth
+	DE4_QSYS_mem_if_ddr2_emif_p0_get_clk_phase_select_clock $output_id_list $pin_type output_clock_id $max_search_depth
 	return $output_clock_id
 }
 
@@ -482,7 +645,7 @@ proc post_sdc_message {msg_type msg} {
 	}
 }
 
-proc get_names_in_collection { col } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_names_in_collection { col } {
 	set res [list]
 	foreach_in_collection node $col {
 		lappend res [ get_node_info -name $node ]
@@ -490,7 +653,7 @@ proc get_names_in_collection { col } {
 	return $res
 }
 
-proc static_map_expand_list { FH listname pinname } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list { FH listname pinname } {
 	upvar $listname local_list
 
 	puts $FH ""
@@ -501,7 +664,7 @@ proc static_map_expand_list { FH listname pinname } {
 	}
 }
 
-proc static_map_expand_list_of_list { FH listname pinname } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list_of_list { FH listname pinname } {
 	upvar $listname local_list
 
 	puts $FH ""
@@ -522,20 +685,19 @@ proc static_map_expand_list_of_list { FH listname pinname } {
 	}
 }
 
-proc static_map_expand_string { FH stringname pinname } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string { FH stringname pinname } {
 	upvar $stringname local_string
 
 	puts $FH ""
 	puts $FH "   # $pinname"
-	
 	puts $FH "   set pins($pinname) $local_string($pinname)"
 }
 
-proc format_3dp { x } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_format_3dp { x } {
 	return [format %.3f $x]
 }
 
-proc get_colours { x y } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_colours { x y } {
 
 	set fcolour [list "black"]
 	if {$x < 0} {
@@ -572,7 +734,7 @@ proc max { a b } {
 	}
 }
 
-proc max_in_collection { col attribute } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection { col attribute } {
 	set i 0
 	set max 0
 	foreach_in_collection path $col {
@@ -589,7 +751,7 @@ proc max_in_collection { col attribute } {
 	return $max
 }
 
-proc min_in_collection { col attribute } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection { col attribute } {
 	set i 0
 	set min 0
 	foreach_in_collection path $col {
@@ -606,7 +768,7 @@ proc min_in_collection { col attribute } {
 	return $min
 }
 
-proc min_in_collection_to_name { col attribute name } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection_to_name { col attribute name } {
 	set i 0
 	set min 0
 	foreach_in_collection path $col {
@@ -625,7 +787,7 @@ proc min_in_collection_to_name { col attribute name } {
 	return $min
 }
 
-proc min_in_collection_from_name { col attribute name } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection_from_name { col attribute name } {
 	set i 0
 	set min 0
 	foreach_in_collection path $col {
@@ -644,7 +806,7 @@ proc min_in_collection_from_name { col attribute name } {
 	return $min
 }
 
-proc max_in_collection_to_name { col attribute name } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection_to_name { col attribute name } {
 	set i 0
 	set max 0
 	foreach_in_collection path $col {
@@ -663,7 +825,7 @@ proc max_in_collection_to_name { col attribute name } {
 	return $max
 }
 
-proc max_in_collection_from_name { col attribute name } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection_from_name { col attribute name } {
 	set i 0
 	set max 0
 	foreach_in_collection path $col {
@@ -683,7 +845,7 @@ proc max_in_collection_from_name { col attribute name } {
 }
 
 
-proc min_in_collection_to_name2 { col attribute name } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection_to_name2 { col attribute name } {
 	set i 0
 	set min 0
 	foreach_in_collection path $col {
@@ -702,7 +864,7 @@ proc min_in_collection_to_name2 { col attribute name } {
 	return $min
 }
 
-proc min_in_collection_from_name2 { col attribute name } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_min_in_collection_from_name2 { col attribute name } {
 	set i 0
 	set min 0
 	foreach_in_collection path $col {
@@ -721,7 +883,7 @@ proc min_in_collection_from_name2 { col attribute name } {
 	return $min
 }
 
-proc max_in_collection_to_name2 { col attribute name } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection_to_name2 { col attribute name } {
 	set i 0
 	set max 0
 	foreach_in_collection path $col {
@@ -740,7 +902,7 @@ proc max_in_collection_to_name2 { col attribute name } {
 	return $max
 }
 
-proc max_in_collection_from_name2 { col attribute name } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_max_in_collection_from_name2 { col attribute name } {
 	set i 0
 	set max 0
 	foreach_in_collection path $col {
@@ -759,7 +921,48 @@ proc max_in_collection_from_name2 { col attribute name } {
 	return $max
 }
 
-proc get_model_corner {} {
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_max_clock_path_delay_through_clock_node {from through to} {
+	set init 0
+	set max_delay 0
+	set paths [get_path -rise_from $through -rise_to $to]
+	foreach_in_collection path1 $paths {
+		set delay [get_path_info $path1 -arrival_time]
+		set clock_node [get_node_info -name [get_path_info $path1 -from]]
+				
+		set paths2 [get_path -rise_from $from -rise_to $clock_node]
+		foreach_in_collection path2 $paths2 {
+			set total_delay [expr $delay + [get_path_info $path2 -arrival_time]]
+			if {$init == 0 || $total_delay > $max_delay} {
+				set init 1
+				set max_delay $total_delay
+			}
+		}
+	}
+	return $max_delay
+}
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_min_clock_path_delay_through_clock_node {from through to} {
+	set init 0
+	set min_delay 0
+	set paths [get_path -rise_from $through -rise_to $to -min_path]
+	foreach_in_collection path1 $paths {
+		set delay [get_path_info $path1 -arrival_time]
+		set clock_node [get_node_info -name [get_path_info $path1 -from]]
+
+		set paths2 [get_path -rise_from $from -rise_to $clock_node -min_path]
+		foreach_in_collection path2 $paths2 {
+			set total_delay [expr $delay + [get_path_info $path2 -arrival_time]]
+			if {$init == 0 || $total_delay < $min_delay} {
+				set init 1
+				set min_delay $total_delay
+			}
+		}
+	}
+	return $min_delay
+}
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_model_corner {} {
 
 	set operating_conditions [get_operating_conditions]
 	set return_value [list]
@@ -773,7 +976,7 @@ proc get_model_corner {} {
 	return $return_value
 }
 
-proc get_min_aiot_delay {pinname} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_min_aiot_delay {pinname} {
 
 	set atom_id [get_atom_node_by_name -name $pinname]
 	set sin_pin [create_pin_object -atom $atom_id]
@@ -791,8 +994,38 @@ proc get_min_aiot_delay {pinname} {
 	return [min $rise $fall]
 }
 
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_rise_aiot_delay {pinname} {
 
-proc get_aiot_attr {pinname attr} {
+	set atom_id [get_atom_node_by_name -name $pinname]
+	set sin_pin [create_pin_object -atom $atom_id]
+	set results [get_simulation_results -pin $sin_pin -aiot]
+	
+	set rise 0
+	foreach { key value } $results {
+            if {$key == "Absolute Rise Delay to Far-end"} {
+               set rise $value
+            }
+	}
+	return $rise
+}
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_fall_aiot_delay {pinname} {
+
+	set atom_id [get_atom_node_by_name -name $pinname]
+	set sin_pin [create_pin_object -atom $atom_id]
+	set results [get_simulation_results -pin $sin_pin -aiot]
+	
+	set fall 0
+	foreach { key value } $results {
+            if {$key == "Absolute Fall Delay to Far-end"} {
+               set fall $value
+            }
+	}
+	return $fall
+}
+
+
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_aiot_attr {pinname attr} {
 
 	set atom_id [get_atom_node_by_name -name $pinname]
 	set sin_pin [create_pin_object -atom $atom_id]
@@ -807,7 +1040,7 @@ proc get_aiot_attr {pinname attr} {
 	return $value
 }
 
-proc get_pll_phase_shift {output_counter_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_phase_shift {output_counter_name} {
 	load_package atoms
 	read_atom_netlist
 	set phase_shift ""
@@ -836,7 +1069,7 @@ proc get_pll_phase_shift {output_counter_name} {
 
 # ----------------------------------------------------------------
 #
-proc get_io_standard {target_pin} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_io_standard {target_pin} {
 #
 # Description: Gets the I/O standard of the given memory interface pin
 #              This function assumes the fitter has already completed and the
@@ -844,7 +1077,7 @@ proc get_io_standard {target_pin} {
 #
 # ----------------------------------------------------------------
 	# Look through the pin report
-	set io_std [get_fitter_report_pin_info $target_pin "I/O Standard" -1]
+	set io_std [DE4_QSYS_mem_if_ddr2_emif_p0_get_fitter_report_pin_info $target_pin "I/O Standard" -1]
 	if {$io_std == ""} {
 		return "UNKNOWN"
 	}
@@ -870,11 +1103,18 @@ proc get_io_standard {target_pin} {
 		"Differential 1.5-V HSTL Class I" {set result "DIFF_HSTL"}
 		"1.5-V HSTL Class II" {set result "HSTL_II"}
 		"Differential 1.5-V HSTL Class II" {set result "DIFF_HSTL_II"}
+		"1.2-V HSTL Class I" {set result "SSTL_125"}
+		"Differential 1.2-V HSTL Class I" {set result "DIFF_SSTL_125"}
+		"1.2-V HSTL Class II" {set result "SSTL_125"}
+		"Differential 1.2-V HSTL Class II" {set result "DIFF_SSTL_125"}
+		"SSTL-15" {set result "SSTL_15"}
+		"Differential 1.5-V SSTL" {set result "DIFF_SSTL_15"}
 		"SSTL-135" {set result "SSTL_135"}
 		"Differential 1.35-V SSTL" {set result "DIFF_SSTL_135"}
 		"SSTL-125" {set result "SSTL_125"}
 		"Differential 1.25-V SSTL" {set result "DIFF_SSTL_125"}
 		"SSTL-12" {set result "DIFF_SSTL_125"}
+		"Differential 1.2-V HSUL" {set result "DIFF_HSUL_12"}
 		default {
 			post_message -type error "Found unsupported Memory I/O standard $io_std on pin $target_pin"
 			set result "UNKNOWN"
@@ -882,7 +1122,54 @@ proc get_io_standard {target_pin} {
 	}
 	return $result
 }
-# (C) 2001-2012 Altera Corporation. All rights reserved.
+
+# Routine to find the termination pins
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_rzq_pins { instname all_rzq_pins } {
+	upvar $all_rzq_pins rzqpins
+	load_package atoms
+	read_atom_netlist
+	set rzq_pins [ list ]
+	set entity_names_on [ DE4_QSYS_mem_if_ddr2_emif_p0_are_entity_names_on ]
+	
+	# Get all termination atoms, to which rzqpin should be attached
+	set_project_mode -always_show_entity_name off
+	set instance ${instname}*
+	set atoms [get_atom_nodes -type TERMINATION -matching [escape_brackets $instance] ]
+	post_message -type info "Number of Termination Atoms are [get_collection_size $atoms]"
+	foreach_in_collection term_atom $atoms { 
+		set rzq_pin ""
+		set atom $term_atom
+		set term_atom_name [get_atom_node_info -key name -node $term_atom] 
+		post_message -type info "Found Termination Atom $term_atom_name"
+		set type [get_atom_node_info -key type -node $term_atom] 
+		
+		# Check until you traverse to an IO_PAD for the RZQ Pin
+		while { ![regexp IO_PAD $type ] } { 
+			set name [get_atom_node_info -key name -node $atom] 
+			set iterms [get_atom_iports -node $atom]
+			set iterm_size [llength $iterms]
+			# Check for Multiple Inputs
+			if { $iterm_size > 1 } {
+				post_message -type error " Multiple inputs to a node:$name attached to a  Termination_Atom:$term_atom_name "
+				break
+			
+			}
+			
+			foreach iterm $iterms { 
+				set fanin	[get_atom_port_info -node $atom -type iport -port_id $iterm -key fanin]
+				set atom [lindex $fanin 0]
+				set type [get_atom_node_info -key type -node $atom]
+				set rzq_pin [get_atom_node_info -key name -node $atom]
+			}		
+		}
+			
+		lappend rzq_pins [ join $rzq_pin ]
+	}
+
+	set_project_mode -always_show_entity_name qsf
+	set rzqpins $rzq_pins
+}
+# (C) 2001-2013 Altera Corporation. All rights reserved.
 # Your use of Altera Corporation's design tools, logic functions and other 
 # software and tools, and its AMPP partner logic functions, and any output 
 # files any of the foregoing (including device programming or simulation 
@@ -909,7 +1196,7 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_sort_proc {a b} {
 	return 0
 }
 
-proc traverse_atom_path {atom_id atom_oport_id path} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_traverse_atom_path {atom_id atom_oport_id path} {
 	# Return list of {atom oterm_id} pairs by tracing the atom netlist starting from the given atom_id through the given path
 	# Path consists of list of {atom_type fanin|fanout|end <port_type> <-optional>}
 	set result [list]
@@ -932,9 +1219,9 @@ proc traverse_atom_path {atom_id atom_oport_id path} {
 					set iport_fanin [get_atom_port_info -key fanin -node $atom_id -port_id $atom_iport -type iport]
 					set source_atom [lindex $iport_fanin 0]
 					set source_oterm [lindex $iport_fanin 1]
-					set result [traverse_atom_path $source_atom $source_oterm [lrange $path 1 end]]
+					set result [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_atom_path $source_atom $source_oterm [lrange $path 1 end]]
 				} elseif {$atom_optional == "-optional"} {
-					set result [traverse_atom_path $atom_id $atom_oport_id [lrange $path 1 end]]
+					set result [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_atom_path $atom_id $atom_oport_id [lrange $path 1 end]]
 				}
 			} elseif {$next_direction == "fanout"} {
 				set atom_oport [get_atom_oport_by_type -node $atom_id -type $port_type]
@@ -943,7 +1230,7 @@ proc traverse_atom_path {atom_id atom_oport_id path} {
 					foreach dest $oport_fanout {
 						set dest_atom [lindex $dest 0]
 						set dest_iterm [lindex $dest 1]
-						set fanout_result_list [traverse_atom_path $dest_atom -1 [lrange $path 1 end]]
+						set fanout_result_list [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_atom_path $dest_atom -1 [lrange $path 1 end]]
 						foreach fanout_result $fanout_result_list {
 							if {[lsearch $result $fanout_result] == -1} {
 								lappend result $fanout_result
@@ -955,20 +1242,20 @@ proc traverse_atom_path {atom_id atom_oport_id path} {
 				error "Unexpected path"
 			}
 		} elseif {$atom_optional == "-optional"} {
-			set result [traverse_atom_path $atom_id $atom_oport_id [lrange $path 1 end]]
+			set result [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_atom_path $atom_id $atom_oport_id [lrange $path 1 end]]
 		}
 	}
 	return $result
 }
 
 # Get the fitter name of the PLL output driving the given pin
-proc traverse_to_ddio_out_pll_clock {pin msg_list_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_ddio_out_pll_clock {pin msg_list_name} {
 	upvar 1 $msg_list_name msg_list
 	set result ""
 	if {$pin != ""} {
 		set pin_id [get_atom_node_by_name -name $pin]
 		set pin_to_pll_path [list {IO_PAD fanin PADIN} {IO_OBUF fanin I} {PSEUDO_DIFF_OUT fanin I -optional} {DELAY_CHAIN fanin DATAIN -optional} {DELAY_CHAIN fanin DATAIN -optional} {DDIO_OUT fanin CLKHI -optional} {OUTPUT_PHASE_ALIGNMENT fanin CLK -optional} {CLKBUF fanin INCLK -optional} {PLL end CLK}]
-		set pll_id_list [traverse_atom_path $pin_id -1 $pin_to_pll_path]
+		set pll_id_list [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_atom_path $pin_id -1 $pin_to_pll_path]
 		if {[llength $pll_id_list] == 1} {
 			set atom_oterm_pair [lindex $pll_id_list 0]
 			set result [get_atom_port_info -key name -node [lindex $atom_oterm_pair 0] -port_id [lindex $atom_oterm_pair 1] -type oport]
@@ -980,11 +1267,11 @@ proc traverse_to_ddio_out_pll_clock {pin msg_list_name} {
 }
 
 
-proc traverse_to_dll {dqs_pin msg_list_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_dll {dqs_pin msg_list_name} {
 	upvar 1 $msg_list_name msg_list
 	set dqs_pin_id [get_atom_node_by_name -name $dqs_pin]
 	set dqs_to_dll_path [list {IO_PAD fanout PADOUT} {IO_IBUF fanout O} {DQS_DELAY_CHAIN fanin DELAYCTRLIN} {DLL end DELAYCTRLOUT}]
-	set dll_id_list [traverse_atom_path $dqs_pin_id -1 $dqs_to_dll_path]
+	set dll_id_list [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_atom_path $dqs_pin_id -1 $dqs_to_dll_path]
 	set result ""
 	if {[llength $dll_id_list] == 1} {
 		set dll_atom_oterm_pair [lindex $dll_id_list 0]
@@ -997,7 +1284,7 @@ proc traverse_to_dll {dqs_pin msg_list_name} {
 	return $result
 }
 
-proc check_hybrid_interface { inst pins_array_name mem_if_memtype } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_check_hybrid_interface { inst pins_array_name mem_if_memtype } {
 	upvar $pins_array_name pins
 
 	foreach q_group $pins(q_groups) {
@@ -1009,7 +1296,7 @@ proc check_hybrid_interface { inst pins_array_name mem_if_memtype } {
 
 	set all_dq_dm_pins [ concat $all_dq_pins $dm_pins ]
 	foreach dq_dm_pin $all_dq_dm_pins {
-		set io_type [get_fitter_report_pin_io_type_info $dq_dm_pin]
+		set io_type [DE4_QSYS_mem_if_ddr2_emif_p0_get_fitter_report_pin_io_type_info $dq_dm_pin]
 		if {[string compare -nocase "Column I/O" $io_type] == 0} {
 			set io_types("column") 1
 		} elseif {[string compare -nocase "Row I/O" $io_type] == 0} {
@@ -1033,11 +1320,11 @@ proc check_hybrid_interface { inst pins_array_name mem_if_memtype } {
 
 }
 
-proc verify_flexible_timing_assumptions { inst pins_array_name mem_if_memtype } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_verify_flexible_timing_assumptions { inst pins_array_name mem_if_memtype } {
 	return 1
 }
 
-proc verify_high_performance_timing_assumptions { inst pins_array_name mem_if_memtype } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_verify_high_performance_timing_assumptions { inst pins_array_name mem_if_memtype } {
 	upvar $pins_array_name pins
 
 	set num_errors 0
@@ -1076,10 +1363,10 @@ proc verify_high_performance_timing_assumptions { inst pins_array_name mem_if_me
 
 	if {$num_errors == 0} {
 		set msg_list [list]
-		set dll_name [traverse_to_dll $dqs msg_list]
-		set clk_to_write_d [traverse_to_ddio_out_pll_clock [lindex $all_d_list 0] msg_list]
-		set clk_to_write_clock [traverse_to_ddio_out_pll_clock [lindex $all_write_dqs_list 0] msg_list]
-		set clk_to_ck_ckn [traverse_to_ddio_out_pll_clock [lindex $pins(ck_pins) 0] msg_list]
+		set dll_name [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_dll $dqs msg_list]
+		set clk_to_write_d [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_ddio_out_pll_clock [lindex $all_d_list 0] msg_list]
+		set clk_to_write_clock [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_ddio_out_pll_clock [lindex $all_write_dqs_list 0] msg_list]
+		set clk_to_ck_ckn [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_ddio_out_pll_clock [lindex $pins(ck_pins) 0] msg_list]
 		foreach msg $msg_list {
 			set verify_assumptions_exception 1
 			incr num_errors
@@ -1123,7 +1410,7 @@ proc verify_high_performance_timing_assumptions { inst pins_array_name mem_if_me
 }
 
 # Return a tuple of the tCCS value for a given device
-proc get_tccs { mem_if_memtype dqs_list period args} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_tccs { mem_if_memtype dqs_list period args} {
 	global TimeQuestInfo
 	array set options [list "-write_deskew" "none" "-dll_length" 0 "-config_period" 0 "-ddr3_discrete" 0]
 	foreach {option value} $args {
@@ -1147,12 +1434,12 @@ proc get_tccs { mem_if_memtype dqs_list period args} {
 		set options(-write_deskew) "static"
 	}	
 
-	set interface_type [get_io_interface_type $dqs_list]
+	set interface_type [DE4_QSYS_mem_if_ddr2_emif_p0_get_io_interface_type $dqs_list]
 	# The tCCS for a VHPAD interface is the same as a HPAD interface
 	if {$interface_type == "VHPAD"} {
 		set interface_type "HPAD"
 	}
-	set io_std [get_io_standard [lindex $dqs_list 0]]
+	set io_std [DE4_QSYS_mem_if_ddr2_emif_p0_get_io_standard [lindex $dqs_list 0]]
   	set result [list 0 0]
 	if {$interface_type != "" && $interface_type != "UNKNOWN" && $io_std != "" && $io_std != "UNKNOWN"} {
 		package require ::quartus::ddr_timing_model
@@ -1174,7 +1461,7 @@ proc get_tccs { mem_if_memtype dqs_list period args} {
 			lappend tccs_params DYNAMIC_DESKEW
 		}
 		if {$options(-ddr3_discrete) == 0 && $options(-write_deskew) != "none"} {
-			set mode [get_deskew_freq_range $tccs_params $period]
+			set mode [DE4_QSYS_mem_if_ddr2_emif_p0_get_deskew_freq_range $tccs_params $period]
 			if {$mode == [list]} {
 				post_message -type critical_warning "Memory interface with period $period and write $options(-write_deskew) deskew does not fall in a supported frequency range"
 			} elseif {[lindex $mode 0] != [list]} {
@@ -1194,7 +1481,7 @@ proc get_tccs { mem_if_memtype dqs_list period args} {
 
 # For static deskew, get the frequency range of the given configuration
 # Return triplet {mode min_freq max_freq}
-proc get_deskew_freq_range {timing_params period} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_deskew_freq_range {timing_params period} {
 	set mode [list]
 	# freq_range list should be sorted from low to high
 	if {[lindex $timing_params 2] == "STATIC_DESKEW_8" || [lindex $timing_params 2] == "STATIC_DESKEW_10"}  {
@@ -1235,7 +1522,7 @@ proc get_deskew_freq_range {timing_params period} {
 
 
 # Return a tuple of setup,hold time for read capture
-proc get_tsw { mem_if_memtype dqs_list period args} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_tsw { mem_if_memtype dqs_list period args} {
 	global TimeQuestInfo
 	array set options [list "-read_deskew" "none" "-dll_length" 0 "-config_period" 0 "-ddr3_discrete" 0]
 	foreach {option value} $args {
@@ -1246,11 +1533,11 @@ proc get_tsw { mem_if_memtype dqs_list period args} {
 		}
 	}
 
-	set interface_type [get_io_interface_type $dqs_list]
+	set interface_type [DE4_QSYS_mem_if_ddr2_emif_p0_get_io_interface_type $dqs_list]
 	if {$interface_type == "VHPAD"} {
 		set interface_type "HPAD"
 	}
-	set io_std [get_io_standard [lindex $dqs_list 0]]
+	set io_std [DE4_QSYS_mem_if_ddr2_emif_p0_get_io_standard [lindex $dqs_list 0]]
 
 	if {$interface_type != "" && $interface_type != "UNKNOWN" && $io_std != "" && $io_std != "UNKNOWN"} {
 		package require ::quartus::ddr_timing_model
@@ -1305,13 +1592,13 @@ proc get_tsw { mem_if_memtype dqs_list period args} {
 
 # ----------------------------------------------------------------
 #
-proc get_fitter_report_pin_info_from_report {target_pin info_type pin_report_id} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_fitter_report_pin_info_from_report {target_pin info_type pin_report_id} {
 #
 # Description: Gets the report field for the given pin in the given report
 #
 # ----------------------------------------------------------------
-	set pin_name_column [get_report_column $pin_report_id "Name"]
-	set info_column [get_report_column $pin_report_id $info_type]
+	set pin_name_column [DE4_QSYS_mem_if_ddr2_emif_p0_get_report_column $pin_report_id "Name"]
+	set info_column [DE4_QSYS_mem_if_ddr2_emif_p0_get_report_column $pin_report_id $info_type]
 	set result ""
 
 	if {$pin_name_column == 0 && 0} {
@@ -1335,7 +1622,7 @@ proc get_fitter_report_pin_info_from_report {target_pin info_type pin_report_id}
 
 # ----------------------------------------------------------------
 #
-proc get_fitter_report_pin_info {target_pin info_type preferred_report_id {found_report_id_name ""}} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_fitter_report_pin_info {target_pin info_type preferred_report_id {found_report_id_name ""}} {
 #
 # Description: Gets the report field for the given pin by searching through the
 #              input, output and bidir pin reports
@@ -1351,14 +1638,16 @@ proc get_fitter_report_pin_info {target_pin info_type preferred_report_id {found
 		for {set pin_report_index 0} {$pin_report_index != [llength $pin_report_list] && $result == ""} {incr pin_report_index} {
 			set pin_report_id [get_report_panel_id [lindex $pin_report_list $pin_report_index]]
 			if {$pin_report_id != -1} {
-				set result [get_fitter_report_pin_info_from_report $target_pin $info_type $pin_report_id]
+				set result [DE4_QSYS_mem_if_ddr2_emif_p0_get_fitter_report_pin_info_from_report $target_pin $info_type $pin_report_id]
 				if {$result != ""} {
 					set found_report_id $pin_report_id
 				}
+			} else {
+				post_message -type error "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: Failed to find fitter report. If report timing is run after an ECO, the user must set_global_assignment -name ECO_REGENERATE_REPORT ON in DE4_QSYS_mem_if_ddr2_emif_p0.qsf and in DE4_QSYS_mem_if_ddr2_emif_p0_pin_assignment.tcl files and rerun ECO and STA"
 			}
 		}
 	} else {
-		set result [get_fitter_report_pin_info_from_report $target_pin $info_type $preferred_report_id]
+		set result [DE4_QSYS_mem_if_ddr2_emif_p0_get_fitter_report_pin_info_from_report $target_pin $info_type $preferred_report_id]
 		if {$result != ""} {
 			set found_report_id $preferred_report_id
 		}
@@ -1367,7 +1656,7 @@ proc get_fitter_report_pin_info {target_pin info_type preferred_report_id {found
 }
 # ----------------------------------------------------------------
 #
-proc get_fitter_report_pin_io_type_info {target_pin} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_fitter_report_pin_io_type_info {target_pin} {
 #
 # Description: Gets the type of IO, either column or row for
 # a given pin. If none found then "" is returned.
@@ -1376,8 +1665,8 @@ proc get_fitter_report_pin_io_type_info {target_pin} {
 	set result ""
 	set pin_report_id [get_report_panel_id "Fitter||Resource Section||All Package Pins"]
 	if {$pin_report_id != -1} {
-		set pin_name_column [get_report_column $pin_report_id "Pin Name/Usage"]
-		set info_column [get_report_column $pin_report_id "I/O Type"]
+		set pin_name_column [DE4_QSYS_mem_if_ddr2_emif_p0_get_report_column $pin_report_id "Pin Name/Usage"]
+		set info_column [DE4_QSYS_mem_if_ddr2_emif_p0_get_report_column $pin_report_id "I/O Type"]
 		if {$pin_name_column == 0 && 0} {
 			set row_index [get_report_panel_row_index -id $pin_report_id $target_pin]
 			if {$row_index != -1} {
@@ -1399,8 +1688,8 @@ proc get_fitter_report_pin_io_type_info {target_pin} {
 		if {$pin_report_id != -1} {
 		
 			set report_rows [get_number_of_rows -id $pin_report_id]
-			set pin_name_column [get_report_column $pin_report_id "Name"]
-			set info_column [get_report_column $pin_report_id "I/O Edge"]
+			set pin_name_column [DE4_QSYS_mem_if_ddr2_emif_p0_get_report_column $pin_report_id "Name"]
+			set info_column [DE4_QSYS_mem_if_ddr2_emif_p0_get_report_column $pin_report_id "I/O Edge"]
 			
 			for {set row_index 1} {$row_index < $report_rows && $result == ""} {incr row_index} {
 				set row [get_report_panel_row -id $pin_report_id -row $row_index]
@@ -1423,7 +1712,7 @@ proc get_fitter_report_pin_io_type_info {target_pin} {
 }
 # ----------------------------------------------------------------
 #
-proc get_io_interface_type {pin_list} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_io_interface_type {pin_list} {
 #
 # Description: Gets the type of pin that the given pins are placed on
 #              either (HPAD, VPAD, HYBRID, "", or UNKNOWN).
@@ -1436,7 +1725,7 @@ proc get_io_interface_type {pin_list} {
 	set preferred_report_id -1
 	set interface_type ""
 	foreach target_pin $pin_list {
-		set io_bank [get_fitter_report_pin_info $target_pin "I/O Bank" $preferred_report_id preferred_report_id]
+		set io_bank [DE4_QSYS_mem_if_ddr2_emif_p0_get_fitter_report_pin_info $target_pin "I/O Bank" $preferred_report_id preferred_report_id]
 		if {[regexp -- {^([0-9]+)[A-Z]*} $io_bank -> io_bank_number]} {
 			if {$io_bank_number == 1 || $io_bank_number == 2 || $io_bank_number == 5 || $io_bank_number == 6} {
 				# Row I/O
@@ -1464,7 +1753,7 @@ proc get_io_interface_type {pin_list} {
 
 # ----------------------------------------------------------------
 #
-proc get_report_column { report_id str} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_report_column { report_id str} {
 #
 # Description: Gets the report column index with the given header string
 #
@@ -1476,11 +1765,11 @@ proc get_report_column { report_id str} {
 	return $target_col
 }
 
-proc traverse_to_dll_id {dqs_pin msg_list_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_dll_id {dqs_pin msg_list_name} {
 	upvar 1 $msg_list_name msg_list
 	set dqs_pin_id [get_atom_node_by_name -name $dqs_pin]
 	set dqs_to_dll_path [list {IO_PAD fanout PADOUT} {IO_IBUF fanout O} {DQS_DELAY_CHAIN fanin DELAYCTRLIN} {DLL end DELAYCTRLOUT}]
-	set dll_id_list [traverse_atom_path $dqs_pin_id -1 $dqs_to_dll_path]
+	set dll_id_list [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_atom_path $dqs_pin_id -1 $dqs_to_dll_path]
 	set dll_id -1
 	if {[llength $dll_id_list] == 1} {
 		set dll_atom_oterm_pair [lindex $dll_id_list 0]
@@ -1493,11 +1782,11 @@ proc traverse_to_dll_id {dqs_pin msg_list_name} {
 	return $dll_id
 }
 
-proc traverse_to_dqs_delaychain_id {dqs_pin msg_list_name} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_dqs_delaychain_id {dqs_pin msg_list_name} {
 	upvar 1 $msg_list_name msg_list
 	set dqs_pin_id [get_atom_node_by_name -name $dqs_pin]
 	set dqs_to_delaychain_path [list {IO_PAD fanout PADOUT} {IO_IBUF fanout O} {DQS_DELAY_CHAIN atom}]
-	set delaychain_id_list [traverse_atom_path $dqs_pin_id -1 $dqs_to_delaychain_path]
+	set delaychain_id_list [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_atom_path $dqs_pin_id -1 $dqs_to_delaychain_path]
 	set delaychain_id -1
 	if {[llength $delaychain_id_list] == 1} {
 		set delaychain_atom_oterm_pair [lindex $delaychain_id_list 0]
@@ -1510,11 +1799,11 @@ proc traverse_to_dqs_delaychain_id {dqs_pin msg_list_name} {
 	return $delaychain_id
 }
 
-proc get_dqs_phase_setting { dqs_pins } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_dqs_phase_setting { dqs_pins } {
 	set dqs_phase_setting 0
 	set dqs0 [lindex $dqs_pins 0]
 	if {$dqs0 != ""} {
-		set dqs_delay_chain_id [traverse_to_dqs_delaychain_id $dqs0 msg_list]
+		set dqs_delay_chain_id [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_dqs_delaychain_id $dqs0 msg_list]
 		if {$dqs_delay_chain_id != -1} {
 			set dqs_phase_setting [get_atom_node_info -key UINT_PHASE_SETTING -node $dqs_delay_chain_id]
 		}
@@ -1528,11 +1817,11 @@ proc get_dqs_phase_setting { dqs_pins } {
 	return $dqs_phase_setting
 }
 
-proc get_dqs_phase { dqs_pins } {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_dqs_phase { dqs_pins } {
 	set dqs0 [lindex $dqs_pins 0]
 	set dll_length 0
 	if {$dqs0 != ""} {
-		set dll_id [traverse_to_dll_id $dqs0 msg_list]
+		set dll_id [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_dll_id $dqs0 msg_list]
 		if {$dll_id != -1} {
 			set dll_length [get_atom_node_info -key UINT_DELAY_CHAIN_LENGTH -node $dll_id]
 		}
@@ -1542,7 +1831,7 @@ proc get_dqs_phase { dqs_pins } {
 		post_message -type critical_warning "Unable to determine DLL delay chain length.  Assuming default setting of $dll_length"
 	}
 
-	set dqs_phase_setting [ get_dqs_phase_setting $dqs_pins ]
+	set dqs_phase_setting [ DE4_QSYS_mem_if_ddr2_emif_p0_get_dqs_phase_setting $dqs_pins ]
 
 	if { $dqs_phase_setting != $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_dqs_delay_chain_length } {
 		post_message -type critical_warning "The DQS delay chain length set in the _parameter.tcl file doesn't match the queried value"
@@ -1556,7 +1845,7 @@ proc get_dqs_phase { dqs_pins } {
 	return $dqs_phase
 }
 
-proc get_operating_conditions_number {} {
+proc DE4_QSYS_mem_if_ddr2_emif_p0_get_operating_conditions_number {} {
 	set cur_operating_condition [get_operating_conditions]
 	set counter 0
 	foreach_in_collection op [get_available_operating_conditions] {
@@ -1594,12 +1883,12 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_get_ddr_pins { instname allpins } {
 	set leveling_pins [ list ]
 	for { set i 0 } { $i < $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_number_of_dqs_groups } { incr i } {
 		set dqs_string ${instname}|p0|umemphy|uio_pads|dq_ddio\[$i\].ubidir_dq_dqs|${dqs_inst}obuf_os_0|o
-		set dqs_local_pins [ get_names_in_collection [ get_fanouts $dqs_string ] ]
+		set dqs_local_pins [ DE4_QSYS_mem_if_ddr2_emif_p0_get_names_in_collection [ get_fanouts $dqs_string ] ]
 		set dqsn_string ${instname}|p0|umemphy|uio_pads|dq_ddio\[$i\].ubidir_dq_dqs|${dqs_inst}obuf_os_bar_0|o
-		set dqsn_local_pins [ get_names_in_collection [ get_fanouts $dqsn_string ] ]
+		set dqsn_local_pins [ DE4_QSYS_mem_if_ddr2_emif_p0_get_names_in_collection [ get_fanouts $dqsn_string ] ]
 
 		set dm_string ${instname}|p0|umemphy|uio_pads|dq_ddio\[$i\].ubidir_dq_dqs|${dqs_inst}extra_output_pad_gen\[0\].obuf_1|o
-		set dm_local_pins [ get_names_in_collection [ get_fanouts $dm_string ] ]
+		set dm_local_pins [ DE4_QSYS_mem_if_ddr2_emif_p0_get_names_in_collection [ get_fanouts $dm_string ] ]
 
 		set dqs_in_clock(dqs_pin) [ lindex $dqs_local_pins 0 ]
 		set dqs_in_clock(dqs_shifted_pin) "${instname}|p0|umemphy|uio_pads|dq_ddio[$i].ubidir_dq_dqs|${dqs_inst}dqs_delay_chain|dqsbusout"
@@ -1627,7 +1916,7 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_get_ddr_pins { instname allpins } {
 		for { set j 0 } { $j < $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_dqs_group_size } { incr j } { 
 			set index [ expr $i * $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_dqs_group_size + $j ]
 			set q_string ${instname}|p0|umemphy|uio_pads|dq_ddio\[$i\].ubidir_dq_dqs|${dqs_inst}pad_gen\[${j}\].data_out|o
-			set tmp_q_pins [ get_names_in_collection [ get_fanouts $q_string ] ]
+			set tmp_q_pins [ DE4_QSYS_mem_if_ddr2_emif_p0_get_names_in_collection [ get_fanouts $q_string ] ]
 			
 			lappend leveling_pins "${instname}|p0|umemphy|uio_pads|dq_ddio[$i].ubidir_dq_dqs|${dqs_inst}output_path_gen[$j].data_alignment|clk"
 			lappend leveling_pins "${instname}|p0|umemphy|uio_pads|dq_ddio[$i].ubidir_dq_dqs|${dqs_inst}output_path_gen[$j].oe_alignment|clk"
@@ -1674,7 +1963,6 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_get_ddr_pins { instname allpins } {
 	lappend patterns ck_pins ${instname}|p0|umemphy|uio_pads|uaddr_cmd_pads|clock_gen[*].uclk_generator|pseudo_diffa_0|o
 	lappend patterns ckn_pins ${instname}|p0|umemphy|uio_pads|uaddr_cmd_pads|clock_gen[*].uclk_generator|pseudo_diffa_0|obar
 
-	
 	set addr_cmd_postfix "auto_generated|ddio_outa[*]|dataout"
 	lappend patterns add_pins ${instname}|p0|umemphy|uio_pads|uaddr_cmd_pads|uaddress_pad|${addr_cmd_postfix}
 	lappend patterns ba_pins ${instname}|p0|umemphy|uio_pads|uaddr_cmd_pads|ubank_pad|${addr_cmd_postfix}
@@ -1686,7 +1974,7 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_get_ddr_pins { instname allpins } {
 	lappend patterns cmd_pins ${instname}|p0|umemphy|uio_pads|uaddr_cmd_pads|ucke_pad|${addr_cmd_postfix}
 
 	foreach {pin_type pattern} $patterns { 
-		set local_pins [ get_names_in_collection [ get_fanouts $pattern ] ]
+		set local_pins [ DE4_QSYS_mem_if_ddr2_emif_p0_get_names_in_collection [ get_fanouts $pattern ] ]
 		if {[llength $local_pins] == 0} {
 			post_message -type critical_warning "Could not find pin of type $pin_type from pattern $pattern"
 		} else {
@@ -1698,11 +1986,10 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_get_ddr_pins { instname allpins } {
 
 	set pins(ac_pins) [ concat $pins(add_pins) $pins(ba_pins) $pins(cmd_pins) ]
 
-	set pins(afi_ck_pins) ${instname}|p0|umemphy|uread_datapath|afi_rdata_valid
-	set pins(afi_half_ck_pins) ${instname}|p0|umemphy|afi_half_clk_reg
+	set pins(afi_ck_pins) ${instname}|p0|umemphy|uread_datapath|afi_rdata_valid[0]
 	set prefix [string map "| |*:" $instname]
 	set pins(avl_ck_pins) *:${prefix}|*:s0|*:sequencer_rw_mgr_inst|*:rw_mgr_inst|cmd_done_avl
-	set pins(config_ck_pins) *:${prefix}|*:s0|*:sequencer_scc_mgr_inst|scc_state_curr.STATE_SCC_IDLE
+	set pins(config_ck_pins) ${instname}|s0|sequencer_scc_mgr_inst|scc_upd[0]
 
 	#############
 	# PLL STUFF #
@@ -1712,7 +1999,6 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_get_ddr_pins { instname allpins } {
 	set pll_ck_clock "_UNDEFINED_PIN_"
 	set pll_write_clock "_UNDEFINED_PIN_"
 	set pll_ac_clock "_UNDEFINED_PIN_"
-	set pll_afi_half_clock "_UNDEFINED_PIN_"
 	set pll_avl_clock "_UNDEFINED_PIN_"
 	set pll_config_clock "_UNDEFINED_PIN_"
 	set pll_ref_clock "_UNDEFINED_PIN_"
@@ -1721,89 +2007,79 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_get_ddr_pins { instname allpins } {
 	set msg_list [ list ]
 
 	# CLOCK OUTPUT PLL
-	set pll_ck_clock_id [get_output_clock_id $pins(ck_pins) "CK Output" msg_list]
+	set pll_ck_clock_id [DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_id $pins(ck_pins) "CK Output" msg_list]
 	if {$pll_ck_clock_id == -1} {
 		foreach {msg_type msg} $msg_list {
 			post_message -type $msg_type "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: $msg"
 		}
 		post_message -type critical_warning "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: Failed to find PLL clock for pins [join $pins(ck_pins)]"
 	} else {
-		set pll_ck_clock [get_pll_clock_name $pll_ck_clock_id]
+		set pll_ck_clock [DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name $pll_ck_clock_id]
 	}
 	set pins(pll_ck_clock) $pll_ck_clock
 
 
 	# AFI CLOCK PLL
-	set pll_afi_clock_id [get_output_clock_id $pins(afi_ck_pins) "AFI CK" msg_list]
+	set pll_afi_clock_id [DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_id $pins(afi_ck_pins) "AFI CK" msg_list]
 	if {$pll_afi_clock_id == -1} {
 		foreach {msg_type msg} $msg_list {
 			post_message -type $msg_type "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: $msg"
 		}
 		post_message -type critical_warning "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: Failed to find PLL clock for pins [join $pins(afi_ck_pins)]"
 	} else {
-		set pll_afi_clock [get_pll_clock_name $pll_afi_clock_id]
+		set pll_afi_clock [DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name $pll_afi_clock_id]
 	}
 	set pins(pll_afi_clock) $pll_afi_clock
 
 	# DQ PLL
-	set pll_write_clock_id [get_output_clock_id [ join [ join $pins(q_groups) ]] "Write CK" msg_list]
+	set pll_write_clock_id [DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_id [ join [ join $pins(q_groups) ]] "Write CK" msg_list]
 	if {$pll_write_clock_id == -1} {
 		foreach {msg_type msg} $msg_list {
 			post_message -type $msg_type "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: $msg"
 		}
 		post_message -type critical_warning "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: Failed to find PLL clock for pins [ join [ join $pins(q_groups) ]]"
 	} else {
-		set pll_write_clock [get_pll_clock_name $pll_write_clock_id]
+		set pll_write_clock [DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name $pll_write_clock_id]
 	}
 	set pins(pll_write_clock) $pll_write_clock
 
 	# AC PLL
-	set pll_ac_clock_id [get_output_clock_id $pins(add_pins) "Address/Command output" msg_list]
+	set pll_ac_clock_id [DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_id $pins(add_pins) "Address/Command output" msg_list]
 	if {$pll_ac_clock_id == -1} {
 		foreach {msg_type msg} $msg_list {
 			post_message -type $msg_type "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: $msg"
 		}
 		post_message -type critical_warning "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: Failed to find PLL clock for pins [join $pins(add_pins)]"
 	} else {
-		set pll_ac_clock [get_pll_clock_name $pll_ac_clock_id]
+		set pll_ac_clock [DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name $pll_ac_clock_id]
 	}
 	set pins(pll_ac_clock) $pll_ac_clock
 
-	set pll_afi_half_clock_id [get_output_clock_id $pins(afi_half_ck_pins) "AFI HALF CK" msg_list]
-	if {$pll_afi_half_clock_id == -1} {
-		foreach {msg_type msg} $msg_list {
-			post_message -type $msg_type "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: $msg"
-		}
-		post_message -type critical_warning "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: Failed to find PLL clock for pins [join $pins(afi_half_ck_pins)]"
-	} else {
-		set pll_afi_half_clock [get_pll_clock_name $pll_afi_half_clock_id]
-	}
-	set pins(pll_afi_half_clock) $pll_afi_half_clock
 
-	set pll_avl_clock_id [get_output_clock_id $pins(avl_ck_pins) "Avalon Bus CK" msg_list]
+	set pll_avl_clock_id [DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_id $pins(avl_ck_pins) "Avalon Bus CK" msg_list]
 	if {$pll_avl_clock_id == -1} {
 		foreach {msg_type msg} $msg_list {
 			post_message -type $msg_type "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: $msg"
 		}
 		post_message -type critical_warning "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: Failed to find PLL clock for pins [join $pins(avl_ck_pins)]"
 	} else {
-		set pll_avl_clock [get_pll_clock_name $pll_avl_clock_id]
+		set pll_avl_clock [DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name $pll_avl_clock_id]
 	}
 	set pins(pll_avl_clock) $pll_avl_clock
 
-	set pll_config_clock_id [get_output_clock_id $pins(config_ck_pins) "Config CK" msg_list]
+	set pll_config_clock_id [DE4_QSYS_mem_if_ddr2_emif_p0_get_output_clock_id $pins(config_ck_pins) "Config CK" msg_list]
 	if {$pll_config_clock_id == -1} {
 		foreach {msg_type msg} $msg_list {
 			post_message -type $msg_type "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: $msg"
 		}
 		post_message -type critical_warning "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: Failed to find PLL clock for pins [join $pins(config_ck_pins)]"
 	} else {
-		set pll_config_clock [get_pll_clock_name $pll_config_clock_id]
+		set pll_config_clock [DE4_QSYS_mem_if_ddr2_emif_p0_get_pll_clock_name $pll_config_clock_id]
 	}
 	set pins(pll_config_clock) $pll_config_clock
 
 
-	set pll_ref_clock_id [get_input_clk_id $pll_ck_clock_id]
+	set pll_ref_clock_id [DE4_QSYS_mem_if_ddr2_emif_p0_get_input_clk_id $pll_ck_clock_id]
 	if {$pll_ref_clock_id == -1} {
 		post_message -type critical_warning "DE4_QSYS_mem_if_ddr2_emif_p0_pin_map.tcl: Failed to find PLL reference clock"
 	} else {
@@ -1824,7 +2100,7 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_get_ddr_pins { instname allpins } {
 	set pins(pll_ref_clock_input_buffer) $pll_ref_clock_input_buffer		
 
 
-	set entity_names_on [ are_entity_names_on ]
+	set entity_names_on [ DE4_QSYS_mem_if_ddr2_emif_p0_are_entity_names_on ]
 
 	# Instance name prefix
 	
@@ -1843,9 +2119,6 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_get_ddr_pins { instname allpins } {
 		"$prefix|*:p0|*:umemphy|*:uio_pads|*:dq_ddio\[*\].ubidir_dq_dqs|*:" : \
 		"$instname|p0|umemphy|uio_pads|dq_ddio\[*\].ubidir_dq_dqs|" }]
 
-	
-	
-	
 	set read_capture_ddio [list "${read_capture_ddio_prefix}${dqs_inst}*input_path_gen\[*\].capture_reg*" \
 								"${read_capture_ddio_prefix}${dqs_inst}*read_data_out\[*\]"]
 	set pins(read_capture_ddio) $read_capture_ddio
@@ -1924,7 +2197,7 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_get_ddr_pins { instname allpins } {
 
 	###############################
 	# DQS ENABLE CIRCUITRY        #
-	###############################	
+	###############################
 	
 	set dqs_enable_reg $prefix|*:p0|*:umemphy|*:uio_pads|*:dq_ddio[*].ubidir_dq_dqs|*:altdq_dqs2_inst|dqs_enable_block~DFFIN
 	if { ! $entity_names_on } {
@@ -1951,7 +2224,7 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_initialize_ddr_db { ddr_db_par } {
 	global ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename
 
 	post_sdc_message info "Initializing DDR database for CORE $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename"
-	set instance_list [get_core_instance_list $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename]
+	set instance_list [DE4_QSYS_mem_if_ddr2_emif_p0_get_core_instance_list $::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename]
 	# set local_ddr_db(instance_list) $instance_list
 
 	foreach instname $instance_list {
@@ -2082,7 +2355,6 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_dump_all_pins { ddr_db_par } {
 		puts $FH "PLL CK: $pins(pll_ck_clock)"
 		puts $FH "PLL WRITE: $pins(pll_write_clock)"
 		puts $FH "PLL AC: $pins(pll_ac_clock)"
-		puts $FH "PLL AFI HALF: $pins(pll_afi_half_clock)"
 		puts $FH "PLL AVL: $pins(pll_avl_clock)"
 		puts $FH "PLL CONFIG: $pins(pll_config_clock)"
 
@@ -2159,34 +2431,33 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_dump_static_pin_map { ddr_db_par filename } {
 
 		puts $FH "   # Pin Mapping for instance: $instname"
 
-		static_map_expand_list $FH pins dqs_pins
-		static_map_expand_list $FH pins dqsn_pins
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list $FH pins dqs_pins
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list $FH pins dqsn_pins
 
-		static_map_expand_list_of_list $FH pins q_groups
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list_of_list $FH pins q_groups
 
 		puts $FH ""
 		puts $FH "   set pins(all_dq_pins) \[ join \[ join \$pins(q_groups) \] \]"
 
-		static_map_expand_list $FH pins dm_pins
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list $FH pins dm_pins
 
-		static_map_expand_list $FH pins ck_pins
-		static_map_expand_list $FH pins ckn_pins
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list $FH pins ck_pins
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list $FH pins ckn_pins
 
-		static_map_expand_list $FH pins add_pins
-		static_map_expand_list $FH pins cmd_pins
-		static_map_expand_list $FH pins ba_pins
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list $FH pins add_pins
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list $FH pins cmd_pins
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list $FH pins ba_pins
 
 		puts $FH ""
 		puts $FH "   set pins(ac_pins) \[ concat \$pins(add_pins) \$pins(ba_pins) \$pins(cmd_pins) \]"
 
-		static_map_expand_string $FH pins pll_ref_clock
-		static_map_expand_string $FH pins pll_afi_clock
-		static_map_expand_string $FH pins pll_ck_clock
-		static_map_expand_string $FH pins pll_write_clock
-		static_map_expand_string $FH pins pll_ac_clock
-		static_map_expand_string $FH pins pll_afi_half_clock
-		static_map_expand_string $FH pins pll_avl_clock
-		static_map_expand_string $FH pins pll_config_clock
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins pll_ref_clock
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins pll_afi_clock
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins pll_ck_clock
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins pll_write_clock
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins pll_ac_clock
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins pll_avl_clock
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins pll_config_clock
 
 		puts $FH ""
 		puts $FH "   set dqs_in_clocks \[ list \]"
@@ -2236,17 +2507,17 @@ proc DE4_QSYS_mem_if_ddr2_emif_p0_dump_static_pin_map { ddr_db_par filename } {
 		}
 		puts $FH "   set pins(dqsn_out_clocks) \$dqsn_out_clocks"
 
-		static_map_expand_list $FH pins leveling_pins
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_list $FH pins leveling_pins
 
-		static_map_expand_string $FH pins read_capture_ddio
-		static_map_expand_string $FH pins afi_reset_reg
-		static_map_expand_string $FH pins seq_reset_reg
-		static_map_expand_string $FH pins sync_reg
-		static_map_expand_string $FH pins fifo_wraddress_reg 
-		static_map_expand_string $FH pins fifo_wrdata_reg 
-		static_map_expand_string $FH pins fifo_rddata_reg
-		static_map_expand_string $FH pins valid_fifo_wrdata_reg 
-		static_map_expand_string $FH pins valid_fifo_rddata_reg
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins read_capture_ddio
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins afi_reset_reg
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins seq_reset_reg
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins sync_reg
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins fifo_wraddress_reg 
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins fifo_wrdata_reg 
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins fifo_rddata_reg
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins valid_fifo_wrdata_reg 
+		DE4_QSYS_mem_if_ddr2_emif_p0_static_map_expand_string $FH pins valid_fifo_rddata_reg
 
 		puts $FH ""
 		puts $FH "   set local_ddr_db($instname) \[ array get pins \]"

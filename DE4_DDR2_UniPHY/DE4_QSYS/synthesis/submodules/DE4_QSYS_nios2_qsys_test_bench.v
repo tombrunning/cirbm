@@ -1,4 +1,4 @@
-//Legal Notice: (C)2012 Altera Corporation. All rights reserved.  Your
+//Legal Notice: (C)2015 Altera Corporation. All rights reserved.  Your
 //use of Altera Corporation's design tools, logic functions and other
 //software and tools, and its AMPP partner logic functions, and any
 //output files any of the foregoing (including device programming or
@@ -21,20 +21,9 @@
 module DE4_QSYS_nios2_qsys_test_bench (
                                         // inputs:
                                          A_bstatus_reg,
-                                         A_cmp_result,
-                                         A_ctrl_exception,
                                          A_ctrl_ld_non_bypass,
-                                         A_dst_regnum,
                                          A_en,
                                          A_estatus_reg,
-                                         A_ienable_reg,
-                                         A_ipending_reg,
-                                         A_iw,
-                                         A_mem_byte_en,
-                                         A_op_hbreak,
-                                         A_op_intr,
-                                         A_pcb,
-                                         A_st_data,
                                          A_status_reg,
                                          A_valid,
                                          A_wr_data_unfiltered,
@@ -85,20 +74,9 @@ module DE4_QSYS_nios2_qsys_test_bench (
   output           M_bht_wr_en_filtered;
   output           test_has_ended;
   input   [ 31: 0] A_bstatus_reg;
-  input            A_cmp_result;
-  input            A_ctrl_exception;
   input            A_ctrl_ld_non_bypass;
-  input   [  4: 0] A_dst_regnum;
   input            A_en;
   input   [ 31: 0] A_estatus_reg;
-  input   [ 31: 0] A_ienable_reg;
-  input   [ 31: 0] A_ipending_reg;
-  input   [ 31: 0] A_iw;
-  input   [  3: 0] A_mem_byte_en;
-  input            A_op_hbreak;
-  input            A_op_intr;
-  input   [ 30: 0] A_pcb;
-  input   [ 31: 0] A_st_data;
   input   [ 31: 0] A_status_reg;
   input            A_valid;
   input   [ 31: 0] A_wr_data_unfiltered;
@@ -765,20 +743,6 @@ module DE4_QSYS_nios2_qsys_test_bench (
               $write("%0d ns: ERROR: DE4_QSYS_nios2_qsys_test_bench/d_read is 'x'\n", $time);
               $stop;
             end
-    end
-
-
-  
-  reg [31:0] trace_handle; // for $fopen
-  initial  
-  begin
-    trace_handle = $fopen("DE4_QSYS_nios2_qsys.tr");
-    $fwrite(trace_handle, "version 3\nnumThreads 1\n");
-  end
-  always @(posedge clk)
-    begin
-      if ((~reset_n || (A_valid & A_en)) && ~test_has_ended)
-          $fwrite(trace_handle, "%0d ns: %0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h,%0h\n", $time, ~reset_n, A_pcb, 0, A_op_intr, A_op_hbreak, A_iw, ~(A_op_intr | A_op_hbreak), A_wr_dst_reg, A_dst_regnum, 0, A_wr_data_filtered, A_mem_baddr, A_st_data, A_mem_byte_en, A_cmp_result, A_target_pcb, A_status_reg, A_estatus_reg, A_bstatus_reg, A_ienable_reg, A_ipending_reg, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, A_ctrl_exception ? 1 : 0, 0, 0, 0, 0);
     end
 
 

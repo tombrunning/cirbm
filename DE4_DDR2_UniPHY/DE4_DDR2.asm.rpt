@@ -1,5 +1,5 @@
 Assembler report for DE4_DDR2
-Tue Jun 09 16:32:19 2015
+Wed Jun 10 16:00:22 2015
 Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Full Version
 
 
@@ -38,7 +38,7 @@ applicable agreement for further details.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Tue Jun 09 16:32:19 2015 ;
+; Assembler Status      ; Successful - Wed Jun 10 16:00:22 2015 ;
 ; Revision Name         ; DE4_DDR2                              ;
 ; Top-level Entity Name ; DE4_DDR2                              ;
 ; Family                ; Stratix IV                            ;
@@ -105,7 +105,7 @@ applicable agreement for further details.
 +----------------+---------------------------------------------------------------+
 ; Device         ; EP4SGX530KH40C2                                               ;
 ; JTAG usercode  ; 0xFFFFFFFF                                                    ;
-; Checksum       ; 0x11137A65                                                    ;
+; Checksum       ; 0x11246106                                                    ;
 +----------------+---------------------------------------------------------------+
 
 
@@ -115,14 +115,14 @@ applicable agreement for further details.
 Info: *******************************************************************
 Info: Running Quartus II 64-Bit Assembler
     Info: Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Full Version
-    Info: Processing started: Tue Jun 09 16:31:47 2015
+    Info: Processing started: Wed Jun 10 15:59:50 2015
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off DE4_DDR2 -c DE4_DDR2
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus II 64-Bit Assembler was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 1041 megabytes
-    Info: Processing ended: Tue Jun 09 16:32:19 2015
+    Info: Peak virtual memory: 1053 megabytes
+    Info: Processing ended: Wed Jun 10 16:00:22 2015
     Info: Elapsed time: 00:00:32
-    Info: Total CPU time (on all processors): 00:00:31
+    Info: Total CPU time (on all processors): 00:00:32
 
 

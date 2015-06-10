@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -109,7 +109,7 @@ module alt_mem_ddrx_ddr2_odt_gen
             else
                 begin
                     if (cfg_output_regd)
-                        regd_output <= (CFG_DWIDTH_RATIO / 2);
+                        regd_output <= (CFG_DWIDTH_RATIO / 2) * cfg_output_regd;
                     else
                         regd_output <= 2'd0;
                 end

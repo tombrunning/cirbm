@@ -1,4 +1,4 @@
-# (C) 2001-2012 Altera Corporation. All rights reserved.
+# (C) 2001-2013 Altera Corporation. All rights reserved.
 # Your use of Altera Corporation's design tools, logic functions and other 
 # software and tools, and its AMPP partner logic functions, and any output 
 # files any of the foregoing (including device programming or simulation 
@@ -144,7 +144,6 @@ set opcs [ list "" ]
 
 set signoff_mode $::quartus(ipc_mode)
 if { [string match "*Analyzer GUI" [get_current_timequest_report_folder]]} {
-	
 	read_sdc
 	update_timing_netlist
 	set script_dir [file dirname [info script]]
@@ -225,8 +224,6 @@ foreach inst $instances {
 	set dm_pins $pins(dm_pins)
 	set all_dq_dm_pins [ concat $all_dq_pins $dm_pins ]
 
-	
-	
 
 	#################################################################################
 	# Find some design values and parameters that will used during the timing analysis
@@ -234,7 +231,7 @@ foreach inst $instances {
 	set period $t(CK)
 	
 	# Get the number of PLL steps
-	set clk_to_write_d [traverse_to_ddio_out_pll_clock [lindex $all_dq_pins 0] msg_list]
+	set clk_to_write_d [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_ddio_out_pll_clock [lindex $all_dq_pins 0] msg_list]
 	set pll_steps [expr {int([get_vco_freq -clk $clk_to_write_d ]*8.0*$period/1000.0)}]
 	
 	# Package skew
@@ -249,7 +246,7 @@ foreach inst $instances {
 	set dll_length 0
 	set dqs0 [lindex $dqs_pins 0]
 	if {$dqs0 != ""} {
-		set dll_id [traverse_to_dll_id $dqs0 msg_list]
+		set dll_id [DE4_QSYS_mem_if_ddr2_emif_p0_traverse_to_dll_id $dqs0 msg_list]
 		if {$dll_id != -1} {
 			set dll_length [get_atom_node_info -key UINT_DELAY_CHAIN_LENGTH -node $dll_id]
 		}
@@ -260,10 +257,10 @@ foreach inst $instances {
 	}
 
 	# DQS_phase offset
-	set dqs_phase [ get_dqs_phase $dqs_pins ]
+	set dqs_phase [ DE4_QSYS_mem_if_ddr2_emif_p0_get_dqs_phase $dqs_pins ]
 
 	# Get the interface type (HPAD or VPAD)
-	set interface_type [get_io_interface_type $all_dq_pins]
+	set interface_type [DE4_QSYS_mem_if_ddr2_emif_p0_get_io_interface_type $all_dq_pins]
 
 	# Treat the VHPAD interface as the same as a HPAD interface
 	if {($interface_type == "VHPAD") || ($interface_type == "HYBRID")} {
@@ -271,7 +268,7 @@ foreach inst $instances {
 	}
 	
 	# Get the IO standard which helps us determine the Memory type
-	set io_std [get_io_standard [lindex $dqs_pins 0]]
+	set io_std [DE4_QSYS_mem_if_ddr2_emif_p0_get_io_standard [lindex $dqs_pins 0]]
 
 	if {$interface_type == "" || $interface_type == "UNKNOWN" || $io_std == "" || $io_std == "UNKNOWN"} {
 		set result 0
@@ -309,7 +306,7 @@ foreach inst $instances {
 		set opcname [get_operating_conditions_info [get_operating_conditions] -display_name]
 		set opcname [string trim $opcname]
 		
-		set model_corner [get_model_corner]
+		set model_corner [DE4_QSYS_mem_if_ddr2_emif_p0_get_model_corner]
 		initialize_sin -model [lindex $model_corner 0] -corner [lindex $model_corner 1]
 		
 		global assumptions_cache
@@ -321,7 +318,7 @@ foreach inst $instances {
 				post_message -type critical_warning "See violated timing model assumptions in previous timing analysis above"
 			}
 		} else {
-				set assumptions_valid [verify_flexible_timing_assumptions $inst pins $mem_if_memtype]
+				set assumptions_valid [DE4_QSYS_mem_if_ddr2_emif_p0_verify_flexible_timing_assumptions $inst pins $mem_if_memtype]
 			set assumptions_cache(${::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename}-$inst) $assumptions_valid
 		}	
 
@@ -340,27 +337,27 @@ foreach inst $instances {
 		#######################################
 		# Write Analysis
 
-			perform_flexible_write_launch_timing_analysis $opcs $opcname $inst $family $DQS_min_max $interface_type $max_package_skew $dll_length $period pins t summary MP IP board
+			DE4_QSYS_mem_if_ddr2_emif_p0_perform_flexible_write_launch_timing_analysis $opcs $opcname $inst $family $DQS_min_max $interface_type $max_package_skew $dll_length $period pins t summary MP IP board
 
 		#######################################
 		# Read Analysis
 
-			perform_flexible_read_capture_timing_analysis $opcs $opcname $inst $family $DQS_min_max $io_std $interface_type $max_package_skew $dqs_phase $period $all_dq_pins pins t summary MP IP board fpga
-		perform_resync_timing_analysis $opcs $opcname $inst ${::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename} $family $DQS_min_max $io_std $interface_type $period pins t summary MP IP board fpga SSN
+			DE4_QSYS_mem_if_ddr2_emif_p0_perform_flexible_read_capture_timing_analysis $opcs $opcname $inst $family $DQS_min_max $io_std $interface_type $max_package_skew $dqs_phase $period $all_dq_pins pins t summary MP IP board fpga
+		DE4_QSYS_mem_if_ddr2_emif_p0_perform_resync_timing_analysis $opcs $opcname $inst ${::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename} $family $DQS_min_max $io_std $interface_type $period pins t summary MP IP board fpga SSN
 
 		#######################################
 		# PHY and Address/command Analyses
 
-		perform_ac_analyses  $opcs $opcname $inst $DQS_min_max pins t summary IP		
-		perform_phy_analyses $opcs $opcname $inst $inst_controller pins t summary IP
+		DE4_QSYS_mem_if_ddr2_emif_p0_perform_ac_analyses  $opcs $opcname $inst $DQS_min_max pins t summary IP		
+		DE4_QSYS_mem_if_ddr2_emif_p0_perform_phy_analyses $opcs $opcname $inst $inst_controller pins t summary IP
 		
 		#######################################
 		# Write Levelling Analysis (UniPHY levelling option picked)
-			perform_flexible_write_levelling_timing_analysis $opcs $opcname $inst $family $period $dll_length $interface_type $tJITper $tJITdty $tDCD $pll_steps pins t summary MP IP SSN board ISI
+			DE4_QSYS_mem_if_ddr2_emif_p0_perform_flexible_write_levelling_timing_analysis $opcs $opcname $inst $family $period $dll_length $interface_type $tJITper $tJITdty $tDCD $pll_steps pins t summary MP IP SSN board ISI
 
 		#######################################
 		# Bus Turnaround Time Analysis
-			perform_flexible_bus_turnaround_time_analysis $opcs $opcname $inst $family $period $dll_length $interface_type $tJITper $tJITdty $tDCD $pll_steps pins t summary MP IP SSN board ISI
+			DE4_QSYS_mem_if_ddr2_emif_p0_perform_flexible_bus_turnaround_time_analysis $opcs $opcname $inst $family $period $dll_length $interface_type $tJITper $tJITdty $tDCD $pll_steps pins t summary MP IP SSN board ISI
 
 
 
@@ -378,8 +375,7 @@ foreach inst $instances {
 	set summary [lsort -command DE4_QSYS_mem_if_ddr2_emif_p0_sort_proc $summary]
 
 	set f -1
-	if { [get_operating_conditions_number] == 0 } {
-		
+	if { [DE4_QSYS_mem_if_ddr2_emif_p0_get_operating_conditions_number] == 0 } {
 		set f [open $fname w]
 
 		puts $f "Core: ${::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename} - Instance: $inst"
@@ -387,6 +383,9 @@ foreach inst $instances {
 	} else {
 		set f [open $fname a]
 	}
+
+	
+
 
 	post_message -type info "Core: ${::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_corename} - Instance: $inst"
 	post_message -type info "                                                         setup  hold"
@@ -411,7 +410,6 @@ foreach inst $instances {
 	lappend rows "add_row_to_table -id \$panel_id \[list \"Path\" \"Operating Condition\" \"Setup Slack\" \"Hold Slack\"\]"
 	foreach summary_line $summary {
 		foreach {corner order path su hold num_su num_hold} $summary_line { }
-		
 		if {($num_su == 0) || ([string trim $su] == "")} {
 			set su "--"
 		}
@@ -429,10 +427,10 @@ foreach inst $instances {
 			set offset 53
 		}
 		if {$su != "--"} {
-			set su [ round_3dp $su]
+			set su [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp $su]
 		}
 		if {$hold != "--"} {
-			set hold [ round_3dp $hold]
+			set hold [ DE4_QSYS_mem_if_ddr2_emif_p0_round_3dp $hold]
 		}
 		post_message -type $type [format "%-${offset}s | %6s %6s" $path $su $hold]
 		puts $f [format "\"%s\",%s,%s" $path $su $hold]
@@ -462,6 +460,13 @@ foreach inst $instances {
 	}
 	
 	write_timing_report
+
+	if { ( [ string compare -nocase $family "stratix iv" ] == 0 ) || ( [ string compare -nocase $family "stratix iii" ] == 0 ) } {
+		set clr_bfr_tri [ get_global_assignment -name RELEASE_CLEARS_BEFORE_TRI_STATES ] 
+		if { [ string compare -nocase $clr_bfr_tri "on" ] == 0 } {
+			post_message -type critical_warning "This design has the QSF assignment RELEASE_CLEARS_BEFORE_TRI_STATES set to ON. UniPHY IP in Stratix III and Stratix IV is not compatible with this setting. Set the RELEASE_CLEARS_BEFORE_TRI_STATES assignment to OFF to resolve the issue."
+		}
+	}
 
 	incr inst_id
 }

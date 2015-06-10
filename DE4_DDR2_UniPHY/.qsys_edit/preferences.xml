@@ -3,7 +3,7 @@
  <debug showDebugMenu="0" />
  <systemtable>
   <columns>
-   <connections preferredWidth="207" />
+   <connections preferredWidth="239" />
    <irq preferredWidth="34" />
    <name preferredWidth="198" />
    <inputclock preferredWidth="165" />
@@ -18,8 +18,8 @@
    <frequency preferredWidth="449" />
   </columns>
  </clocktable>
- <library
-   expandedCategories="Library/Bridges and Adapters,Library,Project,Library/Bridges and Adapters/DMA" />
- <window width="1679" height="1004" x="96" y="76" />
+ <library expandedCategories="Project,Library" />
+ <window width="1679" height="1004" x="23" y="90" />
  <hdlexample language="VERILOG" />
+ <generation testbench_system="STANDARD" />
 </preferences>

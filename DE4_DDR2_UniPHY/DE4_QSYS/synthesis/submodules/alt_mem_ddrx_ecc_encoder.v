@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -10,6 +10,10 @@
 // Altera or its authorized distributors.  Please refer to the applicable 
 // agreement for further details.
 
+
+//altera message_off 10036
+
+`timescale 1 ps / 1 ps
 
 module alt_mem_ddrx_ecc_encoder #
     ( parameter
@@ -273,6 +277,10 @@ output [CFG_DATA_WIDTH - 1 : 0] output_data;
                     .q                  (encoder_output )
                 );
         end
+        else
+        begin
+        	assign encoder_output = {CFG_DATA_WIDTH{1'b0}};
+        end        
     end
     endgenerate
     

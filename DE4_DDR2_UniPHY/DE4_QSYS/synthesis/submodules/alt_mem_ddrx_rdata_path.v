@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -15,6 +15,8 @@
 //altera message_off 10230 10036
 
 `include "alt_mem_ddrx_define.iv"
+
+`timescale 1 ps / 1 ps
 
 module alt_mem_ddrx_rdata_path
 # (
@@ -46,7 +48,8 @@ module alt_mem_ddrx_rdata_path
         CFG_PORT_WIDTH_COL_ADDR_WIDTH   = 9, 
         CFG_PORT_WIDTH_ROW_ADDR_WIDTH   = 12, 
         CFG_PORT_WIDTH_BANK_ADDR_WIDTH  = 3, 
-        CFG_PORT_WIDTH_CS_ADDR_WIDTH    = 2 
+        CFG_PORT_WIDTH_CS_ADDR_WIDTH    = 2,
+		CFG_ERRCMD_FIFO_REG 			= 1								// set 1 to improve timing for errcmd_fifo
 )
 (
     // port list
@@ -128,8 +131,7 @@ module alt_mem_ddrx_rdata_path
     // local parameter declarations
     // -----------------------------
     localparam CFG_ECC_RDATA_COUNTER_REG   = 0;                // set to 1 to improve timing
-
-    localparam CFG_RMW_BIT_WIDTH = 1;
+	localparam CFG_RMW_BIT_WIDTH = 1;
     localparam CFG_RMW_PARTIAL_BIT_WIDTH = 1;
     localparam CFG_PENDING_RD_FIFO_WIDTH = CFG_MEM_IF_CS_WIDTH + CFG_MEM_IF_BA_WIDTH + CFG_MEM_IF_ROW_WIDTH + CFG_MEM_IF_COL_WIDTH + CFG_LOCAL_ID_WIDTH + CFG_INT_SIZE_WIDTH + CFG_DATA_ID_WIDTH + CFG_RMW_BIT_WIDTH + CFG_RMW_PARTIAL_BIT_WIDTH;
     localparam CFG_ERRCMD_FIFO_WIDTH     = CFG_MEM_IF_CS_WIDTH + CFG_MEM_IF_BA_WIDTH + CFG_MEM_IF_ROW_WIDTH + CFG_MEM_IF_COL_WIDTH + CFG_INT_SIZE_WIDTH + CFG_LOCAL_ID_WIDTH;
@@ -442,10 +444,11 @@ module alt_mem_ddrx_rdata_path
     wire                                                errcmd_fifo_in_cmddropped;
     reg                                                 errcmd_fifo_in_cmddropped_r;
     wire                                                errcmd_fifo_in_ready;
-    wire                                                errcmd_fifo_in_valid;
-    wire    [CFG_ERRCMD_FIFO_WIDTH-1:0]                 errcmd_fifo_in;
+    wire                                                errcmd_fifo_in_valid_wire;
+    wire    [CFG_ERRCMD_FIFO_WIDTH-1:0]                 errcmd_fifo_in_wire;
     wire    [CFG_ERRCMD_FIFO_WIDTH-1:0]                 errcmd_fifo_out;
-
+    reg	                                                errcmd_fifo_in_valid;
+    reg     [CFG_ERRCMD_FIFO_WIDTH-1:0]                 errcmd_fifo_in;
     // -----------------------------
     // module definition
     // -----------------------------
@@ -745,10 +748,10 @@ module alt_mem_ddrx_rdata_path
         end
     end
 
-    assign errcmd_fifo_in_valid = rout_sbecmd_valid;
-    assign errcmd_fifo_in = {pfifo_chipsel, pfifo_bank, pfifo_row, pfifo_column_burst_aligned, cfg_max_cmd_burstcount, pfifo_localid};
+    assign errcmd_fifo_in_valid_wire = rout_sbecmd_valid;
+    assign errcmd_fifo_in_wire = {pfifo_chipsel, pfifo_bank, pfifo_row, pfifo_column_burst_aligned, cfg_max_cmd_burstcount, pfifo_localid};
     assign {errcmd_chipsel, errcmd_bank, errcmd_row, errcmd_column, errcmd_size, errcmd_localid} = errcmd_fifo_out;
-    assign errcmd_fifo_in_cmddropped = ~errcmd_fifo_in_ready & errcmd_fifo_in_valid;
+    assign errcmd_fifo_in_cmddropped = ~errcmd_fifo_in_ready & errcmd_fifo_in_valid_wire;
     assign cfg_max_cmd_burstcount = (cfg_burst_length / CFG_DWIDTH_RATIO);
 
     // DDR3, pfifo_column_burst_aligned is burst length 8 aligned
@@ -774,7 +777,32 @@ module alt_mem_ddrx_rdata_path
             pfifo_column_burst_aligned_r <= pfifo_column_burst_aligned;
         end
     end
-    
+   
+	generate
+		if (CFG_ERRCMD_FIFO_REG == 1)
+		begin
+			always @ (posedge ctl_clk	or negedge ctl_reset_n)
+				begin
+				if (!ctl_reset_n)
+				begin
+					errcmd_fifo_in_valid	<= 1'b0;
+					errcmd_fifo_in			<= {CFG_ERRCMD_FIFO_WIDTH{1'b0}};
+				end else
+				begin
+					errcmd_fifo_in_valid	<= errcmd_fifo_in_valid_wire;
+					errcmd_fifo_in			<= errcmd_fifo_in_wire;
+				end
+			 end	
+		end else // (CFG_ERRCMD_FIFO_REG == 0)
+		begin
+			always @ (*)
+			begin
+				errcmd_fifo_in_valid		= errcmd_fifo_in_valid_wire;
+				errcmd_fifo_in				= errcmd_fifo_in_wire;
+			end
+		end
+	endgenerate   
+	
     alt_mem_ddrx_fifo
     # (
         .CTL_FIFO_DATA_WIDTH             (CFG_ERRCMD_FIFO_WIDTH),

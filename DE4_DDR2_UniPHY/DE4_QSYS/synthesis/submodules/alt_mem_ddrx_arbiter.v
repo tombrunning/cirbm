@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -234,6 +234,10 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
     reg  [log2(CFG_CTL_TBP_NUM) - 1 : 0] log2_wr_grant;
     reg                                  or_row_grant;
     reg                                  or_col_grant;
+    reg                                  or_act_grant;
+    reg                                  or_pch_grant;
+    reg                                  or_rd_grant;
+    reg                                  or_wr_grant;
     
     // Arbiter Output Interface
     reg  [CFG_AFI_INTF_PHASE_NUM                          - 1 : 0] arb_do_write;
@@ -264,8 +268,17 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
     // Common
     reg                                 granted_read        [CFG_CTL_TBP_NUM - 1 : 0];
     reg                                 granted_write       [CFG_CTL_TBP_NUM - 1 : 0];
-    reg  [CFG_MEM_IF_CS_WIDTH  - 1 : 0] granted_chipsel_r   [CFG_CTL_TBP_NUM - 1 : 0];
-    reg  [CFG_MEM_IF_CS_WIDTH  - 1 : 0] granted_chipsel_c   [CFG_CTL_TBP_NUM - 1 : 0];
+
+	// WSHUM: See Case:70614
+	// Flatten these into 1-D arrays to avoid using a 2-D array element as an index
+	// into another array, which causes data mismatches in Modelsim SE 10.1b
+	// granted_chipsel_r[tbp] becomes 
+	// granted_chipsel_r[CFG_MEM_IF_CS_WIDTH*(tbp+1) - 1 : CFG_MEM_IF_CS_WIDTH * tbp]
+    //reg  [CFG_MEM_IF_CS_WIDTH  - 1 : 0] granted_chipsel_r   [CFG_CTL_TBP_NUM - 1 : 0];
+    //reg  [CFG_MEM_IF_CS_WIDTH  - 1 : 0] granted_chipsel_c   [CFG_CTL_TBP_NUM - 1 : 0];
+    reg [CFG_MEM_IF_CS_WIDTH*CFG_CTL_TBP_NUM  - 1 : 0] granted_chipsel_r;
+    reg [CFG_MEM_IF_CS_WIDTH*CFG_CTL_TBP_NUM  - 1 : 0] granted_chipsel_c;
+
     reg  [CFG_MEM_IF_CHIP      - 1 : 0] granted_to_chip_r                            ;
     reg  [CFG_MEM_IF_CHIP      - 1 : 0] granted_to_chip_c                            ;
     reg  [CFG_MEM_IF_BA_WIDTH  - 1 : 0] granted_bank_r      [CFG_CTL_TBP_NUM - 1 : 0];
@@ -309,8 +322,22 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
     reg  [CFG_CTL_TBP_NUM - 1 : 0] int_rd_grant;
     reg  [CFG_CTL_TBP_NUM - 1 : 0] int_wr_grant;
     
+    reg                            internal_or_row_grant;
+    reg                            internal_or_col_grant;
+    
     reg                            int_or_row_grant;
     reg                            int_or_col_grant;
+    reg                            int_or_act_grant;
+    reg                            int_or_pch_grant;
+    reg                            int_or_rd_grant;
+    reg                            int_or_wr_grant;
+    
+    reg                            granted_or_row_grant;
+    reg                            granted_or_col_grant;
+    reg                            granted_or_act_grant;
+    reg                            granted_or_pch_grant;
+    reg                            granted_or_rd_grant;
+    reg                            granted_or_wr_grant;
     
     reg  [CFG_CTL_TBP_NUM - 1 : 0] granted_row_grant;
     reg  [CFG_CTL_TBP_NUM - 1 : 0] granted_col_grant;
@@ -344,9 +371,15 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
     //----------------------------------------------------------------------------------------------------
     always @ (*)
     begin
+        granted_or_row_grant   = or_row_grant;
+        granted_or_col_grant   = or_col_grant;
+        granted_or_act_grant   = or_act_grant;
+        granted_or_pch_grant   = or_pch_grant;
+        granted_or_rd_grant    = or_rd_grant;
+        granted_or_wr_grant    = or_wr_grant;
+        
         granted_row_grant      = row_grant;
         granted_col_grant      = col_grant;
-        
         granted_act_grant      = act_grant;
         granted_pch_grant      = pch_grant;
         granted_rd_grant       = rd_grant;
@@ -434,10 +467,11 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
     end
     
     // LMR
-    always @ (*)
-    begin
-        arb_do_lmr = 0;
-    end
+    // SPYGLASS FIX: altera_mem_if_ddr3_emif_test.altera_mem_if_ddr3_emif_inst.c0.ng0.alt_mem_ddrx_controller_top_inst.controller_inst.arb_do_lmr[1:0]' has multiple simultaneous drivers
+    // always @ (*)
+    // begin
+    //    arb_do_lmr = 0;
+    // end
     
     // Local ID
     always @ (*)
@@ -476,7 +510,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
             begin
                 arb_do_write = 0;
                 
-                arb_do_write [AFI_INTF_LOW_PHASE] = |(tbp_write & granted_col_grant);
+                arb_do_write [AFI_INTF_LOW_PHASE] = granted_wr_grant;
             end
             
             // Read
@@ -484,7 +518,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
             begin
                 arb_do_read = 0;
                 
-                arb_do_read [AFI_INTF_LOW_PHASE] = |(tbp_read & granted_col_grant);
+                arb_do_read [AFI_INTF_LOW_PHASE] = granted_rd_grant;
             end
             
             // Auto precharge
@@ -500,7 +534,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
             begin
                 arb_do_activate = 0;
                 
-                arb_do_activate [AFI_INTF_HIGH_PHASE] = |(tbp_activate & granted_row_grant);
+                arb_do_activate [AFI_INTF_HIGH_PHASE] = granted_act_grant;
             end
             
             // Precharge
@@ -508,7 +542,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
             begin
                 arb_do_precharge = 0;
                 
-                arb_do_precharge [AFI_INTF_HIGH_PHASE] = |(tbp_precharge & granted_row_grant);
+                arb_do_precharge [AFI_INTF_HIGH_PHASE] = granted_pch_grant;
             end
             
             // Chip address
@@ -518,7 +552,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                 granted_to_chip_r = 0;
                 
                 if (|granted_row_grant)
-                    granted_to_chip_r [granted_chipsel_r [CFG_CTL_TBP_NUM - 1]] = 1'b1;
+                    granted_to_chip_r [granted_chipsel_r [CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM) - 1 : CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM-1)]] = 1'b1;
             end
             
             always @ (*)
@@ -526,12 +560,12 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                 granted_to_chip_c = 0;
                 
                 if (|granted_col_grant)
-                    granted_to_chip_c [granted_chipsel_c [CFG_CTL_TBP_NUM - 1]] = 1'b1;
+                    granted_to_chip_c [granted_chipsel_c [CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM) - 1 : CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM-1)]] = 1'b1;
             end
             
             always @ (*)
             begin
-                arb_to_chipsel = {granted_chipsel_r [CFG_CTL_TBP_NUM - 1], granted_chipsel_c [CFG_CTL_TBP_NUM - 1]};
+                arb_to_chipsel = {granted_chipsel_r [CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM) - 1 : CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM-1)], granted_chipsel_c [CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM) - 1 : CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM-1)]};
             end
             
             always @ (*)
@@ -600,7 +634,7 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                 granted_to_chip_r = 0;
                 
                 if (|granted_row_grant)
-                    granted_to_chip_r [granted_chipsel_r [CFG_CTL_TBP_NUM - 1]] = 1'b1;
+                    granted_to_chip_r [granted_chipsel_r [CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM) - 1 : CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM-1)]] = 1'b1;
             end
             
             always @ (*)
@@ -608,12 +642,12 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                 granted_to_chip_c = 0;
                 
                 if (|granted_col_grant)
-                    granted_to_chip_c [granted_chipsel_c [CFG_CTL_TBP_NUM - 1]] = 1'b1;
+                    granted_to_chip_c [granted_chipsel_c [CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM) - 1 : CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM-1)]] = 1'b1;
             end
             
             always @ (*)
             begin
-                arb_to_chipsel = {granted_chipsel_c [CFG_CTL_TBP_NUM - 1], granted_chipsel_r [CFG_CTL_TBP_NUM - 1]};
+                arb_to_chipsel = {granted_chipsel_c [CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM) - 1 : CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM-1)], granted_chipsel_r [CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM) - 1 : CFG_MEM_IF_CS_WIDTH*(CFG_CTL_TBP_NUM-1)]};
             end
             
             always @ (*)
@@ -642,8 +676,8 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
     // Chip address
     always @ (*)
     begin
-        granted_chipsel_r   [0] = {CFG_MEM_IF_CS_WIDTH {granted_row_grant [0]}} & tbp_chipsel     [CFG_MEM_IF_CS_WIDTH  - 1 : 0];
-        granted_chipsel_c   [0] = {CFG_MEM_IF_CS_WIDTH {granted_col_grant [0]}} & tbp_chipsel     [CFG_MEM_IF_CS_WIDTH  - 1 : 0];
+        granted_chipsel_r   [CFG_MEM_IF_CS_WIDTH-1 : 0] = {CFG_MEM_IF_CS_WIDTH {granted_row_grant [0]}} & tbp_chipsel     [CFG_MEM_IF_CS_WIDTH  - 1 : 0];
+        granted_chipsel_c   [CFG_MEM_IF_CS_WIDTH-1 : 0] = {CFG_MEM_IF_CS_WIDTH {granted_col_grant [0]}} & tbp_chipsel     [CFG_MEM_IF_CS_WIDTH  - 1 : 0];
     end
     
     // Bank address
@@ -728,8 +762,8 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
             // Chip address
             always @ (*)
             begin
-                granted_chipsel_r   [j_tbp] = ({CFG_MEM_IF_CS_WIDTH {granted_row_grant [j_tbp]}} & chipsel_addr) | granted_chipsel_r   [j_tbp - 1];
-                granted_chipsel_c   [j_tbp] = ({CFG_MEM_IF_CS_WIDTH {granted_col_grant [j_tbp]}} & chipsel_addr) | granted_chipsel_c   [j_tbp - 1];
+                granted_chipsel_r   [CFG_MEM_IF_CS_WIDTH*(j_tbp+1) - 1 : CFG_MEM_IF_CS_WIDTH*j_tbp] = ({CFG_MEM_IF_CS_WIDTH {granted_row_grant [j_tbp]}} & chipsel_addr) | granted_chipsel_r   [CFG_MEM_IF_CS_WIDTH*(j_tbp) - 1 : CFG_MEM_IF_CS_WIDTH*(j_tbp-1)];
+                granted_chipsel_c   [CFG_MEM_IF_CS_WIDTH*(j_tbp+1) - 1 : CFG_MEM_IF_CS_WIDTH*j_tbp] = ({CFG_MEM_IF_CS_WIDTH {granted_col_grant [j_tbp]}} & chipsel_addr) | granted_chipsel_c   [CFG_MEM_IF_CS_WIDTH*(j_tbp) - 1 : CFG_MEM_IF_CS_WIDTH*(j_tbp-1)];
             end
             
             // Bank address
@@ -992,30 +1026,38 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                 
                 int_or_row_grant = 1'b0;
                 int_or_col_grant = 1'b0;
+                int_or_act_grant = 1'b0;
+                int_or_pch_grant = 1'b0;
+                int_or_rd_grant  = 1'b0;
+                int_or_wr_grant  = 1'b0;
                 
-                if (!stall_col_arbiter && !or_col_grant && |rd_req_with_priority)
+                if (!stall_col_arbiter && !internal_or_col_grant && |rd_req_with_priority)
                 begin
                     int_col_grant    = oldest_rd_req_with_priority;
                     int_rd_grant     = oldest_rd_req_with_priority;
                     int_or_col_grant = 1'b1;
+                    int_or_rd_grant  = 1'b1;
                 end
-                else if (!stall_col_arbiter && !or_col_grant && |wr_req_with_priority)
+                else if (!stall_col_arbiter && !internal_or_col_grant && |wr_req_with_priority)
                 begin
                     int_col_grant    = oldest_wr_req_with_priority;
                     int_wr_grant     = oldest_wr_req_with_priority;
                     int_or_col_grant = 1'b1;
+                    int_or_wr_grant  = 1'b1;
                 end
-                else if (!stall_row_arbiter && !or_row_grant && |pch_req_with_priority)
+                else if (!stall_row_arbiter && !internal_or_row_grant && |pch_req_with_priority)
                 begin
                     int_row_grant    = oldest_pch_req_with_priority;
                     int_pch_grant    = oldest_pch_req_with_priority;
                     int_or_row_grant = 1'b1;
+                    int_or_pch_grant = 1'b1;
                 end
-                else if (!stall_row_arbiter && !or_row_grant && |act_req_with_priority)
+                else if (!stall_row_arbiter && !internal_or_row_grant && |act_req_with_priority)
                 begin
                     int_row_grant    = oldest_act_req_with_priority;
                     int_act_grant    = oldest_act_req_with_priority;
                     int_or_row_grant = 1'b1;
+                    int_or_act_grant = 1'b1;
                 end
             end
         end
@@ -1031,18 +1073,22 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                 int_pch_grant    = 0;
                 
                 int_or_row_grant = 1'b0;
+                int_or_act_grant = 1'b0;
+                int_or_pch_grant = 1'b0;
                 
-                if (!stall_row_arbiter && !or_row_grant && |pch_req_with_priority)
+                if (!stall_row_arbiter && !internal_or_row_grant && |pch_req_with_priority)
                 begin
                     int_row_grant    = oldest_pch_req_with_priority;
                     int_pch_grant    = oldest_pch_req_with_priority;
                     int_or_row_grant = 1'b1;
+                    int_or_pch_grant = 1'b1;
                 end
-                else if (!stall_row_arbiter && !or_row_grant && |act_req_with_priority)
+                else if (!stall_row_arbiter && !internal_or_row_grant && |act_req_with_priority)
                 begin
                     int_row_grant    = oldest_act_req_with_priority;
                     int_act_grant    = oldest_act_req_with_priority;
                     int_or_row_grant = 1'b1;
+                    int_or_act_grant = 1'b1;
                 end
             end
             
@@ -1054,18 +1100,22 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                 int_wr_grant     = 0;
                 
                 int_or_col_grant = 1'b0;
+                int_or_rd_grant  = 1'b0;
+                int_or_wr_grant  = 1'b0;
                 
-                if (!stall_col_arbiter && !or_col_grant && |rd_req_with_priority)
+                if (!stall_col_arbiter && !internal_or_col_grant && |rd_req_with_priority)
                 begin
                     int_col_grant    = oldest_rd_req_with_priority;
                     int_rd_grant     = oldest_rd_req_with_priority;
                     int_or_col_grant = 1'b1;
+                    int_or_rd_grant  = 1'b1;
                 end
-                else if (!stall_col_arbiter && !or_col_grant && |wr_req_with_priority)
+                else if (!stall_col_arbiter && !internal_or_col_grant && |wr_req_with_priority)
                 begin
                     int_col_grant    = oldest_wr_req_with_priority;
                     int_wr_grant     = oldest_wr_req_with_priority;
                     int_or_col_grant = 1'b1;
+                    int_or_wr_grant  = 1'b1;
                 end
             end
         end
@@ -1090,6 +1140,11 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                     
                     or_row_grant   <= 0;
                     or_col_grant   <= 0;
+                    
+                    or_act_grant   <= 0;
+                    or_pch_grant   <= 0;
+                    or_rd_grant    <= 0;
+                    or_wr_grant    <= 0;
                 end
                 else
                 begin
@@ -1103,6 +1158,11 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                     
                     or_row_grant   <= int_or_row_grant;
                     or_col_grant   <= int_or_col_grant;
+                    
+                    or_act_grant   <= int_or_act_grant;
+                    or_pch_grant   <= int_or_pch_grant;
+                    or_rd_grant    <= int_or_rd_grant;
+                    or_wr_grant    <= int_or_wr_grant;
                 end
             end
             
@@ -1115,6 +1175,12 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                 log2_pch_grant = log2(pch_grant);
                 log2_rd_grant  = log2(rd_grant );
                 log2_wr_grant  = log2(wr_grant );
+            end
+            
+            always @ (*)
+            begin
+                internal_or_row_grant = or_row_grant;
+                internal_or_col_grant = or_col_grant;
             end
         end
         else
@@ -1137,8 +1203,19 @@ output [CFG_INT_SIZE_WIDTH                              - 1 : 0] arb_size;
                 log2_rd_grant  = log2(int_rd_grant );
                 log2_wr_grant  = log2(int_wr_grant );
                 
-                or_row_grant   = 1'b0; // Hardwire this to 0 in non register-grant mode
-                or_col_grant   = 1'b0; // Hardwire this to 0 in non register-grant mode
+                or_row_grant   = int_or_row_grant;
+                or_col_grant   = int_or_col_grant;
+                
+                or_act_grant   = int_or_act_grant;
+                or_pch_grant   = int_or_pch_grant;
+                or_rd_grant    = int_or_rd_grant;
+                or_wr_grant    = int_or_wr_grant;
+            end
+            
+            always @ (*)
+            begin
+                internal_or_row_grant = zero; // Hardwire to '0' because it's not require when col grant reg mode is disabled
+                internal_or_col_grant = zero; // Hardwire to '0' because it's not require when col grant reg mode is disabled
             end
         end
     end

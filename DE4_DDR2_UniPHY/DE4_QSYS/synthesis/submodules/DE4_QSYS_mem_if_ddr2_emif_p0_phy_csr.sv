@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -22,6 +22,8 @@
 // and are processed in the following clock cycle to when they are initially
 // captured.
 
+// altera message_off 10036
+
 //synopsys translate_off
 `timescale 1 ps / 1 ps
 //synopsys translate_on
@@ -30,7 +32,6 @@ module DE4_QSYS_mem_if_ddr2_emif_p0_phy_csr(
 	clk,
 	reset_n,
 
-	
 	csr_addr,
 	csr_be,
 	csr_write_req,
@@ -40,23 +41,20 @@ module DE4_QSYS_mem_if_ddr2_emif_p0_phy_csr(
 	csr_rdata_valid,
 	csr_waitrequest,
 	
-	
 	pll_locked,
 	afi_cal_success,
 	afi_cal_fail,
 	seq_fom_in,
 	seq_fom_out,
 	cal_init_failing_stage,
-	cal_init_failing_group,
-	dqs_edge_detect,
+	cal_init_failing_substage,
+	cal_init_failing_group
 	
-	
-	soft_reset_req
 );
 
 localparam RESET_REQUEST_DELAY = 4;
 
-localparam CSR_IP_VERSION_NUMBER = 111;
+localparam CSR_IP_VERSION_NUMBER = 130;
 
 parameter CSR_ADDR_WIDTH       = 8;
 parameter CSR_DATA_WIDTH       = 32;
@@ -85,11 +83,10 @@ input afi_cal_fail;
 input [7:0] seq_fom_in;
 input [7:0] seq_fom_out;
 input [7:0] cal_init_failing_stage;
+input [7:0] cal_init_failing_substage;
 input [7:0] cal_init_failing_group;
 
-input [MEM_READ_DQS_WIDTH-1:0] dqs_edge_detect;
 
-output soft_reset_req;
 
 reg int_write_req;
 reg int_read_req;
@@ -108,41 +105,31 @@ reg [31:0] csr_register_0006;
 reg [31:0] csr_register_0007;
 reg [31:0] csr_register_0008;
 
-reg [RESET_REQUEST_DELAY - 1:0] soft_reset_req_reg;
 
 
 always @ (posedge clk) begin
-	
 	csr_register_0001 <= 0;
 	csr_register_0001 <= 32'hdeadbeef;
 	
-	
-	
-	
 	csr_register_0002 <= 0;
 	csr_register_0002 <= {CSR_IP_VERSION_NUMBER[15:0],16'h4};
-	
 	
 	csr_register_0004 <= 0;
 	csr_register_0004[24] <= afi_cal_success;
 	csr_register_0004[25] <= afi_cal_fail;
 	csr_register_0004[26] <= pll_locked;
 	
-	
 	csr_register_0005 <= 0;
 	csr_register_0005[7:0] <= seq_fom_in;
 	csr_register_0005[23:16] <= seq_fom_out;
 
-	
 	csr_register_0006 <= 0;
 	csr_register_0006[7:0] <= cal_init_failing_stage;
+	csr_register_0006[15:8] <= cal_init_failing_substage;
 	csr_register_0006[23:16] <= cal_init_failing_group;
 	
-	
 	csr_register_0007 <= 0;
-	csr_register_0007[MEM_READ_DQS_WIDTH-1:0] <= dqs_edge_detect;
 
-	
 	csr_register_0008 <= 0;
 	csr_register_0008[1:0] <= MR1_RTT[1:0] & 2'b11;
 
@@ -179,14 +166,11 @@ always @ (posedge clk or negedge reset_n) begin
 	if (!reset_n) begin
 		int_rdata       <= 0;
 		int_rdata_valid <= 0;
-		
 		int_waitrequest <= 1;
 	end
 	else begin
-		
 		int_waitrequest <= 1'b0;
 
-		
 		if (int_read_req) 
 			case (int_addr)
 				'h1 :
@@ -203,12 +187,9 @@ always @ (posedge clk or negedge reset_n) begin
 					int_rdata <= csr_register_0007;
 				'h8 :
 					int_rdata <= csr_register_0008;
-				
 				default :
 					int_rdata <= 0;
 			endcase
-		
-		
 		
 		if (int_read_req)
 			int_rdata_valid <= 1'b1;
@@ -222,25 +203,12 @@ always @ (posedge clk or negedge reset_n) begin
 	if (!reset_n) begin
 		
 
-		
 
-		
-		soft_reset_req_reg <= #20 '0;
 
 	end
 	else begin
-		soft_reset_req_reg <= {soft_reset_req_reg[RESET_REQUEST_DELAY-2:0], 1'b0};
 	
-		
 		if (int_write_req) begin
-			case (int_addr)
-				'h4 :
-					if (int_be[0])
-						
-						
-						
-						soft_reset_req_reg[0] <= int_wdata[0];
-			endcase
 		end
 	end
 end
@@ -254,8 +222,6 @@ DE4_QSYS_mem_if_ddr2_emif_p0_iss_probe pll_probe (
 assign csr_waitrequest = int_waitrequest;
 assign csr_rdata = int_rdata;
 assign csr_rdata_valid = int_rdata_valid;
-
-assign soft_reset_req = soft_reset_req_reg[RESET_REQUEST_DELAY-1];
 
 
 endmodule

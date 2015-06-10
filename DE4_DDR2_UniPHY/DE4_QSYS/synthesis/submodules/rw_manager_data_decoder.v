@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -44,7 +44,6 @@ module rw_manager_data_decoder(
 	generate
 		for(j = 0; j < DATA_WIDTH; j = j + 1)
 		begin : bit_pattern
-			
 			if(j % 2 == 0) begin
 				assign pattern[j] = code_R[3];
 				assign pattern[j + DATA_WIDTH] = code_R[2];
@@ -60,7 +59,6 @@ module rw_manager_data_decoder(
 					assign pattern[j + 7 * DATA_WIDTH] = code_R[2] ^ code_R[1];
 				end
 			end
-			
 			else begin
 				assign pattern[j] = code_R[3] ^ code_R[0];
 				assign pattern[j + DATA_WIDTH] = code_R[2] ^ code_R[0];

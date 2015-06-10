@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -57,6 +57,7 @@ module alt_mem_ddrx_tbp
         tbp_full,
         tbp_empty,
         cmd_gen_load,
+        cmd_gen_waiting_to_load,
         cmd_gen_chipsel,
         cmd_gen_bank,
         cmd_gen_row,
@@ -136,15 +137,19 @@ module alt_mem_ddrx_tbp
         t_param_wr_ap_to_valid,
         
         // Misc interface
-        tbp_bank_active,
+        tbp_bank_closed,
         tbp_timer_ready,
         tbp_load,
         data_complete,
+        data_rmw_complete,
+        data_rmw_fetch,
         
         // Config interface
         cfg_reorder_data,
         cfg_starve_limit,
-        cfg_type
+        cfg_type,
+        cfg_enable_ecc,
+        cfg_enable_no_dm
     );
     
     localparam integer CFG_MEM_IF_BA_WIDTH_SQRD     = 2**CFG_MEM_IF_BA_WIDTH;
@@ -153,6 +158,7 @@ module alt_mem_ddrx_tbp
     localparam          COL_TIMER_WIDTH             = T_PARAM_ACT_TO_RDWR_WIDTH;
     localparam          ROW_TIMER_WIDTH             = (T_PARAM_ACT_TO_ACT_WIDTH > RDWR_AP_TO_VALID_WIDTH) ? T_PARAM_ACT_TO_ACT_WIDTH : RDWR_AP_TO_VALID_WIDTH;
     localparam          TRC_TIMER_WIDTH             = T_PARAM_ACT_TO_ACT_WIDTH;
+    localparam          COMBINED_TIMER_WIDTH        = (ROW_TIMER_WIDTH > TRC_TIMER_WIDTH) ? ROW_TIMER_WIDTH : TRC_TIMER_WIDTH;
     
     // Start of port declaration
     input   ctl_clk;
@@ -161,6 +167,7 @@ module alt_mem_ddrx_tbp
     output                               tbp_full;
     output                               tbp_empty;
     input                                cmd_gen_load;
+    input                                cmd_gen_waiting_to_load;
     input   [CFG_MEM_IF_CS_WIDTH-1:0]    cmd_gen_chipsel;
     input   [CFG_MEM_IF_BA_WIDTH-1:0]    cmd_gen_bank;
     input   [CFG_MEM_IF_ROW_WIDTH-1:0]   cmd_gen_row;
@@ -237,14 +244,18 @@ module alt_mem_ddrx_tbp
     input   [T_PARAM_RD_AP_TO_VALID_WIDTH-1:0] t_param_rd_ap_to_valid;
     input   [T_PARAM_WR_AP_TO_VALID_WIDTH-1:0] t_param_wr_ap_to_valid;
     
-    output  [CFG_MEM_IF_CHIP-1:0]              tbp_bank_active;
+    output  [CFG_MEM_IF_CHIP-1:0]              tbp_bank_closed;
     output  [CFG_MEM_IF_CHIP-1:0]              tbp_timer_ready;
     output  [CFG_CTL_TBP_NUM-1:0]              tbp_load;
     input   [CFG_CTL_TBP_NUM-1:0]              data_complete;
+    input                                      data_rmw_complete;
+    output                                     data_rmw_fetch;
     
     input   [CFG_PORT_WIDTH_REORDER_DATA-1:0] cfg_reorder_data;
     input   [CFG_PORT_WIDTH_STARVE_LIMIT-1:0] cfg_starve_limit;
     input   [CFG_PORT_WIDTH_TYPE-1:0]         cfg_type;
+    input                                     cfg_enable_ecc;
+    input                                     cfg_enable_no_dm;
     // End of port declaration
     
     // Logic operators
@@ -261,6 +272,8 @@ module alt_mem_ddrx_tbp
     reg     [CFG_CTL_TBP_NUM-1:0] col_req;
     reg     [CFG_CTL_TBP_NUM-1:0] rd_req;
     reg     [CFG_CTL_TBP_NUM-1:0] wr_req;
+    
+    wire                          cfg_enable_rmw;
     
     reg                           int_tbp_full;
     wire                          int_tbp_empty;
@@ -291,6 +304,7 @@ module alt_mem_ddrx_tbp
     reg     [CFG_CTL_TBP_NUM-1:0]             done_tbp_row_pass_flush_r;
     reg     [CFG_CTL_TBP_NUM-1:0]             open_row_pass;
     reg     [CFG_CTL_TBP_NUM-1:0]             open_row_pass_r;
+    reg     [CFG_CTL_TBP_NUM-1:0]             open_row_passed;
     wire    [CFG_CTL_TBP_NUM-1:0]             open_row_pass_flush;
     reg     [CFG_CTL_TBP_NUM-1:0]             open_row_pass_flush_r;
     reg     [CFG_CTL_TBP_NUM-1:0]             log2_open_row_pass_flush   [CFG_CTL_TBP_NUM-1:0];
@@ -311,6 +325,7 @@ module alt_mem_ddrx_tbp
     reg     [CFG_CTL_TBP_NUM-1:0]             real_ap;
     reg     [CFG_CTL_TBP_NUM-1:0]             rmw_correct;
     reg     [CFG_CTL_TBP_NUM-1:0]             rmw_partial;
+    reg     [CFG_CTL_TBP_NUM-1:0]             rmw;
     reg     [CFG_CTL_TBP_NUM-1:0]             require_flush;
     reg     [CFG_CTL_TBP_NUM-1:0]             require_flush_calc;
     reg     [CFG_CTL_TBP_NUM-1:0]             require_pch_combi [CFG_CTL_TBP_NUM-1:0];
@@ -366,11 +381,11 @@ module alt_mem_ddrx_tbp
     wire    [CFG_CTL_TBP_NUM-1:0]                               tbp_rmw_correct;
     wire    [CFG_CTL_TBP_NUM-1:0]                               tbp_rmw_partial;
     
-    wire    [CFG_MEM_IF_CHIP-1:0]                               tbp_bank_active;
+    wire    [CFG_MEM_IF_CHIP-1:0]                               tbp_bank_closed;
     wire    [CFG_MEM_IF_CHIP-1:0]                               tbp_timer_ready;
-    reg     [CFG_MEM_IF_CHIP-1:0]                               bank_active;
+    reg     [CFG_MEM_IF_CHIP-1:0]                               bank_closed;
     reg     [CFG_MEM_IF_CHIP-1:0]                               timer_ready;
-    reg     [CFG_CTL_TBP_NUM-1:0]                               int_bank_active        [CFG_MEM_IF_CHIP-1:0];
+    reg     [CFG_CTL_TBP_NUM-1:0]                               int_bank_closed        [CFG_MEM_IF_CHIP-1:0];
     reg     [CFG_CTL_TBP_NUM-1:0]                               int_timer_ready        [CFG_MEM_IF_CHIP-1:0];
     reg     [CFG_CTL_SHADOW_TBP_NUM-1:0]                        int_shadow_timer_ready [CFG_MEM_IF_CHIP-1:0];
     
@@ -387,24 +402,23 @@ module alt_mem_ddrx_tbp
     reg     [CFG_CTL_TBP_NUM-1:0]        pre_calculated_same_chip_bank          [CFG_CTL_TBP_NUM-1:0];
     reg     [CFG_CTL_SHADOW_TBP_NUM-1:0] pre_calculated_same_shadow_chip_bank   [CFG_CTL_TBP_NUM-1:0];
     
-    reg     [COL_TIMER_WIDTH-1:0] col_timer           [CFG_CTL_TBP_NUM-1:0];
-    reg     [CFG_CTL_TBP_NUM-1:0] col_timer_ready;
-    reg     [CFG_CTL_TBP_NUM-1:0] col_timer_pre_ready;
+    reg     [COL_TIMER_WIDTH-1:0]        col_timer           [CFG_CTL_TBP_NUM-1:0];
+    reg     [CFG_CTL_TBP_NUM-1:0]        col_timer_ready;
+    reg     [CFG_CTL_TBP_NUM-1:0]        col_timer_pre_ready;
     
-    reg     [ROW_TIMER_WIDTH-1:0] row_timer_combi     [CFG_CTL_TBP_NUM-1:0];
-    reg     [ROW_TIMER_WIDTH-1:0] row_timer           [CFG_CTL_TBP_NUM-1:0];
-    reg     [CFG_CTL_TBP_NUM-1:0] row_timer_ready;
-    reg     [CFG_CTL_TBP_NUM-1:0] row_timer_pre_ready;
+    reg     [COMBINED_TIMER_WIDTH-1:0]   combined_timer      [CFG_CTL_TBP_NUM-1:0];
+    reg     [ROW_TIMER_WIDTH-1:0]        row_timer_combi     [CFG_CTL_TBP_NUM-1:0];
+    reg     [ROW_TIMER_WIDTH-1:0]        row_timer           [CFG_CTL_TBP_NUM-1:0];
+    reg     [CFG_CTL_TBP_NUM-1:0]        row_timer_ready;
+    reg     [CFG_CTL_TBP_NUM-1:0]        row_timer_pre_ready;
     
-    reg     [TRC_TIMER_WIDTH-1:0] trc_timer           [CFG_CTL_TBP_NUM-1:0];
-    reg     [CFG_CTL_TBP_NUM-1:0] trc_timer_ready;
-    reg     [CFG_CTL_TBP_NUM-1:0] trc_timer_pre_ready;
-    reg     [CFG_CTL_TBP_NUM-1:0] trc_timer_pre_ready_combi;
+    reg     [TRC_TIMER_WIDTH-1:0]        trc_timer           [CFG_CTL_TBP_NUM-1:0];
+    reg     [CFG_CTL_TBP_NUM-1:0]        trc_timer_ready;
+    reg     [CFG_CTL_TBP_NUM-1:0]        trc_timer_pre_ready;
+    reg     [CFG_CTL_TBP_NUM-1:0]        trc_timer_pre_ready_combi;
     
     reg     [CFG_CTL_TBP_NUM-1:0] pch_ready;
     
-    reg     [CFG_CTL_TBP_NUM-1:0] compare_t_param_rd_ap_to_valid_greater_than_trc_timer;
-    reg     [CFG_CTL_TBP_NUM-1:0] compare_t_param_wr_ap_to_valid_greater_than_trc_timer;
     reg     [CFG_CTL_TBP_NUM-1:0] compare_t_param_rd_to_pch_greater_than_row_timer;
     reg     [CFG_CTL_TBP_NUM-1:0] compare_t_param_wr_to_pch_greater_than_row_timer;
     
@@ -507,7 +521,7 @@ module alt_mem_ddrx_tbp
     assign  load_tbp          = (~int_tbp_full & cmd_gen_load) ? load_tbp_index : 0;
     assign  flush_tbp         = open_row_pass_flush_r | finish_tbp | (done & precharge_tbp);
     assign  tbp_load          = load_tbp;
-    assign  tbp_bank_active   = bank_active;
+    assign  tbp_bank_closed   = bank_closed;
     assign  tbp_timer_ready   = timer_ready;
     assign  precharge         = activated;
     assign  activate          = ~activated;
@@ -515,7 +529,8 @@ module alt_mem_ddrx_tbp
     //----------------------------------------------------------------------------------------------------
     // TBP General Functions
     //----------------------------------------------------------------------------------------------------
-    assign valid_combi = (valid | load_tbp) & ~flush_tbp;
+    assign cfg_enable_rmw = cfg_enable_ecc | cfg_enable_no_dm;
+    assign valid_combi    = (valid | load_tbp) & ~flush_tbp;
     
     // Decide which TBP to load
     always @ (posedge ctl_clk or negedge ctl_reset_n)
@@ -555,11 +570,11 @@ module alt_mem_ddrx_tbp
                 begin
                     if (CFG_ENABLE_SHADOW_TBP)
                         begin
-                            finish_tbp[i] = push_tbp[i] | (done[i] & precharged[i] & row_timer_pre_ready[i]);
+                            finish_tbp[i] = push_tbp[i] | (done[i] & precharged[i] & row_timer_pre_ready[i] & trc_timer_pre_ready[i]);
                         end
                     else
                         begin
-                            finish_tbp[i] = done[i] & precharged[i] & row_timer_pre_ready[i];
+                            finish_tbp[i] = done[i] & precharged[i] & row_timer_pre_ready[i] & trc_timer_pre_ready[i];
                         end
                 end
         end
@@ -1022,6 +1037,7 @@ module alt_mem_ddrx_tbp
                         dataid     [i] <= 0;
                         rmw_correct[i] <= 0;
                         rmw_partial[i] <= 0;
+                        rmw        [i] <= 0;
                     end
             else
                 for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
@@ -1040,6 +1056,7 @@ module alt_mem_ddrx_tbp
                                 dataid     [i] <= cmd_gen_dataid;
                                 rmw_correct[i] <= cmd_gen_rmw_correct;
                                 rmw_partial[i] <= cmd_gen_rmw_partial;
+                                rmw        [i] <= cmd_gen_rmw_partial | cmd_gen_rmw_correct;
                             end
                     end
         end
@@ -1248,8 +1265,8 @@ module alt_mem_ddrx_tbp
                                         (
                                             !flush_tbp[j] && !col_grant[j] &&
                                             (
-                                                ( cfg_reorder_data && CFG_DATA_REORDERING_TYPE == "INTER_ROW"  && valid[j] && !done[j] && (priority_a[j] || same_chip_bank_row[j] || rmw_partial[j] || rmw_correct[j] || same_command_read[j])) ||
-                                                ( cfg_reorder_data && CFG_DATA_REORDERING_TYPE == "INTER_BANK" && valid[j] && !done[j] && (priority_a[j] || same_chip_bank    [j] || rmw_partial[j] || rmw_correct[j] || same_command_read[j])) ||
+                                                ( cfg_reorder_data && CFG_DATA_REORDERING_TYPE == "INTER_ROW"  && valid[j] && !done[j] && (priority_a[j] || same_chip_bank_row[j] || (rmw[j] && (cmd_gen_rmw_partial || cmd_gen_rmw_correct)) || same_command_read[j])) ||
+                                                ( cfg_reorder_data && CFG_DATA_REORDERING_TYPE == "INTER_BANK" && valid[j] && !done[j] && (priority_a[j] || same_chip_bank    [j] || (rmw[j] && (cmd_gen_rmw_partial || cmd_gen_rmw_correct)) || same_command_read[j])) ||
                                                 (!cfg_reorder_data && valid[j] && !done[j])
                                             )
                                         )
@@ -1390,6 +1407,32 @@ module alt_mem_ddrx_tbp
             for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
                 begin
                     open_row_pass[i] = |open_row_pass_flush && or_wrt[i] && |(wrt[i] & open_row_pass_flush);
+                end
+        end
+    
+    // Open-row-passed logic, keep signal high once there is a open-row-pass to current TBP
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+        begin
+            if (!ctl_reset_n)
+                begin
+                    for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
+                        begin
+                            open_row_passed[i] <= 1'b0;
+                        end
+                end
+            else
+                begin
+                    for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
+                        begin
+                            if (open_row_pass[i])
+                                begin
+                                    open_row_passed[i] <= 1'b1;
+                                end
+                            else if (flush_tbp[i])
+                                begin
+                                    open_row_passed[i] <= 1'b0;
+                                end
+                        end
                 end
         end
     
@@ -1683,6 +1726,100 @@ module alt_mem_ddrx_tbp
     //----------------------------------------------------------------------------------------------------
     // Complete logic
     //----------------------------------------------------------------------------------------------------
+    reg  [CFG_CTL_TBP_NUM-1:0] partial_vector_combi [CFG_CTL_TBP_NUM-1:0];
+    reg  [CFG_CTL_TBP_NUM-1:0] partial_vector       [CFG_CTL_TBP_NUM-1:0];
+    reg  [CFG_CTL_TBP_NUM-1:0] load_rmw_data;
+    reg  [CFG_CTL_TBP_NUM-1:0] all_complete_vector;
+    reg                        all_complete;
+    
+    wire                       data_rmw_fetch = data_rmw_complete && !all_complete;
+    
+    // Partial information, to indicate which partial command should receive the current data_rmw_complete
+    always @ (*)
+        begin
+            for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
+                begin
+                    for (j=0; j<CFG_CTL_TBP_NUM; j=j+1)
+                        begin
+                            if (i == j)
+                                begin
+                                    partial_vector_combi[i][j] = zero;
+                                end
+                            else
+                                begin
+                                    if (load_tbp[i] && (cmd_gen_rmw_partial || cmd_gen_rmw_correct) && cmd_gen_write) // only required for partial write commands
+                                        begin
+                                            if (!done[j] && valid[j] && rmw[j] && write[j] && !load_rmw_data[j] && !complete_wr[j]) // compare with current valid and not done RMW commands
+                                                begin
+                                                    partial_vector_combi[i][j] = 1'b1;
+                                                end
+                                            else
+                                                begin
+                                                    partial_vector_combi[i][j] = 1'b0;
+                                                end
+                                        end
+                                    else if (load_rmw_data[j])
+                                        begin
+                                            partial_vector_combi[i][j] = 1'b0;
+                                        end
+                                    else
+                                        begin
+                                            partial_vector_combi[i][j] = partial_vector[i][j];
+                                        end
+                                end
+                        end
+                end
+        end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+        begin
+            if (!ctl_reset_n)
+                begin
+                    for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
+                        begin
+                            for (j=0; j<CFG_CTL_TBP_NUM; j=j+1)
+                                begin
+                                    partial_vector[i][j] <= 1'b0;
+                                end
+                        end
+                end
+            else
+                begin
+                    for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
+                        begin
+                            for (j=0; j<CFG_CTL_TBP_NUM; j=j+1)
+                                begin
+                                    partial_vector[i][j] <= partial_vector_combi[i][j];
+                                end
+                        end
+                end
+        end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+        begin
+            if (!ctl_reset_n)
+                begin
+                    for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
+                        begin
+                            load_rmw_data[i] <= 1'b0;
+                        end
+                end
+            else
+                begin
+                    for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
+                        begin
+                            if (~|partial_vector_combi[i] && data_rmw_complete)
+                                begin
+                                    load_rmw_data[i] <= 1'b1;
+                                end
+                            else
+                                begin
+                                    load_rmw_data[i] <= 1'b0;
+                                end
+                        end
+                end
+        end
+    
     // Indicate that the data for current TBP is complete and ready to be issued
     always @(*)
         begin
@@ -1704,7 +1841,15 @@ module alt_mem_ddrx_tbp
                     else if (write[i] && !complete[i])
                         begin
                             complete_combi_rd[i] =  complete_rd[i];
-                            complete_combi_wr[i] =  data_complete[i];
+                            
+                            if (cfg_enable_rmw)
+                                begin
+                                    complete_combi_wr[i] =  load_rmw_data[i];
+                                end
+                            else
+                                begin
+                                    complete_combi_wr[i] =  data_complete[i];
+                                end
                         end
                     else
                         begin
@@ -1732,6 +1877,24 @@ module alt_mem_ddrx_tbp
                     complete    <=  complete_combi;
                     complete_rd <=  complete_combi_rd;
                     complete_wr <=  complete_combi_wr;
+                end
+        end
+    
+    // To indicate that all TBP has completed, expect non-valid TBP
+    always @ (*)
+        begin
+            all_complete = &all_complete_vector;
+            
+            for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
+                begin
+                    if (!valid[i])
+                        begin
+                            all_complete_vector[i] = 1'b1;
+                        end
+                    else
+                        begin
+                            all_complete_vector[i] = complete[i];
+                        end
                 end
         end
     
@@ -2198,7 +2361,7 @@ module alt_mem_ddrx_tbp
                         begin
                             if (CFG_CTL_TBP_NUM == 1)
                                 begin
-                                    require_flush[i] <= cmd_gen_load;
+                                    require_flush[i] <= cmd_gen_load | cmd_gen_waiting_to_load;
                                 end
                             else
                                 begin
@@ -2206,7 +2369,7 @@ module alt_mem_ddrx_tbp
                                         begin
                                             require_flush[i] <= 1'b0;
                                         end
-                                    else if (int_tbp_full && cmd_gen_load)
+                                    else if (int_tbp_full && (cmd_gen_load | cmd_gen_waiting_to_load))
                                         begin
                                             if (same_chip_bank_row[i])
                                                 require_flush[i] <= 1'b0;
@@ -2643,129 +2806,30 @@ module alt_mem_ddrx_tbp
                 begin
                     for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
                         begin
-                            compare_t_param_rd_ap_to_valid_greater_than_trc_timer[i] <= 1'b0;
-                            compare_t_param_wr_ap_to_valid_greater_than_trc_timer[i] <= 1'b0;
-                            compare_t_param_rd_to_pch_greater_than_row_timer      [i] <= 1'b0;
-                            compare_t_param_wr_to_pch_greater_than_row_timer      [i] <= 1'b0;
+                            compare_t_param_rd_to_pch_greater_than_row_timer     [i] <= 1'b0;
+                            compare_t_param_wr_to_pch_greater_than_row_timer     [i] <= 1'b0;
                         end
                 end
             else
                 begin
                     for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
                         begin
-                            if (CFG_REG_GRANT == 0 && open_row_pass[i])
+                            if (t_param_rd_to_pch > ((row_timer[i] > 1) ? (row_timer[i] - 1'b1) : 0))
                                 begin
-                                    if (t_param_rd_ap_to_valid > ((trc_timer[log2_open_row_pass_flush[i]] > 1) ? (trc_timer[log2_open_row_pass_flush[i]] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_rd_ap_to_valid_greater_than_trc_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_rd_ap_to_valid_greater_than_trc_timer[i] <= 1'b0;
-                                        end
-                                    
-                                    if (t_param_wr_ap_to_valid > ((trc_timer[log2_open_row_pass_flush[i]] > 1) ? (trc_timer[log2_open_row_pass_flush[i]] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_wr_ap_to_valid_greater_than_trc_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_wr_ap_to_valid_greater_than_trc_timer[i] <= 1'b0;
-                                        end
-                                    
-                                    if (t_param_rd_to_pch > ((row_timer[log2_open_row_pass_flush[i]] > 1) ? (row_timer[log2_open_row_pass_flush[i]] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_rd_to_pch_greater_than_row_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_rd_to_pch_greater_than_row_timer[i] <= 1'b0;
-                                        end
-                                    
-                                    if (t_param_wr_to_pch > ((row_timer[log2_open_row_pass_flush[i]] > 1) ? (row_timer[log2_open_row_pass_flush[i]] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_wr_to_pch_greater_than_row_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_wr_to_pch_greater_than_row_timer[i] <= 1'b0;
-                                        end
-                                end
-                            else if (CFG_REG_GRANT == 1 && open_row_pass_r[i])
-                                begin
-                                    if (t_param_rd_ap_to_valid > ((trc_timer[log2_open_row_pass_flush_r[i]] > 1) ? (trc_timer[log2_open_row_pass_flush_r[i]] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_rd_ap_to_valid_greater_than_trc_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_rd_ap_to_valid_greater_than_trc_timer[i] <= 1'b0;
-                                        end
-                                    
-                                    if (t_param_wr_ap_to_valid > ((trc_timer[log2_open_row_pass_flush_r[i]] > 1) ? (trc_timer[log2_open_row_pass_flush_r[i]] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_wr_ap_to_valid_greater_than_trc_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_wr_ap_to_valid_greater_than_trc_timer[i] <= 1'b0;
-                                        end
-                                    
-                                    if (t_param_rd_to_pch > ((row_timer[log2_open_row_pass_flush_r[i]] > 1) ? (row_timer[log2_open_row_pass_flush_r[i]] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_rd_to_pch_greater_than_row_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_rd_to_pch_greater_than_row_timer[i] <= 1'b0;
-                                        end
-                                    
-                                    if (t_param_wr_to_pch > ((row_timer[log2_open_row_pass_flush_r[i]] > 1) ? (row_timer[log2_open_row_pass_flush_r[i]] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_wr_to_pch_greater_than_row_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_wr_to_pch_greater_than_row_timer[i] <= 1'b0;
-                                        end
+                                    compare_t_param_rd_to_pch_greater_than_row_timer[i] <= 1'b1;
                                 end
                             else
                                 begin
-                                    if (t_param_rd_ap_to_valid > ((trc_timer[i] > 1) ? (trc_timer[i] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_rd_ap_to_valid_greater_than_trc_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_rd_ap_to_valid_greater_than_trc_timer[i] <= 1'b0;
-                                        end
-                                    
-                                    if (t_param_wr_ap_to_valid > ((trc_timer[i] > 1) ? (trc_timer[i] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_wr_ap_to_valid_greater_than_trc_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_wr_ap_to_valid_greater_than_trc_timer[i] <= 1'b0;
-                                        end
-                                    
-                                    if (t_param_rd_to_pch > ((row_timer[i] > 1) ? (row_timer[i] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_rd_to_pch_greater_than_row_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_rd_to_pch_greater_than_row_timer[i] <= 1'b0;
-                                        end
-                                    
-                                    if (t_param_wr_to_pch > ((row_timer[i] > 1) ? (row_timer[i] - 1'b1) : 0))
-                                        begin
-                                            compare_t_param_wr_to_pch_greater_than_row_timer[i] <= 1'b1;
-                                        end
-                                    else
-                                        begin
-                                            compare_t_param_wr_to_pch_greater_than_row_timer[i] <= 1'b0;
-                                        end
+                                    compare_t_param_rd_to_pch_greater_than_row_timer[i] <= 1'b0;
+                                end
+                            
+                            if (t_param_wr_to_pch > ((row_timer[i] > 1) ? (row_timer[i] - 1'b1) : 0))
+                                begin
+                                    compare_t_param_wr_to_pch_greater_than_row_timer[i] <= 1'b1;
+                                end
+                            else
+                                begin
+                                    compare_t_param_wr_to_pch_greater_than_row_timer[i] <= 1'b0;
                                 end
                         end
                 end
@@ -2871,6 +2935,55 @@ module alt_mem_ddrx_tbp
                 end
         end
     
+    // Combined timer logic
+    // compare between row_timer and trc_timer and take the largest value
+    // to be used in open_row_pass only
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+        begin
+            if (!ctl_reset_n)
+                begin
+                    for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
+                        begin
+                            combined_timer[i] <= 0;
+                        end
+                end
+            else
+                begin
+                    for (i=0; i<CFG_CTL_TBP_NUM; i=i+1)
+                        begin
+                            if (CFG_REG_GRANT == 0 && open_row_pass_r[i]) // for QR controller only
+                                begin
+                                    if (col_grant[i])
+                                        begin
+                                            if (row_timer_combi[i] > combined_timer[log2_open_row_pass_flush_r[i]])
+                                                begin
+                                                    combined_timer[i] <= row_timer_combi[i];
+                                                end
+                                            else
+                                                begin
+                                                    combined_timer[i] <= (combined_timer[log2_open_row_pass_flush_r[i]] > 1'b1) ? (combined_timer[log2_open_row_pass_flush_r[i]] - 1'b1) : 1'b1;
+                                                end
+                                        end
+                                    else
+                                        begin
+                                            combined_timer[i] <= (combined_timer[log2_open_row_pass_flush_r[i]] > 1'b1) ? (combined_timer[log2_open_row_pass_flush_r[i]] - 1'b1) : 1'b1;
+                                        end
+                                end
+                            else
+                                begin
+                                    if (row_timer_combi[i] > trc_timer[i])
+                                        begin
+                                            combined_timer[i] <= row_timer_combi[i];
+                                        end
+                                    else
+                                        begin
+                                            combined_timer[i] <= (trc_timer[i] > 1'b1) ? (trc_timer[i] - 1'b1) : 1'b1;
+                                        end
+                                end
+                        end
+                end
+        end
+    
     // Row timer logic
     always @ (*)
         begin
@@ -2911,30 +3024,17 @@ module alt_mem_ddrx_tbp
                                 end
                             // We need to update the timer as soon as possible when CFG_REG_GRANT == 0
                             // because after open-row-pass, row grant can happen on the next clock cycle
-                            else if
-                                (
-                                    (CFG_REG_GRANT == 0 && open_row_pass  [i]) ||
-                                    (CFG_REG_GRANT == 1 && open_row_pass_r[i])
-                                )
+                            else if (CFG_REG_GRANT == 0 && open_row_pass[i])
                                 begin
-                                    if (CFG_REG_GRANT == 0 && !trc_timer_pre_ready_combi[log2_open_row_pass_flush[i]])
-                                        begin
-                                            trc_timer          [i] <= trc_timer[log2_open_row_pass_flush[i]] - 1'b1;
-                                            trc_timer_ready    [i] <= 1'b0;
-                                            trc_timer_pre_ready[i] <= 1'b0;
-                                        end
-                                    else if (CFG_REG_GRANT == 1 && !trc_timer_pre_ready[log2_open_row_pass_flush_r[i]])
-                                        begin
-                                            trc_timer          [i] <= trc_timer[log2_open_row_pass_flush_r[i]] - 1'b1;
-                                            trc_timer_ready    [i] <= 1'b0;
-                                            trc_timer_pre_ready[i] <= 1'b0;
-                                        end
-                                    else
-                                        begin
-                                            trc_timer          [i] <= 0;
-                                            trc_timer_ready    [i] <= 1'b1;
-                                            trc_timer_pre_ready[i] <= 1'b1;
-                                        end
+                                    trc_timer_ready    [i] <= 1'b0;
+                                    trc_timer_pre_ready[i] <= 1'b0;
+                                end
+                            else if
+                                (open_row_pass_r[i])
+                                begin
+                                    trc_timer          [i] <= combined_timer[log2_open_row_pass_flush_r[i]] - 1'b1;
+                                    trc_timer_ready    [i] <= 1'b0;
+                                    trc_timer_pre_ready[i] <= 1'b0;
                                 end
                             else if (act_grant[i])
                                 begin
@@ -2971,18 +3071,7 @@ module alt_mem_ddrx_tbp
                     begin
                         if (real_ap[i])
                             begin
-                                if
-                                    (
-                                        (CFG_REG_GRANT == 1 && compare_t_param_rd_ap_to_valid_greater_than_trc_timer[i]) ||
-                                        (CFG_REG_GRANT == 0 && t_param_rd_ap_to_valid > trc_timer[i])
-                                    )
-                                    begin
-                                        row_timer_combi[i] = offset_t_param_rd_ap_to_valid;
-                                    end
-                                else
-                                    begin
-                                        row_timer_combi[i] = trc_timer[i] - 1'b1;
-                                    end
+                                row_timer_combi[i] = offset_t_param_rd_ap_to_valid;
                             end
                         else
                             begin
@@ -3004,18 +3093,7 @@ module alt_mem_ddrx_tbp
                     begin
                         if (real_ap[i])
                             begin
-                                if
-                                    (
-                                        (CFG_REG_GRANT == 1 && compare_t_param_wr_ap_to_valid_greater_than_trc_timer[i]) ||
-                                        (CFG_REG_GRANT == 0 && t_param_wr_ap_to_valid > trc_timer[i])
-                                    )
-                                    begin
-                                        row_timer_combi[i] = offset_t_param_wr_ap_to_valid;
-                                    end
-                                else
-                                    begin
-                                        row_timer_combi[i] = trc_timer[i] - 1'b1;
-                                    end
+                                row_timer_combi[i] = offset_t_param_wr_ap_to_valid;
                             end
                         else
                             begin
@@ -3068,33 +3146,6 @@ module alt_mem_ddrx_tbp
                                     row_timer          [i] <= 0;
                                     row_timer_ready    [i] <= 1'b1;
                                     row_timer_pre_ready[i] <= 1'b1;
-                                end
-                            // We need to update the timer as soon as possible when CFG_REG_GRANT == 0
-                            // because after open-row-pass, row grant can happen on the next clock cycle
-                            else if
-                                (
-                                    (CFG_REG_GRANT == 0 && open_row_pass  [i]) ||
-                                    (CFG_REG_GRANT == 1 && open_row_pass_r[i])
-                                )
-                                begin
-                                    if (CFG_REG_GRANT == 0)
-                                        begin
-                                            row_timer          [i] <= row_timer_combi[log2_open_row_pass_flush[i]];
-                                            row_timer_ready    [i] <= 1'b0;
-                                            row_timer_pre_ready[i] <= 1'b0;
-                                        end
-                                    else if (CFG_REG_GRANT == 1 && !row_timer_pre_ready[log2_open_row_pass_flush_r[i]])
-                                        begin
-                                            row_timer          [i] <= row_timer[log2_open_row_pass_flush_r[i]] - 1'b1;
-                                            row_timer_ready    [i] <= 1'b0;
-                                            row_timer_pre_ready[i] <= 1'b0;
-                                        end
-                                    else
-                                        begin
-                                            row_timer          [i] <= 1'b0;
-                                            row_timer_ready    [i] <= 1'b1;
-                                            row_timer_pre_ready[i] <= 1'b1;
-                                        end
                                 end
                             else if (act_grant[i])
                                 begin
@@ -3175,7 +3226,9 @@ module alt_mem_ddrx_tbp
                                 begin
                                     pch_ready[i] <= 1'b0;
                                 end
-                            else if (row_timer_pre_ready[i])
+                            else if (row_timer_pre_ready[i] && ((trc_timer_pre_ready[i] && open_row_passed[i]) || !open_row_passed[i]) && !precharged[i])
+                                // disable pch_ready if current TBP is precharged
+                                // only compare with trc_timer if TBP is an open_row_pass command
                                 begin
                                     pch_ready[i] <= 1'b1;
                                 end
@@ -3196,7 +3249,7 @@ module alt_mem_ddrx_tbp
                         begin
                             for (j=0; j<CFG_CTL_TBP_NUM; j=j+1)
                                 begin
-                                    int_bank_active[i][j] <= 1'b0;
+                                    int_bank_closed[i][j] <= 1'b0;
                                 end
                         end
                 end
@@ -3210,20 +3263,20 @@ module alt_mem_ddrx_tbp
                                         begin
                                             if (sb_tbp_precharge_all[j])
                                                 begin
-                                                    int_bank_active[i][j] <= 1'b0;
+                                                    int_bank_closed[i][j] <= 1'b1;
                                                 end
                                             else if (precharged_combi[j])
                                                 begin
-                                                    int_bank_active[i][j] <= 1'b0;
+                                                    int_bank_closed[i][j] <= 1'b1;
                                                 end
                                             else if (activated_combi[j])
                                                 begin
-                                                    int_bank_active[i][j] <= 1'b1;
+                                                    int_bank_closed[i][j] <= 1'b0;
                                                 end
                                         end
                                     else
                                         begin
-                                            int_bank_active[i][j] <= 1'b0; // else default to '0'
+                                            int_bank_closed[i][j] <= 1'b1; // else default to '0'
                                         end
                                 end
                         end
@@ -3326,7 +3379,7 @@ module alt_mem_ddrx_tbp
     begin
         for (i=0; i<CFG_MEM_IF_CHIP; i=i+1)
             begin
-                bank_active[i] = |int_bank_active[i];
+                bank_closed[i] = &int_bank_closed[i];
                 timer_ready[i] = &{int_shadow_timer_ready[i], int_timer_ready[i]};
             end
     end

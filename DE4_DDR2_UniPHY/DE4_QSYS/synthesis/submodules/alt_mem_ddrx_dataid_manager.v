@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -13,6 +13,8 @@
 
 
 //altera message_off 10230 10036
+
+`timescale 1 ps / 1 ps
 
 module alt_mem_ddrx_dataid_manager
 # (
@@ -168,9 +170,11 @@ module alt_mem_ddrx_dataid_manager
     reg                                                 update_cmd_if_ready;
     wire                                                update_cmd_if_valid;
     wire    [CFG_DATA_ID_WIDTH-1:0]                     update_cmd_if_data_id;    
-    wire    [CFG_INT_SIZE_WIDTH-1:0]                    update_cmd_if_burstcount;    
+    wire    [CFG_INT_SIZE_WIDTH-1:0]                    update_cmd_if_burstcount;
+    reg     [CFG_INT_SIZE_WIDTH-1:0]                    update_cmd_if_burstcount_r;
     wire    [CFG_TBP_NUM-1:0]                           update_cmd_if_tbp_id;    
     reg     [CFG_BUFFER_ADDR_WIDTH-1:0]                 update_cmd_if_address;
+    reg     [CFG_BUFFER_ADDR_WIDTH-1:0]                 update_cmd_if_address_r;
                                                                                        
     // update data interface                                                           
     wire                                                update_data_if_valid;
@@ -229,8 +233,10 @@ module alt_mem_ddrx_dataid_manager
     reg     [CFG_PORT_WIDTH_BURST_LENGTH    - 1 : 0]    cfg_max_cmd_burstcount_2x;
 
     wire                                                update_cmd_if_accepted;
+    reg                                                 update_cmd_if_accepted_r;
     wire                                                update_cmd_if_address_blocked;
     wire    [CFG_BUFFER_ADDR_WIDTH-1:0]                 update_cmd_if_nextaddress;
+    reg     [CFG_BUFFER_ADDR_WIDTH-1:0]                 update_cmd_if_nextaddress_r;
     reg     [CFG_BUFFER_ADDR_WIDTH-1:0]                 update_cmd_if_nextmaxaddress;
     reg                                                 update_cmd_if_nextmaxaddress_wrapped;       // nextmaxaddress has wrapped around buffer max address
     reg     [CFG_BURSTCOUNT_TRACKING_WIDTH-1:0]         update_cmd_if_unnotified_burstcount;
@@ -274,31 +280,15 @@ module alt_mem_ddrx_dataid_manager
     // module definition
     // -----------------------------
 
-
-    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    always @ (*)
     begin
-        if (!ctl_reset_n)
-        begin
-            cfg_enable_partial_be_notification <= 1'b0;
-        end
-        else
-        begin
-            cfg_enable_partial_be_notification <= cfg_enable_ecc | cfg_enable_auto_corr | cfg_enable_no_dm;
-        end
+        cfg_enable_partial_be_notification = cfg_enable_ecc | cfg_enable_auto_corr | cfg_enable_no_dm;
     end
     
-    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    always @ (*)
     begin
-        if (!ctl_reset_n)
-        begin
-            cfg_max_cmd_burstcount    <= 0;
-            cfg_max_cmd_burstcount_2x <= 0;
-        end
-        else
-        begin
-            cfg_max_cmd_burstcount    <= cfg_burst_length / CFG_DWIDTH_RATIO;
-            cfg_max_cmd_burstcount_2x <= 2 * cfg_max_cmd_burstcount;
-        end
+        cfg_max_cmd_burstcount    = cfg_burst_length / CFG_DWIDTH_RATIO;
+        cfg_max_cmd_burstcount_2x = 2 * cfg_max_cmd_burstcount;
     end
 
     assign burstcount_list_write      = update_cmd_if_accepted;
@@ -537,7 +527,7 @@ module alt_mem_ddrx_dataid_manager
 
         if (update_cmd_if_nextmaxaddress_wrapped)
         begin
-            mux_update_cmd_if_address_blocked   [0] =  (dataid_array_valid[0] & ~( (dataid_array_address[0] < update_cmd_if_address) & (dataid_array_address[0] > update_cmd_if_nextmaxaddress) ));
+            mux_update_cmd_if_address_blocked   [0] =  (dataid_array_valid[0] & ~( (dataid_array_address[0] <  update_cmd_if_address) & (dataid_array_address[0] >  update_cmd_if_nextmaxaddress) ));
         end
         else
         begin
@@ -562,7 +552,7 @@ module alt_mem_ddrx_dataid_manager
 
                 if (update_cmd_if_nextmaxaddress_wrapped)
                 begin
-                    mux_update_cmd_if_address_blocked   [j] =  (dataid_array_valid[j] & ~( (dataid_array_address[j] < update_cmd_if_address) & (dataid_array_address[j] > update_cmd_if_nextmaxaddress) ));
+                    mux_update_cmd_if_address_blocked   [j] =  (dataid_array_valid[j] & ~( (dataid_array_address[j] <  update_cmd_if_address) & (dataid_array_address[j] >  update_cmd_if_nextmaxaddress) ));
                 end
                 else
                 begin
@@ -577,38 +567,47 @@ module alt_mem_ddrx_dataid_manager
 
 
     // address generation for data location in buffer
-     
+    
     assign update_cmd_if_accepted = update_cmd_if_ready & update_cmd_if_valid;
     assign update_cmd_if_nextaddress = update_cmd_if_address + update_cmd_if_burstcount;
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            update_cmd_if_accepted_r    <= 0;
+            update_cmd_if_address_r     <= 0;
+            update_cmd_if_nextaddress_r <= 0;
+        end
+        else
+        begin
+            update_cmd_if_accepted_r    <= update_cmd_if_accepted;
+            update_cmd_if_address_r     <= update_cmd_if_address;
+            update_cmd_if_nextaddress_r <= update_cmd_if_nextaddress;
+        end
+    end
+    
+    always @ (*)
+    begin
+        if (update_cmd_if_accepted_r)
+        begin
+            update_cmd_if_address = update_cmd_if_nextaddress_r;
+        end
+        else
+        begin
+            update_cmd_if_address = update_cmd_if_address_r;
+        end
+    end
     
     always @ (posedge ctl_clk or negedge ctl_reset_n) 
     begin
         if (~ctl_reset_n)
         begin
-            update_cmd_if_address                <= 0;
-            update_cmd_if_nextmaxaddress         <= 0;
-            update_cmd_if_nextmaxaddress_wrapped <= 1'b0;
             write_data_if_address                <= 0;
             write_data_if_nextaddress            <= 0;
         end
         else
         begin
-            if (update_cmd_if_accepted)
-            begin
-                // dataid allocation/deallocation makes sure doesn't overflow
-                update_cmd_if_address                <= update_cmd_if_nextaddress;
-                update_cmd_if_nextmaxaddress         <= update_cmd_if_nextaddress + cfg_max_cmd_burstcount_2x;
-                
-                if (update_cmd_if_nextaddress > (update_cmd_if_nextaddress + cfg_max_cmd_burstcount_2x))
-                begin
-                    update_cmd_if_nextmaxaddress_wrapped <= 1'b1;
-                end
-                else
-                begin
-                    update_cmd_if_nextmaxaddress_wrapped <= 1'b0;
-                end
-            end
-
             if (write_data_if_accepted)
             begin
                 write_data_if_address     <= write_data_if_address + 1;
@@ -620,34 +619,58 @@ module alt_mem_ddrx_dataid_manager
             end
         end
     end  
-
-
-    // un-notified burstcount counter
-
-    always @ (*) 
+    
+    always @ (*)
     begin
-
-        // notify_data_if_valid isn't evaluated, as notify_data_if_burstcount is 0 when ~notify_data_if_burstcount
-        if (update_cmd_if_accepted)
+        update_cmd_if_nextmaxaddress = update_cmd_if_address + cfg_max_cmd_burstcount_2x;
+    end
+    
+    always @ (*)
+    begin
+        if (update_cmd_if_address > update_cmd_if_nextmaxaddress)
         begin
-            update_cmd_if_next_unnotified_burstcount = update_cmd_if_unnotified_burstcount + update_cmd_if_burstcount - mux_notify_data_if_burstcount [CFG_DATAID_ARRAY_DEPTH-1];
+            update_cmd_if_nextmaxaddress_wrapped = 1'b1;
         end
         else
         begin
-            update_cmd_if_next_unnotified_burstcount = update_cmd_if_unnotified_burstcount - mux_notify_data_if_burstcount [CFG_DATAID_ARRAY_DEPTH-1];
+            update_cmd_if_nextmaxaddress_wrapped = 1'b0;
         end
-
     end
 
-    always @ (posedge ctl_clk or negedge ctl_reset_n) 
+    // un-notified burstcount counter
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
     begin
-        if (~ctl_reset_n)
+        if (!ctl_reset_n)
         begin
-            update_cmd_if_unnotified_burstcount <= 0;
+            update_cmd_if_next_unnotified_burstcount <= 0;
         end
         else
         begin
-            update_cmd_if_unnotified_burstcount <= update_cmd_if_next_unnotified_burstcount;
+            update_cmd_if_next_unnotified_burstcount <= update_cmd_if_unnotified_burstcount - mux_notify_data_if_burstcount [CFG_DATAID_ARRAY_DEPTH-1];
+        end
+    end
+    
+    always @ (posedge ctl_clk or negedge ctl_reset_n)
+    begin
+        if (!ctl_reset_n)
+        begin
+            update_cmd_if_burstcount_r <= 0;
+        end
+        else
+        begin
+            update_cmd_if_burstcount_r <= update_cmd_if_burstcount;
+        end
+    end
+    
+    always @ (*)
+    begin
+        if (update_cmd_if_accepted_r)
+        begin
+            update_cmd_if_unnotified_burstcount = update_cmd_if_next_unnotified_burstcount + update_cmd_if_burstcount_r;
+        end
+        else
+        begin
+            update_cmd_if_unnotified_burstcount = update_cmd_if_next_unnotified_burstcount;
         end
     end
 

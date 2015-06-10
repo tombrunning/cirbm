@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -11,10 +11,14 @@
 // agreement for further details.
 
 
-(* altera_attribute = "-name IP_TOOL_NAME altera_mem_if_ddr2_phy_core; -name IP_TOOL_VERSION 11.1; -name FITTER_ADJUST_HC_SHORT_PATH_GUARDBAND 100" *)
+
+`timescale 1 ps / 1 ps
+
+(* altera_attribute = "-name IP_TOOL_NAME altera_mem_if_ddr2_phy_core; -name IP_TOOL_VERSION 13.0; -name FITTER_ADJUST_HC_SHORT_PATH_GUARDBAND 100" *)
 module DE4_QSYS_mem_if_ddr2_emif_p0 (
     global_reset_n,
     soft_reset_n,
+	csr_soft_reset_req,
     parallelterminationcontrol,
     seriesterminationcontrol,
 	pll_mem_clk,
@@ -24,9 +28,11 @@ module DE4_QSYS_mem_if_ddr2_emif_p0 (
 	pll_avl_clk,
 	pll_config_clk,
 	pll_locked,
+    dll_pll_locked,
 	dll_delayctrl,
 	dll_clk,
 	afi_reset_n,
+	afi_reset_export_n,
 	afi_clk,
 	afi_half_clk,
 	afi_addr,
@@ -101,7 +107,6 @@ module DE4_QSYS_mem_if_ddr2_emif_p0 (
 parameter DEVICE_FAMILY = "Stratix IV";
 
 // choose between abstract (fast) and regular model
-//FIXME BEN: this default needs to change depending on sim vs synth filesets
 `ifndef ALTERA_ALT_MEM_IF_PHY_FAST_SIM_MODEL
   `define ALTERA_ALT_MEM_IF_PHY_FAST_SIM_MODEL 0
 `endif
@@ -136,6 +141,7 @@ parameter AFI_ADDR_WIDTH 	        = 28;
 parameter AFI_DM_WIDTH 	        	= 32; 
 parameter AFI_BANKADDR_WIDTH        = 6; 
 parameter AFI_CS_WIDTH				= 2;
+parameter AFI_CLK_EN_WIDTH			= 2;
 parameter AFI_CONTROL_WIDTH         = 2; 
 parameter AFI_ODT_WIDTH             = 2; 
 parameter AFI_DQ_WIDTH				= 256; 
@@ -149,7 +155,7 @@ parameter DLL_DELAY_CTRL_WIDTH	= 6;
 
 parameter NUM_SUBGROUP_PER_READ_DQS        = 1;
 parameter QVLD_EXTRA_FLOP_STAGES		   = 0;
-parameter QVLD_WR_ADDRESS_OFFSET		   = 5;
+parameter QVLD_WR_ADDRESS_OFFSET		   = 4;
 	
 // Read Datapath parameters, the values should not be changed unless the intention is to change the architecture.
 // Read valid prediction FIFO
@@ -159,7 +165,7 @@ parameter READ_VALID_FIFO_SIZE             = 16;
 parameter READ_FIFO_SIZE                   = 8;
 
 // Latency calibration parameters
-parameter MAX_LATENCY_COUNT_WIDTH		   = 6; // calibration finds the best latency by reducing the maximum latency
+parameter MAX_LATENCY_COUNT_WIDTH		   = 4; // calibration finds the best latency by reducing the maximum latency
 localparam MAX_READ_LATENCY				   = 2**MAX_LATENCY_COUNT_WIDTH; 
 
 // Write Datapath
@@ -172,11 +178,15 @@ parameter NUM_WRITE_FR_CYCLE_SHIFTS = 0;
 parameter REGISTER_C2P = "false";
 
 // Address/Command Datapath
-parameter NUM_AC_FR_CYCLE_SHIFTS = 1;
+parameter NUM_AC_FR_CYCLE_SHIFTS = 0;
+
+// MemCk clock phase select setting
+parameter LDC_MEM_CK_CPS_PHASE = 0;
+
 
 parameter MR1_ODS								= 0;
 parameter MR1_RTT								= 3;
-parameter MEM_T_WL								= 4;
+parameter MEM_T_WL								= 3;
 
 localparam MEM_T_RL								= 6;
 
@@ -206,6 +216,8 @@ parameter TB_PLL_DLL_MASTER = "true";
 parameter FAST_SIM_CALIBRATION = "false";
 
 
+parameter EXTRA_VFIFO_SHIFT = 0;
+
 localparam SIM_FILESET = ("false" == "true");
 
 
@@ -230,6 +242,7 @@ input	pll_locked;
 
 
 input	[DLL_DELAY_CTRL_WIDTH-1:0]  dll_delayctrl;
+output  dll_pll_locked;
 output  dll_clk;
 
 
@@ -238,7 +251,9 @@ output  dll_clk;
 input   global_reset_n;		// Resets (active-low) the whole system (all PHY logic + PLL)
 input	soft_reset_n;		// Resets (active-low) PHY logic only, PLL is NOT reset
 output	afi_reset_n;		// Asynchronously asserted and synchronously de-asserted on afi_clk domain
+output	afi_reset_export_n;		// Asynchronously asserted and synchronously de-asserted on afi_clk domain
 							// should be used to reset system level afi_clk domain logic
+input csr_soft_reset_req;  // Reset request (active_high) being driven by external debug master
 
 // OCT termination control signals
 input [OCT_TERM_CONTROL_WIDTH-1:0] parallelterminationcontrol;
@@ -248,7 +263,7 @@ input [OCT_TERM_CONTROL_WIDTH-1:0] seriesterminationcontrol;
 // Control Interface
 input   [AFI_ADDR_WIDTH-1:0]        afi_addr;		// address
 input   [AFI_BANKADDR_WIDTH-1:0]    afi_ba;			// bank
-input   [AFI_CS_WIDTH-1:0]          afi_cke;		// clock enable
+input   [AFI_CLK_EN_WIDTH-1:0]      afi_cke;		// clock enable
 input   [AFI_CS_WIDTH-1:0]          afi_cs_n;		// chip select
 input   [AFI_CONTROL_WIDTH-1:0]     afi_ras_n;
 input   [AFI_CONTROL_WIDTH-1:0]     afi_we_n;
@@ -302,8 +317,6 @@ wire	pll_dqs_ena_clk;
 
 
 
-wire reset_request_n;
-
 output  addr_cmd_clk;
 output  avl_clk;
 output  scc_clk;
@@ -315,7 +328,7 @@ input    [MEM_IF_READ_DQS_WIDTH-1:0]  scc_dqs_ena;
 input    [MEM_IF_READ_DQS_WIDTH-1:0]  scc_dqs_io_ena;
 input          [MEM_IF_DQ_WIDTH-1:0]  scc_dq_ena;
 input          [MEM_IF_DM_WIDTH-1:0]  scc_dm_ena;
-input                                 scc_upd;
+input                          [0:0]  scc_upd;
 output   [MEM_IF_READ_DQS_WIDTH-1:0]  capture_strobe_tracking;
 
 output  phy_clk;
@@ -383,7 +396,7 @@ DE4_QSYS_mem_if_ddr2_emif_p0_memphy #(
 	.AFI_ADDRESS_WIDTH(AFI_ADDR_WIDTH),
 	.AFI_BANK_WIDTH(AFI_BANKADDR_WIDTH),
 	.AFI_CHIP_SELECT_WIDTH(AFI_CS_WIDTH),
-	.AFI_CLK_EN_WIDTH(AFI_CS_WIDTH),
+	.AFI_CLK_EN_WIDTH(AFI_CLK_EN_WIDTH),
 	.AFI_ODT_WIDTH(AFI_ODT_WIDTH),
 	.AFI_MAX_WRITE_LATENCY_COUNT_WIDTH(AFI_WLAT_WIDTH),
 	.AFI_MAX_READ_LATENCY_COUNT_WIDTH(AFI_RLAT_WIDTH),
@@ -404,6 +417,7 @@ DE4_QSYS_mem_if_ddr2_emif_p0_memphy #(
 	.NUM_WRITE_PATH_FLOP_STAGES(NUM_WRITE_PATH_FLOP_STAGES),
 	.NUM_WRITE_FR_CYCLE_SHIFTS(NUM_WRITE_FR_CYCLE_SHIFTS),
 	.REGISTER_C2P(REGISTER_C2P),
+	.LDC_MEM_CK_CPS_PHASE(LDC_MEM_CK_CPS_PHASE),
 	.NUM_SUBGROUP_PER_READ_DQS(NUM_SUBGROUP_PER_READ_DQS),
 	.QVLD_EXTRA_FLOP_STAGES(QVLD_EXTRA_FLOP_STAGES),
 	.QVLD_WR_ADDRESS_OFFSET(QVLD_WR_ADDRESS_OFFSET),
@@ -415,20 +429,20 @@ DE4_QSYS_mem_if_ddr2_emif_p0_memphy #(
 	.ALTDQDQS_DELAYED_CLOCK_PHASE_SETTING(DELAYED_CLOCK_PHASE_SETTING),
 	.CALIB_REG_WIDTH(CALIB_REG_WIDTH),
 	.AFI_DEBUG_INFO_WIDTH(AFI_DEBUG_INFO_WIDTH),
-	
 	.TB_PROTOCOL(TB_PROTOCOL),
 	.TB_MEM_CLK_FREQ(TB_MEM_CLK_FREQ),
 	.TB_RATE(TB_RATE),
 	.TB_MEM_DQ_WIDTH(TB_MEM_DQ_WIDTH),
 	.TB_MEM_DQS_WIDTH(TB_MEM_DQS_WIDTH),
 	.TB_PLL_DLL_MASTER(TB_PLL_DLL_MASTER),
+	.EXTRA_VFIFO_SHIFT(EXTRA_VFIFO_SHIFT),
 	.FAST_SIM_MODEL(FAST_SIM_MODEL),
 	.FAST_SIM_CALIBRATION(FAST_SIM_CALIBRATION)
 ) umemphy (
 	.global_reset_n(global_reset_n),
-	.soft_reset_n(soft_reset_n),
-	.reset_request_n(reset_request_n),
+	.soft_reset_n(soft_reset_n & ~csr_soft_reset_req),
 	.ctl_reset_n(afi_reset_n),
+	.ctl_reset_export_n(afi_reset_export_n),
 	.pll_locked(pll_locked),
 	.oct_ctl_rt_value(parallelterminationcontrol),
 	.oct_ctl_rs_value(seriesterminationcontrol),
@@ -499,6 +513,7 @@ DE4_QSYS_mem_if_ddr2_emif_p0_memphy #(
 	.pll_avl_clk(pll_avl_clk),
 	.pll_config_clk(pll_config_clk),
 	.dll_clk(dll_clk),
+    .dll_pll_locked(dll_pll_locked),
 	.dll_phy_delayctrl(dll_delayctrl)
 );
 

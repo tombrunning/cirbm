@@ -1,3 +1,4 @@
+-- Contents are randomly generated during RTL generation.
 WIDTH=27;
 DEPTH=128;
 

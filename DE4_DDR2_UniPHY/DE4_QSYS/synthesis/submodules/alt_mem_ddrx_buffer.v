@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -11,12 +11,16 @@
 // agreement for further details.
 
 
-module alt_mem_ddrx_buffer
+
+`timescale 1 ps / 1 ps
+
+(* message_disable = "14320" *) module alt_mem_ddrx_buffer
 # (
     // module parameter port list
     parameter
-        ADDR_WIDTH    =    3,
-        DATA_WIDTH    =    8
+        ADDR_WIDTH      =   3,
+        DATA_WIDTH      =   8,
+        REGISTER_OUTPUT =   0
 )
 (
     // port list
@@ -38,7 +42,8 @@ module alt_mem_ddrx_buffer
     // local parameter declaration
     // -----------------------------
 
-    localparam  BUFFER_DEPTH    =  two_pow_N(ADDR_WIDTH); 
+    localparam  BUFFER_DEPTH            =  two_pow_N(ADDR_WIDTH);
+    localparam  BUFFER_REGISTER_OUTPUT  = (REGISTER_OUTPUT) ? "CLOCK0" : "UNREGISTERED";
 
     // -----------------------------
     // port declaration
@@ -116,7 +121,7 @@ module alt_mem_ddrx_buffer
 		altsyncram_component.numwords_b = BUFFER_DEPTH,
 		altsyncram_component.operation_mode = "DUAL_PORT",
 		altsyncram_component.outdata_aclr_b = "NONE",
-		altsyncram_component.outdata_reg_b = "UNREGISTERED",
+		altsyncram_component.outdata_reg_b = BUFFER_REGISTER_OUTPUT,
 		altsyncram_component.power_up_uninitialized = "FALSE",
 		altsyncram_component.read_during_write_mode_mixed_ports = "DONT_CARE",
 		altsyncram_component.widthad_a = ADDR_WIDTH,

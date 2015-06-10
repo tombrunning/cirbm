@@ -1,4 +1,4 @@
-//Legal Notice: (C)2012 Altera Corporation. All rights reserved.  Your
+//Legal Notice: (C)2015 Altera Corporation. All rights reserved.  Your
 //use of Altera Corporation's design tools, logic functions and other
 //software and tools, and its AMPP partner logic functions, and any
 //output files any of the foregoing (including device programming or
@@ -26,6 +26,7 @@ module DE4_QSYS_onchip_memory (
                                  clk,
                                  clken,
                                  reset,
+                                 reset_req,
                                  write,
                                  writedata,
 
@@ -34,7 +35,7 @@ module DE4_QSYS_onchip_memory (
                               )
 ;
 
-  parameter INIT_FILE = "../DE4_QSYS_onchip_memory.hex";
+  parameter INIT_FILE = "DE4_QSYS_onchip_memory.hex";
 
 
   output  [ 31: 0] readdata;
@@ -44,23 +45,21 @@ module DE4_QSYS_onchip_memory (
   input            clk;
   input            clken;
   input            reset;
+  input            reset_req;
   input            write;
   input   [ 31: 0] writedata;
 
+  wire             clocken0;
   wire    [ 31: 0] readdata;
   wire             wren;
   assign wren = chipselect & write;
-  //s1, which is an e_avalon_slave
-  //s2, which is an e_avalon_slave
-
-//synthesis translate_off
-//////////////// SIMULATION-ONLY CONTENTS
+  assign clocken0 = clken & ~reset_req;
   altsyncram the_altsyncram
     (
       .address_a (address),
       .byteena_a (byteenable),
       .clock0 (clk),
-      .clocken0 (clken),
+      .clocken0 (clocken0),
       .data_a (writedata),
       .q_a (readdata),
       .wren_a (wren)
@@ -79,36 +78,8 @@ module DE4_QSYS_onchip_memory (
            the_altsyncram.width_byteena_a = 4,
            the_altsyncram.widthad_a = 15;
 
-
-//////////////// END SIMULATION-ONLY CONTENTS
-
-//synthesis translate_on
-//synthesis read_comments_as_HDL on
-//  altsyncram the_altsyncram
-//    (
-//      .address_a (address),
-//      .byteena_a (byteenable),
-//      .clock0 (clk),
-//      .clocken0 (clken),
-//      .data_a (writedata),
-//      .q_a (readdata),
-//      .wren_a (wren)
-//    );
-//
-//  defparam the_altsyncram.byte_size = 8,
-//           the_altsyncram.init_file = "DE4_QSYS_onchip_memory.hex",
-//           the_altsyncram.lpm_type = "altsyncram",
-//           the_altsyncram.maximum_depth = 32000,
-//           the_altsyncram.numwords_a = 32000,
-//           the_altsyncram.operation_mode = "SINGLE_PORT",
-//           the_altsyncram.outdata_reg_a = "UNREGISTERED",
-//           the_altsyncram.ram_block_type = "AUTO",
-//           the_altsyncram.read_during_write_mode_mixed_ports = "DONT_CARE",
-//           the_altsyncram.width_a = 32,
-//           the_altsyncram.width_byteena_a = 4,
-//           the_altsyncram.widthad_a = 15;
-//
-//synthesis read_comments_as_HDL off
+  //s1, which is an e_avalon_slave
+  //s2, which is an e_avalon_slave
 
 endmodule
 

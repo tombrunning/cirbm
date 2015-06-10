@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -11,10 +11,10 @@
 // agreement for further details.
 
 
-// $Id: //acds/rel/11.1sp2/ip/merlin/altera_avalon_mm_clock_crossing_bridge/altera_avalon_mm_clock_crossing_bridge.v#1 $
+// $Id: //acds/rel/13.0sp1/ip/merlin/altera_avalon_mm_clock_crossing_bridge/altera_avalon_mm_clock_crossing_bridge.v#1 $
 // $Revision: #1 $
-// $Date: 2011/11/10 $
-// $Author: max $
+// $Date: 2013/03/07 $
+// $Author: swbranch $
 // --------------------------------------
 // Avalon-MM clock crossing bridge
 //
@@ -82,7 +82,7 @@ module altera_avalon_mm_clock_crossing_bridge
     localparam NUMSYMBOLS    = DATA_WIDTH / SYMBOL_WIDTH;
     localparam RSP_WIDTH     = DATA_WIDTH;
     localparam MAX_BURST     = (1 << (BURSTCOUNT_WIDTH-1));
-    localparam COUNTER_WIDTH = $clog2(RESPONSE_FIFO_DEPTH) + 1;
+    localparam COUNTER_WIDTH = log2ceil(RESPONSE_FIFO_DEPTH) + 1;
     localparam NON_BURSTING  = (MAX_BURST == 1);
     localparam BURST_WORDS_W = BURSTCOUNT_WIDTH;
 
@@ -115,7 +115,8 @@ module altera_avalon_mm_clock_crossing_bridge
         .BITS_PER_SYMBOL  (CMD_WIDTH),
         .FIFO_DEPTH       (COMMAND_FIFO_DEPTH),
         .WR_SYNC_DEPTH    (MASTER_SYNC_DEPTH),
-        .RD_SYNC_DEPTH    (SLAVE_SYNC_DEPTH)
+        .RD_SYNC_DEPTH    (SLAVE_SYNC_DEPTH),
+        .BACKPRESSURE_DURING_RESET (1)
     ) 
     cmd_fifo
     (
@@ -263,5 +264,23 @@ module altera_avalon_mm_clock_crossing_bridge
         end
     end
 // synthesis translate_on
+
+    // --------------------------------------------------
+    // Calculates the log2ceil of the input value
+    // --------------------------------------------------
+    function integer log2ceil;
+        input integer val;
+        integer i;
+
+        begin
+            i = 1;
+            log2ceil = 0;
+
+            while (i < val) begin
+                log2ceil = log2ceil + 1;
+                i = i << 1; 
+            end
+        end
+    endfunction
 
 endmodule  
