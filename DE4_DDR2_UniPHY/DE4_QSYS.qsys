@@ -156,27 +156,19 @@
          type = "String";
       }
    }
-   element button.s1
-   {
-      datum baseAddress
-      {
-         value = "80";
-         type = "String";
-      }
-   }
-   element timer.s1
-   {
-      datum baseAddress
-      {
-         value = "0";
-         type = "String";
-      }
-   }
    element ddr2_i2c_sda.s1
    {
       datum baseAddress
       {
          value = "32";
+         type = "String";
+      }
+   }
+   element onchip_memory.s1
+   {
+      datum baseAddress
+      {
+         value = "1090650112";
          type = "String";
       }
    }
@@ -196,11 +188,19 @@
          type = "String";
       }
    }
-   element onchip_memory.s1
+   element timer.s1
    {
       datum baseAddress
       {
-         value = "1090650112";
+         value = "0";
+         type = "String";
+      }
+   }
+   element button.s1
+   {
+      datum baseAddress
+      {
+         value = "80";
          type = "String";
       }
    }
@@ -243,7 +243,7 @@
  <parameter name="projectName" value="DE4_DDR2.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1433947814651" />
+ <parameter name="timeStamp" value="1434032592070" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="clk" internal="clk_50.clk_in" type="clock" dir="end" />
@@ -1141,6 +1141,13 @@
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
+   kind="interrupt"
+   version="13.0"
+   start="nios2_qsys.d_irq"
+   end="dma.irq">
+  <parameter name="irqNumber" value="2" />
+ </connection>
+ <connection
    kind="reset"
    version="13.0"
    start="clk_50.clk_reset"
@@ -1158,13 +1165,6 @@
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="interrupt"
-   version="13.0"
-   start="nios2_qsys.d_irq"
-   end="dma.irq">
-  <parameter name="irqNumber" value="2" />
  </connection>
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />

@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>10-Jun-2015 16:05:12</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1433948712225</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>10-Jun-2015 18:01:38</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1433955698996</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>D:\Projects\fpl16\cirbm\DE4_DDR2_UniPHY\software\DE4_DDR2_test_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\DE4_QSYS.sopcinfo</SopcDesignFile>

@@ -26,9 +26,10 @@ derive_pll_clocks
 #**************************************************************
 # Set Clock Uncertainty
 #**************************************************************
-derive_clock_uncertainty
+#derive_clock_uncertainty
+set_clock_uncertainty  -setup -rise_from u0|mem_if_ddr2_emif|pll0|pll_avl_clk -rise_to u0|mem_if_ddr2_emif|pll0|pll_afi_clk 0.150
 
-
+set_clock_uncertainty  -setup -rise_from u0|mem_if_ddr2_emif|pll0|pll_afi_clk -rise_to u0|mem_if_ddr2_emif|pll0|pll_avl_clk 0.150
 
 #**************************************************************
 # Set Input Delay

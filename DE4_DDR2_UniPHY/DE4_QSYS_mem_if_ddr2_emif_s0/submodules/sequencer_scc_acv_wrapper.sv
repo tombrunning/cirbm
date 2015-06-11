@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -10,6 +10,9 @@
 // Altera or its authorized distributors.  Please refer to the applicable 
 // agreement for further details.
 
+
+
+`timescale 1 ps / 1 ps
 
 // altera message_off 10230
 module sequencer_scc_acv_wrapper
@@ -66,7 +69,7 @@ module sequencer_scc_acv_wrapper
 	// decode phases
 	
 	sequencer_scc_acv_phase_decode  # (
-		.AVL_DATA_WIDTH         (AVL_DATA_WIDTH         ),
+		.AVL_DATA_WIDTH         (DATAWIDTH         ),
 		.DLL_DELAY_CHAIN_LENGTH (DLL_DELAY_CHAIN_LENGTH )
 	) sequencer_scc_phase_decode_dqe_inst (
 		.avl_writedata          ((scc_dataout >> setting_offsets[SCC_ADDR_DQS_EN_PHASE]) & setting_masks[SCC_ADDR_DQS_EN_PHASE]),
@@ -129,8 +132,7 @@ module sequencer_scc_acv_wrapper
 			//   01: Select DQS_CLK (PHY_CLK)
 			//   10: Select SEQ_HR_CLK (PHY_CLK)
 			//   11: Select VCC (Disabled)
-			scc_io_cfg[19:18] <= 2'b10;
-
+			scc_io_cfg[19:18] <= (((scc_dataout >> setting_offsets[SCC_ADDR_RFIFO_MODE]) & ({'0, setting_masks[SCC_ADDR_RFIFO_MODE]})) == 3'b001) ? 2'b01 : 2'b10;
 
 			// bypass IOE Register half-rate register
 			//   0: engage half-rate register

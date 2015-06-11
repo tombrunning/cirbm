@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -103,8 +103,6 @@ module rw_manager_read_datapath(
 		.q(check_word_read)
 	);
 
-	
-	
 
 	assign pattern_radd_next = pattern_radd + (read_data_valid ? 1'b1 : 1'b0);
 

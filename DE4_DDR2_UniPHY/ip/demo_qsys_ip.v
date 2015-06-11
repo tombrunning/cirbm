@@ -11,7 +11,7 @@ module rbm_demo(clk, reset, avs_s0_read, avs_s0_write, avs_s0_readdata, avs_s0_w
 	output reg [DATA_WIDTH-1:0] avs_s0_readdata;
     
     reg [DATA_WIDTH-1:0] buffer;
-    reg [1:0] result;
+    reg [DATA_WIDTH-1:0] result;
     
     assign tester = 'b0;
     
@@ -25,14 +25,14 @@ module rbm_demo(clk, reset, avs_s0_read, avs_s0_write, avs_s0_readdata, avs_s0_w
     
     always @(posedge clk) begin
         if(reset == 1) begin
-            result <= 2'b01;
+            result <= 'b0;
         end else begin
             result [0] <= & buffer;
             result [1] <= & buffer;
         end
     end
     
-    always @(posedge clk) begin
+    /*always @(posedge clk) begin
         if(reset == 1) begin
             avs_s0_readdata <= 'b0;
         end else begin
@@ -42,6 +42,14 @@ module rbm_demo(clk, reset, avs_s0_read, avs_s0_write, avs_s0_readdata, avs_s0_w
                 avs_s0_readdata <= 'b01;
             end
         end
-    end
+    end*/
+//tesing... delete later
 
+    always @(posedge clk) begin
+        if(reset == 1) begin
+            avs_s0_readdata <= 'b0;
+        end else begin
+            avs_s0_readdata <= result;
+        end
+    end
 endmodule

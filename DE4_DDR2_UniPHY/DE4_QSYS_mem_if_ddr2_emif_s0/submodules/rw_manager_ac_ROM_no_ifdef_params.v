@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -69,7 +69,9 @@ module rw_manager_ac_ROM_no_ifdef_params (
 				.data_b ({32{1'b1}}),
 				.eccstatus (),
 				.q_a (),
+//synthesis translate_off																	
 				.rden_a (1'b0),
+//synthesis translate_on																		
 				.rden_b (1'b1),
 				.wren_b (1'b0));
 	defparam

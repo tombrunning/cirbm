@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -23,10 +23,10 @@
 module altera_mem_if_sequencer_mem_no_ifdef_params (
 	clk1,
 	reset1,
+	clken1,
 	s1_address,
 	s1_be,
 	s1_chipselect,
-	s1_clken,
 	s1_write,
 	s1_writedata,
 	s1_readdata
@@ -44,10 +44,10 @@ localparam NUM_WORDS = MEM_SIZE / AVL_NUM_SYMBOLS;
 
 input                            clk1;
 input                            reset1;
+input                            clken1;
 input   [AVL_ADDR_WIDTH - 1:0]   s1_address;
 input   [AVL_NUM_SYMBOLS - 1:0]  s1_be;
 input                            s1_chipselect;
-input                            s1_clken;
 input                            s1_write;
 input   [AVL_DATA_WIDTH - 1:0]   s1_writedata;
 output  [AVL_DATA_WIDTH - 1:0]   s1_readdata;
@@ -60,10 +60,26 @@ assign wren = s1_chipselect & s1_write;
 		.address_a (s1_address),
 		.byteena_a (s1_be),
 		.clock0 (clk1),
-		.clocken0 (s1_clken),
+		.clocken0 (clken1),
 		.data_a (s1_writedata),
 		.q_a (s1_readdata),
-		.wren_a (wren)
+		.wren_a (wren),
+		.rden_a(),
+		.rden_b(),
+		.clocken2(),
+		.clocken3(),
+		.aclr0(),
+		.aclr1(),
+		.addressstall_a(),
+		.addressstall_b(),
+		.eccstatus(),
+		.address_b (),
+		.byteena_b (),
+		.clock1 (),
+		.clocken1 (),
+		.data_b (),
+		.q_b (),
+		.wren_b ()
 	);
 	defparam the_altsyncram.byte_size = AVL_SYMBOL_WIDTH;
 	defparam the_altsyncram.lpm_type = "altsyncram";

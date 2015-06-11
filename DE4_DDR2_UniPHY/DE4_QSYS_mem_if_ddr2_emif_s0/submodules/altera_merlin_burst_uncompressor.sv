@@ -1,3 +1,16 @@
+// (C) 2001-2013 Altera Corporation. All rights reserved.
+// Your use of Altera Corporation's design tools, logic functions and other 
+// software and tools, and its AMPP partner logic functions, and any output 
+// files any of the foregoing (including device programming or simulation 
+// files), and any associated documentation or information are expressly subject 
+// to the terms and conditions of the Altera Program License Subscription 
+// Agreement, Altera MegaCore Function License Agreement, or other applicable 
+// license agreement, including, without limitation, that your use is for the 
+// sole purpose of programming logic devices manufactured by Altera and sold by 
+// Altera or its authorized distributors.  Please refer to the applicable 
+// agreement for further details.
+
+
 // (C) 2001-2012 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
@@ -11,10 +24,10 @@
 // agreement for further details.
 
 
-// $Id: //acds/rel/11.1sp2/ip/merlin/altera_merlin_slave_agent/altera_merlin_burst_uncompressor.sv#1 $
+// $Id: //acds/rel/13.0sp1/ip/merlin/altera_merlin_slave_agent/altera_merlin_burst_uncompressor.sv#1 $
 // $Revision: #1 $
-// $Date: 2011/11/10 $
-// $Author: max $
+// $Date: 2013/03/07 $
+// $Author: swbranch $
 
 // ------------------------------------------
 // Merlin Burst Uncompressor
@@ -29,7 +42,8 @@ module altera_merlin_burst_uncompressor
     parameter ADDR_W      = 16,
     parameter BURSTWRAP_W = 3,
     parameter BYTE_CNT_W  = 4,
-    parameter PKT_SYMBOLS = 4
+    parameter PKT_SYMBOLS = 4,
+    parameter BURST_SIZE_W = 3
 )
 (
     input clk,
@@ -46,6 +60,7 @@ module altera_merlin_burst_uncompressor
     input [BURSTWRAP_W - 1 : 0] sink_burstwrap,
     input [BYTE_CNT_W - 1 : 0] sink_byte_cnt,
     input sink_is_compressed,
+    input [BURST_SIZE_W-1 : 0] sink_burstsize,
    
     // source ST signals
     output source_startofpacket,
@@ -62,8 +77,32 @@ module altera_merlin_burst_uncompressor
     // other applications, it may be required to leave-compressed or not. How to
     // control?  Seems like a simple mux - pass-through if no uncompression is
     // required.
-    output source_is_compressed
+    output source_is_compressed,
+    output [BURST_SIZE_W-1 : 0] source_burstsize
 );
+
+//----------------------------------------------------
+// AXSIZE decoding
+//
+// Turns the axsize value into the actual number of bytes
+// being transferred.
+// ---------------------------------------------------
+function reg[63:0] bytes_in_transfer;
+    input [2:0] axsize;
+    case (axsize)
+        3'b000: bytes_in_transfer = 64'b0000000000000000000000000000000000000000000000000000000000000001;
+        3'b001: bytes_in_transfer = 64'b0000000000000000000000000000000000000000000000000000000000000010;
+        3'b010: bytes_in_transfer = 64'b0000000000000000000000000000000000000000000000000000000000000100;
+        3'b011: bytes_in_transfer = 64'b0000000000000000000000000000000000000000000000000000000000001000;
+        3'b100: bytes_in_transfer = 64'b0000000000000000000000000000000000000000000000000000000000010000;
+        3'b101: bytes_in_transfer = 64'b0000000000000000000000000000000000000000000000000000000000100000;
+        3'b110: bytes_in_transfer = 64'b0000000000000000000000000000000000000000000000000000000001000000;
+        3'b111: bytes_in_transfer = 64'b0000000000000000000000000000000000000000000000000000000010000000;
+        default:bytes_in_transfer = 64'b0000000000000000000000000000000000000000000000000000000000000001;
+    endcase
+
+endfunction  
+
    // num_symbols is PKT_SYMBOLS, appropriately sized.
    wire [31:0] int_num_symbols = PKT_SYMBOLS;
    wire [BYTE_CNT_W-1:0] num_symbols = int_num_symbols[BYTE_CNT_W-1:0];
@@ -165,6 +204,9 @@ module altera_merlin_burst_uncompressor
    reg [ADDR_W - 1 : 0 ] burst_uncompress_address_base;
    reg [ADDR_W - 1 : 0] burst_uncompress_address_offset;
 
+   wire [63:0] decoded_burstsize_wire;
+   wire [ADDR_W-1:0] decoded_burstsize;
+
    // The input burstwrap value can be used as a mask against address values,
    // but with one caveat: the address width may be (probably is) wider than 
    // the burstwrap width.  The spec says: extend the msb of the burstwrap 
@@ -189,11 +231,14 @@ module altera_merlin_burst_uncompressor
      end
    end
 
+   assign decoded_burstsize_wire = bytes_in_transfer(sink_burstsize);  //expand it to 64 bits
+   assign decoded_burstsize = decoded_burstsize_wire[ADDR_W-1:0];      //then take the width that is needed
+
    wire [ADDR_W - 1 : 0] p1_burst_uncompress_address_offset =
    (
      (first_packet_beat ?
        sink_addr :
-       burst_uncompress_address_offset) + num_symbols
+       burst_uncompress_address_offset) + decoded_burstsize
     ) &
     addr_width_burstwrap;
 
@@ -221,6 +266,7 @@ module altera_merlin_burst_uncompressor
    assign source_addr = first_packet_beat ? sink_addr :
        burst_uncompress_address_base | burst_uncompress_address_offset;
    assign source_burstwrap = sink_burstwrap;
+   assign source_burstsize = sink_burstsize;
   
    //-------------------------------------------------------------------
    // A single (compressed) read burst will have sop/eop in the same beat.

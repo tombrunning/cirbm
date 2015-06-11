@@ -44,28 +44,12 @@
 #include <system.h>
 #include "terasic_includes.h"
 #include "i2c.h"
-#include "mem_test.h"
+#include "mem_init.h"
+#include "dma_ctr.h"
 #include "system.h"
 #include <io.h>
 
 #define SHOW_PROGRESS
-
-bool DDR2_RepeatRead(int Addr, int nNum){
-    bool bSuccess = TRUE;
-    int i, Value, FirstValue;
-    FirstValue = IORD(MEM_IF_DDR2_EMIF_BASE, Addr);
-    for(i=0;i<nNum;i++){
-        Value = IORD(MEM_IF_DDR2_EMIF_BASE, Addr);
-        if (Value != FirstValue){
-            printf("Data mismatch at try=%d/%d, Read=%08Xh, Expected=%08Xh\n", i, nNum, Value, FirstValue);
-            bSuccess = FALSE;
-        }            
-    }
-    
-    if (bSuccess)
-        printf("Repeat read  success, addr=%d, repeat=%d, value=%08Xh\n", Addr, nNum, FirstValue); 
-    return bSuccess;
-}
 
 int main(){
 
@@ -75,20 +59,27 @@ int main(){
     void *ddr2_base = (void *)MEM_IF_DDR2_EMIF_BASE;
     alt_u32 InitValue;
     alt_u8 ButtonMask;
-    
-    
-    printf("===== DE4 DDR2 Test Program (UniPHY) =====\n");
+
+    //DDR2 Initialisation
+    printf("===== DE4 DDR2 DBM Program =====\n");
     printf("DDR2 Clock: 400 MHZ\n");
     printf("DDR2  Size: %d MBytes\n", MEM_IF_DDR2_EMIF_SPAN/1024/1024);
-    //printf("DDR2  Rank: %d Rank(s)\n", DDR2_NUM_CHIPSELECTS);
-    //printf("DDR2  Bank: %d Bank(s)\n", DDR2_BA_WIDTH);
-    //printf("DDR2   Row: %d \n", DDR2_ROW_WIDTH);
-    //printf("DDR2   Col: %d \n", DDR2_COL_WIDTH);
     
+    //DMA Setting up
+    alt_u32 txlen;
+    //dma destination
+    void* ptx_dest = (void*) 0x0000;
+    void* ptx_source = (void*) 0x00000000;
+    //text length
+    txlen = 4;
+
+    //pointers for testing purpose
+    alt_u32* pAddr = (alt_u32 *)ddr2_base;
+
     while(1){
         printf("\n==========================================================\n");
-        printf("Press any BUTTON to start test [BUTTON0 for continued test] \n");
-        ButtonMask = 0x0F;
+        printf("Press any BUTTON to start DDR2 initialisation [BUTTON0 for continued test] \n");
+        ButtonMask = 0x00;
         while((ButtonMask & 0x0F) == 0x0F){
             ButtonMask = IORD(BUTTON_BASE, 0) & 0x0F;
         }
@@ -103,20 +94,28 @@ int main(){
         TestIndex = 0;
         
         do{
-        
             TimeStart = alt_nticks();
             TestIndex++;
             // memory test
-            printf("=====> DDR2 Testing, Iteration: %d\n", TestIndex);
-            InitValue = alt_nticks();
-            bPass = TMEM_Verify((alt_u32)ddr2_base, MemSize, InitValue);
+            InitValue = 0xFFFFFFFF;
+            printf("=====> DDR2 Initialisation, Iteration: %d\n", TestIndex);
+            bPass = mem_init((alt_u32)ddr2_base, MemSize, InitValue);
             TimeElapsed = alt_nticks()-TimeStart;
             if (bPass){
-                printf("DDR2 test pass, size=%d bytes, %.3f sec\n", MemSize, (float)TimeElapsed/(float)alt_ticks_per_second());
+                printf("DDR2 Initialisation is Completed! size=%d bytes, %.3f sec\n", MemSize, (float)TimeElapsed/(float)alt_ticks_per_second());
             }else{
-                printf("DDR2 test fail\n");
+                printf("DDR2 Initialisation is failed. \n");
             }
+            bLoop = FALSE;
         }while(bLoop && bPass);
+
+        dma_transmit (txlen, ptx_source, ptx_dest);
+        dma_receive (txlen, ptx_source, ptx_dest);
+
+        printf ("Address: 0x%08X------- Value: 0x%08X \n", (int)pAddr, (int)(*pAddr));
+        printf ("Address: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
+        printf ("Address: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
+        printf ("Address: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
     }        
     return 0;
 
