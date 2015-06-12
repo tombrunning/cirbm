@@ -2,7 +2,7 @@ set_global_assignment -entity "DE4_QSYS" -library "DE4_QSYS" -name IP_TOOL_NAME 
 set_global_assignment -entity "DE4_QSYS" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0sp1"
 set_global_assignment -entity "DE4_QSYS" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
 set_global_assignment -library "DE4_QSYS" -name SOPCINFO_FILE [file join $::quartus(qip_path) "../../DE4_QSYS.sopcinfo"]
-set_instance_assignment -entity "DE4_QSYS" -library "DE4_QSYS" -name SLD_INFO "QSYS_NAME DE4_QSYS HAS_SOPCINFO 1 GENERATION_ID 1434032738"
+set_instance_assignment -entity "DE4_QSYS" -library "DE4_QSYS" -name SLD_INFO "QSYS_NAME DE4_QSYS HAS_SOPCINFO 1 GENERATION_ID 1434126843"
 set_global_assignment -library "DE4_QSYS" -name MISC_FILE [file join $::quartus(qip_path) "../../DE4_QSYS.cmp"]
 set_global_assignment -name SYNTHESIS_ONLY_QIP ON
 set_global_assignment -library "DE4_QSYS" -name MISC_FILE [file join $::quartus(qip_path) "../../DE4_QSYS.qsys"]
@@ -17,17 +17,16 @@ set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $:
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/altera_merlin_address_alignment.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/altera_merlin_burst_uncompressor.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/altera_merlin_arbitrator.sv"]
-set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_rsp_xbar_mux_003.sv"]
-set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_rsp_xbar_demux_006.sv"]
-set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_cmd_xbar_demux_003.sv"]
+set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_rsp_xbar_mux_004.sv"]
+set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_rsp_xbar_demux_007.sv"]
+set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_cmd_xbar_demux_004.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_rsp_xbar_mux_001.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_rsp_xbar_mux.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_rsp_xbar_demux_005.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_rsp_xbar_demux_002.sv"]
-set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_rsp_xbar_demux.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_cmd_xbar_mux_005.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_cmd_xbar_mux.sv"]
-set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_cmd_xbar_demux_002.sv"]
+set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_cmd_xbar_demux_003.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_cmd_xbar_demux_001.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_cmd_xbar_demux.sv"]
 set_global_assignment -library "DE4_QSYS" -name VERILOG_FILE [file join $::quartus(qip_path) "submodules/altera_reset_controller.v"]
@@ -35,8 +34,9 @@ set_global_assignment -library "DE4_QSYS" -name VERILOG_FILE [file join $::quart
 set_global_assignment -library "DE4_QSYS" -name SDC_FILE [file join $::quartus(qip_path) "submodules/altera_reset_controller.sdc"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/altera_merlin_burst_adapter.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/altera_merlin_traffic_limiter.sv"]
+set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_id_router_007.sv"]
+set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_addr_router_004.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_id_router_006.sv"]
-set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_addr_router_003.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_id_router_005.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_id_router_002.sv"]
 set_global_assignment -library "DE4_QSYS" -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "submodules/DE4_QSYS_id_router.sv"]
@@ -217,15 +217,15 @@ set_global_assignment -entity "altera_avalon_st_handshake_clock_crosser" -librar
 set_global_assignment -entity "altera_merlin_width_adapter" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_width_adapter"
 set_global_assignment -entity "altera_merlin_width_adapter" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
 set_global_assignment -entity "altera_merlin_width_adapter" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
-set_global_assignment -entity "DE4_QSYS_rsp_xbar_mux_003" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_multiplexer"
-set_global_assignment -entity "DE4_QSYS_rsp_xbar_mux_003" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
-set_global_assignment -entity "DE4_QSYS_rsp_xbar_mux_003" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
-set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux_006" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_demultiplexer"
-set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux_006" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
-set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux_006" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
-set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_003" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_demultiplexer"
-set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_003" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
-set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_003" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
+set_global_assignment -entity "DE4_QSYS_rsp_xbar_mux_004" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_multiplexer"
+set_global_assignment -entity "DE4_QSYS_rsp_xbar_mux_004" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
+set_global_assignment -entity "DE4_QSYS_rsp_xbar_mux_004" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
+set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux_007" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_demultiplexer"
+set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux_007" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
+set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux_007" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
+set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_004" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_demultiplexer"
+set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_004" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
+set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_004" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
 set_global_assignment -entity "DE4_QSYS_rsp_xbar_mux_001" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_multiplexer"
 set_global_assignment -entity "DE4_QSYS_rsp_xbar_mux_001" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
 set_global_assignment -entity "DE4_QSYS_rsp_xbar_mux_001" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
@@ -238,18 +238,15 @@ set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux_005" -library "DE4_QSYS" 
 set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux_002" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_demultiplexer"
 set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux_002" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
 set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux_002" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
-set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_demultiplexer"
-set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
-set_global_assignment -entity "DE4_QSYS_rsp_xbar_demux" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
 set_global_assignment -entity "DE4_QSYS_cmd_xbar_mux_005" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_multiplexer"
 set_global_assignment -entity "DE4_QSYS_cmd_xbar_mux_005" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
 set_global_assignment -entity "DE4_QSYS_cmd_xbar_mux_005" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
 set_global_assignment -entity "DE4_QSYS_cmd_xbar_mux" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_multiplexer"
 set_global_assignment -entity "DE4_QSYS_cmd_xbar_mux" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
 set_global_assignment -entity "DE4_QSYS_cmd_xbar_mux" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
-set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_002" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_demultiplexer"
-set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_002" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
-set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_002" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
+set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_003" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_demultiplexer"
+set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_003" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
+set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_003" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
 set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_001" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_demultiplexer"
 set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_001" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
 set_global_assignment -entity "DE4_QSYS_cmd_xbar_demux_001" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
@@ -265,12 +262,15 @@ set_global_assignment -entity "altera_merlin_burst_adapter" -library "DE4_QSYS" 
 set_global_assignment -entity "altera_merlin_traffic_limiter" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_traffic_limiter"
 set_global_assignment -entity "altera_merlin_traffic_limiter" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
 set_global_assignment -entity "altera_merlin_traffic_limiter" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
+set_global_assignment -entity "DE4_QSYS_id_router_007" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_router"
+set_global_assignment -entity "DE4_QSYS_id_router_007" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
+set_global_assignment -entity "DE4_QSYS_id_router_007" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
+set_global_assignment -entity "DE4_QSYS_addr_router_004" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_router"
+set_global_assignment -entity "DE4_QSYS_addr_router_004" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
+set_global_assignment -entity "DE4_QSYS_addr_router_004" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
 set_global_assignment -entity "DE4_QSYS_id_router_006" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_router"
 set_global_assignment -entity "DE4_QSYS_id_router_006" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
 set_global_assignment -entity "DE4_QSYS_id_router_006" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
-set_global_assignment -entity "DE4_QSYS_addr_router_003" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_router"
-set_global_assignment -entity "DE4_QSYS_addr_router_003" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
-set_global_assignment -entity "DE4_QSYS_addr_router_003" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"
 set_global_assignment -entity "DE4_QSYS_id_router_005" -library "DE4_QSYS" -name IP_TOOL_NAME "altera_merlin_router"
 set_global_assignment -entity "DE4_QSYS_id_router_005" -library "DE4_QSYS" -name IP_TOOL_VERSION "13.0"
 set_global_assignment -entity "DE4_QSYS_id_router_005" -library "DE4_QSYS" -name IP_TOOL_ENV "Qsys"

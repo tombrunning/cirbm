@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="DE4_QSYS" kind="DE4_QSYS" version="1.0" fabric="QSYS">
  <!-- Format version 13.0sp1 232 (Future versions may contain additional information.) -->
- <!-- 2015.06.11.15:25:38 -->
+ <!-- 2015.06.12.17:34:03 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1434032738</value>
+  <value>1434126843</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -1221,15 +1221,15 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.AC_ROM_MR0</name>
-   <value>0101001100011</value>
+   <value>0100001100011</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.AC_ROM_MR0_CALIB</name>
-   <value>0101001100011</value>
+   <value>0100001100011</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.AC_ROM_MR0_DLL_RESET</name>
-   <value>0101101100011</value>
+   <value>0100101100011</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.AC_ROM_MR0_DLL_RESET_MIRR</name>
@@ -1501,7 +1501,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_CLK_FREQ</name>
-   <value>400.0</value>
+   <value>300.0</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_CLK_FREQ_MAX</name>
@@ -1729,7 +1729,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TFAW</name>
-   <value>15</value>
+   <value>12</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TFAW_NS</name>
@@ -1737,7 +1737,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TINIT_CK</name>
-   <value>80000</value>
+   <value>60001</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TINIT_US</name>
@@ -1749,7 +1749,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TRAS</name>
-   <value>16</value>
+   <value>13</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TRAS_NS</name>
@@ -1757,11 +1757,11 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TRC</name>
-   <value>22</value>
+   <value>17</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TRCD</name>
-   <value>6</value>
+   <value>5</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TRCD_NS</name>
@@ -1769,7 +1769,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TREFI</name>
-   <value>3120</value>
+   <value>2341</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TREFI_US</name>
@@ -1777,7 +1777,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TRFC</name>
-   <value>51</value>
+   <value>39</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TRFC_NS</name>
@@ -1785,7 +1785,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TRP</name>
-   <value>6</value>
+   <value>5</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TRP_NS</name>
@@ -1809,7 +1809,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TWR</name>
-   <value>6</value>
+   <value>5</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MEM_TWR_NS</name>
@@ -1861,7 +1861,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MR0_WR</name>
-   <value>5</value>
+   <value>4</value>
   </assignment>
   <assignment>
    <name>testbench.partner.mem_model.parameter.MR1_AL</name>
@@ -2069,7 +2069,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_CLK_FREQ">
    <type>double</type>
-   <value>400.0</value>
+   <value>300.0</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -2285,7 +2285,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="AC_ROM_MR0">
    <type>java.lang.String</type>
-   <value>0101001100011</value>
+   <value>0100001100011</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2301,7 +2301,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="AC_ROM_MR0_CALIB">
    <type>java.lang.String</type>
-   <value>0101001100011</value>
+   <value>0100001100011</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2309,7 +2309,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="AC_ROM_MR0_DLL_RESET">
    <type>java.lang.String</type>
-   <value>0101101100011</value>
+   <value>0100101100011</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2421,7 +2421,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MR0_WR">
    <type>int</type>
-   <value>5</value>
+   <value>4</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2765,7 +2765,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_TRC">
    <type>int</type>
-   <value>22</value>
+   <value>17</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2773,7 +2773,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_TRAS">
    <type>int</type>
-   <value>16</value>
+   <value>13</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2781,7 +2781,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_TRCD">
    <type>int</type>
-   <value>6</value>
+   <value>5</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2789,7 +2789,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_TRP">
    <type>int</type>
-   <value>6</value>
+   <value>5</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2797,7 +2797,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_TREFI">
    <type>int</type>
-   <value>3120</value>
+   <value>2341</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2805,7 +2805,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_TRFC">
    <type>int</type>
-   <value>51</value>
+   <value>39</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2821,7 +2821,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_TWR">
    <type>int</type>
-   <value>6</value>
+   <value>5</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -2829,7 +2829,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_TFAW">
    <type>int</type>
-   <value>15</value>
+   <value>12</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -3493,7 +3493,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_TINIT_CK">
    <type>int</type>
-   <value>80000</value>
+   <value>60001</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -9653,7 +9653,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="TB_MEM_CLK_FREQ">
    <type>double</type>
-   <value>400.0</value>
+   <value>300.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -9821,7 +9821,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_MEM_CLK_FREQ">
    <type>double</type>
-   <value>400.0</value>
+   <value>300.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -9829,7 +9829,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_MEM_CLK_FREQ_STR">
    <type>java.lang.String</type>
-   <value>400.0 MHz</value>
+   <value>300.0 MHz</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -9837,7 +9837,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_MEM_CLK_FREQ_SIM_STR">
    <type>java.lang.String</type>
-   <value>2500 ps</value>
+   <value>3334 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -9893,7 +9893,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_MEM_CLK_MULT">
    <type>int</type>
-   <value>8</value>
+   <value>6</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -9909,7 +9909,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_CLK_FREQ">
    <type>double</type>
-   <value>200.0</value>
+   <value>150.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -9917,7 +9917,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_CLK_FREQ_STR">
    <type>java.lang.String</type>
-   <value>200.0 MHz</value>
+   <value>150.0 MHz</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -9925,7 +9925,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_CLK_FREQ_SIM_STR">
    <type>java.lang.String</type>
-   <value>5000 ps</value>
+   <value>6668 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -9981,7 +9981,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_CLK_MULT">
    <type>int</type>
-   <value>4</value>
+   <value>3</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -9997,7 +9997,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_FREQ">
    <type>double</type>
-   <value>400.0</value>
+   <value>300.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10005,7 +10005,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_FREQ_STR">
    <type>java.lang.String</type>
-   <value>400.0 MHz</value>
+   <value>300.0 MHz</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10013,7 +10013,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_FREQ_SIM_STR">
    <type>java.lang.String</type>
-   <value>2500 ps</value>
+   <value>3334 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10021,7 +10021,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_PHASE_PS">
    <type>int</type>
-   <value>625</value>
+   <value>833</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10029,7 +10029,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_PHASE_PS_STR">
    <type>java.lang.String</type>
-   <value>625 ps</value>
+   <value>833 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10045,7 +10045,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_PHASE_PS_SIM">
    <type>int</type>
-   <value>625</value>
+   <value>833</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10053,7 +10053,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_PHASE_PS_SIM_STR">
    <type>java.lang.String</type>
-   <value>625 ps</value>
+   <value>833 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10069,7 +10069,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_MULT">
    <type>int</type>
-   <value>8</value>
+   <value>6</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10085,7 +10085,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_FREQ">
    <type>double</type>
-   <value>200.0</value>
+   <value>150.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10093,7 +10093,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_FREQ_STR">
    <type>java.lang.String</type>
-   <value>200.0 MHz</value>
+   <value>150.0 MHz</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10101,7 +10101,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_FREQ_SIM_STR">
    <type>java.lang.String</type>
-   <value>5000 ps</value>
+   <value>6668 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10109,7 +10109,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_PHASE_PS">
    <type>int</type>
-   <value>3750</value>
+   <value>5000</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10117,7 +10117,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_PHASE_PS_STR">
    <type>java.lang.String</type>
-   <value>3750 ps</value>
+   <value>5000 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10133,7 +10133,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_PHASE_PS_SIM">
    <type>int</type>
-   <value>3750</value>
+   <value>5000</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10141,7 +10141,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_PHASE_PS_SIM_STR">
    <type>java.lang.String</type>
-   <value>3750 ps</value>
+   <value>5000 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10157,7 +10157,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_MULT">
    <type>int</type>
-   <value>4</value>
+   <value>3</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10173,7 +10173,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_HALF_CLK_FREQ">
    <type>double</type>
-   <value>100.0</value>
+   <value>75.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10181,7 +10181,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_HALF_CLK_FREQ_STR">
    <type>java.lang.String</type>
-   <value>100.0 MHz</value>
+   <value>75.0 MHz</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10189,7 +10189,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_HALF_CLK_FREQ_SIM_STR">
    <type>java.lang.String</type>
-   <value>10000 ps</value>
+   <value>13336 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10245,7 +10245,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_HALF_CLK_MULT">
    <type>int</type>
-   <value>2</value>
+   <value>3</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10253,7 +10253,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_HALF_CLK_DIV">
    <type>int</type>
-   <value>1</value>
+   <value>2</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10261,7 +10261,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_NIOS_CLK_FREQ">
    <type>double</type>
-   <value>100.0</value>
+   <value>75.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10269,7 +10269,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_NIOS_CLK_FREQ_STR">
    <type>java.lang.String</type>
-   <value>100.0 MHz</value>
+   <value>75.0 MHz</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10277,7 +10277,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_NIOS_CLK_FREQ_SIM_STR">
    <type>java.lang.String</type>
-   <value>10000 ps</value>
+   <value>13336 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10333,7 +10333,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_NIOS_CLK_MULT">
    <type>int</type>
-   <value>2</value>
+   <value>3</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10341,7 +10341,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_NIOS_CLK_DIV">
    <type>int</type>
-   <value>1</value>
+   <value>2</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10365,7 +10365,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_CONFIG_CLK_FREQ_SIM_STR">
    <type>java.lang.String</type>
-   <value>40000 ps</value>
+   <value>40008 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10981,7 +10981,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_MEM_CLK_FREQ_CACHE">
    <type>double</type>
-   <value>400.0</value>
+   <value>300.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -10989,7 +10989,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_MEM_CLK_FREQ_SIM_STR_CACHE">
    <type>java.lang.String</type>
-   <value>2500 ps</value>
+   <value>3334 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11013,7 +11013,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_MEM_CLK_MULT_CACHE">
    <type>int</type>
-   <value>8</value>
+   <value>6</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11077,7 +11077,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_CLK_FREQ_CACHE">
    <type>double</type>
-   <value>200.0</value>
+   <value>150.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11085,7 +11085,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_CLK_FREQ_SIM_STR_CACHE">
    <type>java.lang.String</type>
-   <value>5000 ps</value>
+   <value>6668 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11109,7 +11109,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_CLK_MULT_CACHE">
    <type>int</type>
-   <value>4</value>
+   <value>3</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11173,7 +11173,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_FREQ_CACHE">
    <type>double</type>
-   <value>400.0</value>
+   <value>300.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11181,7 +11181,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_FREQ_SIM_STR_CACHE">
    <type>java.lang.String</type>
-   <value>2500 ps</value>
+   <value>3334 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11189,7 +11189,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_PHASE_PS_CACHE">
    <type>int</type>
-   <value>625</value>
+   <value>833</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11197,7 +11197,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_PHASE_PS_SIM_STR_CACHE">
    <type>java.lang.String</type>
-   <value>625 ps</value>
+   <value>833 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11205,7 +11205,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_WRITE_CLK_MULT_CACHE">
    <type>int</type>
-   <value>8</value>
+   <value>6</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11269,7 +11269,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_FREQ_CACHE">
    <type>double</type>
-   <value>200.0</value>
+   <value>150.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11277,7 +11277,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_FREQ_SIM_STR_CACHE">
    <type>java.lang.String</type>
-   <value>5000 ps</value>
+   <value>6668 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11285,7 +11285,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_PHASE_PS_CACHE">
    <type>int</type>
-   <value>3750</value>
+   <value>5000</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11293,7 +11293,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_PHASE_PS_SIM_STR_CACHE">
    <type>java.lang.String</type>
-   <value>3750 ps</value>
+   <value>5000 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11301,7 +11301,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_ADDR_CMD_CLK_MULT_CACHE">
    <type>int</type>
-   <value>4</value>
+   <value>3</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11365,7 +11365,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_HALF_CLK_FREQ_CACHE">
    <type>double</type>
-   <value>100.0</value>
+   <value>75.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11373,7 +11373,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_HALF_CLK_FREQ_SIM_STR_CACHE">
    <type>java.lang.String</type>
-   <value>10000 ps</value>
+   <value>13336 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11397,7 +11397,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_HALF_CLK_MULT_CACHE">
    <type>int</type>
-   <value>2</value>
+   <value>3</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11405,7 +11405,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_AFI_HALF_CLK_DIV_CACHE">
    <type>int</type>
-   <value>1</value>
+   <value>2</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11461,7 +11461,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_NIOS_CLK_FREQ_CACHE">
    <type>double</type>
-   <value>100.0</value>
+   <value>75.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11469,7 +11469,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_NIOS_CLK_FREQ_SIM_STR_CACHE">
    <type>java.lang.String</type>
-   <value>10000 ps</value>
+   <value>13336 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11493,7 +11493,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_NIOS_CLK_MULT_CACHE">
    <type>int</type>
-   <value>2</value>
+   <value>3</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11501,7 +11501,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_NIOS_CLK_DIV_CACHE">
    <type>int</type>
-   <value>1</value>
+   <value>2</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -11565,7 +11565,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="PLL_CONFIG_CLK_FREQ_SIM_STR_CACHE">
    <type>java.lang.String</type>
-   <value>40000 ps</value>
+   <value>40008 ps</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -12005,7 +12005,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_CLK_FREQ_CACHE">
    <type>double</type>
-   <value>400.0</value>
+   <value>300.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -12405,7 +12405,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="DQS_PHASE_SHIFT">
    <type>int</type>
-   <value>9000</value>
+   <value>7200</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -12461,7 +12461,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="IO_DQS_EN_PHASE_MAX">
    <type>int</type>
-   <value>7</value>
+   <value>9</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -12469,7 +12469,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="IO_DQDQS_OUT_PHASE_MAX">
    <type>int</type>
-   <value>14</value>
+   <value>17</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -12485,7 +12485,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_CLK_NS">
    <type>double</type>
-   <value>2.5</value>
+   <value>3.333</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -12493,7 +12493,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="MEM_CLK_PS">
    <type>double</type>
-   <value>2500.0</value>
+   <value>3333.0</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -12517,7 +12517,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="DELAY_PER_OPA_TAP">
    <type>int</type>
-   <value>312</value>
+   <value>333</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -13325,7 +13325,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="DELAY_CHAIN_LENGTH">
    <type>int</type>
-   <value>8</value>
+   <value>10</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -13544,7 +13544,7 @@ parameters are a RESULT of the module parameters. -->
    </parameter>
    <parameter name="clockRate">
     <type>long</type>
-    <value>200000000</value>
+    <value>150000000</value>
     <derived>false</derived>
     <enabled>true</enabled>
     <visible>true</visible>
@@ -13630,9 +13630,9 @@ parameters are a RESULT of the module parameters. -->
    </clockDomainMember>
    <clockDomainMember>
     <isBridge>false</isBridge>
-    <moduleName>testing_demo2</moduleName>
+    <moduleName>testing_demo2_0</moduleName>
     <slaveName>clock</slaveName>
-    <name>testing_demo2.clock</name>
+    <name>testing_demo2_0.clock</name>
    </clockDomainMember>
   </interface>
   <interface name="afi_half_clk" kind="clock_source" version="13.0">
@@ -13649,7 +13649,7 @@ parameters are a RESULT of the module parameters. -->
    </parameter>
    <parameter name="clockRate">
     <type>long</type>
-    <value>100000000</value>
+    <value>75000000</value>
     <derived>false</derived>
     <enabled>true</enabled>
     <visible>true</visible>
@@ -14478,7 +14478,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.CPU_FREQ</name>
-   <value>200000000u</value>
+   <value>150000000u</value>
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.CPU_ID_SIZE</name>
@@ -15490,7 +15490,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="clockFrequency">
    <type>long</type>
-   <value>200000000</value>
+   <value>150000000</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -15654,7 +15654,7 @@ parameters are a RESULT of the module parameters. -->
    </parameter>
    <parameter name="clockRate">
     <type>java.lang.Long</type>
-    <value>200000000</value>
+    <value>150000000</value>
     <derived>true</derived>
     <enabled>true</enabled>
     <visible>false</visible>
@@ -17754,7 +17754,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.TIMESTAMP</name>
-   <value>1434032738</value>
+   <value>1434126843</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.params.id</name>
@@ -17762,7 +17762,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.dts.params.timestamp</name>
-   <value>1434032738</value>
+   <value>1434126843</value>
   </assignment>
   <parameter name="id">
    <type>int</type>
@@ -17774,7 +17774,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="timestamp">
    <type>int</type>
-   <value>1434032738</value>
+   <value>1434126843</value>
    <derived>false</derived>
    <enabled>false</enabled>
    <visible>false</visible>
@@ -20549,7 +20549,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="AUTO_M0_CLK_CLOCK_RATE">
    <type>java.lang.Long</type>
-   <value>200000000</value>
+   <value>150000000</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -20633,7 +20633,7 @@ parameters are a RESULT of the module parameters. -->
    </parameter>
    <parameter name="clockRate">
     <type>java.lang.Long</type>
-    <value>200000000</value>
+    <value>150000000</value>
     <derived>true</derived>
     <enabled>true</enabled>
     <visible>false</visible>
@@ -23067,7 +23067,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.ALLOW_HW_TRANSACTIONS</name>
-   <value>1</value>
+   <value>0</value>
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.ALLOW_QUADWORD_TRANSACTIONS</name>
@@ -23075,7 +23075,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.ALLOW_WORD_TRANSACTIONS</name>
-   <value>0</value>
+   <value>1</value>
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.LENGTHWIDTH</name>
@@ -23083,7 +23083,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.MAX_BURST_SIZE</name>
-   <value>1</value>
+   <value>2</value>
   </assignment>
   <parameter name="allowByteTransactions">
    <type>boolean</type>
@@ -23103,7 +23103,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="allowHalfWordTransactions">
    <type>boolean</type>
-   <value>true</value>
+   <value>false</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -23119,7 +23119,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="allowWordTransactions">
    <type>boolean</type>
-   <value>false</value>
+   <value>true</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -23151,7 +23151,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="maxBurstSize">
    <type>int</type>
-   <value>1</value>
+   <value>2</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -23183,7 +23183,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="readAddressMap">
    <type>java.lang.String</type>
-   <value><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /></address-map>]]></value>
+   <value><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='testing_demo2_0.s0' start='0x40000000' end='0x40000004' /></address-map>]]></value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -23191,7 +23191,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="readSlaveAddressWidthMax">
    <type>int</type>
-   <value>30</value>
+   <value>31</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -23207,7 +23207,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="writeAddressMap">
    <type>java.lang.String</type>
-   <value><![CDATA[<address-map><slave name='testing_demo2.s0' start='0x0' end='0x2' /></address-map>]]></value>
+   <value><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='testing_demo2_0.s0' start='0x40000000' end='0x40000004' /></address-map>]]></value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -23215,7 +23215,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="writeSlaveAddressWidthMax">
    <type>int</type>
-   <value>1</value>
+   <value>31</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -23223,7 +23223,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="writeSlaveDataWidthMax">
    <type>int</type>
-   <value>16</value>
+   <value>256</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -23263,7 +23263,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="writeMaximumSlaveSpan">
    <type>long</type>
-   <value>2</value>
+   <value>1073741824</value>
    <derived>true</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -24062,7 +24062,7 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>read_address</name>
     <direction>Output</direction>
-    <width>30</width>
+    <width>31</width>
     <role>address</role>
    </port>
    <port>
@@ -24080,7 +24080,7 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>read_readdata</name>
     <direction>Input</direction>
-    <width>16</width>
+    <width>32</width>
     <role>readdata</role>
    </port>
    <port>
@@ -24098,7 +24098,7 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>read_burstcount</name>
     <direction>Output</direction>
-    <width>1</width>
+    <width>2</width>
     <role>burstcount</role>
    </port>
    <memoryBlock>
@@ -24108,6 +24108,14 @@ parameters are a RESULT of the module parameters. -->
     <name>mem_if_ddr2_emif.avl</name>
     <baseAddress>0</baseAddress>
     <span>1073741824</span>
+   </memoryBlock>
+   <memoryBlock>
+    <isBridge>false</isBridge>
+    <moduleName>testing_demo2_0</moduleName>
+    <slaveName>s0</slaveName>
+    <name>testing_demo2_0.s0</name>
+    <baseAddress>1073741824</baseAddress>
+    <span>4</span>
    </memoryBlock>
   </interface>
   <interface name="write_master" kind="avalon_master" version="13.0">
@@ -24375,7 +24383,7 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>write_address</name>
     <direction>Output</direction>
-    <width>5</width>
+    <width>31</width>
     <role>address</role>
    </port>
    <port>
@@ -24399,52 +24407,52 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>write_writedata</name>
     <direction>Output</direction>
-    <width>16</width>
+    <width>32</width>
     <role>writedata</role>
    </port>
    <port>
     <name>write_byteenable</name>
     <direction>Output</direction>
-    <width>2</width>
+    <width>4</width>
     <role>byteenable</role>
    </port>
    <port>
     <name>write_burstcount</name>
     <direction>Output</direction>
-    <width>1</width>
+    <width>2</width>
     <role>burstcount</role>
    </port>
    <memoryBlock>
     <isBridge>false</isBridge>
-    <moduleName>testing_demo2</moduleName>
-    <slaveName>s0</slaveName>
-    <name>testing_demo2.s0</name>
+    <moduleName>mem_if_ddr2_emif</moduleName>
+    <slaveName>avl</slaveName>
+    <name>mem_if_ddr2_emif.avl</name>
     <baseAddress>0</baseAddress>
-    <span>2</span>
+    <span>1073741824</span>
+   </memoryBlock>
+   <memoryBlock>
+    <isBridge>false</isBridge>
+    <moduleName>testing_demo2_0</moduleName>
+    <slaveName>s0</slaveName>
+    <name>testing_demo2_0.s0</name>
+    <baseAddress>1073741824</baseAddress>
+    <span>4</span>
    </memoryBlock>
   </interface>
  </module>
  <module
-   name="testing_demo2"
+   name="testing_demo2_0"
    kind="testing_demo2"
    version="1.0"
-   path="testing_demo2">
+   path="testing_demo2_0">
   <!-- Describes a single module. Module parameters are
 the requested settings for a module instance. -->
   <parameter name="DATA_WIDTH">
    <type>int</type>
-   <value>16</value>
+   <value>32</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
-   <valid>true</valid>
-  </parameter>
-  <parameter name="AUTO_CLOCK_CLOCK_RATE">
-   <type>java.lang.Long</type>
-   <value>200000000</value>
-   <derived>false</derived>
-   <enabled>true</enabled>
-   <visible>false</visible>
    <valid>true</valid>
   </parameter>
   <parameter name="deviceFamily">
@@ -24497,22 +24505,6 @@ parameters are a RESULT of the module parameters. -->
     <derived>false</derived>
     <enabled>true</enabled>
     <visible>true</visible>
-    <valid>true</valid>
-   </parameter>
-   <parameter name="clockRateKnown">
-    <type>java.lang.Boolean</type>
-    <value>true</value>
-    <derived>true</derived>
-    <enabled>true</enabled>
-    <visible>false</visible>
-    <valid>true</valid>
-   </parameter>
-   <parameter name="clockRate">
-    <type>java.lang.Long</type>
-    <value>200000000</value>
-    <derived>true</derived>
-    <enabled>true</enabled>
-    <visible>false</visible>
     <valid>true</valid>
    </parameter>
    <type>clock</type>
@@ -24607,7 +24599,7 @@ parameters are a RESULT of the module parameters. -->
    </parameter>
    <parameter name="addressSpan">
     <type>java.math.BigInteger</type>
-    <value>2</value>
+    <value>4</value>
     <derived>true</derived>
     <enabled>true</enabled>
     <visible>false</visible>
@@ -24910,13 +24902,13 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>avs_s0_readdata</name>
     <direction>Output</direction>
-    <width>16</width>
+    <width>32</width>
     <role>readdata</role>
    </port>
    <port>
     <name>avs_s0_writedata</name>
     <direction>Input</direction>
-    <width>16</width>
+    <width>32</width>
     <role>writedata</role>
    </port>
   </interface>
@@ -26521,65 +26513,11 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>irq</endConnectionPoint>
  </connection>
  <connection
-   name="clk_50.clk_reset/testing_demo2.reset"
-   kind="reset"
-   version="13.0"
-   start="clk_50.clk_reset"
-   end="testing_demo2.reset">
-  <parameter name="deviceFamily">
-   <type>java.lang.String</type>
-   <value>UNKNOWN</value>
-   <derived>false</derived>
-   <enabled>true</enabled>
-   <visible>true</visible>
-   <valid>true</valid>
-  </parameter>
-  <parameter name="generateLegacySim">
-   <type>boolean</type>
-   <value>false</value>
-   <derived>false</derived>
-   <enabled>true</enabled>
-   <visible>true</visible>
-   <valid>true</valid>
-  </parameter>
-  <startModule>clk_50</startModule>
-  <startConnectionPoint>clk_reset</startConnectionPoint>
-  <endModule>testing_demo2</endModule>
-  <endConnectionPoint>reset</endConnectionPoint>
- </connection>
- <connection
-   name="mem_if_ddr2_emif.afi_clk/testing_demo2.clock"
-   kind="clock"
-   version="13.0"
-   start="mem_if_ddr2_emif.afi_clk"
-   end="testing_demo2.clock">
-  <parameter name="deviceFamily">
-   <type>java.lang.String</type>
-   <value>UNKNOWN</value>
-   <derived>false</derived>
-   <enabled>true</enabled>
-   <visible>true</visible>
-   <valid>true</valid>
-  </parameter>
-  <parameter name="generateLegacySim">
-   <type>boolean</type>
-   <value>false</value>
-   <derived>false</derived>
-   <enabled>true</enabled>
-   <visible>true</visible>
-   <valid>true</valid>
-  </parameter>
-  <startModule>mem_if_ddr2_emif</startModule>
-  <startConnectionPoint>afi_clk</startConnectionPoint>
-  <endModule>testing_demo2</endModule>
-  <endConnectionPoint>clock</endConnectionPoint>
- </connection>
- <connection
-   name="dma.write_master/testing_demo2.s0"
+   name="dma.write_master/mem_if_ddr2_emif.avl"
    kind="avalon"
    version="13.0"
    start="dma.write_master"
-   end="testing_demo2.s0">
+   end="mem_if_ddr2_emif.avl">
   <parameter name="arbitrationPriority">
    <type>int</type>
    <value>1</value>
@@ -26622,39 +26560,195 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>dma</startModule>
   <startConnectionPoint>write_master</startConnectionPoint>
-  <endModule>testing_demo2</endModule>
+  <endModule>mem_if_ddr2_emif</endModule>
+  <endConnectionPoint>avl</endConnectionPoint>
+ </connection>
+ <connection
+   name="clk_50.clk_reset/testing_demo2_0.reset"
+   kind="reset"
+   version="13.0"
+   start="clk_50.clk_reset"
+   end="testing_demo2_0.reset">
+  <parameter name="deviceFamily">
+   <type>java.lang.String</type>
+   <value>UNKNOWN</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="generateLegacySim">
+   <type>boolean</type>
+   <value>false</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <startModule>clk_50</startModule>
+  <startConnectionPoint>clk_reset</startConnectionPoint>
+  <endModule>testing_demo2_0</endModule>
+  <endConnectionPoint>reset</endConnectionPoint>
+ </connection>
+ <connection
+   name="mem_if_ddr2_emif.afi_clk/testing_demo2_0.clock"
+   kind="clock"
+   version="13.0"
+   start="mem_if_ddr2_emif.afi_clk"
+   end="testing_demo2_0.clock">
+  <parameter name="deviceFamily">
+   <type>java.lang.String</type>
+   <value>UNKNOWN</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="generateLegacySim">
+   <type>boolean</type>
+   <value>false</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <startModule>mem_if_ddr2_emif</startModule>
+  <startConnectionPoint>afi_clk</startConnectionPoint>
+  <endModule>testing_demo2_0</endModule>
+  <endConnectionPoint>clock</endConnectionPoint>
+ </connection>
+ <connection
+   name="dma.read_master/testing_demo2_0.s0"
+   kind="avalon"
+   version="13.0"
+   start="dma.read_master"
+   end="testing_demo2_0.s0">
+  <parameter name="arbitrationPriority">
+   <type>int</type>
+   <value>1</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="baseAddress">
+   <type>java.math.BigInteger</type>
+   <value>0x40000000</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="defaultConnection">
+   <type>boolean</type>
+   <value>false</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="deviceFamily">
+   <type>java.lang.String</type>
+   <value>UNKNOWN</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="generateLegacySim">
+   <type>boolean</type>
+   <value>false</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <startModule>dma</startModule>
+  <startConnectionPoint>read_master</startConnectionPoint>
+  <endModule>testing_demo2_0</endModule>
+  <endConnectionPoint>s0</endConnectionPoint>
+ </connection>
+ <connection
+   name="dma.write_master/testing_demo2_0.s0"
+   kind="avalon"
+   version="13.0"
+   start="dma.write_master"
+   end="testing_demo2_0.s0">
+  <parameter name="arbitrationPriority">
+   <type>int</type>
+   <value>1</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="baseAddress">
+   <type>java.math.BigInteger</type>
+   <value>0x40000000</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="defaultConnection">
+   <type>boolean</type>
+   <value>false</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="deviceFamily">
+   <type>java.lang.String</type>
+   <value>UNKNOWN</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="generateLegacySim">
+   <type>boolean</type>
+   <value>false</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <startModule>dma</startModule>
+  <startConnectionPoint>write_master</startConnectionPoint>
+  <endModule>testing_demo2_0</endModule>
   <endConnectionPoint>s0</endConnectionPoint>
  </connection>
  <plugin>
   <instanceCount>1</instanceCount>
-  <name>altera_avalon_sysid_qsys</name>
+  <name>altera_avalon_timer</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>System ID Peripheral</displayName>
+  <displayName>Interval Timer</displayName>
+  <version>13.0.1.99.2</version>
+ </plugin>
+ <plugin>
+  <instanceCount>1</instanceCount>
+  <name>testing_demo2</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IModule</subtype>
+  <displayName>testing_demo2</displayName>
+  <version>1.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>7</instanceCount>
+  <name>conduit_end</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
+  <displayName>Conduit</displayName>
   <version>13.0</version>
  </plugin>
  <plugin>
   <instanceCount>1</instanceCount>
-  <name>altera_avalon_mm_clock_crossing_bridge</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>Avalon-MM Clock Crossing Bridge</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>4</instanceCount>
-  <name>altera_avalon_pio</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>PIO (Parallel I/O)</displayName>
-  <version>13.0.1.99.2</version>
- </plugin>
- <plugin>
-  <instanceCount>2</instanceCount>
-  <name>clock_source</name>
+  <name>clock_sink</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
-  <displayName>Clock Output</displayName>
+  <displayName>Clock Input</displayName>
   <version>13.0</version>
  </plugin>
  <plugin>
@@ -26667,10 +26761,18 @@ parameters are a RESULT of the module parameters. -->
  </plugin>
  <plugin>
   <instanceCount>3</instanceCount>
-  <name>reset_source</name>
+  <name>interrupt</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
-  <displayName>Reset Output</displayName>
+  <subtype>com.altera.entityinterfaces.IConnection</subtype>
+  <displayName>Interrupt Connection</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>1</instanceCount>
+  <name>altera_avalon_mm_clock_crossing_bridge</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IModule</subtype>
+  <displayName>Avalon-MM Clock Crossing Bridge</displayName>
   <version>13.0</version>
  </plugin>
  <plugin>
@@ -26682,20 +26784,12 @@ parameters are a RESULT of the module parameters. -->
   <version>13.0</version>
  </plugin>
  <plugin>
-  <instanceCount>7</instanceCount>
-  <name>conduit_end</name>
+  <instanceCount>1</instanceCount>
+  <name>altera_avalon_jtag_uart</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
-  <displayName>Conduit</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>3</instanceCount>
-  <name>interrupt</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IConnection</subtype>
-  <displayName>Interrupt Connection</displayName>
-  <version>13.0</version>
+  <subtype>com.altera.entityinterfaces.IModule</subtype>
+  <displayName>JTAG UART</displayName>
+  <version>13.0.1.99.2</version>
  </plugin>
  <plugin>
   <instanceCount>15</instanceCount>
@@ -26706,107 +26800,11 @@ parameters are a RESULT of the module parameters. -->
   <version>13.0</version>
  </plugin>
  <plugin>
-  <instanceCount>1</instanceCount>
-  <name>interrupt_receiver</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
-  <displayName>Interrupt Receiver</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>1</instanceCount>
-  <name>reset_sink</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
-  <displayName>Reset Input</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>1</instanceCount>
-  <name>altera_avalon_timer</name>
+  <instanceCount>4</instanceCount>
+  <name>altera_avalon_pio</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>Interval Timer</displayName>
-  <version>13.0.1.99.2</version>
- </plugin>
- <plugin>
-  <instanceCount>13</instanceCount>
-  <name>avalon_slave</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
-  <displayName>Avalon Memory Mapped Slave</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>14</instanceCount>
-  <name>clock</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IConnection</subtype>
-  <displayName>Clock Connection</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>1</instanceCount>
-  <name>altera_nios2_qsys</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>Nios II Processor</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>1</instanceCount>
-  <name>testing_demo2</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>testing_demo2</displayName>
-  <version>1.0</version>
- </plugin>
- <plugin>
-  <instanceCount>16</instanceCount>
-  <name>avalon</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IConnection</subtype>
-  <displayName>Avalon Memory Mapped Connection</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>1</instanceCount>
-  <name>altera_mem_if_ddr2_emif</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>DDR2 SDRAM Controller with UniPHY</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>1</instanceCount>
-  <name>reset_source</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
-  <displayName>Reset Output</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>14</instanceCount>
-  <name>clock_sink</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
-  <displayName>Clock Input</displayName>
-  <version>13.0</version>
- </plugin>
- <plugin>
-  <instanceCount>1</instanceCount>
-  <name>altera_avalon_dma</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>DMA Controller</displayName>
-  <version>13.0.1.99.2</version>
- </plugin>
- <plugin>
-  <instanceCount>1</instanceCount>
-  <name>altera_avalon_onchip_memory2</name>
-  <type>com.altera.entityinterfaces.IElementClass</type>
-  <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>On-Chip Memory (RAM or ROM)</displayName>
+  <displayName>PIO (Parallel I/O)</displayName>
   <version>13.0.1.99.2</version>
  </plugin>
  <plugin>
@@ -26827,10 +26825,26 @@ parameters are a RESULT of the module parameters. -->
  </plugin>
  <plugin>
   <instanceCount>1</instanceCount>
-  <name>clock_sink</name>
+  <name>altera_avalon_onchip_memory2</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IModule</subtype>
+  <displayName>On-Chip Memory (RAM or ROM)</displayName>
+  <version>13.0.1.99.2</version>
+ </plugin>
+ <plugin>
+  <instanceCount>1</instanceCount>
+  <name>reset_sink</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
-  <displayName>Clock Input</displayName>
+  <displayName>Reset Input</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>18</instanceCount>
+  <name>avalon</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IConnection</subtype>
+  <displayName>Avalon Memory Mapped Connection</displayName>
   <version>13.0</version>
  </plugin>
  <plugin>
@@ -26842,12 +26856,84 @@ parameters are a RESULT of the module parameters. -->
   <version>13.0</version>
  </plugin>
  <plugin>
+  <instanceCount>3</instanceCount>
+  <name>reset_source</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
+  <displayName>Reset Output</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
   <instanceCount>1</instanceCount>
-  <name>altera_avalon_jtag_uart</name>
+  <name>altera_avalon_dma</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>JTAG UART</displayName>
+  <displayName>DMA Controller</displayName>
   <version>13.0.1.99.2</version>
+ </plugin>
+ <plugin>
+  <instanceCount>1</instanceCount>
+  <name>altera_avalon_sysid_qsys</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IModule</subtype>
+  <displayName>System ID Peripheral</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>1</instanceCount>
+  <name>altera_nios2_qsys</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IModule</subtype>
+  <displayName>Nios II Processor</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>14</instanceCount>
+  <name>clock</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IConnection</subtype>
+  <displayName>Clock Connection</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>14</instanceCount>
+  <name>clock_sink</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
+  <displayName>Clock Input</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>1</instanceCount>
+  <name>altera_mem_if_ddr2_emif</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IModule</subtype>
+  <displayName>DDR2 SDRAM Controller with UniPHY</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>2</instanceCount>
+  <name>clock_source</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
+  <displayName>Clock Output</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>1</instanceCount>
+  <name>interrupt_receiver</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
+  <displayName>Interrupt Receiver</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>13</instanceCount>
+  <name>avalon_slave</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
+  <displayName>Avalon Memory Mapped Slave</displayName>
+  <version>13.0</version>
  </plugin>
  <plugin>
   <instanceCount>1</instanceCount>
@@ -26855,6 +26941,14 @@ parameters are a RESULT of the module parameters. -->
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
   <displayName>Clock Output</displayName>
+  <version>13.0</version>
+ </plugin>
+ <plugin>
+  <instanceCount>1</instanceCount>
+  <name>reset_source</name>
+  <type>com.altera.entityinterfaces.IElementClass</type>
+  <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
+  <displayName>Reset Output</displayName>
   <version>13.0</version>
  </plugin>
  <reportVersion>13.0sp1 232</reportVersion>

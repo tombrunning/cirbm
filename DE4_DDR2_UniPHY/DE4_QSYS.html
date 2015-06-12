@@ -67,7 +67,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
   </table>
   <table class="blueBar">
    <tr>
-    <td class="l">2015.06.11.15:25:39</td>
+    <td class="l">2015.06.12.17:34:05</td>
     <td class="r">Datasheet</td>
    </tr>
   </table>
@@ -127,7 +127,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
      <a href="#module_dma"><b>dma</b>
      </a> altera_avalon_dma 13.0.1.99.2
      <br/>&#160;&#160;
-     <a href="#module_testing_demo2"><b>testing_demo2</b>
+     <a href="#module_testing_demo2_0"><b>testing_demo2_0</b>
      </a> testing_demo2 1.0</span>
    </div>
   </div>
@@ -183,7 +183,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="addr"><span style="color:#989898">0x</span>00000000</td>
     <td class="empty"></td>
     <td class="addr"><span style="color:#989898">0x</span>00000000</td>
-    <td class="empty"></td>
+    <td class="addr"><span style="color:#989898">0x</span>00000000</td>
    </tr>
    <tr>
     <td class="slavemodule">&#160;
@@ -340,7 +340,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
    </tr>
    <tr>
     <td class="slavemodule">&#160;
-     <a href="#module_testing_demo2"><b>testing_demo2</b>
+     <a href="#module_testing_demo2_0"><b>testing_demo2_0</b>
      </a>
     </td>
     <td class="empty"></td>
@@ -352,8 +352,8 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="slaveb">s0&#160;</td>
     <td class="empty"></td>
     <td class="empty"></td>
-    <td class="empty"></td>
-    <td class="addr"><span style="color:#989898">0x</span>00000000</td>
+    <td class="addr"><span style="color:#989898">0x</span>40000000</td>
+    <td class="addr"><span style="color:#989898">0x</span>40000000</td>
    </tr>
   </table>
   <a name="module_clk_50"> </a>
@@ -645,7 +645,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        <a href="#module_clk_50">clk_50</a>
       </td>
       <td class="from">clk&#160;&#160;</td>
-      <td class="main" rowspan="29">mem_if_ddr2_emif</td>
+      <td class="main" rowspan="31">mem_if_ddr2_emif</td>
      </tr>
      <tr>
       <td class="to">&#160;&#160;pll_ref_clk</td>
@@ -666,10 +666,16 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <td></td>
      </tr>
      <tr>
-      <td class="neighbor" rowspan="2">
+      <td class="neighbor" rowspan="4">
        <a href="#module_dma">dma</a>
       </td>
       <td class="from">read_master&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;avl</td>
+     </tr>
+     <tr>
+      <td class="from">write_master&#160;&#160;</td>
      </tr>
      <tr>
       <td class="to">&#160;&#160;avl</td>
@@ -771,7 +777,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <td></td>
       <td class="from">afi_clk&#160;&#160;</td>
       <td class="neighbor" rowspan="2">
-       <a href="#module_testing_demo2">testing_demo2</a>
+       <a href="#module_testing_demo2_0">testing_demo2_0</a>
       </td>
      </tr>
      <tr>
@@ -794,7 +800,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">MEM_CLK_FREQ</td>
-        <td class="parametervalue">400.0</td>
+        <td class="parametervalue">300.0</td>
        </tr>
        <tr>
         <td class="parametername">USE_MEM_CLK_FREQ</td>
@@ -902,7 +908,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">AC_ROM_MR0</td>
-        <td class="parametervalue">0101001100011</td>
+        <td class="parametervalue">0100001100011</td>
        </tr>
        <tr>
         <td class="parametername">AC_ROM_MR0_MIRR</td>
@@ -910,11 +916,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">AC_ROM_MR0_CALIB</td>
-        <td class="parametervalue">0101001100011</td>
+        <td class="parametervalue">0100001100011</td>
        </tr>
        <tr>
         <td class="parametername">AC_ROM_MR0_DLL_RESET</td>
-        <td class="parametervalue">0101101100011</td>
+        <td class="parametervalue">0100101100011</td>
        </tr>
        <tr>
         <td class="parametername">AC_ROM_MR0_DLL_RESET_MIRR</td>
@@ -970,7 +976,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">MR0_WR</td>
-        <td class="parametervalue">5</td>
+        <td class="parametervalue">4</td>
        </tr>
        <tr>
         <td class="parametername">MR0_PD</td>
@@ -1142,27 +1148,27 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">MEM_TRC</td>
-        <td class="parametervalue">22</td>
+        <td class="parametervalue">17</td>
        </tr>
        <tr>
         <td class="parametername">MEM_TRAS</td>
-        <td class="parametervalue">16</td>
+        <td class="parametervalue">13</td>
        </tr>
        <tr>
         <td class="parametername">MEM_TRCD</td>
-        <td class="parametervalue">6</td>
+        <td class="parametervalue">5</td>
        </tr>
        <tr>
         <td class="parametername">MEM_TRP</td>
-        <td class="parametervalue">6</td>
+        <td class="parametervalue">5</td>
        </tr>
        <tr>
         <td class="parametername">MEM_TREFI</td>
-        <td class="parametervalue">3120</td>
+        <td class="parametervalue">2341</td>
        </tr>
        <tr>
         <td class="parametername">MEM_TRFC</td>
-        <td class="parametervalue">51</td>
+        <td class="parametervalue">39</td>
        </tr>
        <tr>
         <td class="parametername">CFG_TCCD</td>
@@ -1170,11 +1176,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">MEM_TWR</td>
-        <td class="parametervalue">6</td>
+        <td class="parametervalue">5</td>
        </tr>
        <tr>
         <td class="parametername">MEM_TFAW</td>
-        <td class="parametervalue">15</td>
+        <td class="parametervalue">12</td>
        </tr>
        <tr>
         <td class="parametername">MEM_TRRD</td>
@@ -1506,7 +1512,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">MEM_TINIT_CK</td>
-        <td class="parametervalue">80000</td>
+        <td class="parametervalue">60001</td>
        </tr>
        <tr>
         <td class="parametername">MEM_TDQSCK</td>
@@ -4586,7 +4592,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">TB_MEM_CLK_FREQ</td>
-        <td class="parametervalue">400.0</td>
+        <td class="parametervalue">300.0</td>
        </tr>
        <tr>
         <td class="parametername">TB_RATE</td>
@@ -4670,15 +4676,15 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_FREQ</td>
-        <td class="parametervalue">400.0</td>
+        <td class="parametervalue">300.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_FREQ_STR</td>
-        <td class="parametervalue">400.0 MHz</td>
+        <td class="parametervalue">300.0 MHz</td>
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_FREQ_SIM_STR</td>
-        <td class="parametervalue">2500 ps</td>
+        <td class="parametervalue">3334 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_PHASE_PS</td>
@@ -4706,7 +4712,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_MULT</td>
-        <td class="parametervalue">8</td>
+        <td class="parametervalue">6</td>
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_DIV</td>
@@ -4714,15 +4720,15 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_FREQ</td>
-        <td class="parametervalue">200.0</td>
+        <td class="parametervalue">150.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_FREQ_STR</td>
-        <td class="parametervalue">200.0 MHz</td>
+        <td class="parametervalue">150.0 MHz</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_FREQ_SIM_STR</td>
-        <td class="parametervalue">5000 ps</td>
+        <td class="parametervalue">6668 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_PHASE_PS</td>
@@ -4750,7 +4756,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_MULT</td>
-        <td class="parametervalue">4</td>
+        <td class="parametervalue">3</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_DIV</td>
@@ -4758,23 +4764,23 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_FREQ</td>
-        <td class="parametervalue">400.0</td>
+        <td class="parametervalue">300.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_FREQ_STR</td>
-        <td class="parametervalue">400.0 MHz</td>
+        <td class="parametervalue">300.0 MHz</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_FREQ_SIM_STR</td>
-        <td class="parametervalue">2500 ps</td>
+        <td class="parametervalue">3334 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_PHASE_PS</td>
-        <td class="parametervalue">625</td>
+        <td class="parametervalue">833</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_PHASE_PS_STR</td>
-        <td class="parametervalue">625 ps</td>
+        <td class="parametervalue">833 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_PHASE_DEG</td>
@@ -4782,11 +4788,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_PHASE_PS_SIM</td>
-        <td class="parametervalue">625</td>
+        <td class="parametervalue">833</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_PHASE_PS_SIM_STR</td>
-        <td class="parametervalue">625 ps</td>
+        <td class="parametervalue">833 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_PHASE_DEG_SIM</td>
@@ -4794,7 +4800,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_MULT</td>
-        <td class="parametervalue">8</td>
+        <td class="parametervalue">6</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_DIV</td>
@@ -4802,23 +4808,23 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_FREQ</td>
-        <td class="parametervalue">200.0</td>
+        <td class="parametervalue">150.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_FREQ_STR</td>
-        <td class="parametervalue">200.0 MHz</td>
+        <td class="parametervalue">150.0 MHz</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_FREQ_SIM_STR</td>
-        <td class="parametervalue">5000 ps</td>
+        <td class="parametervalue">6668 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_PHASE_PS</td>
-        <td class="parametervalue">3750</td>
+        <td class="parametervalue">5000</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_PHASE_PS_STR</td>
-        <td class="parametervalue">3750 ps</td>
+        <td class="parametervalue">5000 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_PHASE_DEG</td>
@@ -4826,11 +4832,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_PHASE_PS_SIM</td>
-        <td class="parametervalue">3750</td>
+        <td class="parametervalue">5000</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_PHASE_PS_SIM_STR</td>
-        <td class="parametervalue">3750 ps</td>
+        <td class="parametervalue">5000 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_PHASE_DEG_SIM</td>
@@ -4838,7 +4844,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_MULT</td>
-        <td class="parametervalue">4</td>
+        <td class="parametervalue">3</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_DIV</td>
@@ -4846,15 +4852,15 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_FREQ</td>
-        <td class="parametervalue">100.0</td>
+        <td class="parametervalue">75.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_FREQ_STR</td>
-        <td class="parametervalue">100.0 MHz</td>
+        <td class="parametervalue">75.0 MHz</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_FREQ_SIM_STR</td>
-        <td class="parametervalue">10000 ps</td>
+        <td class="parametervalue">13336 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_PHASE_PS</td>
@@ -4882,23 +4888,23 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_MULT</td>
-        <td class="parametervalue">2</td>
+        <td class="parametervalue">3</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_DIV</td>
-        <td class="parametervalue">1</td>
+        <td class="parametervalue">2</td>
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_FREQ</td>
-        <td class="parametervalue">100.0</td>
+        <td class="parametervalue">75.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_FREQ_STR</td>
-        <td class="parametervalue">100.0 MHz</td>
+        <td class="parametervalue">75.0 MHz</td>
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_FREQ_SIM_STR</td>
-        <td class="parametervalue">10000 ps</td>
+        <td class="parametervalue">13336 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_PHASE_PS</td>
@@ -4926,11 +4932,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_MULT</td>
-        <td class="parametervalue">2</td>
+        <td class="parametervalue">3</td>
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_DIV</td>
-        <td class="parametervalue">1</td>
+        <td class="parametervalue">2</td>
        </tr>
        <tr>
         <td class="parametername">PLL_CONFIG_CLK_FREQ</td>
@@ -4942,7 +4948,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_CONFIG_CLK_FREQ_SIM_STR</td>
-        <td class="parametervalue">40000 ps</td>
+        <td class="parametervalue">40008 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_CONFIG_CLK_PHASE_PS</td>
@@ -5250,11 +5256,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_FREQ_CACHE</td>
-        <td class="parametervalue">400.0</td>
+        <td class="parametervalue">300.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_FREQ_SIM_STR_CACHE</td>
-        <td class="parametervalue">2500 ps</td>
+        <td class="parametervalue">3334 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_PHASE_PS_CACHE</td>
@@ -5266,7 +5272,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_MULT_CACHE</td>
-        <td class="parametervalue">8</td>
+        <td class="parametervalue">6</td>
        </tr>
        <tr>
         <td class="parametername">PLL_MEM_CLK_DIV_CACHE</td>
@@ -5298,11 +5304,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_FREQ_CACHE</td>
-        <td class="parametervalue">200.0</td>
+        <td class="parametervalue">150.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_FREQ_SIM_STR_CACHE</td>
-        <td class="parametervalue">5000 ps</td>
+        <td class="parametervalue">6668 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_PHASE_PS_CACHE</td>
@@ -5314,7 +5320,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_MULT_CACHE</td>
-        <td class="parametervalue">4</td>
+        <td class="parametervalue">3</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_CLK_DIV_CACHE</td>
@@ -5346,23 +5352,23 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_FREQ_CACHE</td>
-        <td class="parametervalue">400.0</td>
+        <td class="parametervalue">300.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_FREQ_SIM_STR_CACHE</td>
-        <td class="parametervalue">2500 ps</td>
+        <td class="parametervalue">3334 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_PHASE_PS_CACHE</td>
-        <td class="parametervalue">625</td>
+        <td class="parametervalue">833</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_PHASE_PS_SIM_STR_CACHE</td>
-        <td class="parametervalue">625 ps</td>
+        <td class="parametervalue">833 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_MULT_CACHE</td>
-        <td class="parametervalue">8</td>
+        <td class="parametervalue">6</td>
        </tr>
        <tr>
         <td class="parametername">PLL_WRITE_CLK_DIV_CACHE</td>
@@ -5394,23 +5400,23 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_FREQ_CACHE</td>
-        <td class="parametervalue">200.0</td>
+        <td class="parametervalue">150.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_FREQ_SIM_STR_CACHE</td>
-        <td class="parametervalue">5000 ps</td>
+        <td class="parametervalue">6668 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_PHASE_PS_CACHE</td>
-        <td class="parametervalue">3750</td>
+        <td class="parametervalue">5000</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_PHASE_PS_SIM_STR_CACHE</td>
-        <td class="parametervalue">3750 ps</td>
+        <td class="parametervalue">5000 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_MULT_CACHE</td>
-        <td class="parametervalue">4</td>
+        <td class="parametervalue">3</td>
        </tr>
        <tr>
         <td class="parametername">PLL_ADDR_CMD_CLK_DIV_CACHE</td>
@@ -5442,11 +5448,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_FREQ_CACHE</td>
-        <td class="parametervalue">100.0</td>
+        <td class="parametervalue">75.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_FREQ_SIM_STR_CACHE</td>
-        <td class="parametervalue">10000 ps</td>
+        <td class="parametervalue">13336 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_PHASE_PS_CACHE</td>
@@ -5458,11 +5464,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_MULT_CACHE</td>
-        <td class="parametervalue">2</td>
+        <td class="parametervalue">3</td>
        </tr>
        <tr>
         <td class="parametername">PLL_AFI_HALF_CLK_DIV_CACHE</td>
-        <td class="parametervalue">1</td>
+        <td class="parametervalue">2</td>
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_FREQ_PARAM</td>
@@ -5490,11 +5496,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_FREQ_CACHE</td>
-        <td class="parametervalue">100.0</td>
+        <td class="parametervalue">75.0</td>
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_FREQ_SIM_STR_CACHE</td>
-        <td class="parametervalue">10000 ps</td>
+        <td class="parametervalue">13336 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_PHASE_PS_CACHE</td>
@@ -5506,11 +5512,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_MULT_CACHE</td>
-        <td class="parametervalue">2</td>
+        <td class="parametervalue">3</td>
        </tr>
        <tr>
         <td class="parametername">PLL_NIOS_CLK_DIV_CACHE</td>
-        <td class="parametervalue">1</td>
+        <td class="parametervalue">2</td>
        </tr>
        <tr>
         <td class="parametername">PLL_CONFIG_CLK_FREQ_PARAM</td>
@@ -5542,7 +5548,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">PLL_CONFIG_CLK_FREQ_SIM_STR_CACHE</td>
-        <td class="parametervalue">40000 ps</td>
+        <td class="parametervalue">40008 ps</td>
        </tr>
        <tr>
         <td class="parametername">PLL_CONFIG_CLK_PHASE_PS_CACHE</td>
@@ -5762,7 +5768,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">MEM_CLK_FREQ_CACHE</td>
-        <td class="parametervalue">400.0</td>
+        <td class="parametervalue">300.0</td>
        </tr>
        <tr>
         <td class="parametername">REF_CLK_FREQ_CACHE</td>
@@ -5962,7 +5968,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">DQS_PHASE_SHIFT</td>
-        <td class="parametervalue">9000</td>
+        <td class="parametervalue">7200</td>
        </tr>
        <tr>
         <td class="parametername">DELAYED_CLOCK_PHASE_SETTING</td>
@@ -5990,11 +5996,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">IO_DQS_EN_PHASE_MAX</td>
-        <td class="parametervalue">7</td>
+        <td class="parametervalue">9</td>
        </tr>
        <tr>
         <td class="parametername">IO_DQDQS_OUT_PHASE_MAX</td>
-        <td class="parametervalue">14</td>
+        <td class="parametervalue">17</td>
        </tr>
        <tr>
         <td class="parametername">IO_SHIFT_DQS_EN_WHEN_SHIFT_DQS</td>
@@ -6002,11 +6008,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">MEM_CLK_NS</td>
-        <td class="parametervalue">2.5</td>
+        <td class="parametervalue">3.333</td>
        </tr>
        <tr>
         <td class="parametername">MEM_CLK_PS</td>
-        <td class="parametervalue">2500.0</td>
+        <td class="parametervalue">3333.0</td>
        </tr>
        <tr>
         <td class="parametername">CALIB_LFIFO_OFFSET</td>
@@ -6018,7 +6024,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">DELAY_PER_OPA_TAP</td>
-        <td class="parametervalue">312</td>
+        <td class="parametervalue">333</td>
        </tr>
        <tr>
         <td class="parametername">DELAY_PER_DCHAIN_TAP</td>
@@ -6422,7 +6428,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">DELAY_CHAIN_LENGTH</td>
-        <td class="parametervalue">8</td>
+        <td class="parametervalue">10</td>
        </tr>
        <tr>
         <td class="parametername">DLL_SHARING_MODE</td>
@@ -7074,7 +7080,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">clockFrequency</td>
-        <td class="parametervalue">200000000</td>
+        <td class="parametervalue">150000000</td>
        </tr>
        <tr>
         <td class="parametername">deviceFamilyName</td>
@@ -7151,7 +7157,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">CPU_FREQ</td>
-        <td class="parametervalue">200000000u</td>
+        <td class="parametervalue">150000000u</td>
        </tr>
        <tr>
         <td class="parametername">CPU_ID_SIZE</td>
@@ -7450,7 +7456,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">timestamp</td>
-        <td class="parametervalue">1434032738</td>
+        <td class="parametervalue">1434126843</td>
        </tr>
        <tr>
         <td class="parametername">AUTO_CLK_CLOCK_RATE</td>
@@ -7483,7 +7489,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">TIMESTAMP</td>
-        <td class="parametervalue">1434032738</td>
+        <td class="parametervalue">1434126843</td>
        </tr>
       </table>
      </td>
@@ -8273,7 +8279,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">AUTO_M0_CLK_CLOCK_RATE</td>
-        <td class="parametervalue">200000000</td>
+        <td class="parametervalue">150000000</td>
        </tr>
        <tr>
         <td class="parametername">AUTO_S0_CLK_CLOCK_RATE</td>
@@ -8710,7 +8716,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        <a href="#module_mem_if_ddr2_emif">mem_if_ddr2_emif</a>
       </td>
       <td class="from">afi_clk&#160;&#160;</td>
-      <td class="main" rowspan="15">dma</td>
+      <td class="main" rowspan="19">dma</td>
      </tr>
      <tr>
       <td class="to">&#160;&#160;clk</td>
@@ -8749,9 +8755,19 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <td></td>
       <td></td>
       <td class="from">read_master&#160;&#160;</td>
-      <td class="neighbor" rowspan="2">
+      <td class="neighbor" rowspan="4">
        <a href="#module_mem_if_ddr2_emif">mem_if_ddr2_emif</a>
       </td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;avl</td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">write_master&#160;&#160;</td>
      </tr>
      <tr>
       <td></td>
@@ -8764,10 +8780,20 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
      <tr>
       <td></td>
       <td></td>
-      <td class="from">write_master&#160;&#160;</td>
-      <td class="neighbor" rowspan="2">
-       <a href="#module_testing_demo2">testing_demo2</a>
+      <td class="from">read_master&#160;&#160;</td>
+      <td class="neighbor" rowspan="4">
+       <a href="#module_testing_demo2_0">testing_demo2_0</a>
       </td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;s0</td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">write_master&#160;&#160;</td>
      </tr>
      <tr>
       <td></td>
@@ -8793,7 +8819,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">allowHalfWordTransactions</td>
-        <td class="parametervalue">true</td>
+        <td class="parametervalue">false</td>
        </tr>
        <tr>
         <td class="parametername">allowQuadWordTransactions</td>
@@ -8801,7 +8827,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">allowWordTransactions</td>
-        <td class="parametervalue">false</td>
+        <td class="parametervalue">true</td>
        </tr>
        <tr>
         <td class="parametername">bigEndian</td>
@@ -8817,7 +8843,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">maxBurstSize</td>
-        <td class="parametervalue">1</td>
+        <td class="parametervalue">2</td>
        </tr>
        <tr>
         <td class="parametername">minimumDmaTransactionRegisterWidth</td>
@@ -8833,11 +8859,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">readAddressMap</td>
-        <td class="parametervalue">&lt;address-map&gt;&lt;slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /&gt;&lt;/address-map&gt;</td>
+        <td class="parametervalue">&lt;address-map&gt;&lt;slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /&gt;&lt;slave name='testing_demo2_0.s0' start='0x40000000' end='0x40000004' /&gt;&lt;/address-map&gt;</td>
        </tr>
        <tr>
         <td class="parametername">readSlaveAddressWidthMax</td>
-        <td class="parametervalue">30</td>
+        <td class="parametervalue">31</td>
        </tr>
        <tr>
         <td class="parametername">readSlaveDataWidthMax</td>
@@ -8845,15 +8871,15 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">writeAddressMap</td>
-        <td class="parametervalue">&lt;address-map&gt;&lt;slave name='testing_demo2.s0' start='0x0' end='0x2' /&gt;&lt;/address-map&gt;</td>
+        <td class="parametervalue">&lt;address-map&gt;&lt;slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /&gt;&lt;slave name='testing_demo2_0.s0' start='0x40000000' end='0x40000004' /&gt;&lt;/address-map&gt;</td>
        </tr>
        <tr>
         <td class="parametername">writeSlaveAddressWidthMax</td>
-        <td class="parametervalue">1</td>
+        <td class="parametervalue">31</td>
        </tr>
        <tr>
         <td class="parametername">writeSlaveDataWidthMax</td>
-        <td class="parametervalue">16</td>
+        <td class="parametervalue">256</td>
        </tr>
        <tr>
         <td class="parametername">actualDmaTransactionRegisterWidth</td>
@@ -8873,7 +8899,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">writeMaximumSlaveSpan</td>
-        <td class="parametervalue">2</td>
+        <td class="parametervalue">1073741824</td>
        </tr>
        <tr>
         <td class="parametername">deviceFamily</td>
@@ -8902,7 +8928,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">ALLOW_HW_TRANSACTIONS</td>
-        <td class="parametervalue">1</td>
+        <td class="parametervalue">0</td>
        </tr>
        <tr>
         <td class="parametername">ALLOW_QUADWORD_TRANSACTIONS</td>
@@ -8910,7 +8936,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">ALLOW_WORD_TRANSACTIONS</td>
-        <td class="parametervalue">0</td>
+        <td class="parametervalue">1</td>
        </tr>
        <tr>
         <td class="parametername">LENGTHWIDTH</td>
@@ -8918,17 +8944,17 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">MAX_BURST_SIZE</td>
-        <td class="parametervalue">1</td>
+        <td class="parametervalue">2</td>
        </tr>
       </table>
      </td>
     </tr>
    </table>
   </div>
-  <a name="module_testing_demo2"> </a>
+  <a name="module_testing_demo2_0"> </a>
   <div>
    <hr/>
-   <h2>testing_demo2</h2>testing_demo2 v1.0
+   <h2>testing_demo2_0</h2>testing_demo2 v1.0
    <br/>
    <div class="greydiv">
     <table class="connectionboxes">
@@ -8937,7 +8963,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        <a href="#module_clk_50">clk_50</a>
       </td>
       <td class="from">clk_reset&#160;&#160;</td>
-      <td class="main" rowspan="8">testing_demo2</td>
+      <td class="main" rowspan="10">testing_demo2_0</td>
      </tr>
      <tr>
       <td class="to">&#160;&#160;reset</td>
@@ -8958,9 +8984,15 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <td></td>
      </tr>
      <tr>
-      <td class="neighbor" rowspan="2">
+      <td class="neighbor" rowspan="4">
        <a href="#module_dma">dma</a>
       </td>
+      <td class="from">read_master&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;s0</td>
+     </tr>
+     <tr>
       <td class="from">write_master&#160;&#160;</td>
      </tr>
      <tr>
@@ -8977,11 +9009,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <table>
        <tr>
         <td class="parametername">DATA_WIDTH</td>
-        <td class="parametervalue">16</td>
-       </tr>
-       <tr>
-        <td class="parametername">AUTO_CLOCK_CLOCK_RATE</td>
-        <td class="parametervalue">200000000</td>
+        <td class="parametervalue">32</td>
        </tr>
        <tr>
         <td class="parametername">deviceFamily</td>

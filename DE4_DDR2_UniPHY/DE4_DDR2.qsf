@@ -535,7 +535,7 @@ set_instance_assignment -name ENABLE_BENEFICIAL_SKEW_OPTIMIZATION_FOR_NON_GLOBAL
 set_instance_assignment -name PLL_ENFORCE_USER_PHASE_SHIFT ON -to u0|mem_if_ddr2_emif|p0|controller_phy_inst|memphy_top_inst|upll_memphy|altpll_component|auto_generated|pll1 -tag __DE4_QSYS_mem_if_ddr2_emif_p0
 set_global_assignment -name UNIPHY_SEQUENCER_DQS_CONFIG_ENABLE ON
 set_global_assignment -name OPTIMIZE_MULTI_CORNER_TIMING ON
-set_global_assignment -name UNIPHY_TEMP_VER_CODE 1149961142
+set_global_assignment -name UNIPHY_TEMP_VER_CODE 1833192078
 set_instance_assignment -name MEM_INTERFACE_DELAY_CHAIN_CONFIG FLEXIBLE_TIMING -to M2_DDR2_dq[0] -tag __DE4_QSYS_mem_if_ddr2_emif_p0
 set_instance_assignment -name MEM_INTERFACE_DELAY_CHAIN_CONFIG FLEXIBLE_TIMING -to M2_DDR2_dq[1] -tag __DE4_QSYS_mem_if_ddr2_emif_p0
 set_instance_assignment -name MEM_INTERFACE_DELAY_CHAIN_CONFIG FLEXIBLE_TIMING -to M2_DDR2_dq[2] -tag __DE4_QSYS_mem_if_ddr2_emif_p0
