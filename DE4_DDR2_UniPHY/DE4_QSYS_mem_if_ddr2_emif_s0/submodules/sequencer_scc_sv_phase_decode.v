@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -10,6 +10,9 @@
 // Altera or its authorized distributors.  Please refer to the applicable 
 // agreement for further details.
 
+
+
+`timescale 1 ps / 1 ps
 
 module sequencer_scc_sv_phase_decode
     # (parameter
@@ -157,6 +160,16 @@ module sequencer_scc_sv_phase_decode
 			begin
 				dqs_phase  = 7'b1111011;
 				dq_phase   = 7'b0111010;
+			end
+		5'b10100: 
+			begin
+				dqs_phase  = 7'b0001011;
+				dq_phase   = 7'b1011010;
+			end
+		5'b10101: 
+			begin
+				dqs_phase  = 7'b0101011;
+				dq_phase   = 7'b1111011;
 			end
 		default : begin end
 		endcase

@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -10,6 +10,9 @@
 // Altera or its authorized distributors.  Please refer to the applicable 
 // agreement for further details.
 
+
+
+`timescale 1 ps / 1 ps
 
 module sequencer_scc_siii_wrapper
     # (parameter
@@ -95,10 +98,10 @@ module sequencer_scc_siii_wrapper
 			
 			scc_dqs_cfg[6:4] <= dqsi_phase;
 			
-			scc_dqs_cfg[3:0] <= (scc_dataout >> setting_offsets[SCC_ADDR_DQS_IN_DELAY]) & ({'0, setting_masks[SCC_ADDR_DQS_IN_DELAY]});
-			scc_dqs_cfg[29:27] <= (scc_dataout >> setting_offsets[SCC_ADDR_DQS_EN_DELAY]) & ({'0, setting_masks[SCC_ADDR_DQS_EN_DELAY]});
-			scc_dqs_cfg[33:30] <= (scc_dataout >> setting_offsets[SCC_ADDR_OCT_OUT1_DELAY]) & ({'0, setting_masks[SCC_ADDR_OCT_OUT1_DELAY]});
-			scc_dqs_cfg[36:34] <= (scc_dataout >> setting_offsets[SCC_ADDR_OCT_OUT2_DELAY]) & ({'0, setting_masks[SCC_ADDR_OCT_OUT2_DELAY]});
+			scc_dqs_cfg[3:0] <= maskTo4Bits(scc_dataout >> setting_offsets[SCC_ADDR_DQS_IN_DELAY]);
+			scc_dqs_cfg[29:27] <= maskTo3Bits(scc_dataout >> setting_offsets[SCC_ADDR_DQS_EN_DELAY]);
+			scc_dqs_cfg[33:30] <= maskTo4Bits(scc_dataout >> setting_offsets[SCC_ADDR_OCT_OUT1_DELAY]);
+			scc_dqs_cfg[36:34] <= maskTo3Bits(scc_dataout >> setting_offsets[SCC_ADDR_OCT_OUT2_DELAY]);
 			scc_dqs_cfg[10:7] <= dqse_phase[5:2];
 			scc_dqs_cfg[43] <= dqse_phase[1];
 			scc_dqs_cfg[38] <= dqse_phase[0];
@@ -111,10 +114,20 @@ module sequencer_scc_siii_wrapper
 			scc_dqs_cfg[40] <= dq_phase[1];
 			scc_dqs_cfg[26] <= dq_phase[0];
 				
-			scc_io_cfg[3:0] <= (scc_dataout >> setting_offsets[SCC_ADDR_IO_OUT1_DELAY]) & ({'0, setting_masks[SCC_ADDR_IO_OUT1_DELAY]});
-			scc_io_cfg[6:4] <= (scc_dataout >> setting_offsets[SCC_ADDR_IO_OUT2_DELAY]) & ({'0, setting_masks[SCC_ADDR_IO_OUT2_DELAY]});
-			scc_io_cfg[10:7] <= (scc_dataout >> setting_offsets[SCC_ADDR_IO_IN_DELAY]) & ({'0, setting_masks[SCC_ADDR_IO_IN_DELAY]});
+			scc_io_cfg[3:0] <= maskTo4Bits(scc_dataout >> setting_offsets[SCC_ADDR_IO_OUT1_DELAY]);
+			scc_io_cfg[6:4] <= maskTo3Bits(scc_dataout >> setting_offsets[SCC_ADDR_IO_OUT2_DELAY]);
+			scc_io_cfg[10:7] <= maskTo4Bits(scc_dataout >> setting_offsets[SCC_ADDR_IO_IN_DELAY]);
 		end
 	end
+
+	function[2:0] maskTo3Bits;
+		input[DATAWIDTH-1:0] i;
+		maskTo3Bits = i[2:0];
+	endfunction
 	
+	function[3:0] maskTo4Bits;
+		input[DATAWIDTH-1:0] i;
+		maskTo4Bits = i[3:0];
+	endfunction
+
 endmodule

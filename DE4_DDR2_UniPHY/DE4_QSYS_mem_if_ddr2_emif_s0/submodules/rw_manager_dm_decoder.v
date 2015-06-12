@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -33,16 +33,6 @@ module rw_manager_dm_decoder(ck, reset_n, code, pattern);
 			code_R <= code;
 		end
 	end
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	assign pattern[0] = code_R[2];

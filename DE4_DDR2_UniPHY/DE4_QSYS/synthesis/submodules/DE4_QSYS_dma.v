@@ -27,19 +27,19 @@ module DE4_QSYS_dma_read_data_mux (
                                      dma_ctl_chipselect,
                                      dma_ctl_write_n,
                                      dma_ctl_writedata,
-                                     hw,
                                      read_readdata,
                                      read_readdatavalid,
                                      readaddress,
                                      readaddress_inc,
                                      reset_n,
+                                     word,
 
                                     // outputs:
                                      fifo_wr_data
                                   )
 ;
 
-  output  [ 15: 0] fifo_wr_data;
+  output  [ 31: 0] fifo_wr_data;
   input            byte_access;
   input            clk;
   input            clk_en;
@@ -47,18 +47,18 @@ module DE4_QSYS_dma_read_data_mux (
   input            dma_ctl_chipselect;
   input            dma_ctl_write_n;
   input   [ 30: 0] dma_ctl_writedata;
-  input            hw;
-  input   [ 15: 0] read_readdata;
+  input   [ 31: 0] read_readdata;
   input            read_readdatavalid;
-  input   [ 29: 0] readaddress;
+  input   [ 30: 0] readaddress;
   input   [  4: 0] readaddress_inc;
   input            reset_n;
+  input            word;
 
   wire             control_write;
-  wire    [ 15: 0] fifo_wr_data;
+  wire    [ 31: 0] fifo_wr_data;
   wire             length_write;
-  wire             read_data_mux_input;
-  reg              readdata_mux_select;
+  wire    [  1: 0] read_data_mux_input;
+  reg     [  1: 0] readdata_mux_select;
   assign control_write = dma_ctl_chipselect & ~dma_ctl_write_n & ((dma_ctl_address == 6) || (dma_ctl_address == 7));
   assign length_write = dma_ctl_chipselect & ~dma_ctl_write_n & (dma_ctl_address == 3);
   assign read_data_mux_input = ((control_write && dma_ctl_writedata[3] || length_write))? readaddress[1 : 0] :
@@ -71,14 +71,17 @@ module DE4_QSYS_dma_read_data_mux (
       if (reset_n == 0)
           readdata_mux_select <= 0;
       else if (clk_en)
-          readdata_mux_select <= read_data_mux_input;
+          readdata_mux_select <= read_data_mux_input[1 : 0];
     end
 
 
+  assign fifo_wr_data[31 : 16] = read_readdata[31 : 16];
   assign fifo_wr_data[15 : 8] = read_readdata[15 : 8];
-  assign fifo_wr_data[7 : 0] = ({8 {(byte_access & (readdata_mux_select == 0))}} & read_readdata[7 : 0]) |
-    ({8 {(byte_access & (readdata_mux_select == 1))}} & read_readdata[15 : 8]) |
-    ({8 {hw}} & read_readdata[7 : 0]);
+  assign fifo_wr_data[7 : 0] = ({8 {(byte_access & (readdata_mux_select[1 : 0] == 0))}} & read_readdata[7 : 0]) |
+    ({8 {(byte_access & (readdata_mux_select[1 : 0] == 1))}} & read_readdata[15 : 8]) |
+    ({8 {(byte_access & (readdata_mux_select[1 : 0] == 2))}} & read_readdata[23 : 16]) |
+    ({8 {(byte_access & (readdata_mux_select[1 : 0] == 3))}} & read_readdata[31 : 24]) |
+    ({8 {word}} & read_readdata[7 : 0]);
 
 
 endmodule
@@ -95,7 +98,7 @@ endmodule
 module DE4_QSYS_dma_byteenables (
                                   // inputs:
                                    byte_access,
-                                   hw,
+                                   word,
                                    write_address,
 
                                   // outputs:
@@ -103,18 +106,22 @@ module DE4_QSYS_dma_byteenables (
                                 )
 ;
 
-  output  [  1: 0] write_byteenable;
+  output  [  3: 0] write_byteenable;
   input            byte_access;
-  input            hw;
-  input   [  4: 0] write_address;
+  input            word;
+  input   [ 30: 0] write_address;
 
-  wire             wa_0_is_0;
-  wire             wa_0_is_1;
-  wire    [  1: 0] write_byteenable;
-  assign wa_0_is_1 = write_address[0] == 1'h1;
-  assign wa_0_is_0 = write_address[0] == 1'h0;
-  assign write_byteenable = ({2 {byte_access}} & {wa_0_is_1, wa_0_is_0}) |
-    ({2 {hw}} & 2'b11);
+  wire             wa_1_to_0_is_0;
+  wire             wa_1_to_0_is_1;
+  wire             wa_1_to_0_is_2;
+  wire             wa_1_to_0_is_3;
+  wire    [  3: 0] write_byteenable;
+  assign wa_1_to_0_is_3 = write_address[1 : 0] == 2'h3;
+  assign wa_1_to_0_is_2 = write_address[1 : 0] == 2'h2;
+  assign wa_1_to_0_is_1 = write_address[1 : 0] == 2'h1;
+  assign wa_1_to_0_is_0 = write_address[1 : 0] == 2'h0;
+  assign write_byteenable = ({4 {byte_access}} & {wa_1_to_0_is_3, wa_1_to_0_is_2, wa_1_to_0_is_1, wa_1_to_0_is_0}) |
+    ({4 {word}} & 4'b1111);
 
 
 endmodule
@@ -144,9 +151,9 @@ module DE4_QSYS_dma_fifo_module_fifo_ram_module (
                                                 )
 ;
 
-  output  [ 15: 0] q;
+  output  [ 31: 0] q;
   input            clk;
-  input   [ 15: 0] data;
+  input   [ 31: 0] data;
   input   [  5: 0] rdaddress;
   input            rdclken;
   input            reset_n;
@@ -154,8 +161,8 @@ module DE4_QSYS_dma_fifo_module_fifo_ram_module (
   input            wrclock;
   input            wren;
 
-  reg     [ 15: 0] mem_array [ 63: 0];
-  wire    [ 15: 0] q;
+  reg     [ 31: 0] mem_array [ 63: 0];
+  wire    [ 31: 0] q;
   reg     [  5: 0] read_address;
 
 //synthesis translate_off
@@ -208,7 +215,7 @@ module DE4_QSYS_dma_fifo_module_fifo_ram_module (
 //           lpm_ram_dp_component.lpm_indata = "REGISTERED",
 //           lpm_ram_dp_component.lpm_outdata = "UNREGISTERED",
 //           lpm_ram_dp_component.lpm_rdaddress_control = "REGISTERED",
-//           lpm_ram_dp_component.lpm_width = 16,
+//           lpm_ram_dp_component.lpm_width = 32,
 //           lpm_ram_dp_component.lpm_widthad = 6,
 //           lpm_ram_dp_component.lpm_wraddress_control = "REGISTERED",
 //           lpm_ram_dp_component.suppress_memory_conversion_warnings = "ON";
@@ -247,12 +254,12 @@ module DE4_QSYS_dma_fifo_module (
 
   output           fifo_datavalid;
   output           fifo_empty;
-  output  [ 15: 0] fifo_rd_data;
+  output  [ 31: 0] fifo_rd_data;
   output           p1_fifo_full;
   input            clk;
   input            clk_en;
   input            fifo_read;
-  input   [ 15: 0] fifo_wr_data;
+  input   [ 31: 0] fifo_wr_data;
   input            fifo_write;
   input            flush_fifo;
   input            inc_pending_data;
@@ -265,10 +272,10 @@ module DE4_QSYS_dma_fifo_module (
   reg              fifo_empty;
   reg              fifo_full;
   wire             fifo_inc;
-  wire    [ 15: 0] fifo_ram_q;
-  wire    [ 15: 0] fifo_rd_data;
+  wire    [ 31: 0] fifo_ram_q;
+  wire    [ 31: 0] fifo_rd_data;
   reg              last_write_collision;
-  reg     [ 15: 0] last_write_data;
+  reg     [ 31: 0] last_write_data;
   wire    [  5: 0] p1_estimated_wraddress;
   wire             p1_fifo_empty;
   wire             p1_fifo_full;
@@ -520,9 +527,9 @@ endmodule
 
 //DMA peripheral DE4_QSYS_dma
 //Read slaves:
-//mem_if_ddr2_emif.avl; 
+//mem_if_ddr2_emif.avl,testing_demo2.s0; 
 //Write slaves:
-//testing_demo2.s0; 
+//mem_if_ddr2_emif.avl,testing_demo2.s0; 
 
 
 module DE4_QSYS_dma (
@@ -556,22 +563,22 @@ module DE4_QSYS_dma (
 
   output           dma_ctl_irq;
   output  [ 30: 0] dma_ctl_readdata;
-  output  [ 29: 0] read_address;
+  output  [ 30: 0] read_address;
   output           read_burstcount;
   output           read_chipselect;
   output           read_read_n;
-  output  [  4: 0] write_address;
+  output  [ 30: 0] write_address;
   output           write_burstcount;
-  output  [  1: 0] write_byteenable;
+  output  [  3: 0] write_byteenable;
   output           write_chipselect;
   output           write_write_n;
-  output  [ 15: 0] write_writedata;
+  output  [ 31: 0] write_writedata;
   input            clk;
   input   [  2: 0] dma_ctl_address;
   input            dma_ctl_chipselect;
   input            dma_ctl_write_n;
   input   [ 30: 0] dma_ctl_writedata;
-  input   [ 15: 0] read_readdata;
+  input   [ 31: 0] read_readdata;
   input            read_readdatavalid;
   input            read_waitrequest;
   input            system_reset_n;
@@ -597,11 +604,11 @@ module DE4_QSYS_dma (
   wire             enabled_write_endofpacket;
   wire             fifo_datavalid;
   wire             fifo_empty;
-  wire    [ 15: 0] fifo_rd_data;
-  wire    [ 15: 0] fifo_rd_data_as_byte_access;
-  wire    [ 15: 0] fifo_rd_data_as_hw;
+  wire    [ 31: 0] fifo_rd_data;
+  wire    [ 31: 0] fifo_rd_data_as_byte_access;
+  wire    [ 31: 0] fifo_rd_data_as_word;
   wire             fifo_read;
-  wire    [ 15: 0] fifo_wr_data;
+  wire    [ 31: 0] fifo_wr_data;
   wire             fifo_write;
   wire             fifo_write_data_valid;
   wire             flush_fifo;
@@ -625,21 +632,21 @@ module DE4_QSYS_dma (
   wire    [ 30: 0] p1_length;
   wire             p1_length_eq_0;
   wire             p1_read_got_endofpacket;
-  wire    [ 29: 0] p1_readaddress;
+  wire    [ 30: 0] p1_readaddress;
   wire             p1_write_got_endofpacket;
-  wire    [  4: 0] p1_writeaddress;
+  wire    [ 30: 0] p1_writeaddress;
   wire    [ 30: 0] p1_writelength;
   wire             p1_writelength_eq_0;
   wire             quadword;
   wire             rcon;
-  wire    [ 29: 0] read_address;
+  wire    [ 30: 0] read_address;
   wire             read_burstcount;
   wire             read_chipselect;
   wire             read_endofpacket;
   reg              read_got_endofpacket;
   wire             read_read_n;
   reg              read_waitrequest_s1;
-  reg     [ 29: 0] readaddress;
+  reg     [ 30: 0] readaddress;
   wire    [  4: 0] readaddress_inc;
   wire             reen;
   reg              reop;
@@ -653,16 +660,16 @@ module DE4_QSYS_dma (
   wire             ween;
   reg              weop;
   wire             word;
-  wire    [  4: 0] write_address;
+  wire    [ 30: 0] write_address;
   wire             write_burstcount;
-  wire    [  1: 0] write_byteenable;
+  wire    [  3: 0] write_byteenable;
   wire             write_chipselect;
   wire             write_endofpacket;
   reg              write_got_endofpacket;
   wire             write_select;
   wire             write_write_n;
-  wire    [ 15: 0] write_writedata;
-  reg     [  4: 0] writeaddress;
+  wire    [ 31: 0] write_writedata;
+  reg     [ 30: 0] writeaddress;
   wire    [  4: 0] writeaddress_inc;
   reg     [ 30: 0] writelength;
   reg              writelength_eq_0;
@@ -679,19 +686,19 @@ module DE4_QSYS_dma (
       .dma_ctl_write_n    (dma_ctl_write_n),
       .dma_ctl_writedata  (dma_ctl_writedata),
       .fifo_wr_data       (fifo_wr_data),
-      .hw                 (hw),
       .read_readdata      (read_readdata),
       .read_readdatavalid (read_readdatavalid),
       .readaddress        (readaddress),
       .readaddress_inc    (readaddress_inc),
-      .reset_n            (reset_n)
+      .reset_n            (reset_n),
+      .word               (word)
     );
 
   //write_master, which is an e_avalon_master
   DE4_QSYS_dma_byteenables the_DE4_QSYS_dma_byteenables
     (
       .byte_access      (byte_access),
-      .hw               (hw),
+      .word             (word),
       .write_address    (write_address),
       .write_byteenable (write_byteenable)
     );
@@ -702,7 +709,7 @@ module DE4_QSYS_dma (
       if (reset_n == 0)
           burstcount_update <= 1;
       else if (length_register_write)
-          burstcount_update <= dma_ctl_writedata >> 1;
+          burstcount_update <= dma_ctl_writedata >> 2;
     end
 
 
@@ -742,7 +749,7 @@ module DE4_QSYS_dma (
   always @(posedge clk or negedge reset_n)
     begin
       if (reset_n == 0)
-          readaddress <= 30'h0;
+          readaddress <= 31'h0;
       else if (clk_en)
           readaddress <= p1_readaddress;
     end
@@ -756,7 +763,7 @@ module DE4_QSYS_dma (
   always @(posedge clk or negedge reset_n)
     begin
       if (reset_n == 0)
-          writeaddress <= 5'h0;
+          writeaddress <= 31'h0;
       else if (clk_en)
           writeaddress <= p1_writeaddress;
     end
@@ -806,15 +813,15 @@ module DE4_QSYS_dma (
   assign p1_writelength = ((dma_ctl_chipselect & ~dma_ctl_write_n & (dma_ctl_address == 3)))? dma_ctl_writedata :
     ((inc_write && (!writelength_eq_0)))? writelength - {1'b0,
     1'b0,
+    word,
     1'b0,
-    hw,
     byte_access} :
     writelength;
 
   assign p1_writelength_eq_0 = inc_write && (!writelength_eq_0) && ((writelength  - {1'b0,
     1'b0,
+    word,
     1'b0,
-    hw,
     byte_access}) == 0);
 
   assign p1_length_eq_0 = inc_read && (!length_eq_0) && ((length  - length) == 0);
@@ -846,16 +853,16 @@ module DE4_QSYS_dma (
     (1)? 0 :
     {1'b0,
     1'b0,
+    word,
     1'b0,
-    hw,
     byte_access};
 
   assign readaddress_inc = (rcon)? 0 :
     (1)? 0 :
     {1'b0,
     1'b0,
+    word,
     1'b0,
-    hw,
     byte_access};
 
   assign p1_dma_ctl_readdata = ({31 {(dma_ctl_address == 0)}} & status) |
@@ -1053,11 +1060,13 @@ module DE4_QSYS_dma (
   assign read_chipselect = ~read_read_n;
   assign write_write_n = mem_write_n;
   assign fifo_rd_data_as_byte_access = {fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
     fifo_rd_data[7 : 0]};
 
-  assign fifo_rd_data_as_hw = fifo_rd_data[15 : 0];
-  assign write_writedata = ({16 {byte_access}} & fifo_rd_data_as_byte_access) |
-    ({16 {hw}} & fifo_rd_data_as_hw);
+  assign fifo_rd_data_as_word = fifo_rd_data[31 : 0];
+  assign write_writedata = ({32 {byte_access}} & fifo_rd_data_as_byte_access) |
+    ({32 {word}} & fifo_rd_data_as_word);
 
   assign fifo_write_data_valid = read_readdatavalid;
   assign set_software_reset_bit = ((dma_ctl_chipselect & ~dma_ctl_write_n & ((dma_ctl_address == 6) || (dma_ctl_address == 7)))) & (dma_ctl_address != 7) & dma_ctl_writedata[12];

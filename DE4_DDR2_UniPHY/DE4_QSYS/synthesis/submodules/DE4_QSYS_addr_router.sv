@@ -50,9 +50,9 @@ module DE4_QSYS_addr_router_default_decode
                DEFAULT_DESTID = 5 
    )
   (output [98 - 96 : 0] default_destination_id,
-   output [6-1 : 0] default_wr_channel,
-   output [6-1 : 0] default_rd_channel,
-   output [6-1 : 0] default_src_channel
+   output [7-1 : 0] default_wr_channel,
+   output [7-1 : 0] default_rd_channel,
+   output [7-1 : 0] default_src_channel
   );
 
   assign default_destination_id = 
@@ -63,7 +63,7 @@ module DE4_QSYS_addr_router_default_decode
       assign default_src_channel = '0;
     end
     else begin
-      assign default_src_channel = 6'b1 << DEFAULT_CHANNEL;
+      assign default_src_channel = 7'b1 << DEFAULT_CHANNEL;
     end
   end
   endgenerate
@@ -74,8 +74,8 @@ module DE4_QSYS_addr_router_default_decode
       assign default_rd_channel = '0;
     end
     else begin
-      assign default_wr_channel = 6'b1 << DEFAULT_WR_CHANNEL;
-      assign default_rd_channel = 6'b1 << DEFAULT_RD_CHANNEL;
+      assign default_wr_channel = 7'b1 << DEFAULT_WR_CHANNEL;
+      assign default_rd_channel = 7'b1 << DEFAULT_RD_CHANNEL;
     end
   end
   endgenerate
@@ -105,7 +105,7 @@ module DE4_QSYS_addr_router
     // -------------------
     output                          src_valid,
     output reg [109-1    : 0] src_data,
-    output reg [6-1 : 0] src_channel,
+    output reg [7-1 : 0] src_channel,
     output                          src_startofpacket,
     output                          src_endofpacket,
     input                           src_ready
@@ -121,7 +121,7 @@ module DE4_QSYS_addr_router
     localparam PKT_PROTECTION_H = 102;
     localparam PKT_PROTECTION_L = 100;
     localparam ST_DATA_W = 109;
-    localparam ST_CHANNEL_W = 6;
+    localparam ST_CHANNEL_W = 7;
     localparam DECODER_TYPE = 0;
 
     localparam PKT_TRANS_WRITE = 69;
@@ -138,12 +138,13 @@ module DE4_QSYS_addr_router
     // -------------------------------------------------------
     localparam PAD0 = log2ceil(64'h41040000 - 64'h41020000); 
     localparam PAD1 = log2ceil(64'h41041000 - 64'h41040800); 
+    localparam PAD2 = log2ceil(64'h41041040 - 64'h41041020); 
     // -------------------------------------------------------
     // Work out which address bits are significant based on the
     // address range of the slaves. If the required width is too
     // large or too small, we use the address field width instead.
     // -------------------------------------------------------
-    localparam ADDR_RANGE = 64'h41041000;
+    localparam ADDR_RANGE = 64'h41041040;
     localparam RANGE_ADDR_WIDTH = log2ceil(ADDR_RANGE);
     localparam OPTIMIZED_ADDR_H = (RANGE_ADDR_WIDTH > PKT_ADDR_W) ||
                                   (RANGE_ADDR_WIDTH == 0) ?
@@ -163,7 +164,7 @@ module DE4_QSYS_addr_router
     assign src_endofpacket   = sink_endofpacket;
 
     wire [PKT_DEST_ID_W-1:0] default_destid;
-    wire [6-1 : 0] default_src_channel;
+    wire [7-1 : 0] default_src_channel;
 
 
 
@@ -188,14 +189,20 @@ module DE4_QSYS_addr_router
 
     // ( 0x41020000 .. 0x41040000 )
     if ( {address[RG:PAD0],{PAD0{1'b0}}} == 31'h41020000   ) begin
-            src_channel = 6'b10;
+            src_channel = 7'b010;
             src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 5;
     end
 
     // ( 0x41040800 .. 0x41041000 )
     if ( {address[RG:PAD1],{PAD1{1'b0}}} == 31'h41040800   ) begin
-            src_channel = 6'b01;
+            src_channel = 7'b001;
             src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 4;
+    end
+
+    // ( 0x41041020 .. 0x41041040 )
+    if ( {address[RG:PAD2],{PAD2{1'b0}}} == 31'h41041020   ) begin
+            src_channel = 7'b100;
+            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 0;
     end
 
 end

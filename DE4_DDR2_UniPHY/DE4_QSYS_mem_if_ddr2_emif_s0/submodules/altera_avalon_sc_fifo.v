@@ -636,9 +636,7 @@ module altera_avalon_sc_fifo
         end
     end
     else begin
-          always @* begin
-            fill_level = 0;
-          end
+        initial fill_level = 0;
     end
     endgenerate
 

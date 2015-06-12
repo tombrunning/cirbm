@@ -104,7 +104,7 @@
  <parameter name="projectName" value="DE4_DDR2.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1433947866290" />
+ <parameter name="timeStamp" value="1434117292144" />
  <parameter name="useTestBenchNamingPattern" value="true" />
  <instanceScript></instanceScript>
  <module kind="DE4_QSYS" version="1.0" enabled="1" name="DE4_QSYS_inst">
@@ -274,7 +274,7 @@
   <parameter name="MEM_TRRD_NS" value="7.5" />
   <parameter name="MEM_TRTP_NS" value="7.5" />
   <parameter name="RATE" value="Half" />
-  <parameter name="MEM_CLK_FREQ" value="400.0" />
+  <parameter name="MEM_CLK_FREQ" value="300.0" />
   <parameter name="USE_MEM_CLK_FREQ" value="false" />
   <parameter name="FORCE_DQS_TRACKING" value="AUTO" />
   <parameter name="FORCE_SHADOW_REGS" value="AUTO" />

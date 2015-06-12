@@ -16,7 +16,7 @@
    {
       datum baseAddress
       {
-         value = "1090785312";
+         value = "1090785344";
          type = "String";
       }
    }
@@ -48,7 +48,7 @@
    {
       datum baseAddress
       {
-         value = "1090785280";
+         value = "1090785312";
          type = "String";
       }
    }
@@ -140,14 +140,6 @@
          type = "int";
       }
    }
-   element testing_demo2.s0
-   {
-      datum baseAddress
-      {
-         value = "0";
-         type = "String";
-      }
-   }
    element mm_clock_crossing_bridge_io.s0
    {
       datum baseAddress
@@ -156,11 +148,19 @@
          type = "String";
       }
    }
-   element button.s1
+   element testing_demo2.s0
    {
       datum baseAddress
       {
-         value = "80";
+         value = "1073741824";
+         type = "String";
+      }
+   }
+   element led.s1
+   {
+      datum baseAddress
+      {
+         value = "64";
          type = "String";
       }
    }
@@ -180,11 +180,11 @@
          type = "String";
       }
    }
-   element led.s1
+   element onchip_memory.s1
    {
       datum baseAddress
       {
-         value = "64";
+         value = "1090650112";
          type = "String";
       }
    }
@@ -196,11 +196,11 @@
          type = "String";
       }
    }
-   element onchip_memory.s1
+   element button.s1
    {
       datum baseAddress
       {
-         value = "1090650112";
+         value = "80";
          type = "String";
       }
    }
@@ -243,7 +243,7 @@
  <parameter name="projectName" value="DE4_DDR2.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1433947814651" />
+ <parameter name="timeStamp" value="1434116302451" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="clk" internal="clk_50.clk_in" type="clock" dir="end" />
@@ -320,7 +320,7 @@
    enabled="1"
    name="mem_if_ddr2_emif">
   <parameter name="RATE" value="Half" />
-  <parameter name="MEM_CLK_FREQ" value="400.0" />
+  <parameter name="MEM_CLK_FREQ" value="300.0" />
   <parameter name="USE_MEM_CLK_FREQ" value="false" />
   <parameter name="FORCE_DQS_TRACKING" value="AUTO" />
   <parameter name="FORCE_SHADOW_REGS" value="AUTO" />
@@ -719,9 +719,9 @@
   <parameter name="tightlyCoupledInstructionMaster1AddrWidth" value="1" />
   <parameter name="tightlyCoupledInstructionMaster2AddrWidth" value="1" />
   <parameter name="tightlyCoupledInstructionMaster3AddrWidth" value="1" />
-  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='onchip_memory.s1' start='0x41020000' end='0x4103F400' /><slave name='nios2_qsys.jtag_debug_module' start='0x41040800' end='0x41041000' /></address-map>]]></parameter>
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='timer.s1' start='0x40000000' end='0x40000020' /><slave name='ddr2_i2c_sda.s1' start='0x40000020' end='0x40000030' /><slave name='ddr2_i2c_scl.s1' start='0x40000030' end='0x40000040' /><slave name='led.s1' start='0x40000040' end='0x40000050' /><slave name='button.s1' start='0x40000050' end='0x40000060' /><slave name='sysid.control_slave' start='0x40000060' end='0x40000068' /><slave name='onchip_memory.s1' start='0x41020000' end='0x4103F400' /><slave name='nios2_qsys.jtag_debug_module' start='0x41040800' end='0x41041000' /><slave name='dma.control_port_slave' start='0x41041000' end='0x41041020' /><slave name='jtag_uart.avalon_jtag_slave' start='0x41041020' end='0x41041028' /></address-map>]]></parameter>
-  <parameter name="clockFrequency" value="200000000" />
+  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='onchip_memory.s1' start='0x41020000' end='0x4103F400' /><slave name='nios2_qsys.jtag_debug_module' start='0x41040800' end='0x41041000' /><slave name='dma.control_port_slave' start='0x41041020' end='0x41041040' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='timer.s1' start='0x40000000' end='0x40000020' /><slave name='ddr2_i2c_sda.s1' start='0x40000020' end='0x40000030' /><slave name='ddr2_i2c_scl.s1' start='0x40000030' end='0x40000040' /><slave name='led.s1' start='0x40000040' end='0x40000050' /><slave name='button.s1' start='0x40000050' end='0x40000060' /><slave name='sysid.control_slave' start='0x40000060' end='0x40000068' /><slave name='onchip_memory.s1' start='0x41020000' end='0x4103F400' /><slave name='nios2_qsys.jtag_debug_module' start='0x41040800' end='0x41041000' /><slave name='dma.control_port_slave' start='0x41041020' end='0x41041040' /><slave name='jtag_uart.avalon_jtag_slave' start='0x41041040' end='0x41041048' /></address-map>]]></parameter>
+  <parameter name="clockFrequency" value="150000000" />
   <parameter name="deviceFamilyName" value="Stratix IV" />
   <parameter name="internalIrqMaskSystemInfo" value="7" />
   <parameter name="customInstSlavesSystemInfo" value="&lt;info/&gt;" />
@@ -824,7 +824,7 @@
   <parameter name="RESPONSE_FIFO_DEPTH" value="4" />
   <parameter name="MASTER_SYNC_DEPTH" value="2" />
   <parameter name="SLAVE_SYNC_DEPTH" value="2" />
-  <parameter name="AUTO_M0_CLK_CLOCK_RATE" value="200000000" />
+  <parameter name="AUTO_M0_CLK_CLOCK_RATE" value="150000000" />
   <parameter name="AUTO_S0_CLK_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Stratix IV" />
  </module>
@@ -867,9 +867,9 @@
  <module kind="altera_avalon_dma" version="13.0.1.99.2" enabled="1" name="dma">
   <parameter name="allowByteTransactions" value="false" />
   <parameter name="allowDoubleWordTransactions" value="false" />
-  <parameter name="allowHalfWordTransactions" value="true" />
+  <parameter name="allowHalfWordTransactions" value="false" />
   <parameter name="allowQuadWordTransactions" value="false" />
-  <parameter name="allowWordTransactions" value="false" />
+  <parameter name="allowWordTransactions" value="true" />
   <parameter name="bigEndian" value="false" />
   <parameter name="burstEnable" value="true" />
   <parameter name="fifoDepth" value="64" />
@@ -877,16 +877,16 @@
   <parameter name="minimumDmaTransactionRegisterWidth" value="31" />
   <parameter name="useRegistersForFIFO" value="false" />
   <parameter name="avalonSpec" value="2.0" />
-  <parameter name="readAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /></address-map>]]></parameter>
-  <parameter name="readSlaveAddressWidthMax" value="30" />
+  <parameter name="readAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='testing_demo2.s0' start='0x40000000' end='0x40000004' /></address-map>]]></parameter>
+  <parameter name="readSlaveAddressWidthMax" value="31" />
   <parameter name="readSlaveDataWidthMax" value="256" />
-  <parameter name="writeAddressMap"><![CDATA[<address-map><slave name='testing_demo2.s0' start='0x0' end='0x2' /></address-map>]]></parameter>
-  <parameter name="writeSlaveAddressWidthMax" value="1" />
-  <parameter name="writeSlaveDataWidthMax" value="16" />
+  <parameter name="writeAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='testing_demo2.s0' start='0x40000000' end='0x40000004' /></address-map>]]></parameter>
+  <parameter name="writeSlaveAddressWidthMax" value="31" />
+  <parameter name="writeSlaveDataWidthMax" value="256" />
  </module>
  <module kind="testing_demo2" version="1.0" enabled="1" name="testing_demo2">
-  <parameter name="DATA_WIDTH" value="16" />
-  <parameter name="AUTO_CLOCK_CLOCK_RATE" value="200000000" />
+  <parameter name="DATA_WIDTH" value="32" />
+  <parameter name="AUTO_CLOCK_CLOCK_RATE" value="150000000" />
  </module>
  <connection
    kind="avalon"
@@ -1000,7 +1000,7 @@
    start="nios2_qsys.data_master"
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x41041020" />
+  <parameter name="baseAddress" value="0x41041040" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1116,15 +1116,6 @@
  <connection
    kind="avalon"
    version="13.0"
-   start="nios2_qsys.data_master"
-   end="dma.control_port_slave">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x41041000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="13.0"
    start="dma.read_master"
    end="mem_if_ddr2_emif.avl">
   <parameter name="arbitrationPriority" value="1" />
@@ -1139,6 +1130,13 @@
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="13.0"
+   start="nios2_qsys.d_irq"
+   end="dma.irq">
+  <parameter name="irqNumber" value="2" />
  </connection>
  <connection
    kind="reset"
@@ -1156,15 +1154,44 @@
    start="dma.write_master"
    end="testing_demo2.s0">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="baseAddress" value="0x40000000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
-   kind="interrupt"
+   kind="avalon"
    version="13.0"
-   start="nios2_qsys.d_irq"
-   end="dma.irq">
-  <parameter name="irqNumber" value="2" />
+   start="nios2_qsys.instruction_master"
+   end="dma.control_port_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x41041020" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="13.0"
+   start="nios2_qsys.data_master"
+   end="dma.control_port_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x41041020" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="13.0"
+   start="dma.read_master"
+   end="testing_demo2.s0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x40000000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="13.0"
+   start="dma.write_master"
+   end="mem_if_ddr2_emif.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
  </connection>
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />

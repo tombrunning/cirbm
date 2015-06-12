@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -37,14 +37,12 @@ module rw_manager_data_broadcast(
 	generate
 		for(wr = 0; wr < NUMBER_OF_WORDS; wr = wr + 1)
 		begin : word
-			
 			for(gr = 0; gr < NUMBER_OF_DQS_GROUPS; gr = gr + 1)
 			begin : group
 				assign dq_data_out[wr * NUMBER_OF_DQ_BITS + (gr + 1) * NUMBER_OF_DQ_PER_DQS - 1 : wr * NUMBER_OF_DQ_BITS + gr * NUMBER_OF_DQ_PER_DQS] = 
 					dq_data_in[(wr + 1) * NUMBER_OF_DQ_PER_DQS - 1 : wr * NUMBER_OF_DQ_PER_DQS];
 			end
 
-			
 			for(dmbit = 0; dmbit < MEM_DM_WIDTH; dmbit = dmbit + 1)
 			begin : data_mask_bit
 				assign dm_data_out[wr * MEM_DM_WIDTH + dmbit] = dm_data_in[wr];

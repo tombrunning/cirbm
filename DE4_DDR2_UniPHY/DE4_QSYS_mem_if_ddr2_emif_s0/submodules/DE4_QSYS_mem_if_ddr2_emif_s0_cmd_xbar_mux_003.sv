@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -11,10 +11,10 @@
 // agreement for further details.
 
 
-// $Id: //acds/rel/11.1sp2/ip/merlin/altera_merlin_multiplexer/altera_merlin_multiplexer.sv.terp#1 $
+// $Id: //acds/rel/13.0sp1/ip/merlin/altera_merlin_multiplexer/altera_merlin_multiplexer.sv.terp#1 $
 // $Revision: #1 $
-// $Date: 2011/11/10 $
-// $Author: max $
+// $Date: 2013/03/07 $
+// $Author: swbranch $
 
 // ------------------------------------------
 // Merlin Multiplexer
@@ -31,7 +31,7 @@
 //   ARBITRATION_SCHEME   "round-robin"
 //   PIPELINE_ARB:        0
 //   PKT_TRANS_LOCK:      60 (arbitration locking enabled)
-//   ST_DATA_W:           75
+//   ST_DATA_W:           93
 //   ST_CHANNEL_W:        6
 // ------------------------------------------
 
@@ -41,14 +41,14 @@ module DE4_QSYS_mem_if_ddr2_emif_s0_cmd_xbar_mux_003
     // Sinks
     // ----------------------
     input                       sink0_valid,
-    input [75-1   : 0]  sink0_data,
+    input [93-1   : 0]  sink0_data,
     input [6-1: 0]  sink0_channel,
     input                       sink0_startofpacket,
     input                       sink0_endofpacket,
     output                      sink0_ready,
 
     input                       sink1_valid,
-    input [75-1   : 0]  sink1_data,
+    input [93-1   : 0]  sink1_data,
     input [6-1: 0]  sink1_channel,
     input                       sink1_startofpacket,
     input                       sink1_endofpacket,
@@ -59,7 +59,7 @@ module DE4_QSYS_mem_if_ddr2_emif_s0_cmd_xbar_mux_003
     // Source
     // ----------------------
     output                      src_valid,
-    output [75-1    : 0] src_data,
+    output [93-1    : 0] src_data,
     output [6-1 : 0] src_channel,
     output                      src_startofpacket,
     output                      src_endofpacket,
@@ -71,11 +71,11 @@ module DE4_QSYS_mem_if_ddr2_emif_s0_cmd_xbar_mux_003
     input clk,
     input reset
 );
-    localparam PAYLOAD_W        = 75 + 6 + 2;
+    localparam PAYLOAD_W        = 93 + 6 + 2;
     localparam NUM_INPUTS       = 2;
     localparam SHARE_COUNTER_W  = 1;
     localparam PIPELINE_ARB     = 0;
-    localparam ST_DATA_W        = 75;
+    localparam ST_DATA_W        = 93;
     localparam ST_CHANNEL_W     = 6;
     localparam PKT_TRANS_LOCK   = 60;
 
@@ -285,7 +285,10 @@ module DE4_QSYS_mem_if_ddr2_emif_s0_cmd_xbar_mux_003
 
     // ------------------------------------------
     // Create a request vector that stays high during
-    // the packet
+    // the packet for unpipelined arbitration.
+    //
+    // The pipelined arbitration scheme does not require
+    // request to be held high during the packet.
     // ------------------------------------------
     reg  [NUM_INPUTS - 1 : 0] prev_request;
     always @(posedge clk, posedge reset) begin
@@ -294,7 +297,9 @@ module DE4_QSYS_mem_if_ddr2_emif_s0_cmd_xbar_mux_003
         else
             prev_request <= request & ~(valid & eop);
     end
-    assign request = prev_request | valid | locked;
+
+    assign request = (PIPELINE_ARB == 1) ? valid | locked :
+                                           prev_request | valid | locked;
 
 
     altera_merlin_arbitrator

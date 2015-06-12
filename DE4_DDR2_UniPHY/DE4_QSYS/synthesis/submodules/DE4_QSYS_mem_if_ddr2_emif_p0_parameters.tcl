@@ -11,7 +11,7 @@ set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_dqs_group_size 8
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_number_of_ck_pins 2
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_number_of_dm_pins 8
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_dqs_delay_chain_length 2
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_uniphy_temp_ver_code 103067803
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_uniphy_temp_ver_code 1986295281
 # PLL Parameters
 
 #USER W A R N I N G !
@@ -22,41 +22,41 @@ set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_uniphy_temp_ver_code 103067803
 #USER apply those changes to the PLL parameters in this file
 
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_num_pll_clock 7
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(0) 4
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(0) 3
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(0) 1
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(0) 0.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_AFI_CLK) 4
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_AFI_CLK) 3
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(PLL_AFI_CLK) 1
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(PLL_AFI_CLK) 0.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(1) 8
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(1) 6
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(1) 1
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(1) 0.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_MEM_CLK) 8
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_MEM_CLK) 6
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(PLL_MEM_CLK) 1
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(PLL_MEM_CLK) 0.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(2) 8
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(2) 6
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(2) 1
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(2) 90.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_WRITE_CLK) 8
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_WRITE_CLK) 6
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(PLL_WRITE_CLK) 1
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(PLL_WRITE_CLK) 90.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(3) 4
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(3) 3
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(3) 1
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(3) 270.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_ADDR_CMD_CLK) 4
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_ADDR_CMD_CLK) 3
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(PLL_ADDR_CMD_CLK) 1
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(PLL_ADDR_CMD_CLK) 270.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(4) 2
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(4) 1
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(4) 3
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(4) 2
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(4) 0.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_AFI_HALF_CLK) 2
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(PLL_AFI_HALF_CLK) 1
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_AFI_HALF_CLK) 3
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(PLL_AFI_HALF_CLK) 2
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(PLL_AFI_HALF_CLK) 0.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(5) 2
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(5) 1
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(5) 3
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(5) 2
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(5) 0.0
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_NIOS_CLK) 2
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(PLL_NIOS_CLK) 1
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_NIOS_CLK) 3
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(PLL_NIOS_CLK) 2
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(PLL_NIOS_CLK) 0.0
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(6) 1
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(6) 2
@@ -65,7 +65,7 @@ set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_mult(PLL_CONFIG_CLK) 1
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_div(PLL_CONFIG_CLK) 2
 set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_pll_phase(PLL_CONFIG_CLK) 0.0
 
-set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_leveling_capture_phase 90.0
+set ::GLOBAL_DE4_QSYS_mem_if_ddr2_emif_p0_leveling_capture_phase 72.0
 
 ##############################################################
 ## IP options

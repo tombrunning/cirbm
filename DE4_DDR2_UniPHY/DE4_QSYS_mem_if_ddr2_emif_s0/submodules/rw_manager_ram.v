@@ -1,4 +1,4 @@
-// (C) 2001-2012 Altera Corporation. All rights reserved.
+// (C) 2001-2013 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -33,7 +33,6 @@ input [(ADDR_WIDTH-1):0] rdaddress, wraddress;
 input wren, clock;
 output reg [(DATA_WIDTH-1):0] q;
 
-	
 
 	reg [DATA_WIDTH-1:0] ram[2**ADDR_WIDTH-1:0];
 
