@@ -16,6 +16,7 @@ Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router_001.sv
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router_001.sv(49): object "DEFAULT_RD_CHANNEL" differs only in case from object "default_rd_channel" in the same scope
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router.sv(48): object "DEFAULT_WR_CHANNEL" differs only in case from object "default_wr_channel" in the same scope
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router.sv(49): object "DEFAULT_RD_CHANNEL" differs only in case from object "default_rd_channel" in the same scope
+Warning (10268): Verilog HDL information at demo_qsys_ip.v(51): always construct contains both blocking and non-blocking assignments
 Info (10281): Verilog HDL Declaration information at alt_mem_ddrx_rdwr_data_tmg.v(114): object "i" differs only in case from object "I" in the same scope
 Info (10281): Verilog HDL Declaration information at alt_mem_ddrx_csr.v(60): object "CFG_CAS_WR_LAT" differs only in case from object "cfg_cas_wr_lat" in the same scope
 Info (10281): Verilog HDL Declaration information at alt_mem_ddrx_csr.v(61): object "CFG_ADD_LAT" differs only in case from object "cfg_add_lat" in the same scope
@@ -135,7 +136,6 @@ Info (10281): Verilog HDL Declaration information at DE4_QSYS_mem_if_ddr2_emif_s
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_mem_if_ddr2_emif_s0_id_router_003.sv(49): object "DEFAULT_RD_CHANNEL" differs only in case from object "default_rd_channel" in the same scope
 Info (10281): Verilog HDL Declaration information at rw_manager_core.sv(71): object "RATE" differs only in case from object "rate" in the same scope
 Warning (10268): Verilog HDL information at sequencer_phy_mgr.sv(398): always construct contains both blocking and non-blocking assignments
-Warning (10236): Verilog HDL Implicit Net warning at demo_qsys_ip.v(16): created implicit net for "tester"
 Warning (10236): Verilog HDL Implicit Net warning at altera_mem_if_sequencer_rst.sv(49): created implicit net for "m20k_gate"
 Warning (10037): Verilog HDL or VHDL warning at DE4_QSYS_nios2_qsys.v(2074): conditional expression evaluates to a constant
 Warning (10037): Verilog HDL or VHDL warning at DE4_QSYS_nios2_qsys.v(2076): conditional expression evaluates to a constant

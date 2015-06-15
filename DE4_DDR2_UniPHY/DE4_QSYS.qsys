@@ -140,7 +140,7 @@
          type = "int";
       }
    }
-   element testing_demo2_0.s0
+   element mm_clock_crossing_bridge_io.s0
    {
       datum baseAddress
       {
@@ -148,11 +148,19 @@
          type = "String";
       }
    }
-   element mm_clock_crossing_bridge_io.s0
+   element testing_demo2.s0
    {
       datum baseAddress
       {
          value = "1073741824";
+         type = "String";
+      }
+   }
+   element ddr2_i2c_scl.s1
+   {
+      datum baseAddress
+      {
+         value = "48";
          type = "String";
       }
    }
@@ -164,11 +172,11 @@
          type = "String";
       }
    }
-   element ddr2_i2c_scl.s1
+   element button.s1
    {
       datum baseAddress
       {
-         value = "48";
+         value = "80";
          type = "String";
       }
    }
@@ -196,14 +204,6 @@
          type = "String";
       }
    }
-   element button.s1
-   {
-      datum baseAddress
-      {
-         value = "80";
-         type = "String";
-      }
-   }
    element sysid
    {
       datum _sortIndex
@@ -212,7 +212,7 @@
          type = "int";
       }
    }
-   element testing_demo2_0
+   element testing_demo2
    {
       datum _sortIndex
       {
@@ -243,7 +243,7 @@
  <parameter name="projectName" value="DE4_DDR2.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1434126553903" />
+ <parameter name="timeStamp" value="1434373218009" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="clk" internal="clk_50.clk_in" type="clock" dir="end" />
@@ -868,24 +868,25 @@
   <parameter name="allowByteTransactions" value="false" />
   <parameter name="allowDoubleWordTransactions" value="false" />
   <parameter name="allowHalfWordTransactions" value="false" />
-  <parameter name="allowQuadWordTransactions" value="false" />
+  <parameter name="allowQuadWordTransactions" value="true" />
   <parameter name="allowWordTransactions" value="true" />
   <parameter name="bigEndian" value="false" />
   <parameter name="burstEnable" value="true" />
-  <parameter name="fifoDepth" value="64" />
+  <parameter name="fifoDepth" value="4" />
   <parameter name="maxBurstSize" value="2" />
   <parameter name="minimumDmaTransactionRegisterWidth" value="31" />
   <parameter name="useRegistersForFIFO" value="false" />
   <parameter name="avalonSpec" value="2.0" />
-  <parameter name="readAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='testing_demo2_0.s0' start='0x40000000' end='0x40000004' /></address-map>]]></parameter>
+  <parameter name="readAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='testing_demo2.s0' start='0x40000000' end='0x40000010' /></address-map>]]></parameter>
   <parameter name="readSlaveAddressWidthMax" value="31" />
   <parameter name="readSlaveDataWidthMax" value="256" />
-  <parameter name="writeAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='testing_demo2_0.s0' start='0x40000000' end='0x40000004' /></address-map>]]></parameter>
+  <parameter name="writeAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='testing_demo2.s0' start='0x40000000' end='0x40000010' /></address-map>]]></parameter>
   <parameter name="writeSlaveAddressWidthMax" value="31" />
   <parameter name="writeSlaveDataWidthMax" value="256" />
  </module>
- <module kind="testing_demo2" version="1.0" enabled="1" name="testing_demo2_0">
-  <parameter name="DATA_WIDTH" value="32" />
+ <module kind="testing_demo2" version="1.0" enabled="1" name="testing_demo2">
+  <parameter name="DATA_WIDTH" value="128" />
+  <parameter name="AUTO_CLOCK_CLOCK_RATE" value="150000000" />
  </module>
  <connection
    kind="avalon"
@@ -1159,17 +1160,17 @@
    kind="reset"
    version="13.0"
    start="clk_50.clk_reset"
-   end="testing_demo2_0.reset" />
+   end="testing_demo2.reset" />
  <connection
    kind="clock"
    version="13.0"
    start="mem_if_ddr2_emif.afi_clk"
-   end="testing_demo2_0.clock" />
+   end="testing_demo2.clock" />
  <connection
    kind="avalon"
    version="13.0"
    start="dma.read_master"
-   end="testing_demo2_0.s0">
+   end="testing_demo2.s0">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x40000000" />
   <parameter name="defaultConnection" value="false" />
@@ -1178,7 +1179,7 @@
    kind="avalon"
    version="13.0"
    start="dma.write_master"
-   end="testing_demo2_0.s0">
+   end="testing_demo2.s0">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x40000000" />
   <parameter name="defaultConnection" value="false" />

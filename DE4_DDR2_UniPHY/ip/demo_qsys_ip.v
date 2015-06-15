@@ -1,6 +1,7 @@
 module rbm_demo(clk, reset, avs_s0_read, avs_s0_write, avs_s0_readdata, avs_s0_writedata);
 
-    parameter DATA_WIDTH = 256;
+    parameter DATA_WIDTH = 128;
+    parameter NUM_WIDTH = DATA_WIDTH/4;
     
     input wire clk;
     input wire reset;
@@ -11,9 +12,12 @@ module rbm_demo(clk, reset, avs_s0_read, avs_s0_write, avs_s0_readdata, avs_s0_w
 	output reg [DATA_WIDTH-1:0] avs_s0_readdata;
     
     reg [DATA_WIDTH-1:0] buffer;
-    reg [DATA_WIDTH-1:0] result;
+    reg [NUM_WIDTH-1:0]num1;
+    reg [NUM_WIDTH-1:0]num2;
+    reg [NUM_WIDTH-1:0]num3;
+    reg [NUM_WIDTH-1:0]num4;
+    //reg [DATA_WIDTH-1:0] result;
     
-    assign tester = 'b0;
     
     always @(posedge clk) begin
         if(reset == 1) begin
@@ -23,7 +27,7 @@ module rbm_demo(clk, reset, avs_s0_read, avs_s0_write, avs_s0_readdata, avs_s0_w
         end
     end
     
-    always @(posedge clk) begin
+    /*always @(posedge clk) begin
         if(reset == 1) begin
             result <= 'b0;
         end else begin
@@ -32,7 +36,7 @@ module rbm_demo(clk, reset, avs_s0_read, avs_s0_write, avs_s0_readdata, avs_s0_w
         end
     end
     
-    /*always @(posedge clk) begin
+    always @(posedge clk) begin
         if(reset == 1) begin
             avs_s0_readdata <= 'b0;
         end else begin
@@ -43,13 +47,26 @@ module rbm_demo(clk, reset, avs_s0_read, avs_s0_write, avs_s0_readdata, avs_s0_w
             end
         end
     end*/
-//tesing... delete later
-
+    
+    always @(posedge clk) begin
+        if(reset == 1) begin
+            num1 = 'b0;
+            num2 = 'b0;
+            num3 = 'b0;
+            num4 = 'b0;
+        end else begin
+            num1 <= buffer [NUM_WIDTH*1-1:NUM_WIDTH*0];
+            num2 <= buffer [NUM_WIDTH*2-1:NUM_WIDTH*1];
+            num3 <= buffer [NUM_WIDTH*3-1:NUM_WIDTH*2];
+            num4 <= buffer [NUM_WIDTH*4-1:NUM_WIDTH*3];
+        end
+    end 
+    
     always @(posedge clk) begin
         if(reset == 1) begin
             avs_s0_readdata <= 'b0;
         end else begin
-            avs_s0_readdata <= result;
+            avs_s0_readdata <= num3*num4;
         end
     end
 endmodule

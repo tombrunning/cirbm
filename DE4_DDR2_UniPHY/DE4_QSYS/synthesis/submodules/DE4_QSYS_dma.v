@@ -27,6 +27,7 @@ module DE4_QSYS_dma_read_data_mux (
                                      dma_ctl_chipselect,
                                      dma_ctl_write_n,
                                      dma_ctl_writedata,
+                                     quadword,
                                      read_readdata,
                                      read_readdatavalid,
                                      readaddress,
@@ -39,7 +40,7 @@ module DE4_QSYS_dma_read_data_mux (
                                   )
 ;
 
-  output  [ 31: 0] fifo_wr_data;
+  output  [127: 0] fifo_wr_data;
   input            byte_access;
   input            clk;
   input            clk_en;
@@ -47,7 +48,8 @@ module DE4_QSYS_dma_read_data_mux (
   input            dma_ctl_chipselect;
   input            dma_ctl_write_n;
   input   [ 30: 0] dma_ctl_writedata;
-  input   [ 31: 0] read_readdata;
+  input            quadword;
+  input   [127: 0] read_readdata;
   input            read_readdatavalid;
   input   [ 30: 0] readaddress;
   input   [  4: 0] readaddress_inc;
@@ -55,10 +57,10 @@ module DE4_QSYS_dma_read_data_mux (
   input            word;
 
   wire             control_write;
-  wire    [ 31: 0] fifo_wr_data;
+  wire    [127: 0] fifo_wr_data;
   wire             length_write;
-  wire    [  1: 0] read_data_mux_input;
-  reg     [  1: 0] readdata_mux_select;
+  wire    [  3: 0] read_data_mux_input;
+  reg     [  3: 0] readdata_mux_select;
   assign control_write = dma_ctl_chipselect & ~dma_ctl_write_n & ((dma_ctl_address == 6) || (dma_ctl_address == 7));
   assign length_write = dma_ctl_chipselect & ~dma_ctl_write_n & (dma_ctl_address == 3);
   assign read_data_mux_input = ((control_write && dma_ctl_writedata[3] || length_write))? readaddress[1 : 0] :
@@ -71,17 +73,45 @@ module DE4_QSYS_dma_read_data_mux (
       if (reset_n == 0)
           readdata_mux_select <= 0;
       else if (clk_en)
-          readdata_mux_select <= read_data_mux_input[1 : 0];
+          readdata_mux_select <= read_data_mux_input[3 : 0];
     end
 
 
-  assign fifo_wr_data[31 : 16] = read_readdata[31 : 16];
-  assign fifo_wr_data[15 : 8] = read_readdata[15 : 8];
-  assign fifo_wr_data[7 : 0] = ({8 {(byte_access & (readdata_mux_select[1 : 0] == 0))}} & read_readdata[7 : 0]) |
-    ({8 {(byte_access & (readdata_mux_select[1 : 0] == 1))}} & read_readdata[15 : 8]) |
-    ({8 {(byte_access & (readdata_mux_select[1 : 0] == 2))}} & read_readdata[23 : 16]) |
-    ({8 {(byte_access & (readdata_mux_select[1 : 0] == 3))}} & read_readdata[31 : 24]) |
-    ({8 {word}} & read_readdata[7 : 0]);
+  assign fifo_wr_data[127 : 64] = read_readdata[127 : 64];
+  assign fifo_wr_data[63 : 32] = read_readdata[63 : 32];
+  assign fifo_wr_data[31 : 16] = ({16 {(word & (readdata_mux_select[3 : 2] == 0))}} & read_readdata[31 : 16]) |
+    ({16 {(word & (readdata_mux_select[3 : 2] == 1))}} & read_readdata[63 : 48]) |
+    ({16 {(word & (readdata_mux_select[3 : 2] == 2))}} & read_readdata[95 : 80]) |
+    ({16 {(word & (readdata_mux_select[3 : 2] == 3))}} & read_readdata[127 : 112]) |
+    ({16 {quadword}} & read_readdata[31 : 16]);
+
+  assign fifo_wr_data[15 : 8] = ({8 {(word & (readdata_mux_select[3 : 2] == 0))}} & read_readdata[15 : 8]) |
+    ({8 {(word & (readdata_mux_select[3 : 2] == 1))}} & read_readdata[47 : 40]) |
+    ({8 {(word & (readdata_mux_select[3 : 2] == 2))}} & read_readdata[79 : 72]) |
+    ({8 {(word & (readdata_mux_select[3 : 2] == 3))}} & read_readdata[111 : 104]) |
+    ({8 {quadword}} & read_readdata[15 : 8]);
+
+  assign fifo_wr_data[7 : 0] = ({8 {(byte_access & (readdata_mux_select[3 : 0] == 0))}} & read_readdata[7 : 0]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 1))}} & read_readdata[15 : 8]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 2))}} & read_readdata[23 : 16]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 3))}} & read_readdata[31 : 24]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 4))}} & read_readdata[39 : 32]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 5))}} & read_readdata[47 : 40]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 6))}} & read_readdata[55 : 48]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 7))}} & read_readdata[63 : 56]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 8))}} & read_readdata[71 : 64]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 9))}} & read_readdata[79 : 72]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 10))}} & read_readdata[87 : 80]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 11))}} & read_readdata[95 : 88]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 12))}} & read_readdata[103 : 96]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 13))}} & read_readdata[111 : 104]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 14))}} & read_readdata[119 : 112]) |
+    ({8 {(byte_access & (readdata_mux_select[3 : 0] == 15))}} & read_readdata[127 : 120]) |
+    ({8 {(word & (readdata_mux_select[3 : 2] == 0))}} & read_readdata[7 : 0]) |
+    ({8 {(word & (readdata_mux_select[3 : 2] == 1))}} & read_readdata[39 : 32]) |
+    ({8 {(word & (readdata_mux_select[3 : 2] == 2))}} & read_readdata[71 : 64]) |
+    ({8 {(word & (readdata_mux_select[3 : 2] == 3))}} & read_readdata[103 : 96]) |
+    ({8 {quadword}} & read_readdata[7 : 0]);
 
 
 endmodule
@@ -98,6 +128,7 @@ endmodule
 module DE4_QSYS_dma_byteenables (
                                   // inputs:
                                    byte_access,
+                                   quadword,
                                    word,
                                    write_address,
 
@@ -106,22 +137,56 @@ module DE4_QSYS_dma_byteenables (
                                 )
 ;
 
-  output  [  3: 0] write_byteenable;
+  output  [ 15: 0] write_byteenable;
   input            byte_access;
+  input            quadword;
   input            word;
   input   [ 30: 0] write_address;
 
-  wire             wa_1_to_0_is_0;
-  wire             wa_1_to_0_is_1;
-  wire             wa_1_to_0_is_2;
-  wire             wa_1_to_0_is_3;
-  wire    [  3: 0] write_byteenable;
-  assign wa_1_to_0_is_3 = write_address[1 : 0] == 2'h3;
-  assign wa_1_to_0_is_2 = write_address[1 : 0] == 2'h2;
-  assign wa_1_to_0_is_1 = write_address[1 : 0] == 2'h1;
-  assign wa_1_to_0_is_0 = write_address[1 : 0] == 2'h0;
-  assign write_byteenable = ({4 {byte_access}} & {wa_1_to_0_is_3, wa_1_to_0_is_2, wa_1_to_0_is_1, wa_1_to_0_is_0}) |
-    ({4 {word}} & 4'b1111);
+  wire             wa_3_to_0_is_0;
+  wire             wa_3_to_0_is_1;
+  wire             wa_3_to_0_is_10;
+  wire             wa_3_to_0_is_11;
+  wire             wa_3_to_0_is_12;
+  wire             wa_3_to_0_is_13;
+  wire             wa_3_to_0_is_14;
+  wire             wa_3_to_0_is_15;
+  wire             wa_3_to_0_is_2;
+  wire             wa_3_to_0_is_3;
+  wire             wa_3_to_0_is_4;
+  wire             wa_3_to_0_is_5;
+  wire             wa_3_to_0_is_6;
+  wire             wa_3_to_0_is_7;
+  wire             wa_3_to_0_is_8;
+  wire             wa_3_to_0_is_9;
+  wire             wa_3_to_2_is_0;
+  wire             wa_3_to_2_is_1;
+  wire             wa_3_to_2_is_2;
+  wire             wa_3_to_2_is_3;
+  wire    [ 15: 0] write_byteenable;
+  assign wa_3_to_0_is_15 = write_address[3 : 0] == 4'hF;
+  assign wa_3_to_0_is_14 = write_address[3 : 0] == 4'hE;
+  assign wa_3_to_0_is_13 = write_address[3 : 0] == 4'hD;
+  assign wa_3_to_0_is_12 = write_address[3 : 0] == 4'hC;
+  assign wa_3_to_0_is_11 = write_address[3 : 0] == 4'hB;
+  assign wa_3_to_0_is_10 = write_address[3 : 0] == 4'hA;
+  assign wa_3_to_0_is_9 = write_address[3 : 0] == 4'h9;
+  assign wa_3_to_0_is_8 = write_address[3 : 0] == 4'h8;
+  assign wa_3_to_0_is_7 = write_address[3 : 0] == 4'h7;
+  assign wa_3_to_0_is_6 = write_address[3 : 0] == 4'h6;
+  assign wa_3_to_0_is_5 = write_address[3 : 0] == 4'h5;
+  assign wa_3_to_0_is_4 = write_address[3 : 0] == 4'h4;
+  assign wa_3_to_0_is_3 = write_address[3 : 0] == 4'h3;
+  assign wa_3_to_0_is_2 = write_address[3 : 0] == 4'h2;
+  assign wa_3_to_0_is_1 = write_address[3 : 0] == 4'h1;
+  assign wa_3_to_0_is_0 = write_address[3 : 0] == 4'h0;
+  assign wa_3_to_2_is_3 = write_address[3 : 2] == 2'h3;
+  assign wa_3_to_2_is_2 = write_address[3 : 2] == 2'h2;
+  assign wa_3_to_2_is_1 = write_address[3 : 2] == 2'h1;
+  assign wa_3_to_2_is_0 = write_address[3 : 2] == 2'h0;
+  assign write_byteenable = ({16 {byte_access}} & {wa_3_to_0_is_15, wa_3_to_0_is_14, wa_3_to_0_is_13, wa_3_to_0_is_12, wa_3_to_0_is_11, wa_3_to_0_is_10, wa_3_to_0_is_9, wa_3_to_0_is_8, wa_3_to_0_is_7, wa_3_to_0_is_6, wa_3_to_0_is_5, wa_3_to_0_is_4, wa_3_to_0_is_3, wa_3_to_0_is_2, wa_3_to_0_is_1, wa_3_to_0_is_0}) |
+    ({16 {word}} & {wa_3_to_2_is_3, wa_3_to_2_is_3, wa_3_to_2_is_3, wa_3_to_2_is_3, wa_3_to_2_is_2, wa_3_to_2_is_2, wa_3_to_2_is_2, wa_3_to_2_is_2, wa_3_to_2_is_1, wa_3_to_2_is_1, wa_3_to_2_is_1, wa_3_to_2_is_1, wa_3_to_2_is_0, wa_3_to_2_is_0, wa_3_to_2_is_0, wa_3_to_2_is_0}) |
+    ({16 {quadword}} & 16'b1111111111111111);
 
 
 endmodule
@@ -151,19 +216,19 @@ module DE4_QSYS_dma_fifo_module_fifo_ram_module (
                                                 )
 ;
 
-  output  [ 31: 0] q;
+  output  [127: 0] q;
   input            clk;
-  input   [ 31: 0] data;
-  input   [  5: 0] rdaddress;
+  input   [127: 0] data;
+  input   [  1: 0] rdaddress;
   input            rdclken;
   input            reset_n;
-  input   [  5: 0] wraddress;
+  input   [  1: 0] wraddress;
   input            wrclock;
   input            wren;
 
-  reg     [ 31: 0] mem_array [ 63: 0];
-  wire    [ 31: 0] q;
-  reg     [  5: 0] read_address;
+  reg     [127: 0] mem_array [  3: 0];
+  wire    [127: 0] q;
+  reg     [  1: 0] read_address;
 
 //synthesis translate_off
 //////////////// SIMULATION-ONLY CONTENTS
@@ -215,8 +280,8 @@ module DE4_QSYS_dma_fifo_module_fifo_ram_module (
 //           lpm_ram_dp_component.lpm_indata = "REGISTERED",
 //           lpm_ram_dp_component.lpm_outdata = "UNREGISTERED",
 //           lpm_ram_dp_component.lpm_rdaddress_control = "REGISTERED",
-//           lpm_ram_dp_component.lpm_width = 32,
-//           lpm_ram_dp_component.lpm_widthad = 6,
+//           lpm_ram_dp_component.lpm_width = 128,
+//           lpm_ram_dp_component.lpm_widthad = 2,
 //           lpm_ram_dp_component.lpm_wraddress_control = "REGISTERED",
 //           lpm_ram_dp_component.suppress_memory_conversion_warnings = "ON";
 //
@@ -254,35 +319,35 @@ module DE4_QSYS_dma_fifo_module (
 
   output           fifo_datavalid;
   output           fifo_empty;
-  output  [ 31: 0] fifo_rd_data;
+  output  [127: 0] fifo_rd_data;
   output           p1_fifo_full;
   input            clk;
   input            clk_en;
   input            fifo_read;
-  input   [ 31: 0] fifo_wr_data;
+  input   [127: 0] fifo_wr_data;
   input            fifo_write;
   input            flush_fifo;
   input            inc_pending_data;
   input            reset_n;
 
-  wire    [  5: 0] estimated_rdaddress;
-  reg     [  5: 0] estimated_wraddress;
+  wire    [  1: 0] estimated_rdaddress;
+  reg     [  1: 0] estimated_wraddress;
   wire             fifo_datavalid;
   wire             fifo_dec;
   reg              fifo_empty;
   reg              fifo_full;
   wire             fifo_inc;
-  wire    [ 31: 0] fifo_ram_q;
-  wire    [ 31: 0] fifo_rd_data;
+  wire    [127: 0] fifo_ram_q;
+  wire    [127: 0] fifo_rd_data;
   reg              last_write_collision;
-  reg     [ 31: 0] last_write_data;
-  wire    [  5: 0] p1_estimated_wraddress;
+  reg     [127: 0] last_write_data;
+  wire    [  1: 0] p1_estimated_wraddress;
   wire             p1_fifo_empty;
   wire             p1_fifo_full;
-  wire    [  5: 0] p1_wraddress;
-  wire    [  5: 0] rdaddress;
-  reg     [  5: 0] rdaddress_reg;
-  reg     [  5: 0] wraddress;
+  wire    [  1: 0] p1_wraddress;
+  wire    [  1: 0] rdaddress;
+  reg     [  1: 0] rdaddress_reg;
+  reg     [  1: 0] wraddress;
   wire             write_collision;
   assign p1_wraddress = (fifo_write)? wraddress - 1 :
     wraddress;
@@ -319,10 +384,10 @@ module DE4_QSYS_dma_fifo_module (
   always @(posedge clk or negedge reset_n)
     begin
       if (reset_n == 0)
-          estimated_wraddress <= {6 {1'b1}};
+          estimated_wraddress <= {2 {1'b1}};
       else if (clk_en)
           if (flush_fifo)
-              estimated_wraddress <= {6 {1'b1}};
+              estimated_wraddress <= {2 {1'b1}};
           else 
             estimated_wraddress <= p1_estimated_wraddress;
     end
@@ -527,9 +592,9 @@ endmodule
 
 //DMA peripheral DE4_QSYS_dma
 //Read slaves:
-//mem_if_ddr2_emif.avl,testing_demo2_0.s0; 
+//mem_if_ddr2_emif.avl,testing_demo2.s0; 
 //Write slaves:
-//mem_if_ddr2_emif.avl,testing_demo2_0.s0; 
+//mem_if_ddr2_emif.avl,testing_demo2.s0; 
 
 
 module DE4_QSYS_dma (
@@ -569,16 +634,16 @@ module DE4_QSYS_dma (
   output           read_read_n;
   output  [ 30: 0] write_address;
   output  [  1: 0] write_burstcount;
-  output  [  3: 0] write_byteenable;
+  output  [ 15: 0] write_byteenable;
   output           write_chipselect;
   output           write_write_n;
-  output  [ 31: 0] write_writedata;
+  output  [127: 0] write_writedata;
   input            clk;
   input   [  2: 0] dma_ctl_address;
   input            dma_ctl_chipselect;
   input            dma_ctl_write_n;
   input   [ 30: 0] dma_ctl_writedata;
-  input   [ 31: 0] read_readdata;
+  input   [127: 0] read_readdata;
   input            read_readdatavalid;
   input            read_waitrequest;
   input            system_reset_n;
@@ -604,11 +669,12 @@ module DE4_QSYS_dma (
   wire             enabled_write_endofpacket;
   wire             fifo_datavalid;
   wire             fifo_empty;
-  wire    [ 31: 0] fifo_rd_data;
-  wire    [ 31: 0] fifo_rd_data_as_byte_access;
-  wire    [ 31: 0] fifo_rd_data_as_word;
+  wire    [127: 0] fifo_rd_data;
+  wire    [127: 0] fifo_rd_data_as_byte_access;
+  wire    [127: 0] fifo_rd_data_as_quadword;
+  wire    [127: 0] fifo_rd_data_as_word;
   wire             fifo_read;
-  wire    [ 31: 0] fifo_wr_data;
+  wire    [127: 0] fifo_wr_data;
   wire             fifo_write;
   wire             fifo_write_data_valid;
   wire             flush_fifo;
@@ -662,13 +728,13 @@ module DE4_QSYS_dma (
   wire             word;
   wire    [ 30: 0] write_address;
   wire    [  1: 0] write_burstcount;
-  wire    [  3: 0] write_byteenable;
+  wire    [ 15: 0] write_byteenable;
   wire             write_chipselect;
   wire             write_endofpacket;
   reg              write_got_endofpacket;
   wire             write_select;
   wire             write_write_n;
-  wire    [ 31: 0] write_writedata;
+  wire    [127: 0] write_writedata;
   reg     [ 30: 0] writeaddress;
   wire    [  4: 0] writeaddress_inc;
   reg     [ 30: 0] writelength;
@@ -686,6 +752,7 @@ module DE4_QSYS_dma (
       .dma_ctl_write_n    (dma_ctl_write_n),
       .dma_ctl_writedata  (dma_ctl_writedata),
       .fifo_wr_data       (fifo_wr_data),
+      .quadword           (quadword),
       .read_readdata      (read_readdata),
       .read_readdatavalid (read_readdatavalid),
       .readaddress        (readaddress),
@@ -698,6 +765,7 @@ module DE4_QSYS_dma (
   DE4_QSYS_dma_byteenables the_DE4_QSYS_dma_byteenables
     (
       .byte_access      (byte_access),
+      .quadword         (quadword),
       .word             (word),
       .write_address    (write_address),
       .write_byteenable (write_byteenable)
@@ -709,7 +777,7 @@ module DE4_QSYS_dma (
       if (reset_n == 0)
           burstcount_update <= 1;
       else if (length_register_write)
-          burstcount_update <= dma_ctl_writedata >> 2;
+          burstcount_update <= dma_ctl_writedata >> 4;
     end
 
 
@@ -811,14 +879,14 @@ module DE4_QSYS_dma (
 
 
   assign p1_writelength = ((dma_ctl_chipselect & ~dma_ctl_write_n & (dma_ctl_address == 3)))? dma_ctl_writedata :
-    ((inc_write && (!writelength_eq_0)))? writelength - {1'b0,
+    ((inc_write && (!writelength_eq_0)))? writelength - {quadword,
     1'b0,
     word,
     1'b0,
     byte_access} :
     writelength;
 
-  assign p1_writelength_eq_0 = inc_write && (!writelength_eq_0) && ((writelength  - {1'b0,
+  assign p1_writelength_eq_0 = inc_write && (!writelength_eq_0) && ((writelength  - {quadword,
     1'b0,
     word,
     1'b0,
@@ -851,7 +919,7 @@ module DE4_QSYS_dma (
 
   assign writeaddress_inc = (wcon)? 0 :
     (1)? 0 :
-    {1'b0,
+    {quadword,
     1'b0,
     word,
     1'b0,
@@ -859,7 +927,7 @@ module DE4_QSYS_dma (
 
   assign readaddress_inc = (rcon)? 0 :
     (1)? 0 :
-    {1'b0,
+    {quadword,
     1'b0,
     word,
     1'b0,
@@ -1062,11 +1130,29 @@ module DE4_QSYS_dma (
   assign fifo_rd_data_as_byte_access = {fifo_rd_data[7 : 0],
     fifo_rd_data[7 : 0],
     fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
+    fifo_rd_data[7 : 0],
     fifo_rd_data[7 : 0]};
 
-  assign fifo_rd_data_as_word = fifo_rd_data[31 : 0];
-  assign write_writedata = ({32 {byte_access}} & fifo_rd_data_as_byte_access) |
-    ({32 {word}} & fifo_rd_data_as_word);
+  assign fifo_rd_data_as_word = {fifo_rd_data[31 : 0],
+    fifo_rd_data[31 : 0],
+    fifo_rd_data[31 : 0],
+    fifo_rd_data[31 : 0]};
+
+  assign fifo_rd_data_as_quadword = fifo_rd_data[127 : 0];
+  assign write_writedata = ({128 {byte_access}} & fifo_rd_data_as_byte_access) |
+    ({128 {word}} & fifo_rd_data_as_word) |
+    ({128 {quadword}} & fifo_rd_data_as_quadword);
 
   assign fifo_write_data_valid = read_readdatavalid;
   assign set_software_reset_bit = ((dma_ctl_chipselect & ~dma_ctl_write_n & ((dma_ctl_address == 6) || (dma_ctl_address == 7)))) & (dma_ctl_address != 7) & dma_ctl_writedata[12];
