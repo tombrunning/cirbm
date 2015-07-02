@@ -1,9 +1,7 @@
-Info (10281): Verilog HDL Declaration information at DE4_QSYS_id_router_007.sv(48): object "DEFAULT_WR_CHANNEL" differs only in case from object "default_wr_channel" in the same scope
-Info (10281): Verilog HDL Declaration information at DE4_QSYS_id_router_007.sv(49): object "DEFAULT_RD_CHANNEL" differs only in case from object "default_rd_channel" in the same scope
-Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router_004.sv(48): object "DEFAULT_WR_CHANNEL" differs only in case from object "default_wr_channel" in the same scope
-Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router_004.sv(49): object "DEFAULT_RD_CHANNEL" differs only in case from object "default_rd_channel" in the same scope
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_id_router_006.sv(48): object "DEFAULT_WR_CHANNEL" differs only in case from object "default_wr_channel" in the same scope
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_id_router_006.sv(49): object "DEFAULT_RD_CHANNEL" differs only in case from object "default_rd_channel" in the same scope
+Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router_004.sv(48): object "DEFAULT_WR_CHANNEL" differs only in case from object "default_wr_channel" in the same scope
+Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router_004.sv(49): object "DEFAULT_RD_CHANNEL" differs only in case from object "default_rd_channel" in the same scope
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_id_router_005.sv(48): object "DEFAULT_WR_CHANNEL" differs only in case from object "default_wr_channel" in the same scope
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_id_router_005.sv(49): object "DEFAULT_RD_CHANNEL" differs only in case from object "default_rd_channel" in the same scope
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_id_router_002.sv(48): object "DEFAULT_WR_CHANNEL" differs only in case from object "default_wr_channel" in the same scope
@@ -16,7 +14,6 @@ Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router_001.sv
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router_001.sv(49): object "DEFAULT_RD_CHANNEL" differs only in case from object "default_rd_channel" in the same scope
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router.sv(48): object "DEFAULT_WR_CHANNEL" differs only in case from object "default_wr_channel" in the same scope
 Info (10281): Verilog HDL Declaration information at DE4_QSYS_addr_router.sv(49): object "DEFAULT_RD_CHANNEL" differs only in case from object "default_rd_channel" in the same scope
-Warning (10268): Verilog HDL information at demo_qsys_ip.v(51): always construct contains both blocking and non-blocking assignments
 Info (10281): Verilog HDL Declaration information at alt_mem_ddrx_rdwr_data_tmg.v(114): object "i" differs only in case from object "I" in the same scope
 Info (10281): Verilog HDL Declaration information at alt_mem_ddrx_csr.v(60): object "CFG_CAS_WR_LAT" differs only in case from object "cfg_cas_wr_lat" in the same scope
 Info (10281): Verilog HDL Declaration information at alt_mem_ddrx_csr.v(61): object "CFG_ADD_LAT" differs only in case from object "cfg_add_lat" in the same scope

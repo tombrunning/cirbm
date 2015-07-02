@@ -1,6 +1,6 @@
 <sld_project_info>
   <project>
-    <hash md5_digest_80b="f38cf24a54c29df908ec"/>
+    <hash md5_digest_80b="3713113d8e62fde82cda"/>
   </project>
   <file_info>
     <file device="EP4SGX530KH40C2" path="DE4_DDR2.sof" usercode="0xFFFFFFFF"/>
@@ -144,7 +144,7 @@
   <sld_infos>
     <sld_info hpath="DE4_QSYS:u0" name="u0">
       <assignment_values>
-        <assignment_value text="QSYS_NAME DE4_QSYS HAS_SOPCINFO 1 GENERATION_ID 1434373291"/>
+        <assignment_value text="QSYS_NAME DE4_QSYS HAS_SOPCINFO 1 GENERATION_ID 1435750158"/>
       </assignment_values>
       <parameters/>
     </sld_info>

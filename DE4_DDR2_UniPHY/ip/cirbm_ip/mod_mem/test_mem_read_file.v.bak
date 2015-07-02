@@ -1,0 +1,39 @@
+module test_mem();
+integer data_file;
+integer scan_file;
+
+reg clk;
+reg [15:0] data[3:0];
+
+always begin
+  #5 clk = ~clk;
+end
+initial begin
+    data[0] = 0;
+    data[1] = 0;
+    data[2] = 0;
+    data[3] = 0;
+    clk = 0;
+    data_file = 0;
+    scan_file = 0;
+    data_file = $fopen("test_mem.dat","r");
+    if (data_file == 0) begin
+        $display("file is invalid to open");
+        $finish;
+    end
+    #500 $finish;
+end
+
+always@(posedge clk)begin
+    if(!$feof(data_file)) begin
+        scan_file = $fscanf(data_file,"%d %d %d %d\n",data);
+        $display("Captured data is: %d\n finish!", data[3]);
+
+    end else begin
+        $fclose(data_file);
+        $finish;
+
+    end
+end
+
+endmodule

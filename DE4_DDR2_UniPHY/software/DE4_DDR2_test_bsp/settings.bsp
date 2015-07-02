@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>10-Jun-2015 18:01:38</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1433955698996</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>01-Jul-2015 12:27:20</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1435750040382</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>D:\Projects\fpl16\cirbm\DE4_DDR2_UniPHY\software\DE4_DDR2_test_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\DE4_QSYS.sopcinfo</SopcDesignFile>
@@ -870,32 +870,32 @@
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>timer</slaveDescriptor>
-                <addressRange>0x40000000 - 0x4000001F</addressRange>
-                <addressSpan>32</addressSpan>
+                <addressRange>0x40000000 - 0x4000007F</addressRange>
+                <addressSpan>128</addressSpan>
                 <attributes>timer</attributes>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>ddr2_i2c_sda</slaveDescriptor>
-                <addressRange>0x40000020 - 0x4000002F</addressRange>
-                <addressSpan>16</addressSpan>
+                <addressRange>0x40000020 - 0x4000005F</addressRange>
+                <addressSpan>64</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>ddr2_i2c_scl</slaveDescriptor>
-                <addressRange>0x40000030 - 0x4000003F</addressRange>
-                <addressSpan>16</addressSpan>
+                <addressRange>0x40000030 - 0x4000006F</addressRange>
+                <addressSpan>64</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>led</slaveDescriptor>
-                <addressRange>0x40000040 - 0x4000004F</addressRange>
-                <addressSpan>16</addressSpan>
+                <addressRange>0x40000040 - 0x4000007F</addressRange>
+                <addressSpan>64</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>button</slaveDescriptor>
-                <addressRange>0x40000050 - 0x4000005F</addressRange>
-                <addressSpan>16</addressSpan>
+                <addressRange>0x40000050 - 0x4000008F</addressRange>
+                <addressSpan>64</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
@@ -912,14 +912,14 @@
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>dma</slaveDescriptor>
-                <addressRange>0x41041000 - 0x4104101F</addressRange>
-                <addressSpan>32</addressSpan>
+                <addressRange>0x41041000 - 0x4104107F</addressRange>
+                <addressSpan>128</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>jtag_uart</slaveDescriptor>
-                <addressRange>0x41041020 - 0x41041027</addressRange>
-                <addressSpan>8</addressSpan>
+                <addressRange>0x41041020 - 0x4104103F</addressRange>
+                <addressSpan>32</addressSpan>
                 <attributes>printable</attributes>
         </MemoryMap>
         <LinkerSection>

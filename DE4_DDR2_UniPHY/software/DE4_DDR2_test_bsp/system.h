@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_qsys' in SOPC Builder design 'DE4_QSYS'
  * SOPC Builder design path: ../../DE4_QSYS.sopcinfo
  *
- * Generated: Wed Jun 10 16:05:12 BST 2015
+ * Generated: Wed Jul 01 12:27:21 BST 2015
  */
 
 /*
@@ -63,7 +63,7 @@
 #define ALT_CPU_ARCHITECTURE "altera_nios2_qsys"
 #define ALT_CPU_BIG_ENDIAN 0
 #define ALT_CPU_BREAK_ADDR 0x41040820
-#define ALT_CPU_CPU_FREQ 200000000u
+#define ALT_CPU_CPU_FREQ 150000000u
 #define ALT_CPU_CPU_ID_SIZE 1
 #define ALT_CPU_CPU_ID_VALUE 0x00000000
 #define ALT_CPU_CPU_IMPLEMENTATION "fast"
@@ -73,7 +73,7 @@
 #define ALT_CPU_DCACHE_SIZE 2048
 #define ALT_CPU_EXCEPTION_ADDR 0x41020020
 #define ALT_CPU_FLUSHDA_SUPPORTED
-#define ALT_CPU_FREQ 200000000
+#define ALT_CPU_FREQ 150000000
 #define ALT_CPU_HARDWARE_DIVIDE_PRESENT 0
 #define ALT_CPU_HARDWARE_MULTIPLY_PRESENT 1
 #define ALT_CPU_HARDWARE_MULX_PRESENT 1
@@ -97,7 +97,7 @@
 
 #define NIOS2_BIG_ENDIAN 0
 #define NIOS2_BREAK_ADDR 0x41040820
-#define NIOS2_CPU_FREQ 200000000u
+#define NIOS2_CPU_FREQ 150000000u
 #define NIOS2_CPU_ID_SIZE 1
 #define NIOS2_CPU_ID_VALUE 0x00000000
 #define NIOS2_CPU_IMPLEMENTATION "fast"
@@ -196,7 +196,7 @@
 #define BUTTON_IRQ_TYPE "NONE"
 #define BUTTON_NAME "/dev/button"
 #define BUTTON_RESET_VALUE 0
-#define BUTTON_SPAN 16
+#define BUTTON_SPAN 64
 #define BUTTON_TYPE "altera_avalon_pio"
 
 
@@ -223,7 +223,7 @@
 #define DDR2_I2C_SCL_IRQ_TYPE "NONE"
 #define DDR2_I2C_SCL_NAME "/dev/ddr2_i2c_scl"
 #define DDR2_I2C_SCL_RESET_VALUE 0
-#define DDR2_I2C_SCL_SPAN 16
+#define DDR2_I2C_SCL_SPAN 64
 #define DDR2_I2C_SCL_TYPE "altera_avalon_pio"
 
 
@@ -250,7 +250,7 @@
 #define DDR2_I2C_SDA_IRQ_TYPE "NONE"
 #define DDR2_I2C_SDA_NAME "/dev/ddr2_i2c_sda"
 #define DDR2_I2C_SDA_RESET_VALUE 0
-#define DDR2_I2C_SDA_SPAN 16
+#define DDR2_I2C_SDA_SPAN 64
 #define DDR2_I2C_SDA_TYPE "altera_avalon_pio"
 
 
@@ -262,16 +262,16 @@
 #define ALT_MODULE_CLASS_dma altera_avalon_dma
 #define DMA_ALLOW_BYTE_TRANSACTIONS 0
 #define DMA_ALLOW_DOUBLEWORD_TRANSACTIONS 0
-#define DMA_ALLOW_HW_TRANSACTIONS 1
-#define DMA_ALLOW_QUADWORD_TRANSACTIONS 0
-#define DMA_ALLOW_WORD_TRANSACTIONS 0
+#define DMA_ALLOW_HW_TRANSACTIONS 0
+#define DMA_ALLOW_QUADWORD_TRANSACTIONS 1
+#define DMA_ALLOW_WORD_TRANSACTIONS 1
 #define DMA_BASE 0x41041000
 #define DMA_IRQ 2
 #define DMA_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define DMA_LENGTHWIDTH 31
-#define DMA_MAX_BURST_SIZE 1
+#define DMA_MAX_BURST_SIZE 1024
 #define DMA_NAME "/dev/dma"
-#define DMA_SPAN 32
+#define DMA_SPAN 128
 #define DMA_TYPE "altera_avalon_dma"
 
 
@@ -297,7 +297,7 @@
 #define JTAG_UART_NAME "/dev/jtag_uart"
 #define JTAG_UART_READ_DEPTH 64
 #define JTAG_UART_READ_THRESHOLD 8
-#define JTAG_UART_SPAN 8
+#define JTAG_UART_SPAN 32
 #define JTAG_UART_TYPE "altera_avalon_jtag_uart"
 #define JTAG_UART_WRITE_DEPTH 64
 #define JTAG_UART_WRITE_THRESHOLD 8
@@ -326,7 +326,7 @@
 #define LED_IRQ_TYPE "NONE"
 #define LED_NAME "/dev/led"
 #define LED_RESET_VALUE 0
-#define LED_SPAN 16
+#define LED_SPAN 64
 #define LED_TYPE "altera_avalon_pio"
 
 
@@ -355,6 +355,19 @@
 #define DMA_READ_MASTER_MEM_IF_DDR2_EMIF_NAME "/dev/mem_if_ddr2_emif"
 #define DMA_READ_MASTER_MEM_IF_DDR2_EMIF_SPAN 1073741824
 #define DMA_READ_MASTER_MEM_IF_DDR2_EMIF_TYPE "altera_mem_if_ddr2_emif"
+
+
+/*
+ * mem_if_ddr2_emif configuration as viewed by dma_write_master
+ *
+ */
+
+#define DMA_WRITE_MASTER_MEM_IF_DDR2_EMIF_BASE 0x0
+#define DMA_WRITE_MASTER_MEM_IF_DDR2_EMIF_IRQ -1
+#define DMA_WRITE_MASTER_MEM_IF_DDR2_EMIF_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define DMA_WRITE_MASTER_MEM_IF_DDR2_EMIF_NAME "/dev/mem_if_ddr2_emif"
+#define DMA_WRITE_MASTER_MEM_IF_DDR2_EMIF_SPAN 1073741824
+#define DMA_WRITE_MASTER_MEM_IF_DDR2_EMIF_TYPE "altera_mem_if_ddr2_emif"
 
 
 /*
@@ -398,21 +411,8 @@
 #define SYSID_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_NAME "/dev/sysid"
 #define SYSID_SPAN 8
-#define SYSID_TIMESTAMP 1433947896
+#define SYSID_TIMESTAMP 1435748941
 #define SYSID_TYPE "altera_avalon_sysid_qsys"
-
-
-/*
- * testing_demo2 configuration as viewed by dma_write_master
- *
- */
-
-#define DMA_WRITE_MASTER_TESTING_DEMO2_BASE 0x0
-#define DMA_WRITE_MASTER_TESTING_DEMO2_IRQ -1
-#define DMA_WRITE_MASTER_TESTING_DEMO2_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define DMA_WRITE_MASTER_TESTING_DEMO2_NAME "/dev/testing_demo2"
-#define DMA_WRITE_MASTER_TESTING_DEMO2_SPAN 2
-#define DMA_WRITE_MASTER_TESTING_DEMO2_TYPE "testing_demo2"
 
 
 /*
@@ -435,7 +435,7 @@
 #define TIMER_PERIOD_UNITS "ms"
 #define TIMER_RESET_OUTPUT 0
 #define TIMER_SNAPSHOT 1
-#define TIMER_SPAN 32
+#define TIMER_SPAN 128
 #define TIMER_TICKS_PER_SEC 1000.0
 #define TIMER_TIMEOUT_PULSE_OUTPUT 0
 #define TIMER_TYPE "altera_avalon_timer"

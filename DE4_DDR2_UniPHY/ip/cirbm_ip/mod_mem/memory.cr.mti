@@ -1,0 +1,8 @@
+D:/Projects/Nios_Proj/rbm/ipv7/mod2_mem/memory_tb.v {1 {vlog -work work {D:\Projects\Nios_Proj\rbm\ipv7\mod2_mem\memory_tb.v}
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module memory_tb
+
+Top level modules:
+	memory_tb
+
+} {} {}}

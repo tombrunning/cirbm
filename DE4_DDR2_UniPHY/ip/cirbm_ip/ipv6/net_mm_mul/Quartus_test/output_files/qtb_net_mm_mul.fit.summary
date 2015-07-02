@@ -1,0 +1,11 @@
+I/O Assignment Analysis Status : Successful - Wed Aug 20 03:40:58 2014
+Quartus II 64-Bit Version : 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version
+Revision Name : qtb_net_mm_mul
+Top-level Entity Name : qtb_net_mm_mul
+Family : Stratix IV
+Device : EP4SGX230KF40C2
+Timing Models : Final
+Total pins : 275 / 888 ( 31 % )
+Total virtual pins : 0
+Total PLLs : 0 / 8 ( 0 % )
+Total DLLs : 0 / 4 ( 0 % )

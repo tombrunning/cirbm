@@ -1,0 +1,55 @@
+
+`include "param.v"
+
+`timescale 10ns / 10ns
+
+module vh_mmmii_tb();
+
+parameter DATA_WIDTH = 16;
+parameter CLASSES = 10;
+
+reg clk;
+reg reset;
+
+reg [DATA_WIDTH*CLASSES-1:0] wc_cols;
+reg [DATA_WIDTH-1:0] _wc_cols [CLASSES-1:0];
+reg [CLASSES-1:0] class_rows;
+wire [DATA_WIDTH-1:0] ii_res;
+
+initial begin        	
+  clk = 1;
+  reset = 1;
+  _wc_cols[0] = 1;
+  _wc_cols[1] = 1;
+  _wc_cols[2] = 1;
+  _wc_cols[3] = 1;
+  _wc_cols[4] = 1;
+  _wc_cols[5] = 1;
+  _wc_cols[6] = 1;
+  _wc_cols[7] = 1;
+  _wc_cols[8] = 1;
+  _wc_cols[9] = 1;
+  
+  class_rows = 10'b1111111111;
+  
+  #100 reset = 0;   
+  #500 reset= 0;
+  #20 reset = 1;
+  #20 $finish;
+end 
+
+// clock  generator
+always begin
+  #5 clk = ~clk; // Toggle clk every 50 ns
+end
+
+genvar i;
+    for(i=0;i<CLASSES;i=i+1) begin
+        always@(posedge clk) begin
+            wc_cols [(i+1)*DATA_WIDTH-1:i*DATA_WIDTH] <= _wc_cols[i];
+        end
+    end
+end
+
+vh_mmmii inst(clk,reset,class_rows,wc_cols,ii_res);
+endmodule

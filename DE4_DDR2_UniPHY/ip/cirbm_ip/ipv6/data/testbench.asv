@@ -1,0 +1,6 @@
+f = fopen('bin.dat');
+line = fgetl(f);
+
+while ischar(line)
+     data(1,...) = fgetl(f);
+end

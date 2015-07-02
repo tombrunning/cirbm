@@ -24,8 +24,7 @@ obj/default/main.o: main.c ../DE4_DDR2_test_bsp/system.h \
   ../DE4_DDR2_test_bsp//HAL/inc/alt_types.h \
   ../DE4_DDR2_test_bsp//HAL/inc/sys/alt_dev.h \
   ../DE4_DDR2_test_bsp//HAL/inc/sys/alt_warning.h \
-  ../DE4_DDR2_test_bsp//HAL/inc/sys/alt_stdio.h i2c.h mem_init.h \
-  dma_ctr.h
+  ../DE4_DDR2_test_bsp//HAL/inc/sys/alt_stdio.h i2c.h mem_test.h
 
 ../DE4_DDR2_test_bsp/system.h:
 
@@ -85,6 +84,4 @@ terasic_includes.h:
 
 i2c.h:
 
-mem_init.h:
-
-dma_ctr.h:
+mem_test.h:

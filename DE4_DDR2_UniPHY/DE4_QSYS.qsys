@@ -32,7 +32,7 @@
    {
       datum _sortIndex
       {
-         value = "8";
+         value = "7";
          type = "int";
       }
    }
@@ -64,7 +64,7 @@
    {
       datum _sortIndex
       {
-         value = "12";
+         value = "11";
          type = "int";
       }
    }
@@ -72,7 +72,7 @@
    {
       datum _sortIndex
       {
-         value = "13";
+         value = "12";
          type = "int";
       }
    }
@@ -104,7 +104,7 @@
    {
       datum _sortIndex
       {
-         value = "9";
+         value = "8";
          type = "int";
       }
    }
@@ -140,15 +140,23 @@
          type = "int";
       }
    }
-   element mm_clock_crossing_bridge_io.s0
+   element ppl_mem_reader
+   {
+      datum _sortIndex
+      {
+         value = "13";
+         type = "int";
+      }
+   }
+   element wrapper.s0
    {
       datum baseAddress
       {
-         value = "1073741824";
+         value = "1090785312";
          type = "String";
       }
    }
-   element testing_demo2.s0
+   element mm_clock_crossing_bridge_io.s0
    {
       datum baseAddress
       {
@@ -180,19 +188,19 @@
          type = "String";
       }
    }
-   element led.s1
-   {
-      datum baseAddress
-      {
-         value = "64";
-         type = "String";
-      }
-   }
    element onchip_memory.s1
    {
       datum baseAddress
       {
          value = "1090650112";
+         type = "String";
+      }
+   }
+   element led.s1
+   {
+      datum baseAddress
+      {
+         value = "64";
          type = "String";
       }
    }
@@ -208,15 +216,7 @@
    {
       datum _sortIndex
       {
-         value = "11";
-         type = "int";
-      }
-   }
-   element testing_demo2
-   {
-      datum _sortIndex
-      {
-         value = "7";
+         value = "10";
          type = "int";
       }
    }
@@ -224,7 +224,15 @@
    {
       datum _sortIndex
       {
-         value = "10";
+         value = "9";
+         type = "int";
+      }
+   }
+   element wrapper
+   {
+      datum _sortIndex
+      {
+         value = "14";
          type = "int";
       }
    }
@@ -243,7 +251,7 @@
  <parameter name="projectName" value="DE4_DDR2.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1434373218009" />
+ <parameter name="timeStamp" value="1435746701544" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="clk" internal="clk_50.clk_in" type="clock" dir="end" />
@@ -872,20 +880,30 @@
   <parameter name="allowWordTransactions" value="true" />
   <parameter name="bigEndian" value="false" />
   <parameter name="burstEnable" value="true" />
-  <parameter name="fifoDepth" value="4" />
+  <parameter name="fifoDepth" value="8" />
   <parameter name="maxBurstSize" value="2" />
   <parameter name="minimumDmaTransactionRegisterWidth" value="31" />
   <parameter name="useRegistersForFIFO" value="false" />
   <parameter name="avalonSpec" value="2.0" />
-  <parameter name="readAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='testing_demo2.s0' start='0x40000000' end='0x40000010' /></address-map>]]></parameter>
-  <parameter name="readSlaveAddressWidthMax" value="31" />
+  <parameter name="readAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /></address-map>]]></parameter>
+  <parameter name="readSlaveAddressWidthMax" value="30" />
   <parameter name="readSlaveDataWidthMax" value="256" />
-  <parameter name="writeAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /><slave name='testing_demo2.s0' start='0x40000000' end='0x40000010' /></address-map>]]></parameter>
-  <parameter name="writeSlaveAddressWidthMax" value="31" />
+  <parameter name="writeAddressMap"><![CDATA[<address-map><slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /></address-map>]]></parameter>
+  <parameter name="writeSlaveAddressWidthMax" value="30" />
   <parameter name="writeSlaveDataWidthMax" value="256" />
  </module>
- <module kind="testing_demo2" version="1.0" enabled="1" name="testing_demo2">
-  <parameter name="DATA_WIDTH" value="128" />
+ <module kind="ppl_mem_reader" version="1.0" enabled="0" name="ppl_mem_reader">
+  <parameter name="DATAWIDTH" value="32" />
+  <parameter name="BYTEENABLEWIDTH" value="4" />
+  <parameter name="ADDRESSWIDTH" value="32" />
+  <parameter name="FIFODEPTH" value="32" />
+  <parameter name="FIFODEPTH_LOG2" value="5" />
+  <parameter name="FIFOUSEMEMORY" value="1" />
+  <parameter name="AUTO_CLOCK_CLOCK_RATE" value="150000000" />
+ </module>
+ <module kind="wrapper" version="1.0" enabled="0" name="wrapper">
+  <parameter name="DATAWIDTH" value="32" />
+  <parameter name="ADDRESS_WIDTH" value="32" />
   <parameter name="AUTO_CLOCK_CLOCK_RATE" value="150000000" />
  </module>
  <connection
@@ -1078,7 +1096,6 @@
    start="clk_50.clk_reset"
    end="mm_clock_crossing_bridge_io.s0_reset" />
  <connection kind="clock" version="13.0" start="clk_50.clk" end="ddr2_i2c_scl.clk" />
- <connection kind="clock" version="13.0" start="clk_50.clk" end="ddr2_i2c_sda.clk" />
  <connection
    kind="avalon"
    version="13.0"
@@ -1157,33 +1174,75 @@
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
+   kind="avalon"
+   version="13.0"
+   start="nios2_qsys.data_master"
+   end="wrapper.s0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x41041020" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="13.0"
+   start="nios2_qsys.instruction_master"
+   end="wrapper.s0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x41041020" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="conduit"
+   version="13.0"
+   start="wrapper.control"
+   end="ppl_mem_reader.control">
+  <parameter name="endPort" value="" />
+  <parameter name="endPortLSB" value="0" />
+  <parameter name="startPort" value="" />
+  <parameter name="startPortLSB" value="0" />
+  <parameter name="width" value="0" />
+ </connection>
+ <connection
+   kind="conduit"
+   version="13.0"
+   start="ppl_mem_reader.user"
+   end="wrapper.user">
+  <parameter name="endPort" value="" />
+  <parameter name="endPortLSB" value="0" />
+  <parameter name="startPort" value="" />
+  <parameter name="startPortLSB" value="0" />
+  <parameter name="width" value="0" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="13.0"
+   start="ppl_mem_reader.avalon_master"
+   end="mem_if_ddr2_emif.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection kind="clock" version="13.0" start="clk_50.clk" end="ddr2_i2c_sda.clk" />
+ <connection
    kind="reset"
    version="13.0"
    start="clk_50.clk_reset"
-   end="testing_demo2.reset" />
+   end="wrapper.reset" />
  <connection
    kind="clock"
    version="13.0"
    start="mem_if_ddr2_emif.afi_clk"
-   end="testing_demo2.clock" />
+   end="wrapper.clock" />
  <connection
-   kind="avalon"
+   kind="reset"
    version="13.0"
-   start="dma.read_master"
-   end="testing_demo2.s0">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x40000000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
+   start="clk_50.clk_reset"
+   end="ppl_mem_reader.reset" />
  <connection
-   kind="avalon"
+   kind="clock"
    version="13.0"
-   start="dma.write_master"
-   end="testing_demo2.s0">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x40000000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
+   start="mem_if_ddr2_emif.afi_clk"
+   end="ppl_mem_reader.clock" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
 </system>

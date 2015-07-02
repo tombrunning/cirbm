@@ -144,8 +144,7 @@ ELF := DE4_DDR2_test.elf
 # Paths to C, C++, and assembly source files.
 C_SRCS += I2C.c
 C_SRCS += main.c
-C_SRCS += mem_init.c
-C_SRCS += dma_ctr.c
+C_SRCS += mem_test.c
 CXX_SRCS :=
 ASM_SRCS :=
 

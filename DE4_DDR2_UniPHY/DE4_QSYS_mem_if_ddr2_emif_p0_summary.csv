@@ -1,29 +1,29 @@
 Core: DE4_QSYS_mem_if_ddr2_emif_p0 - Instance: u0|mem_if_ddr2_emif
 Path, Setup Margin, Hold Margin
-"Address Command (Slow 900mV 85C Model)",0.614,0.999
-"Bus Turnaround Time (Slow 900mV 85C Model)",7.942,--
-"Core (Slow 900mV 85C Model)",0.589,0.243
-"Core Recovery/Removal (Slow 900mV 85C Model)",1.932,0.584
+"Address Command (Slow 900mV 85C Model)",0.614,1.0
+"Bus Turnaround Time (Slow 900mV 85C Model)",7.943,--
+"Core (Slow 900mV 85C Model)",0.436,0.245
+"Core Recovery/Removal (Slow 900mV 85C Model)",1.762,0.668
 "Read Capture (Slow 900mV 85C Model)",0.458,0.41
-"Read Resync (Slow 900mV 85C Model)",4.489,7.835
+"Read Resync (Slow 900mV 85C Model)",4.424,7.843
 "Write (Slow 900mV 85C Model)",0.306,0.306
 "Write Leveling tDQSS (Slow 900mV 85C Model)",0.983,0.983
 "Write Leveling tDSS/tDSH (Slow 900mV 85C Model)",1.035,1.035
 "Address Command (Slow 900mV 0C Model)",0.6,1.056
 "Bus Turnaround Time (Slow 900mV 0C Model)",7.968,--
-"Core (Slow 900mV 0C Model)",0.855,0.241
-"Core Recovery/Removal (Slow 900mV 0C Model)",2.193,0.572
+"Core (Slow 900mV 0C Model)",0.661,0.241
+"Core Recovery/Removal (Slow 900mV 0C Model)",1.986,0.66
 "Read Capture (Slow 900mV 0C Model)",0.46,0.412
-"Read Resync (Slow 900mV 0C Model)",4.558,7.888
+"Read Resync (Slow 900mV 0C Model)",4.497,7.899
 "Write (Slow 900mV 0C Model)",0.344,0.344
 "Write Leveling tDQSS (Slow 900mV 0C Model)",0.983,0.983
 "Write Leveling tDSS/tDSH (Slow 900mV 0C Model)",1.035,1.035
 "Address Command (Fast 900mV 0C Model)",0.555,1.242
 "Bus Turnaround Time (Fast 900mV 0C Model)",8.014,--
-"Core (Fast 900mV 0C Model)",0.631,0.131
-"Core Recovery/Removal (Fast 900mV 0C Model)",3.878,0.311
+"Core (Fast 900mV 0C Model)",0.641,0.124
+"Core Recovery/Removal (Fast 900mV 0C Model)",3.824,0.359
 "Read Capture (Fast 900mV 0C Model)",0.489,0.441
-"Read Resync (Fast 900mV 0C Model)",5.108,8.494
+"Read Resync (Fast 900mV 0C Model)",5.071,8.477
 "Write (Fast 900mV 0C Model)",0.319,0.319
 "Write Leveling tDQSS (Fast 900mV 0C Model)",0.983,0.983
 "Write Leveling tDSS/tDSH (Fast 900mV 0C Model)",1.035,1.035

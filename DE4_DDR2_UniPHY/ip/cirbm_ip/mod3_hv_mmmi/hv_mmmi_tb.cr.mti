@@ -1,0 +1,15 @@
+D:/Projects/Nios_Proj/rbm/ipv7/mod3_hv_mmmi/hv_mmmi.v {1 {vlog -work work D:/Projects/Nios_Proj/rbm/ipv7/mod3_hv_mmmi/hv_mmmi.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module hv_mmmi
+
+Top level modules:
+	hv_mmmi
+
+} {} {}} D:/Projects/Nios_Proj/rbm/ipv7/mod3_hv_mmmi/hv_mmmi_tb.v {1 {vlog -work work D:/Projects/Nios_Proj/rbm/ipv7/mod3_hv_mmmi/hv_mmmi_tb.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module hv_mmmi_tb
+
+Top level modules:
+	hv_mmmi_tb
+
+} {} {}}

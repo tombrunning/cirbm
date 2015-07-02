@@ -1,0 +1,9 @@
+D:/Projects/Nios_Proj/rbm/ipv5/net_mm_mul/net_mm_mul.v {1 {vlog -work work -vopt {D:\Projects\Nios_Proj\rbm\ipv5\net_mm_mul\net_mm_mul.v}
+Model Technology ModelSim SE-64 vlog 10.1b Compiler 2012.04 Apr 26 2012
+-- Compiling module net_mm_mul
+-- Compiling module element_mul_accu
+
+Top level modules:
+	net_mm_mul
+
+} {} {}}

@@ -1,0 +1,98 @@
+module rbm_demo(clk, 
+                reset, 
+                enable,
+                avs_s0_read, 
+                avs_s0_write, 
+                avs_s0_writedata, 
+                avs_s0_readdata, 
+                avs_s0_readdatavalid 
+                //avs_s0_waitrequest
+                );
+
+    parameter DATA_WIDTH = 128;
+    parameter NUM_WIDTH = DATA_WIDTH/4;
+    
+    input wire clk;
+    input wire reset;
+    input wire enable;
+    input wire avs_s0_read;
+	input wire avs_s0_write;
+    
+    input  wire [DATA_WIDTH-1:0] avs_s0_writedata;
+	output reg [DATA_WIDTH-1:0] avs_s0_readdata;
+	output reg avs_s0_readdatavalid;
+    
+    //output reg avs_s0_waitrequest;
+    
+    reg [DATA_WIDTH:0] buffer;
+    reg [NUM_WIDTH-1:0]num1;
+    reg [NUM_WIDTH-1:0]num2;
+    reg [NUM_WIDTH-1:0]num3;
+    reg [NUM_WIDTH-1:0]num4;
+    reg cp1;
+    reg cp2;
+    
+    always @(posedge clk) begin
+        if(reset == 1) begin
+            avs_s0_readdatavalid <= 'b0;
+        end else begin
+            if(enable == 1) begin
+                if(cp2 == 1'b1) begin
+                    avs_s0_readdatavalid <= 1'b1;
+                    cp2 <= 1'b0;
+                end else begin
+                    avs_s0_readdatavalid <= 1'b0;
+                end
+            end
+        end
+    end
+    
+    always @(posedge clk) begin
+        if(reset == 1) begin
+            buffer <= 'b0;
+        end else begin
+            if(enable == 1) begin
+                if (avs_s0_write == 1) begin
+                    buffer [DATA_WIDTH-1:0] <= avs_s0_writedata;
+                    buffer [DATA_WIDTH] <= 1'b1;
+                end
+            end
+        end
+    end
+    
+    always @(posedge clk) begin
+        if(reset == 1) begin
+            num1 <= 'b0;
+            num2 <= 'b0;
+            num3 <= 'b0;
+            num4 <= 'b0;
+            cp1  <= 1'b0;
+        end else begin
+            if(enable == 1) begin
+                if (buffer [DATA_WIDTH] == 1'b1) begin
+                    num1 <= buffer [NUM_WIDTH*1-1:NUM_WIDTH*0];
+                    num2 <= buffer [NUM_WIDTH*2-1:NUM_WIDTH*1];
+                    num3 <= buffer [NUM_WIDTH*3-1:NUM_WIDTH*2];
+                    num4 <= buffer [NUM_WIDTH*4-1:NUM_WIDTH*3];
+                    cp1 <= 1'b1;
+                    buffer [DATA_WIDTH] == 1'b0;
+                end
+            end
+        end
+    end 
+    
+    always @(posedge clk) begin
+        if(reset == 1) begin
+            avs_s0_readdata <= 'b0;
+            cp2 <= 1'b0;
+        end else begin
+            if(enable == 1) begin
+                if (cp1 == 1'b1) begin
+                    avs_s0_readdata <= num3*num4;
+                    cp1 <= 1'b0;
+                    cp2 <= 1'b1;
+                end
+            end
+        end
+    end
+endmodule

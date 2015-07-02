@@ -1,0 +1,150 @@
+/*
+module: vh_mmmii
+input:  16 elements from Wc (16-bit fix point) 
+        16 elements from classes (1 bit)
+      
+output: 1 16-bit fix point outputs per cycle
+Intro:  this module calculates the multiplication between classes and Wc,
+        which is the second item in the first equation in go up phase.
+*/
+
+
+`include "param.v"
+
+module vh_mmmii(clk,reset,class_rows,wc_cols,ii_res);
+
+parameter VIS_SIZE = 768;
+parameter DATA_WIDTH = 16;
+parameter BATCH_SIZE = 16;
+parameter CLASSES = 10;
+
+//IO ports
+input wire clk;
+input wire reset;
+input wire [DATA_WIDTH*CLASSES-1:0] wc_cols;
+input wire [CLASSES-1:0] class_rows; 
+output wire [DATA_WIDTH-1:0] ii_res;
+
+//Internal signals
+reg [DATA_WIDTH-1:0] _wc_cols [CLASSES-1:0];
+reg [CLASSES-1:0] _class_rows; 
+reg [DATA_WIDTH-1:0] _and_res [CLASSES-1:0];
+
+//Adder Tree signals
+reg [DATA_WIDTH-1:0] bl [3:0];
+reg [DATA_WIDTH-1:0] cl [1:0];
+reg [DATA_WIDTH-1:0] dl [1:0];
+reg [DATA_WIDTH-1:0] el ;
+
+//Assign input signals to internal signals
+always @(posedge clk) begin
+    if(reset == 1) begin
+        _class_rows <= 'b0;
+    end else begin
+        _class_rows <= class_rows;
+    end
+end
+
+genvar i;
+generate 
+for(i=0;i<CLASSES;i=i+1) begin
+    always @(posedge clk) begin
+        if(reset == 1) begin
+            _wc_cols [i] <= 'b0;
+        end else begin
+            _wc_cols [i] <= wc_cols [(i+1)*DATA_WIDTH-1:i*DATA_WIDTH];
+        end
+    end
+end
+endgenerate
+
+//AND logic producing the inputs to the three adder trees.
+genvar j;
+generate 
+for(j=0;j<CLASSES;j=j+1) begin
+    always @(posedge clk) begin
+        if(reset == 1) begin
+            _and_res [j] <= 'b0;
+        end else begin
+            if(_class_rows[j] == 1) begin
+                _and_res [j] <= _wc_cols [j];
+            end else begin
+                _and_res [j] <= 'b0;
+            end
+        end
+    end
+end
+endgenerate
+
+//Adder tree (10 inputs):
+// a
+//  >b
+// a
+//    >c
+// a
+//  >b  \
+// a
+//        d
+// a
+//  >b  /
+// a        \
+//    >c  
+// a          e ->
+//  >b
+// a
+//          /
+//     a
+//       >d
+//     a
+
+// layer b
+genvar b;
+generate
+for(b=0;b<4;b=b+1) begin
+    always@(posedge clk) begin
+        if(reset == 1) begin
+            bl[b] <= 'b0;
+        end else begin
+            bl[b] <= _and_res[2*b]+_and_res[2*b+1];
+        end
+    end
+end
+endgenerate
+
+// layer c
+genvar c;
+generate
+for(c=0;c<2;c=c+1) begin
+    always@(posedge clk) begin
+        if(reset == 1) begin
+            cl[c] <= 'b0;
+        end else begin
+            cl[c] <= bl[2*c]+bl[2*c+1];
+        end
+    end 
+end
+endgenerate
+
+// layer d
+always@(posedge clk) begin
+    if(reset == 1) begin
+        dl[0] <= 'b0;
+        dl[1] <= 'b0;
+    end else begin
+        dl[0] <= cl[0] + cl[1];
+        dl[1] <= _and_res[8] + _and_res[9];
+    end
+end
+
+//layer e
+always@(posedge clk) begin
+    if(reset == 1) begin
+        el <= 'b0;
+    end else begin
+        el <= dl[0] + dl[1];
+    end
+end
+
+assign ii_res = el;
+
+endmodule

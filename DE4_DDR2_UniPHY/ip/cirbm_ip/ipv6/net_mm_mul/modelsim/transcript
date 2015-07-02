@@ -1,0 +1,87 @@
+# Compile of mask_input.v failed with 1 errors.
+# Compile of net_mm_mul.v failed with 5 errors.
+# Compile of tb_net_mm_mul.v failed with 4 errors.
+# 3 compiles, 3 failed with 10 errors. 
+# Compile of net_mm_mul.v failed with 5 errors.
+# Compile of tb_net_mm_mul.v failed with 4 errors.
+# 2 compiles, 2 failed with 9 errors. 
+# Compile of net_mm_mul.v was successful.
+# Compile of tb_net_mm_mul.v failed with 17 errors.
+# 2 compiles, 1 failed with 17 errors. 
+# Compile of tb_net_mm_mul.v failed with 17 errors.
+# Compile of tb_net_mm_mul.v failed with 2 errors.
+# Compile of net_mm_mul.v was successful.
+# Compile of tb_net_mm_mul.v was successful.
+# 2 compiles, 0 failed with no errors. 
+vsim -gui -voptargs=+acc work.tb_net_mm_mul
+# vsim -gui -voptargs=+acc work.tb_net_mm_mul 
+# ** Note: (vsim-3812) Design is being optimized...
+# 
+# Loading work.tb_net_mm_mul(fast)
+# Loading work.net_mm_mul(fast)
+# Loading work.element_mul_accu(fast)
+add wave -position insertpoint  \
+sim:/tb_net_mm_mul/clock \
+sim:/tb_net_mm_mul/reset \
+sim:/tb_net_mm_mul/data \
+sim:/tb_net_mm_mul/partial_sum \
+sim:/tb_net_mm_mul/W_Wc
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# Compile of tb_net_mm_mul.v was successful.
+restart -f
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# 
+# Loading work.tb_net_mm_mul(fast)
+# Loading work.net_mm_mul(fast)
+# Loading work.element_mul_accu(fast)
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# Compile of tb_net_mm_mul.v was successful.
+restart -f
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# 
+# Loading work.tb_net_mm_mul(fast)
+# Loading work.net_mm_mul(fast)
+# Loading work.element_mul_accu(fast)
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
