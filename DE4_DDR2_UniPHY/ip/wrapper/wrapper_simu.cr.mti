@@ -1,0 +1,8 @@
+D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/rbm_demo_tb.v {1 {vlog -work work D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/rbm_demo_tb.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module rbm_demo_tb
+
+Top level modules:
+	rbm_demo_tb
+
+} {} {}}

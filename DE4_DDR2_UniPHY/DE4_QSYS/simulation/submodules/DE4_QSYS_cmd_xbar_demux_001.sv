@@ -28,10 +28,10 @@
 // ------------------------------------------
 // Generation parameters:
 //   output_name:         DE4_QSYS_cmd_xbar_demux_001
-//   ST_DATA_W:           117
-//   ST_CHANNEL_W:        6
+//   ST_DATA_W:           110
+//   ST_CHANNEL_W:        7
 //   NUM_OUTPUTS:         6
-//   VALID_WIDTH:         6
+//   VALID_WIDTH:         7
 // ------------------------------------------
 
 //------------------------------------------
@@ -45,9 +45,9 @@ module DE4_QSYS_cmd_xbar_demux_001
     // -------------------
     // Sink
     // -------------------
-    input  [6-1      : 0]   sink_valid,
-    input  [117-1    : 0]   sink_data, // ST_DATA_W=117
-    input  [6-1 : 0]   sink_channel, // ST_CHANNEL_W=6
+    input  [7-1      : 0]   sink_valid,
+    input  [110-1    : 0]   sink_data, // ST_DATA_W=110
+    input  [7-1 : 0]   sink_channel, // ST_CHANNEL_W=7
     input                         sink_startofpacket,
     input                         sink_endofpacket,
     output                        sink_ready,
@@ -56,43 +56,43 @@ module DE4_QSYS_cmd_xbar_demux_001
     // Sources 
     // -------------------
     output reg                      src0_valid,
-    output reg [117-1    : 0] src0_data, // ST_DATA_W=117
-    output reg [6-1 : 0] src0_channel, // ST_CHANNEL_W=6
+    output reg [110-1    : 0] src0_data, // ST_DATA_W=110
+    output reg [7-1 : 0] src0_channel, // ST_CHANNEL_W=7
     output reg                      src0_startofpacket,
     output reg                      src0_endofpacket,
     input                           src0_ready,
 
     output reg                      src1_valid,
-    output reg [117-1    : 0] src1_data, // ST_DATA_W=117
-    output reg [6-1 : 0] src1_channel, // ST_CHANNEL_W=6
+    output reg [110-1    : 0] src1_data, // ST_DATA_W=110
+    output reg [7-1 : 0] src1_channel, // ST_CHANNEL_W=7
     output reg                      src1_startofpacket,
     output reg                      src1_endofpacket,
     input                           src1_ready,
 
     output reg                      src2_valid,
-    output reg [117-1    : 0] src2_data, // ST_DATA_W=117
-    output reg [6-1 : 0] src2_channel, // ST_CHANNEL_W=6
+    output reg [110-1    : 0] src2_data, // ST_DATA_W=110
+    output reg [7-1 : 0] src2_channel, // ST_CHANNEL_W=7
     output reg                      src2_startofpacket,
     output reg                      src2_endofpacket,
     input                           src2_ready,
 
     output reg                      src3_valid,
-    output reg [117-1    : 0] src3_data, // ST_DATA_W=117
-    output reg [6-1 : 0] src3_channel, // ST_CHANNEL_W=6
+    output reg [110-1    : 0] src3_data, // ST_DATA_W=110
+    output reg [7-1 : 0] src3_channel, // ST_CHANNEL_W=7
     output reg                      src3_startofpacket,
     output reg                      src3_endofpacket,
     input                           src3_ready,
 
     output reg                      src4_valid,
-    output reg [117-1    : 0] src4_data, // ST_DATA_W=117
-    output reg [6-1 : 0] src4_channel, // ST_CHANNEL_W=6
+    output reg [110-1    : 0] src4_data, // ST_DATA_W=110
+    output reg [7-1 : 0] src4_channel, // ST_CHANNEL_W=7
     output reg                      src4_startofpacket,
     output reg                      src4_endofpacket,
     input                           src4_ready,
 
     output reg                      src5_valid,
-    output reg [117-1    : 0] src5_data, // ST_DATA_W=117
-    output reg [6-1 : 0] src5_channel, // ST_CHANNEL_W=6
+    output reg [110-1    : 0] src5_data, // ST_DATA_W=110
+    output reg [7-1 : 0] src5_channel, // ST_CHANNEL_W=7
     output reg                      src5_startofpacket,
     output reg                      src5_endofpacket,
     input                           src5_ready,
@@ -169,7 +169,7 @@ module DE4_QSYS_cmd_xbar_demux_001
     assign ready_vector[4] = src4_ready;
     assign ready_vector[5] = src5_ready;
 
-    assign sink_ready = |(sink_channel & ready_vector);
+    assign sink_ready = |(sink_channel & {{1{1'b0}},{ready_vector[NUM_OUTPUTS - 1 : 0]}});
 
 endmodule
 

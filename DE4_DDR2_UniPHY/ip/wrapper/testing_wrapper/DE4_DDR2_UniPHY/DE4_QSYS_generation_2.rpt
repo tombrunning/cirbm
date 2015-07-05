@@ -1,0 +1,309 @@
+Info: Starting: Create block symbol file (.bsf)
+Info: ip-generate --project-directory=D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/ --output-directory=D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/ --report-file=bsf:D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS.bsf --system-info=DEVICE_FAMILY="Stratix IV" --system-info=DEVICE=EP4SGX530KH40C2 --system-info=DEVICE_SPEEDGRADE=2 --component-file=D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS.qsys
+Progress: Loading DE4_DDR2_UniPHY/DE4_QSYS.qsys
+Progress: Reading input file
+Progress: Adding clk_50 [clock_source 13.0]
+Progress: Parameterizing module clk_50
+Progress: Adding onchip_memory [altera_avalon_onchip_memory2 13.0.1.99.2]
+Progress: Parameterizing module onchip_memory
+Progress: Adding mem_if_ddr2_emif [altera_mem_if_ddr2_emif 13.0]
+Progress: Parameterizing module mem_if_ddr2_emif
+Progress: Adding nios2_qsys [altera_nios2_qsys 13.0]
+Progress: Parameterizing module nios2_qsys
+Progress: Adding jtag_uart [altera_avalon_jtag_uart 13.0.1.99.2]
+Progress: Parameterizing module jtag_uart
+Progress: Adding sysid [altera_avalon_sysid_qsys 13.0]
+Progress: Parameterizing module sysid
+Progress: Adding timer [altera_avalon_timer 13.0.1.99.2]
+Progress: Parameterizing module timer
+Progress: Adding led [altera_avalon_pio 13.0.1.99.2]
+Progress: Parameterizing module led
+Progress: Adding button [altera_avalon_pio 13.0.1.99.2]
+Progress: Parameterizing module button
+Progress: Adding mm_clock_crossing_bridge_io [altera_avalon_mm_clock_crossing_bridge 13.0]
+Progress: Parameterizing module mm_clock_crossing_bridge_io
+Progress: Adding ddr2_i2c_scl [altera_avalon_pio 13.0.1.99.2]
+Progress: Parameterizing module ddr2_i2c_scl
+Progress: Adding ddr2_i2c_sda [altera_avalon_pio 13.0.1.99.2]
+Progress: Parameterizing module ddr2_i2c_sda
+Progress: Adding testing_wrapperr [testing_wrapperr 1.0]
+Progress: Parameterizing module testing_wrapperr
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Info: DE4_QSYS.mem_if_ddr2_emif: Auto interface leveling mode set to 'Leveling'
+Info: DE4_QSYS.nios2_qsys: CPUID control register value is 0. Please manually assign CPUID if creating multiple Nios II system
+Info: DE4_QSYS.sysid: System ID is not assigned automatically. Edit the System ID parameter to provide a unique ID
+Info: DE4_QSYS.sysid: Time stamp will be automatically updated when this component is generated.
+Info: DE4_QSYS.button: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
+Info: DE4_QSYS.ddr2_i2c_sda: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
+Error: DE4_QSYS.testing_wrapperr.s0: Interface with non-zero pending reads (1) must have readdatavalid signal
+Info: ip-generate succeeded.
+Info: Finished: Create block symbol file (.bsf)
+Info: 
+Info: Starting: Create HDL design files for synthesis
+Info: ip-generate --project-directory=D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/ --output-directory=D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/ --file-set=QUARTUS_SYNTH --report-file=sopcinfo:D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS.sopcinfo --report-file=html:D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS.html --report-file=qip:D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/DE4_QSYS.qip --report-file=cmp:D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS.cmp --report-file=svd --system-info=DEVICE_FAMILY="Stratix IV" --system-info=DEVICE=EP4SGX530KH40C2 --system-info=DEVICE_SPEEDGRADE=2 --component-file=D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS.qsys --language=VERILOG
+Progress: Loading DE4_DDR2_UniPHY/DE4_QSYS.qsys
+Progress: Reading input file
+Progress: Adding clk_50 [clock_source 13.0]
+Progress: Parameterizing module clk_50
+Progress: Adding onchip_memory [altera_avalon_onchip_memory2 13.0.1.99.2]
+Progress: Parameterizing module onchip_memory
+Progress: Adding mem_if_ddr2_emif [altera_mem_if_ddr2_emif 13.0]
+Progress: Parameterizing module mem_if_ddr2_emif
+Progress: Adding nios2_qsys [altera_nios2_qsys 13.0]
+Progress: Parameterizing module nios2_qsys
+Progress: Adding jtag_uart [altera_avalon_jtag_uart 13.0.1.99.2]
+Progress: Parameterizing module jtag_uart
+Progress: Adding sysid [altera_avalon_sysid_qsys 13.0]
+Progress: Parameterizing module sysid
+Progress: Adding timer [altera_avalon_timer 13.0.1.99.2]
+Progress: Parameterizing module timer
+Progress: Adding led [altera_avalon_pio 13.0.1.99.2]
+Progress: Parameterizing module led
+Progress: Adding button [altera_avalon_pio 13.0.1.99.2]
+Progress: Parameterizing module button
+Progress: Adding mm_clock_crossing_bridge_io [altera_avalon_mm_clock_crossing_bridge 13.0]
+Progress: Parameterizing module mm_clock_crossing_bridge_io
+Progress: Adding ddr2_i2c_scl [altera_avalon_pio 13.0.1.99.2]
+Progress: Parameterizing module ddr2_i2c_scl
+Progress: Adding ddr2_i2c_sda [altera_avalon_pio 13.0.1.99.2]
+Progress: Parameterizing module ddr2_i2c_sda
+Progress: Adding testing_wrapperr [testing_wrapperr 1.0]
+Progress: Parameterizing module testing_wrapperr
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Info: DE4_QSYS.mem_if_ddr2_emif: Auto interface leveling mode set to 'Leveling'
+Info: DE4_QSYS.nios2_qsys: CPUID control register value is 0. Please manually assign CPUID if creating multiple Nios II system
+Info: DE4_QSYS.sysid: System ID is not assigned automatically. Edit the System ID parameter to provide a unique ID
+Info: DE4_QSYS.sysid: Time stamp will be automatically updated when this component is generated.
+Info: DE4_QSYS.button: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
+Info: DE4_QSYS.ddr2_i2c_sda: PIO inputs are not hardwired in test bench. Undefined values will be read from PIO inputs during simulation.
+Error: DE4_QSYS.testing_wrapperr.s0: Interface with non-zero pending reads (1) must have readdatavalid signal
+Info: DE4_QSYS: Generating DE4_QSYS "DE4_QSYS" for QUARTUS_SYNTH
+Info: pipeline_bridge_swap_transform: After transform: 13 modules, 44 connections
+Info: No custom instruction connections, skipping transform 
+Info: merlin_translator_transform: After transform: 28 modules, 89 connections
+Info: merlin_domain_transform: After transform: 65 modules, 263 connections
+Info: merlin_router_transform: After transform: 80 modules, 308 connections
+Info: merlin_traffic_limiter_transform: After transform: 83 modules, 320 connections
+Info: merlin_burst_transform: After transform: 88 modules, 335 connections
+Info: reset_adaptation_transform: After transform: 91 modules, 341 connections
+Info: merlin_network_to_switch_transform: After transform: 119 modules, 401 connections
+Info: merlin_width_transform: After transform: 121 modules, 407 connections
+Info: Inserting clock-crossing logic between cmd_xbar_demux_001.src5 and cmd_xbar_mux_005.sink0
+Info: Inserting clock-crossing logic between rsp_xbar_demux_005.src0 and rsp_xbar_mux_001.sink5
+Info: Inserting clock-crossing logic between cmd_xbar_demux_002.src0 and cmd_xbar_mux_006.sink0
+Info: Inserting clock-crossing logic between cmd_xbar_demux_002.src1 and cmd_xbar_mux_007.sink0
+Info: Inserting clock-crossing logic between cmd_xbar_demux_002.src2 and cmd_xbar_mux_008.sink0
+Info: Inserting clock-crossing logic between cmd_xbar_demux_002.src3 and cmd_xbar_mux_009.sink0
+Info: Inserting clock-crossing logic between cmd_xbar_demux_002.src4 and cmd_xbar_mux_010.sink0
+Info: Inserting clock-crossing logic between cmd_xbar_demux_002.src5 and cmd_xbar_mux_011.sink0
+Info: Inserting clock-crossing logic between rsp_xbar_demux_006.src0 and rsp_xbar_mux_002.sink0
+Info: Inserting clock-crossing logic between rsp_xbar_demux_007.src0 and rsp_xbar_mux_002.sink1
+Info: Inserting clock-crossing logic between rsp_xbar_demux_008.src0 and rsp_xbar_mux_002.sink2
+Info: Inserting clock-crossing logic between rsp_xbar_demux_009.src0 and rsp_xbar_mux_002.sink3
+Info: Inserting clock-crossing logic between rsp_xbar_demux_010.src0 and rsp_xbar_mux_002.sink4
+Info: Inserting clock-crossing logic between rsp_xbar_demux_011.src0 and rsp_xbar_mux_002.sink5
+Info: com_altera_sopcmodel_transforms_avalon_ClockCrossingTransform: After transform: 135 modules, 477 connections
+Info: limiter_update_transform: After transform: 135 modules, 480 connections
+Info: merlin_mm_transform: After transform: 135 modules, 480 connections
+Info: merlin_interrupt_mapper_transform: After transform: 136 modules, 483 connections
+Info: merlin_interrupt_sync_transform: After transform: 137 modules, 488 connections
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Warning: DE4_QSYS: "No matching role found for rst_controller:reset_out:reset_req (reset_req)"
+Info: onchip_memory: Starting RTL generation for module 'DE4_QSYS_onchip_memory'
+Info: onchip_memory:   Generation command is [exec C:/altera/13.0sp1/quartus/bin/perl/bin/perl.exe -I C:/altera/13.0sp1/quartus/common/ip/altera/common/perl/5.8.3 -I C:/altera/13.0sp1/quartus/sopc_builder/bin/europa -I C:/altera/13.0sp1/quartus/sopc_builder/bin/perl_lib -I C:/altera/13.0sp1/quartus/sopc_builder/bin -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/common -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_onchip_memory2 -- C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_onchip_memory2/generate_rtl.pl --name=DE4_QSYS_onchip_memory --dir=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0002_onchip_memory_gen/ --quartus_dir=C:/altera/13.0sp1/quartus --verilog --config=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0002_onchip_memory_gen//DE4_QSYS_onchip_memory_component_configuration.pl  --do_build_sim=0  ]
+Info: onchip_memory: Done RTL generation for module 'DE4_QSYS_onchip_memory'
+Info: onchip_memory: "DE4_QSYS" instantiated altera_avalon_onchip_memory2 "onchip_memory"
+Info: pipeline_bridge_swap_transform: After transform: 15 modules, 34 connections
+Info: No custom instruction connections, skipping transform 
+Info: No Avalon connections, skipping transform 
+Info: merlin_translator_transform: After transform: 15 modules, 34 connections
+Info: mem_if_ddr2_emif: "DE4_QSYS" instantiated altera_mem_if_ddr2_emif "mem_if_ddr2_emif"
+Info: nios2_qsys: Starting RTL generation for module 'DE4_QSYS_nios2_qsys'
+Info: nios2_qsys:   Generation command is [exec C:/altera/13.0sp1/quartus/../ip/altera/nios2_ip/altera_nios2/eperl.exe -I C:/altera/13.0sp1/quartus/common/ip/altera/common/perl/5.8.3 -I C:/altera/13.0sp1/quartus/sopc_builder/bin/europa -I C:/altera/13.0sp1/quartus/sopc_builder/bin/perl_lib -I C:/altera/13.0sp1/quartus/sopc_builder/bin -I C:/altera/13.0sp1/quartus/../ip/altera/nios2_ip/altera_nios2/cpu_lib -I C:/altera/13.0sp1/quartus/../ip/altera/nios2_ip/altera_nios2/nios_lib -I C:/altera/13.0sp1/quartus/../ip/altera/nios2_ip/altera_nios2 -I C:/altera/13.0sp1/quartus/../ip/altera/nios2_ip/altera_nios2 -- C:/altera/13.0sp1/quartus/../ip/altera/nios2_ip/altera_nios2/generate_rtl.epl --name=DE4_QSYS_nios2_qsys --dir=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0003_nios2_qsys_gen/ --quartus_dir=C:/altera/13.0sp1/quartus --verilog --config=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0003_nios2_qsys_gen//DE4_QSYS_nios2_qsys_processor_configuration.pl  --do_build_sim=0    --bogus  ]
+Info: nios2_qsys: # 2015.07.04 13:44:11 (*) Starting Nios II generation
+Info: nios2_qsys: # 2015.07.04 13:44:11 (*)   Checking for plaintext license.
+Info: nios2_qsys: # 2015.07.04 13:44:12 (*)   Plaintext license not found.
+Info: nios2_qsys: # 2015.07.04 13:44:12 (*)   Checking for encrypted license (non-evaluation).
+Info: nios2_qsys: # 2015.07.04 13:44:13 (*)   Encrypted license found.  SOF will not be time-limited.
+Info: nios2_qsys: # 2015.07.04 13:44:13 (*)   Elaborating CPU configuration settings
+Info: nios2_qsys: # 2015.07.04 13:44:13 (*)   Creating all objects for CPU
+Info: nios2_qsys: # 2015.07.04 13:44:13 (*)     Testbench
+Info: nios2_qsys: # 2015.07.04 13:44:13 (*)     Instruction decoding
+Info: nios2_qsys: # 2015.07.04 13:44:13 (*)       Instruction fields
+Info: nios2_qsys: # 2015.07.04 13:44:13 (*)       Instruction decodes
+Info: nios2_qsys: # 2015.07.04 13:44:14 (*)       Signals for RTL simulation waveforms
+Info: nios2_qsys: # 2015.07.04 13:44:14 (*)       Instruction controls
+Info: nios2_qsys: # 2015.07.04 13:44:14 (*)     Pipeline frontend
+Info: nios2_qsys: # 2015.07.04 13:44:14 (*)     Pipeline backend
+Info: nios2_qsys: # 2015.07.04 13:44:16 (*)   Generating RTL from CPU objects
+Info: nios2_qsys: # 2015.07.04 13:44:19 (*)   Creating encrypted RTL
+Info: nios2_qsys: # 2015.07.04 13:44:20 (*) Done Nios II generation
+Info: nios2_qsys: Done RTL generation for module 'DE4_QSYS_nios2_qsys'
+Info: nios2_qsys: "DE4_QSYS" instantiated altera_nios2_qsys "nios2_qsys"
+Info: jtag_uart: Starting RTL generation for module 'DE4_QSYS_jtag_uart'
+Info: jtag_uart:   Generation command is [exec C:/altera/13.0sp1/quartus/bin/perl/bin/perl.exe -I C:/altera/13.0sp1/quartus/common/ip/altera/common/perl/5.8.3 -I C:/altera/13.0sp1/quartus/sopc_builder/bin/europa -I C:/altera/13.0sp1/quartus/sopc_builder/bin/perl_lib -I C:/altera/13.0sp1/quartus/sopc_builder/bin -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/common -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart -- C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_jtag_uart/generate_rtl.pl --name=DE4_QSYS_jtag_uart --dir=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0004_jtag_uart_gen/ --quartus_dir=C:/altera/13.0sp1/quartus --verilog --config=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0004_jtag_uart_gen//DE4_QSYS_jtag_uart_component_configuration.pl  --do_build_sim=0  ]
+Info: jtag_uart: Done RTL generation for module 'DE4_QSYS_jtag_uart'
+Info: jtag_uart: "DE4_QSYS" instantiated altera_avalon_jtag_uart "jtag_uart"
+Info: sysid: "DE4_QSYS" instantiated altera_avalon_sysid_qsys "sysid"
+Info: timer: Starting RTL generation for module 'DE4_QSYS_timer'
+Info: timer:   Generation command is [exec C:/altera/13.0sp1/quartus/bin/perl/bin/perl.exe -I C:/altera/13.0sp1/quartus/common/ip/altera/common/perl/5.8.3 -I C:/altera/13.0sp1/quartus/sopc_builder/bin/europa -I C:/altera/13.0sp1/quartus/sopc_builder/bin/perl_lib -I C:/altera/13.0sp1/quartus/sopc_builder/bin -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/common -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer -- C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_timer/generate_rtl.pl --name=DE4_QSYS_timer --dir=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0006_timer_gen/ --quartus_dir=C:/altera/13.0sp1/quartus --verilog --config=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0006_timer_gen//DE4_QSYS_timer_component_configuration.pl  --do_build_sim=0  ]
+Info: timer: Done RTL generation for module 'DE4_QSYS_timer'
+Info: timer: "DE4_QSYS" instantiated altera_avalon_timer "timer"
+Info: led: Starting RTL generation for module 'DE4_QSYS_led'
+Info: led:   Generation command is [exec C:/altera/13.0sp1/quartus/bin/perl/bin/perl.exe -I C:/altera/13.0sp1/quartus/common/ip/altera/common/perl/5.8.3 -I C:/altera/13.0sp1/quartus/sopc_builder/bin/europa -I C:/altera/13.0sp1/quartus/sopc_builder/bin/perl_lib -I C:/altera/13.0sp1/quartus/sopc_builder/bin -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/common -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=DE4_QSYS_led --dir=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0007_led_gen/ --quartus_dir=C:/altera/13.0sp1/quartus --verilog --config=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0007_led_gen//DE4_QSYS_led_component_configuration.pl  --do_build_sim=0  ]
+Info: led: Done RTL generation for module 'DE4_QSYS_led'
+Info: led: "DE4_QSYS" instantiated altera_avalon_pio "led"
+Info: button: Starting RTL generation for module 'DE4_QSYS_button'
+Info: button:   Generation command is [exec C:/altera/13.0sp1/quartus/bin/perl/bin/perl.exe -I C:/altera/13.0sp1/quartus/common/ip/altera/common/perl/5.8.3 -I C:/altera/13.0sp1/quartus/sopc_builder/bin/europa -I C:/altera/13.0sp1/quartus/sopc_builder/bin/perl_lib -I C:/altera/13.0sp1/quartus/sopc_builder/bin -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/common -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=DE4_QSYS_button --dir=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0008_button_gen/ --quartus_dir=C:/altera/13.0sp1/quartus --verilog --config=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0008_button_gen//DE4_QSYS_button_component_configuration.pl  --do_build_sim=0  ]
+Info: button: Done RTL generation for module 'DE4_QSYS_button'
+Info: button: "DE4_QSYS" instantiated altera_avalon_pio "button"
+Info: mm_clock_crossing_bridge_io: "DE4_QSYS" instantiated altera_avalon_mm_clock_crossing_bridge "mm_clock_crossing_bridge_io"
+Info: ddr2_i2c_scl: Starting RTL generation for module 'DE4_QSYS_ddr2_i2c_scl'
+Info: ddr2_i2c_scl:   Generation command is [exec C:/altera/13.0sp1/quartus/bin/perl/bin/perl.exe -I C:/altera/13.0sp1/quartus/common/ip/altera/common/perl/5.8.3 -I C:/altera/13.0sp1/quartus/sopc_builder/bin/europa -I C:/altera/13.0sp1/quartus/sopc_builder/bin/perl_lib -I C:/altera/13.0sp1/quartus/sopc_builder/bin -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/common -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=DE4_QSYS_ddr2_i2c_scl --dir=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0009_ddr2_i2c_scl_gen/ --quartus_dir=C:/altera/13.0sp1/quartus --verilog --config=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0009_ddr2_i2c_scl_gen//DE4_QSYS_ddr2_i2c_scl_component_configuration.pl  --do_build_sim=0  ]
+Info: ddr2_i2c_scl: Done RTL generation for module 'DE4_QSYS_ddr2_i2c_scl'
+Info: ddr2_i2c_scl: "DE4_QSYS" instantiated altera_avalon_pio "ddr2_i2c_scl"
+Info: ddr2_i2c_sda: Starting RTL generation for module 'DE4_QSYS_ddr2_i2c_sda'
+Info: ddr2_i2c_sda:   Generation command is [exec C:/altera/13.0sp1/quartus/bin/perl/bin/perl.exe -I C:/altera/13.0sp1/quartus/common/ip/altera/common/perl/5.8.3 -I C:/altera/13.0sp1/quartus/sopc_builder/bin/europa -I C:/altera/13.0sp1/quartus/sopc_builder/bin/perl_lib -I C:/altera/13.0sp1/quartus/sopc_builder/bin -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/common -I C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio -- C:/altera/13.0sp1/quartus/../ip/altera/sopc_builder_ip/altera_avalon_pio/generate_rtl.pl --name=DE4_QSYS_ddr2_i2c_sda --dir=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0010_ddr2_i2c_sda_gen/ --quartus_dir=C:/altera/13.0sp1/quartus --verilog --config=C:/Users/js2113/AppData/Local/Temp/alt6620_2488532079485442510.dir/0010_ddr2_i2c_sda_gen//DE4_QSYS_ddr2_i2c_sda_component_configuration.pl  --do_build_sim=0  ]
+Info: ddr2_i2c_sda: Done RTL generation for module 'DE4_QSYS_ddr2_i2c_sda'
+Info: ddr2_i2c_sda: "DE4_QSYS" instantiated altera_avalon_pio "ddr2_i2c_sda"
+Info: testing_wrapperr: "DE4_QSYS" instantiated testing_wrapperr "testing_wrapperr"
+Info: nios2_qsys_instruction_master_translator: "DE4_QSYS" instantiated altera_merlin_master_translator "nios2_qsys_instruction_master_translator"
+Info: nios2_qsys_jtag_debug_module_translator: "DE4_QSYS" instantiated altera_merlin_slave_translator "nios2_qsys_jtag_debug_module_translator"
+Info: nios2_qsys_instruction_master_translator_avalon_universal_master_0_agent: "DE4_QSYS" instantiated altera_merlin_master_agent "nios2_qsys_instruction_master_translator_avalon_universal_master_0_agent"
+Info: nios2_qsys_jtag_debug_module_translator_avalon_universal_slave_0_agent: "DE4_QSYS" instantiated altera_merlin_slave_agent "nios2_qsys_jtag_debug_module_translator_avalon_universal_slave_0_agent"
+Info: nios2_qsys_jtag_debug_module_translator_avalon_universal_slave_0_agent_rsp_fifo: "DE4_QSYS" instantiated altera_avalon_sc_fifo "nios2_qsys_jtag_debug_module_translator_avalon_universal_slave_0_agent_rsp_fifo"
+Info: addr_router: "DE4_QSYS" instantiated altera_merlin_router "addr_router"
+Info: addr_router_001: "DE4_QSYS" instantiated altera_merlin_router "addr_router_001"
+Info: id_router: "DE4_QSYS" instantiated altera_merlin_router "id_router"
+Info: id_router_003: "DE4_QSYS" instantiated altera_merlin_router "id_router_003"
+Info: id_router_004: "DE4_QSYS" instantiated altera_merlin_router "id_router_004"
+Info: addr_router_002: "DE4_QSYS" instantiated altera_merlin_router "addr_router_002"
+Info: id_router_006: "DE4_QSYS" instantiated altera_merlin_router "id_router_006"
+Info: limiter: "DE4_QSYS" instantiated altera_merlin_traffic_limiter "limiter"
+Info: burst_adapter: "DE4_QSYS" instantiated altera_merlin_burst_adapter "burst_adapter"
+Info: rst_controller: "DE4_QSYS" instantiated altera_reset_controller "rst_controller"
+Info: cmd_xbar_demux: "DE4_QSYS" instantiated altera_merlin_demultiplexer "cmd_xbar_demux"
+Info: cmd_xbar_demux_001: "DE4_QSYS" instantiated altera_merlin_demultiplexer "cmd_xbar_demux_001"
+Info: cmd_xbar_mux: "DE4_QSYS" instantiated altera_merlin_multiplexer "cmd_xbar_mux"
+Info: rsp_xbar_demux: "DE4_QSYS" instantiated altera_merlin_demultiplexer "rsp_xbar_demux"
+Info: rsp_xbar_demux_003: "DE4_QSYS" instantiated altera_merlin_demultiplexer "rsp_xbar_demux_003"
+Info: rsp_xbar_mux: "DE4_QSYS" instantiated altera_merlin_multiplexer "rsp_xbar_mux"
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: rsp_xbar_mux_001: "DE4_QSYS" instantiated altera_merlin_multiplexer "rsp_xbar_mux_001"
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: cmd_xbar_demux_002: "DE4_QSYS" instantiated altera_merlin_demultiplexer "cmd_xbar_demux_002"
+Info: rsp_xbar_demux_006: "DE4_QSYS" instantiated altera_merlin_demultiplexer "rsp_xbar_demux_006"
+Info: rsp_xbar_mux_002: "DE4_QSYS" instantiated altera_merlin_multiplexer "rsp_xbar_mux_002"
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: width_adapter: "DE4_QSYS" instantiated altera_merlin_width_adapter "width_adapter"
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_address_alignment.sv
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_burst_uncompressor.sv
+Info: crosser: "DE4_QSYS" instantiated altera_avalon_st_handshake_clock_crosser "crosser"
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_avalon_st_pipeline_base.v
+Info: irq_mapper: "DE4_QSYS" instantiated altera_irq_mapper "irq_mapper"
+Info: irq_synchronizer: "DE4_QSYS" instantiated altera_irq_clock_crosser "irq_synchronizer"
+Info: pll0: "mem_if_ddr2_emif" instantiated altera_mem_if_ddr2_pll "pll0"
+Info: p0: Generating clock pair generator
+Info: p0: Generating DE4_QSYS_mem_if_ddr2_emif_p0_altdqdqs
+Info: p0: 
+Info: p0: *****************************
+Info: p0: 
+Info: p0: Remember to run the DE4_QSYS_mem_if_ddr2_emif_p0_pin_assignments.tcl
+Info: p0: script after running Synthesis and before Fitting.
+Info: p0: 
+Info: p0: *****************************
+Info: p0: 
+Info: p0: "mem_if_ddr2_emif" instantiated altera_mem_if_ddr2_phy_core "p0"
+Info: m0: "mem_if_ddr2_emif" instantiated altera_mem_if_ddr2_afi_mux "m0"
+Info: s0: Generating Qsys sequencer system
+Info: s0: QSYS sequencer system generated successfully
+Info: s0: "mem_if_ddr2_emif" instantiated altera_mem_if_ddr2_qseq "s0"
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_avalon_sc_fifo.v
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_burst_uncompressor.sv
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_master_agent.sv
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_master_translator.sv
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_slave_agent.sv
+Info: Reusing file D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/DE4_QSYS/synthesis/submodules/altera_merlin_slave_translator.sv
+Info: pipeline_bridge_swap_transform: After transform: 5 modules, 8 connections
+Info: No custom instruction connections, skipping transform 
+Info: No Avalon connections, skipping transform 
+Info: merlin_translator_transform: After transform: 5 modules, 8 connections
+Info: c0: "mem_if_ddr2_emif" instantiated altera_mem_if_nextgen_ddr2_controller "c0"
+Info: oct0: "mem_if_ddr2_emif" instantiated altera_mem_if_oct "oct0"
+Info: dll0: "mem_if_ddr2_emif" instantiated altera_mem_if_dll "dll0"
+Info: ng0: "c0" instantiated altera_mem_if_nextgen_ddr2_controller_core "ng0"
+Info: a0: "c0" instantiated alt_mem_ddrx_mm_st_converter "a0"
+Info: DE4_QSYS: Done DE4_QSYS" with 51 modules, 329 files, 8108256 bytes
+Error: ip-generate failed with exit code 1: 1 Error, 66 Warnings
+Info: Finished: Create HDL design files for synthesis

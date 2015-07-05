@@ -1,0 +1,25 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+vDE4_QSYS
+!i10b 1
+!s100 l2:0miO4L[oEEjKJ]`CDC0
+IMKd<lz`C>6n6I5m:CiL;k2
+Ve9n2W8k;QQ]ZKb4N>9O_=2
+Z1 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+w1435753712
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS.v
+L0 6
+OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1435754509.851000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS.v|-work|DE4_QSYS_inst|
+!s101 -O0
+o-work DE4_QSYS_inst -O0
+n@d@e4_@q@s@y@s

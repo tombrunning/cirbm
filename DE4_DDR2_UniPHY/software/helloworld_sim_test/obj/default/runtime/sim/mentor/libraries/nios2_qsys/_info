@@ -1,0 +1,145 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+vDE4_QSYS_nios2_qsys
+I:Q<<MiF1[fbZh2ZW:S53U1
+VZ6YI>bf>G1N1JeKUdGdSF0
+Z1 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+Z2 w1435753732
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys.vo
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys.vo
+L0 31
+Z3 OV;L;10.1d;51
+r1
+31
+Z4 o-work nios2_qsys -O0
+n@d@e4_@q@s@y@s_nios2_qsys
+!i10b 1
+!s100 6CU;TCYa5:ZQn4]:;Bhek3
+!s85 0
+!s108 1435754505.773000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys.vo|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys.vo|-work|nios2_qsys|
+!s101 -O0
+vDE4_QSYS_nios2_qsys_jtag_debug_module_sysclk
+I5>C93HGoeW9FAPO[ZH;903
+Von:=@U?6TZ713a0USjOho2
+R1
+R2
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_sysclk.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_sysclk.v
+L0 21
+R3
+r1
+31
+R4
+n@d@e4_@q@s@y@s_nios2_qsys_jtag_debug_module_sysclk
+!i10b 1
+!s100 45TDU5?][56Cc@ViZNWWX3
+!s85 0
+!s108 1435754506.372000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_sysclk.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_sysclk.v|-work|nios2_qsys|
+!s101 -O0
+vDE4_QSYS_nios2_qsys_jtag_debug_module_tck
+I[Z=dj]VTEXZf0GHgX4JzM3
+V;9i?4=:PhEPf38Ko?4eh60
+R1
+R2
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_tck.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_tck.v
+L0 21
+R3
+r1
+31
+R4
+n@d@e4_@q@s@y@s_nios2_qsys_jtag_debug_module_tck
+!i10b 1
+!s100 TZfQSY5I6H1APMW;N_h>81
+!s85 0
+!s108 1435754506.553000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_tck.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_tck.v|-work|nios2_qsys|
+!s101 -O0
+vDE4_QSYS_nios2_qsys_jtag_debug_module_wrapper
+I=^@QFb@h:bTAEj]AdZ:YJ2
+V1C^]z@XV>kYf35Cao8^392
+R1
+R2
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_wrapper.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_wrapper.v
+L0 21
+R3
+r1
+31
+R4
+n@d@e4_@q@s@y@s_nios2_qsys_jtag_debug_module_wrapper
+!i10b 1
+!s100 >lHIf@:k@zX:BzW`S8cfI1
+!s85 0
+!s108 1435754506.727000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_wrapper.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_jtag_debug_module_wrapper.v|-work|nios2_qsys|
+!s101 -O0
+vDE4_QSYS_nios2_qsys_mult_cell
+Ige^mFE=:70_bNBffWbUl=0
+VD;R01OGXjgFK;F[1d9Ke22
+R1
+R2
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_mult_cell.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_mult_cell.v
+L0 21
+R3
+r1
+31
+R4
+n@d@e4_@q@s@y@s_nios2_qsys_mult_cell
+!i10b 1
+!s100 Q0GcT8TXbXZC4ZHzJ_@;_1
+!s85 0
+!s108 1435754506.889000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_mult_cell.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_mult_cell.v|-work|nios2_qsys|
+!s101 -O0
+vDE4_QSYS_nios2_qsys_oci_test_bench
+InoZ4458MSI]fG[F7dT1Cb3
+V`<5`hQH@d]S53jePcSXf10
+R1
+R2
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_oci_test_bench.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_oci_test_bench.v
+L0 21
+R3
+r1
+31
+R4
+n@d@e4_@q@s@y@s_nios2_qsys_oci_test_bench
+!i10b 1
+!s100 mNLQz5J2P7UXfj>`:1R9@3
+!s85 0
+!s108 1435754507.029000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_oci_test_bench.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_oci_test_bench.v|-work|nios2_qsys|
+!s101 -O0
+vDE4_QSYS_nios2_qsys_test_bench
+!i10b 1
+!s100 M?bQ2;mGKkFM3M^zGhedn2
+IZl0LdITd5cB7e`>NY_9[T1
+VSZXzVAOgJ2TM5>NI@Y?_Z1
+R1
+R2
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_test_bench.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_test_bench.v
+L0 21
+R3
+r1
+!s85 0
+31
+!s108 1435754507.184000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_test_bench.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_nios2_qsys_test_bench.v|-work|nios2_qsys|
+!s101 -O0
+R4
+n@d@e4_@q@s@y@s_nios2_qsys_test_bench

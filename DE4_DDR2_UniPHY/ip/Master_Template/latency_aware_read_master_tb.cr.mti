@@ -1,0 +1,8 @@
+D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/Master_Template/latency_aware_read_master_tb.v {1 {vlog -work work D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/Master_Template/latency_aware_read_master_tb.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module latency_aware_read_master_tb
+
+Top level modules:
+	latency_aware_read_master_tb
+
+} {} {}}

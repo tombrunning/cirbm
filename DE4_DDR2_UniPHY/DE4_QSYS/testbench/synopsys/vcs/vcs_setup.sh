@@ -12,7 +12,7 @@
 # or its authorized distributors. Please refer to the applicable 
 # agreement for further details.
 
-# ACDS 13.0sp1 232 win32 2015.07.01.13:29:38
+# ACDS 13.0sp1 232 win32 2015.07.03.11:52:58
 
 # ----------------------------------------
 # vcs - auto-generated simulation script
@@ -202,16 +202,16 @@ vcs -lca -timescale=1ps/1ps -sverilog +verilog2001ext+.v -ntb_opts dtm $USER_DEF
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_pipeline_base.v \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_width_adapter.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_address_alignment.sv \
-  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_mux_004.sv \
-  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_006.sv \
-  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_004.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_mux_005.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_007.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_005.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_mux_001.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_mux.sv \
-  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_005.sv \
-  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_002.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_004.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux.sv \
-  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_mux_005.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_mux_004.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_mux.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_003.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_002.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_001.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux.sv \
@@ -219,14 +219,18 @@ vcs -lca -timescale=1ps/1ps -sverilog +verilog2001ext+.v -ntb_opts dtm $USER_DEF
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_reset_synchronizer.v \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_burst_adapter.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_traffic_limiter.sv \
-  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_006.sv \
-  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_004.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_007.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_005.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_005.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_004.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_002.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_003.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_002.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_001.sv \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router.sv \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/latency_aware_read_master.v \
+  $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/rbm_demo.v \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_dma.v \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_ddr2_i2c_sda.v \
   $QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_ddr2_i2c_scl.v \

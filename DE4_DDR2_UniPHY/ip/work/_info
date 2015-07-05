@@ -1,0 +1,62 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\cirbm\DE4_DDR2_UniPHY\ip\simulation
+vrbm_demo
+Z1 I[W3Mo3J^5fB1_=im0UEO`0
+Z2 V>1mUCBRz?fP[DfF;i3AY]0
+Z3 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip
+Z4 w1435852725
+Z5 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/rbm_demo.v
+Z6 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/rbm_demo.v
+L0 3
+Z7 OV;L;10.1d;51
+r1
+31
+Z8 o-work work -O0
+!i10b 1
+Z9 !s100 5km92XAN_kAWm5OODj_E<0
+!s85 0
+Z10 !s108 1435933341.850000
+Z11 !s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/rbm_demo.v|
+Z12 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/rbm_demo.v|
+!s101 -O0
+vrbm_demo_tb
+Z13 !s100 SSnh;S2=PM<7@ULh7XoPA3
+Z14 IIjoXUHO`]G7c2HmL3HNJd1
+Z15 VhbTC[Nm15f87a5RlO@llb0
+R3
+Z16 w1434576370
+Z17 8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/ip/tb_demo_qsys_ip.v
+Z18 FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/ip/tb_demo_qsys_ip.v
+L0 3
+R7
+r1
+31
+Z19 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/ip/tb_demo_qsys_ip.v|
+R8
+Z20 !s108 1434577206.662000
+Z21 !s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/ip/tb_demo_qsys_ip.v|
+!i10b 1
+!s85 0
+!s101 -O0
+vvh_mmmi_tb
+!i10b 1
+!s100 Tl<F?Ucg9UoL4hXjYRQ>H3
+IKICIIJJh2Z;gTBJSPZ:O:2
+VYA_hY>PEB@WCP3NR^KHO;1
+R3
+w1435933438
+8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/rbm_demo_tb.v
+FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/rbm_demo_tb.v
+L0 3
+R7
+r1
+!s85 0
+31
+!s108 1435933442.797000
+!s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/rbm_demo_tb.v|
+!s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/rbm_demo_tb.v|
+!s101 -O0
+R8

@@ -644,19 +644,19 @@
  <file
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"
    type="SYSTEM_VERILOG"
-   library="rsp_xbar_mux_004" />
+   library="rsp_xbar_mux_005" />
  <file
-   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_mux_004.sv"
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_mux_005.sv"
    type="SYSTEM_VERILOG"
-   library="rsp_xbar_mux_004" />
+   library="rsp_xbar_mux_005" />
  <file
-   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_006.sv"
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_007.sv"
    type="SYSTEM_VERILOG"
-   library="rsp_xbar_demux_006" />
+   library="rsp_xbar_demux_007" />
  <file
-   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_004.sv"
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_005.sv"
    type="SYSTEM_VERILOG"
-   library="cmd_xbar_demux_004" />
+   library="cmd_xbar_demux_005" />
  <file
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"
    type="SYSTEM_VERILOG"
@@ -674,13 +674,9 @@
    type="SYSTEM_VERILOG"
    library="rsp_xbar_mux" />
  <file
-   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_005.sv"
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_004.sv"
    type="SYSTEM_VERILOG"
-   library="rsp_xbar_demux_005" />
- <file
-   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_002.sv"
-   type="SYSTEM_VERILOG"
-   library="rsp_xbar_demux_002" />
+   library="rsp_xbar_demux_004" />
  <file
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux.sv"
    type="SYSTEM_VERILOG"
@@ -688,11 +684,11 @@
  <file
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"
    type="SYSTEM_VERILOG"
-   library="cmd_xbar_mux_005" />
+   library="cmd_xbar_mux_004" />
  <file
-   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_mux_005.sv"
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_mux_004.sv"
    type="SYSTEM_VERILOG"
-   library="cmd_xbar_mux_005" />
+   library="cmd_xbar_mux_004" />
  <file
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"
    type="SYSTEM_VERILOG"
@@ -701,6 +697,10 @@
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_mux.sv"
    type="SYSTEM_VERILOG"
    library="cmd_xbar_mux" />
+ <file
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_003.sv"
+   type="SYSTEM_VERILOG"
+   library="cmd_xbar_demux_003" />
  <file
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_002.sv"
    type="SYSTEM_VERILOG"
@@ -742,17 +742,21 @@
    type="SYSTEM_VERILOG"
    library="limiter" />
  <file
-   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_006.sv"
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_007.sv"
    type="SYSTEM_VERILOG"
-   library="id_router_006" />
+   library="id_router_007" />
  <file
-   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_004.sv"
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_005.sv"
    type="SYSTEM_VERILOG"
-   library="addr_router_004" />
+   library="addr_router_005" />
  <file
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_005.sv"
    type="SYSTEM_VERILOG"
    library="id_router_005" />
+ <file
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_004.sv"
+   type="SYSTEM_VERILOG"
+   library="id_router_004" />
  <file
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_002.sv"
    type="SYSTEM_VERILOG"
@@ -761,6 +765,10 @@
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router.sv"
    type="SYSTEM_VERILOG"
    library="id_router" />
+ <file
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_003.sv"
+   type="SYSTEM_VERILOG"
+   library="addr_router_003" />
  <file
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_002.sv"
    type="SYSTEM_VERILOG"
@@ -797,6 +805,14 @@
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_merlin_master_translator.sv"
    type="SYSTEM_VERILOG"
    library="nios2_qsys_instruction_master_translator" />
+ <file
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/latency_aware_read_master.v"
+   type="VERILOG"
+   library="ppl_mem_reader" />
+ <file
+   path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/rbm_demo.v"
+   type="VERILOG"
+   library="wrapper" />
  <file
    path="DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_dma.v"
    type="VERILOG"

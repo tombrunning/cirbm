@@ -23,8 +23,8 @@
 
 	To use this master you must simply drive the control signals into this block,
 	and also read the data from the exposed read FIFO.  To read from the exposed FIFO
-	use the 'user_read_buffer' signal to pop data from the FIFO 'user_buffer_data'.
-	The signal 'user_data_available' is asserted whenever data is available from the
+	use the 'coe_user_read_buffer' signal to pop data from the FIFO 'coe_user_buffer_data'.
+	The signal 'coe_user_data_available' is asserted whenever data is available from the
 	exposed FIFO.
 	
 */
@@ -37,17 +37,17 @@ module latency_aware_read_master (
 	reset,
 
 	// control inputs and outputs
-	control_fixed_location,
-	control_read_base,
-	control_read_length,
-	control_go,
-	control_done,
-	control_early_done,
+	coe_control_fixed_location,
+	coe_control_read_base,
+	coe_control_read_length,
+	coe_control_go,
+	coe_control_done,
+	coe_control_early_done,
 	
 	// user logic inputs and outputs
-	user_read_buffer,
-	user_buffer_data,
-	user_data_available,
+	coe_user_read_buffer,
+	coe_user_buffer_data,
+	coe_user_data_available,
 	
 	// master inputs and outputs
 	master_address,
@@ -70,17 +70,17 @@ module latency_aware_read_master (
 
 
 	// control inputs and outputs
-	input control_fixed_location;
-	input [ADDRESSWIDTH-1:0] control_read_base;
-	input [ADDRESSWIDTH-1:0] control_read_length;
-	input control_go;
-	output wire control_done;
-	output wire control_early_done;  // don't use this unless you know what you are doing!
+	input coe_control_fixed_location;
+	input [ADDRESSWIDTH-1:0] coe_control_read_base;
+	input [ADDRESSWIDTH-1:0] coe_control_read_length;
+	input coe_control_go;
+	output wire coe_control_done;
+	output wire coe_control_early_done;  // don't use this unless you know what you are doing!
 	
 	// user logic inputs and outputs
-	input user_read_buffer;
-	output wire [DATAWIDTH-1:0] user_buffer_data;
-	output wire user_data_available;
+	input coe_user_read_buffer;
+	output wire [DATAWIDTH-1:0] coe_user_buffer_data;
+	output wire coe_user_data_available;
 	
 	// master inputs and outputs
 	input master_waitrequest;
@@ -91,7 +91,7 @@ module latency_aware_read_master (
 	output wire [BYTEENABLEWIDTH-1:0] master_byteenable;
 	
 	// internal control signals
-	reg control_fixed_location_d1;
+	reg coe_control_fixed_location_d1;
 	wire fifo_empty;
 	reg [ADDRESSWIDTH-1:0] address;
 	reg [ADDRESSWIDTH-1:0] length;
@@ -104,18 +104,18 @@ module latency_aware_read_master (
 
 
 
-	// registering the control_fixed_location bit
+	// registering the coe_control_fixed_location bit
 	always @ (posedge clk or posedge reset)
 	begin
 		if (reset == 1)
 		begin
-			control_fixed_location_d1 <= 0;
+			coe_control_fixed_location_d1 <= 0;
 		end
 		else
 		begin
-			if (control_go == 1)
+			if (coe_control_go == 1)
 			begin
-				control_fixed_location_d1 <= control_fixed_location;
+				coe_control_fixed_location_d1 <= coe_control_fixed_location;
 			end
 		end
 	end
@@ -133,11 +133,11 @@ module latency_aware_read_master (
 		end
 		else
 		begin
-			if(control_go == 1)
+			if(coe_control_go == 1)
 			begin
-				address <= control_read_base;
+				address <= coe_control_read_base;
 			end
-			else if((increment_address == 1) & (control_fixed_location_d1 == 0))
+			else if((increment_address == 1) & (coe_control_fixed_location_d1 == 0))
 			begin
 				address <= address + BYTEENABLEWIDTH;  // always performing word size accesses
 			end
@@ -155,9 +155,9 @@ module latency_aware_read_master (
 		end
 		else
 		begin
-			if(control_go == 1)
+			if(coe_control_go == 1)
 			begin
-				length <= control_read_length;
+				length <= coe_control_read_length;
 			end
 			else if(increment_address == 1)
 			begin
@@ -172,8 +172,8 @@ module latency_aware_read_master (
 	assign too_many_pending_reads = (fifo_used + reads_pending) >= (FIFODEPTH - 4);
 	assign master_read = (length != 0) & (too_many_pending_reads_d1 == 0);
 	assign increment_address = (length != 0) & (too_many_pending_reads_d1 == 0) & (master_waitrequest == 0);
-	assign control_done = (reads_pending == 0) & (length == 0);  // master done posting reads and all reads have returned
-	assign control_early_done = (length == 0);  // if you need all the pending reads to return then use 'control_done' instead of this signal
+	assign coe_control_done = (reads_pending == 0) & (length == 0);  // master done posting reads and all reads have returned
+	assign coe_control_early_done = (length == 0);  // if you need all the pending reads to return then use 'coe_control_done' instead of this signal
 
 
 	always @ (posedge clk)
@@ -225,14 +225,14 @@ module latency_aware_read_master (
 
 	
 	// read data feeding user logic	
-	assign user_data_available = !fifo_empty;
+	assign coe_user_data_available = !fifo_empty;
 	scfifo the_master_to_user_fifo (
 		.aclr (reset),
 		.clock (clk),
 		.data (master_readdata),
 		.empty (fifo_empty),
-		.q (user_buffer_data),
-		.rdreq (user_read_buffer),
+		.q (coe_user_buffer_data),
+		.rdreq (coe_user_read_buffer),
 		.usedw (fifo_used),
 		.wrreq (master_readdatavalid)
 	);

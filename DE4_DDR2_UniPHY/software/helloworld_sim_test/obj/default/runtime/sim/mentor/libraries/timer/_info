@@ -1,0 +1,25 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+vDE4_QSYS_timer
+!i10b 1
+!s100 >MYigo2fRSF<67hTQ4Y9d2
+IzZYBi?:9eKOd_lSb7J8[J0
+VLa^mWM[@gU^iFh?FCz33m1
+Z1 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+w1435753734
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_timer.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_timer.v
+L0 21
+OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1435754504.917000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_timer.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_timer.v|-work|timer|
+!s101 -O0
+o-work timer -O0
+n@d@e4_@q@s@y@s_timer

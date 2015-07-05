@@ -1,0 +1,25 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+vDE4_QSYS_ddr2_i2c_sda
+!i10b 1
+!s100 d:mQ2zbe`165>FZljeSzT3
+IA]BbNMEi`VBi8aD`C?>Tl0
+Vk6HEL004jzDS6iJ5z3f9T1
+Z1 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+w1435753735
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_ddr2_i2c_sda.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_ddr2_i2c_sda.v
+L0 21
+OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1435754503.165000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_ddr2_i2c_sda.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_ddr2_i2c_sda.v|-work|ddr2_i2c_sda|
+!s101 -O0
+o-work ddr2_i2c_sda -O0
+n@d@e4_@q@s@y@s_ddr2_i2c_sda

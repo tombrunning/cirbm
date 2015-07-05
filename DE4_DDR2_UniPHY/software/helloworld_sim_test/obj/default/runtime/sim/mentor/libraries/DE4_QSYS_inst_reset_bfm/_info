@@ -1,0 +1,28 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+valtera_avalon_reset_source
+Z1 DXx6 sv_std 3 std 0 22 F[19LRNL:5;XmIFh[XOPn1
+DXx26 altera_avalon_vip_pkgs_lib 13 verbosity_pkg 0 22 UMjj8An7e>LD1ohVD]7KL0
+!i10b 1
+!s100 OU;mjXWPIWI6nKn2Le71W1
+I4e_Mg[1LD81>cG6OJ<g5k0
+Vk1]bU7T^0F5>e8jlRd2OT1
+!s105 altera_avalon_reset_source_sv_unit
+S1
+Z2 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+Z3 w1435753712
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_reset_source.sv
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_reset_source.sv
+L0 23
+Z4 OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1435754509.526000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_reset_source.sv|
+!s90 -reportprogress|300|-sv|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_reset_source.sv|-L|altera_avalon_vip_pkgs_lib|-work|DE4_QSYS_inst_reset_bfm|
+!s101 -O0
+o-sv -L altera_avalon_vip_pkgs_lib -work DE4_QSYS_inst_reset_bfm -O0

@@ -1,0 +1,65 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+valtera_avalon_st_clock_crosser
+IVPSe=RGlPTl[32ZZ[N2892
+V0e:lkDY0^f=mT6IM[:_5b3
+Z1 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+Z2 w1435753737
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_clock_crosser.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_clock_crosser.v
+L0 22
+Z3 OV;L;10.1d;51
+r1
+31
+Z4 o-work crosser -O0
+!i10b 1
+!s100 D<bfgzl=W:?:zzmA9Mhi<2
+!s85 0
+!s108 1435754493.048000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_clock_crosser.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_clock_crosser.v|-work|crosser|
+!s101 -O0
+valtera_avalon_st_handshake_clock_crosser
+IBBAJMjB7hmbD>110?BY;b0
+VYDTFiCWV0RkTigPZ<4iW90
+R1
+R2
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_handshake_clock_crosser.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_handshake_clock_crosser.v
+L0 24
+R3
+r1
+31
+R4
+!i10b 1
+!s100 1eY;6J>XA6dAC`nWDAW4f2
+!s85 0
+!s108 1435754492.881000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_handshake_clock_crosser.v|
+!s90 -reportprogress|300|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_handshake_clock_crosser.v|-work|crosser|
+!s101 -O0
+valtera_avalon_st_pipeline_base
+DXx6 sv_std 3 std 0 22 F[19LRNL:5;XmIFh[XOPn1
+!i10b 1
+!s100 lgbl]SiaN<:[0jC:_ae^`1
+IV<<UNkmz<HjiDaXmfVZUN1
+VzC;0]nBLKo0Q[zO07mJ[H0
+!s105 altera_avalon_st_pipeline_base_v_unit
+S1
+R1
+w1435753736
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_pipeline_base.v
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_pipeline_base.v
+L0 22
+R3
+r1
+!s85 0
+31
+!s108 1435754493.175000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_pipeline_base.v|
+!s90 -reportprogress|300|-sv|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_pipeline_base.v|-work|crosser|
+!s101 -O0
+o-sv -work crosser -O0

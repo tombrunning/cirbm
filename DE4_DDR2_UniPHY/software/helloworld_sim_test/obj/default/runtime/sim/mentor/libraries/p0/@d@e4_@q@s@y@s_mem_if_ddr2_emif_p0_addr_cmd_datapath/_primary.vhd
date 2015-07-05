@@ -1,0 +1,65 @@
+library verilog;
+use verilog.vl_types.all;
+entity DE4_QSYS_mem_if_ddr2_emif_p0_addr_cmd_datapath is
+    generic(
+        MEM_ADDRESS_WIDTH: string  := "";
+        MEM_BANK_WIDTH  : string  := "";
+        MEM_CHIP_SELECT_WIDTH: string  := "";
+        MEM_CLK_EN_WIDTH: string  := "";
+        MEM_ODT_WIDTH   : string  := "";
+        MEM_DM_WIDTH    : string  := "";
+        MEM_CONTROL_WIDTH: string  := "";
+        MEM_DQ_WIDTH    : string  := "";
+        MEM_READ_DQS_WIDTH: string  := "";
+        MEM_WRITE_DQS_WIDTH: string  := "";
+        AFI_ADDRESS_WIDTH: string  := "";
+        AFI_BANK_WIDTH  : string  := "";
+        AFI_CHIP_SELECT_WIDTH: string  := "";
+        AFI_CLK_EN_WIDTH: string  := "";
+        AFI_ODT_WIDTH   : string  := "";
+        AFI_DATA_MASK_WIDTH: string  := "";
+        AFI_CONTROL_WIDTH: string  := "";
+        AFI_DATA_WIDTH  : string  := "";
+        NUM_AC_FR_CYCLE_SHIFTS: string  := ""
+    );
+    port(
+        clk             : in     vl_logic;
+        reset_n         : in     vl_logic;
+        afi_address     : in     vl_logic_vector;
+        afi_bank        : in     vl_logic_vector;
+        afi_cs_n        : in     vl_logic_vector;
+        afi_cke         : in     vl_logic_vector;
+        afi_odt         : in     vl_logic_vector;
+        afi_ras_n       : in     vl_logic_vector;
+        afi_cas_n       : in     vl_logic_vector;
+        afi_we_n        : in     vl_logic_vector;
+        phy_ddio_address: out    vl_logic_vector;
+        phy_ddio_bank   : out    vl_logic_vector;
+        phy_ddio_cs_n   : out    vl_logic_vector;
+        phy_ddio_cke    : out    vl_logic_vector;
+        phy_ddio_we_n   : out    vl_logic_vector;
+        phy_ddio_ras_n  : out    vl_logic_vector;
+        phy_ddio_cas_n  : out    vl_logic_vector;
+        phy_ddio_odt    : out    vl_logic_vector
+    );
+    attribute mti_svvh_generic_type : integer;
+    attribute mti_svvh_generic_type of MEM_ADDRESS_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of MEM_BANK_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of MEM_CHIP_SELECT_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of MEM_CLK_EN_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of MEM_ODT_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of MEM_DM_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of MEM_CONTROL_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of MEM_DQ_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of MEM_READ_DQS_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of MEM_WRITE_DQS_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of AFI_ADDRESS_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of AFI_BANK_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of AFI_CHIP_SELECT_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of AFI_CLK_EN_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of AFI_ODT_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of AFI_DATA_MASK_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of AFI_CONTROL_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of AFI_DATA_WIDTH : constant is 1;
+    attribute mti_svvh_generic_type of NUM_AC_FR_CYCLE_SHIFTS : constant is 1;
+end DE4_QSYS_mem_if_ddr2_emif_p0_addr_cmd_datapath;

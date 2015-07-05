@@ -1,4 +1,4 @@
-Fitter Status : Successful - Wed Jul 01 12:37:11 2015
+Fitter Status : Successful - Sun Jul 05 19:12:56 2015
 Quartus II 64-Bit Version : 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version
 Revision Name : DE4_DDR2
 Top-level Entity Name : DE4_DDR2
@@ -6,10 +6,10 @@ Family : Stratix IV
 Device : EP4SGX530KH40C2
 Timing Models : Final
 Logic utilization : 4 %
-    Combinational ALUTs : 10,233 / 424,960 ( 2 % )
-    Memory ALUTs : 1,098 / 212,480 ( < 1 % )
-    Dedicated logic registers : 12,843 / 424,960 ( 3 % )
-Total registers : 13481
+    Combinational ALUTs : 9,283 / 424,960 ( 2 % )
+    Memory ALUTs : 1,002 / 212,480 ( < 1 % )
+    Dedicated logic registers : 12,168 / 424,960 ( 3 % )
+Total registers : 12806
 Total pins : 156 / 888 ( 18 % )
 Total virtual pins : 0
 Total block memory bits : 1,234,492 / 21,233,664 ( 6 % )

@@ -1,5 +1,4 @@
-#Mon Feb 06 10:39:49 CST 2012
-newSoftwareExampleWizardPage.defaultLocation=D\:\\MYSVN\\de4\\test\\DE4_230_DDR2_UniPHY_QSYS_0000\\software\\DE4_DDR2_test
-newSoftwareExampleWizardPage.sopcinfoFile=D\:\\MYSVN\\de4\\test\\DE4_230_DDR2_UniPHY_QSYS_0000\\DE4_QSYS.sopcinfo
 eclipse.preferences.version=1
-newSoftwareExampleWizardPage2.newBspLocation=D\:\\MYSVN\\de4\\test\\DE4_230_DDR2_UniPHY_QSYS_0000\\software\\DE4_DDR2_test_bsp
+newSoftwareExampleWizardPage.defaultLocation=D\:\\Projects\\fpl16\\DE4_DDR2_UniPHY\\software\\123
+newSoftwareExampleWizardPage.sopcinfoFile=D\:\\Projects\\fpl16\\DE4_DDR2_UniPHY\\DE4_QSYS.sopcinfo
+newSoftwareExampleWizardPage2.newBspLocation=D\:\\Projects\\fpl16\\DE4_DDR2_UniPHY\\software\\123_bsp

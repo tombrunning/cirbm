@@ -1,0 +1,102 @@
+`timescale 10ns / 10ns
+
+module rbm_demo_tb();
+
+	parameter DATAWIDTH = 32;
+
+reg clk;
+reg reset;
+
+reg [1:0]avs_s0_address;
+reg avs_s0_read;
+reg avs_s0_write;
+
+reg [DATAWIDTH-1:0]avs_s0_writedata;
+
+wire [DATAWIDTH-1:0]coe_control_read_base;
+wire [DATAWIDTH-1:0]coe_control_read_length;
+
+reg coe_control_done;
+reg coe_control_early_done;
+
+reg [DATAWIDTH-1:0]coe_user_buffer_data;
+reg coe_user_data_available;
+
+wire [DATAWIDTH-1:0] avs_s0_readdata;
+wire coe_control_fixed_location;
+wire coe_control_go;
+wire coe_user_read_buffer;
+wire avs_s0_readdatavalid;
+
+initial begin        	
+    clk = 1;
+    reset = 1;
+    avs_s0_address = 'b00;
+    avs_s0_read = 0;
+    avs_s0_write = 0;
+    
+    avs_s0_writedata = 0;
+
+    coe_control_done = 0;
+    coe_control_early_done = 0;
+
+    coe_user_buffer_data = 0;
+    coe_user_data_available = 0;
+    
+#50
+    reset = 0;
+    avs_s0_write = 1;
+    avs_s0_writedata = 2;
+    avs_s0_address = 0;
+#100 
+    avs_s0_writedata = 3;
+    avs_s0_address = 1;
+#100 
+    avs_s0_writedata = 0;
+    avs_s0_address = 2;
+#40
+    coe_user_data_available = 1;
+    coe_user_buffer_data = 5;
+#20
+    coe_control_done = 1;
+#50
+   avs_s0_read = 1; 
+    
+#100
+
+
+
+
+
+    $finish;
+  
+end  
+  
+always begin
+  #5 clk = ~clk; // Toggle clk every 50 ns
+end
+
+
+rbm_demo demo_inst(
+    clk, 
+    reset, 
+
+    avs_s0_address,
+    avs_s0_read,
+    avs_s0_write,
+    avs_s0_readdata,
+    avs_s0_readdatavalid,
+    avs_s0_writedata,
+
+    coe_control_fixed_location,
+    coe_control_read_base,
+    coe_control_read_length,
+    coe_control_go,
+    coe_control_done,
+    coe_control_early_done,
+
+    coe_user_buffer_data,
+    coe_user_data_available,
+    coe_user_read_buffer
+                );
+endmodule

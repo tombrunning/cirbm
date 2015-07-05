@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="17" version="2.0">
+<workbench progressCount="34" version="2.0">
 <workbenchAdvisor/>
-<window height="768" maximized="true" minimized="true" width="1024" x="88" y="102">
+<window height="1100" width="1024" x="1929" y="535">
 <fastViewData fastViewLocation="1024"/>
-<intro standby="true"/>
 <perspectiveBar>
 <itemSize x="160"/>
 </perspectiveBar>
-<coolbarLayout locked="0">
+<coolbarLayout>
 <coolItem id="group.file" itemType="typeGroupMarker"/>
-<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="152" y="22"/>
+<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="153" y="22"/>
 <coolItem id="additions" itemType="typeGroupMarker"/>
-<coolItem id="org.eclipse.cdt.ui.CElementCreationActionSet" itemType="typeToolBarContribution" x="160" y="22"/>
+<coolItem id="org.eclipse.cdt.ui.CElementCreationActionSet" itemType="typeToolBarContribution" x="167" y="22"/>
 <coolItem id="org.eclipse.cdt.ui.buildConfigActionSet" itemType="typeToolBarContribution" x="86" y="22"/>
-<coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="124" y="22"/>
-<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="75" y="22"/>
-<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="62" y="22"/>
+<coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="129" y="22"/>
+<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="99" y="22"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="61" y="22"/>
 <coolItem id="group.nav" itemType="typeGroupMarker"/>
-<coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="183" y="22"/>
+<coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="190" y="22"/>
 <coolItem id="group.editor" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.cdt.make.editor" itemType="typePlaceholder" x="-1" y="-1"/>
 <coolItem id="org.eclipse.ui.DefaultTextEditor" itemType="typePlaceholder" x="-1" y="-1"/>
-<coolItem id="org.eclipse.cdt.ui.editor.CEditor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="org.eclipse.cdt.ui.editor.CEditor" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="group.help" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
 </coolbarLayout>
@@ -29,19 +29,35 @@
 <editorArea activeWorkbook="DefaultEditorWorkbook">
 <info part="DefaultEditorWorkbook">
 <folder appearance="1" expanded="2">
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+</presentation>
 </folder>
 </info>
 </editorArea>
+<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" partName="main.c" path="D:/Projects/fpl16/DE4_DDR2_UniPHY/software/DE4_DDR2_test/main.c" title="main.c" tooltip="DE4_DDR2_test/main.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DE4_DDR2_test/main.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="6183" selectionTopPixel="1772"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="system.h" partName="system.h" path="D:/Projects/fpl16/DE4_DDR2_UniPHY/software/DE4_DDR2_test_bsp/system.h" title="system.h" tooltip="DE4_DDR2_test_bsp/system.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DE4_DDR2_test_bsp/system.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="21" selectionOffset="9640" selectionTopPixel="4111"/>
+</editor>
 </editors>
 <views>
 <view id="org.eclipse.ui.navigator.ProjectExplorer" partName="Project Explorer">
-<viewState CommonNavigator.LINKING_ENABLED="0" CommonNavigator.LINKING_ENABLED.delayed="0" org.eclipse.cdt.ui.cview.groupincludes="false" org.eclipse.cdt.ui.cview.groupmacros="false" org.eclipse.cdt.ui.editor.CUChildren="true" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0"/>
+<viewState CommonNavigator.LINKING_ENABLED="0" org.eclipse.cdt.ui.cview.groupincludes="false" org.eclipse.cdt.ui.cview.groupmacros="false" org.eclipse.cdt.ui.editor.CUChildren="true" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0"/>
 </view>
-<view id="org.eclipse.ui.views.PropertySheet" partName="Properties"/>
+<view id="org.eclipse.ui.views.PropertySheet" partName="Properties">
+<viewState/>
+</view>
 <view id="org.eclipse.cdt.make.ui.views.MakeView" partName="Make Target"/>
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
+<expanded>
+<category IMemento.internal.id="Warnings (8 items)"/>
+</expanded>
 <columnWidths org.eclipse.ui.ide.locationField="64" org.eclipse.ui.ide.markerType="94" org.eclipse.ui.ide.pathField="124" org.eclipse.ui.ide.resourceField="94" org.eclipse.ui.ide.severityAndDescriptionField="1134"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
@@ -53,19 +69,13 @@
 <view id="org.eclipse.ui.console.ConsoleView" partName="Console">
 <viewState/>
 </view>
-<view id="org.eclipse.ui.internal.introview" partName="Welcome">
-<viewState>
-<presentation currentPage="root" restore="true"/>
-<standbyPart/>
-</viewState>
-</view>
 <view id="org.eclipse.mylyn.tasks.ui.views.tasks" partName="Task List"/>
 <view id="org.eclipse.ui.views.TaskList" partName="Tasks"/>
 <view id="org.eclipse.ui.views.ContentOutline" partName="Outline">
 <viewState/>
 </view>
 </views>
-<perspectives activePart="org.eclipse.ui.console.ConsoleView" activePerspective="com.altera.sbtgui.ui.cPerspective">
+<perspectives activePart="com.altera.sbtgui.launch.hardware.ByteStreamConsoleView:USB-Blaster on localhost [USB-0].1.0" activePerspective="com.altera.sbtgui.ui.cPerspective">
 <perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
 <descriptor class="org.eclipse.cdt.internal.ui.CPerspectiveFactory" id="org.eclipse.cdt.ui.CPerspective" label="C/C++"/>
 <alwaysOnActionSet id="org.eclipse.mylyn.context.ui.actionSet"/>
@@ -189,6 +199,7 @@
 <alwaysOnActionSet id="org.eclipse.cdt.ui.CElementCreationActionSet"/>
 <alwaysOnActionSet id="org.eclipse.ui.NavigateActionSet"/>
 <alwaysOnActionSet id="org.eclipse.debug.ui.launchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.rse.core.search.searchActionSet"/>
 <show_view_action id="org.eclipse.ui.console.ConsoleView"/>
 <show_view_action id="org.eclipse.search.ui.views.SearchView"/>
 <show_view_action id="org.eclipse.ui.views.ContentOutline"/>
@@ -209,8 +220,6 @@
 <view id="org.eclipse.ui.views.TaskList"/>
 <view id="org.eclipse.ui.console.ConsoleView"/>
 <view id="org.eclipse.ui.views.PropertySheet"/>
-<view id="org.eclipse.ui.views.ContentOutline"/>
-<view id="org.eclipse.ui.internal.introview"/>
 <fastViewBars/>
 <layout>
 <mainWindow>
@@ -226,22 +235,21 @@
 </folder>
 </info>
 <info folder="true" part="org.eclipse.ui.internal.ViewStack@1a40fff" ratio="0.75" ratioLeft="756" ratioRight="252" relationship="2" relative="topLeft">
-<folder activePageID="org.eclipse.ui.internal.introview" appearance="2" expanded="2">
-<page content="org.eclipse.ui.internal.introview" label="Welcome"/>
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 <page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
-</presentation>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
-<info part="org.eclipse.ui.editorss" ratio="0.25" ratioLeft="252" ratioRight="756" relationship="2" relative="topLeft"/>
-<info folder="true" part="bottom" ratio="0.3403694" ratioLeft="258" ratioRight="500" relationship="4" relative="org.eclipse.ui.editorss">
-<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
+<info part="org.eclipse.ui.editorss" ratio="0.2684752" ratioLeft="287" ratioRight="782" relationship="2" relative="topLeft"/>
+<info folder="true" part="bottom" ratio="0.64446723" ratioLeft="629" ratioRight="347" relationship="4" relative="org.eclipse.ui.editorss">
+<folder activePageID="com.altera.sbtgui.launch.hardware.ByteStreamConsoleView:USB-Blaster on localhost [USB-0].1.0" appearance="2" expanded="2">
 <page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
 <page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.ui.views.PropertySheet" label="Properties"/>
+<page content="com.altera.sbtgui.launch.hardware.ByteStreamConsoleView:USB-Blaster on localhost [USB-0].1.0" label="Nios II Console"/>
 <page content="com.altera.sbtgui.launch.hardware.ByteStreamConsoleView:*" label="LabelNotFound"/>
 <page content="com.altera.sbtgui.launch.hardware.ByteStreamConsoleView" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
@@ -249,15 +257,14 @@
 <part id="1"/>
 <part id="2"/>
 <part id="3"/>
+<part id="4"/>
 </presentation>
 </folder>
 </info>
 <info folder="true" part="topRight" ratio="0.75" ratioLeft="567" ratioRight="189" relationship="2" relative="org.eclipse.ui.editorss">
-<folder activePageID="org.eclipse.ui.views.ContentOutline" appearance="2" expanded="2">
-<page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
-</presentation>
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ContentOutline" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
 </mainWindow>
@@ -265,13 +272,182 @@
 </perspective>
 </perspectives>
 <workingSets/>
-<navigationHistory/>
+<navigationHistory>
+<editors>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test_bsp/system.h"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/main.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/mem_init.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.make.editor" path="/DE4_DDR2_test/Makefile"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.make.editor" path="/DE4_DDR2_test/Makefile"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test_bsp/alt_sys_init.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/main.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/mem_init.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test_bsp/system.h"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test_bsp/alt_sys_init.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test_bsp/system.h"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/mem_init.h"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/mem_init.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/main.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test_bsp/system.h"/>
+</editors>
+<item historyLabel="system.h" index="0">
+<position info="not_deleted" x="2279" y="10"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="5054" y="88"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="4978" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="4858" y="0"/>
+</item>
+<item historyLabel="mem_init.c" index="2">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="4858" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="5097" y="12"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="2314" y="21"/>
+</item>
+<item historyLabel="system.h" index="0">
+<position info="not_deleted" x="12846" y="7"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="4976" y="21"/>
+</item>
+<item historyLabel="system.h" index="0">
+<position info="not_deleted" x="10005" y="21"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="4966" y="0"/>
+</item>
+<item historyLabel="system.h" index="0">
+<position info="not_deleted" x="5500" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="4966" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="5097" y="12"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="2413" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="5322" y="84"/>
+</item>
+<item historyLabel="Makefile" index="3">
+<position info="not_deleted" x="24750" y="13"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="5322" y="84"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="5023" y="12"/>
+</item>
+<item historyLabel="Makefile" index="4">
+<position info="not_deleted" x="24750" y="13"/>
+</item>
+<item historyLabel="Makefile" index="4">
+<position info="not_deleted" x="24841" y="15"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="4542" y="0"/>
+</item>
+<item historyLabel="alt_sys_init.c" index="5">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="main.c" index="6">
+<position info="not_deleted" x="4542" y="0"/>
+</item>
+<item historyLabel="mem_init.c" index="7">
+<position info="not_deleted" x="3064" y="0"/>
+</item>
+<item historyLabel="main.c" index="6">
+<position info="not_deleted" x="4874" y="0"/>
+</item>
+<item historyLabel="system.h" index="8">
+<position info="not_deleted" x="5500" y="0"/>
+</item>
+<item historyLabel="mem_init.c" index="7">
+<position info="not_deleted" x="3064" y="0"/>
+</item>
+<item historyLabel="main.c" index="6">
+<position info="not_deleted" x="4933" y="0"/>
+</item>
+<item historyLabel="system.h" index="8">
+<position info="not_deleted" x="12938" y="10"/>
+</item>
+<item historyLabel="main.c" index="6">
+<position info="not_deleted" x="4933" y="0"/>
+</item>
+<item historyLabel="system.h" index="8">
+<position info="not_deleted" x="12917" y="31"/>
+</item>
+<item historyLabel="main.c" index="6">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="alt_sys_init.c" index="9">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="alt_sys_init.c" index="9">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="alt_sys_init.c" index="9">
+<position info="not_deleted" x="2288" y="39"/>
+</item>
+<item historyLabel="system.h" index="10">
+<position/>
+</item>
+<item historyLabel="alt_sys_init.c" index="9">
+<position info="not_deleted" x="2327" y="0"/>
+</item>
+<item historyLabel="main.c" index="6">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="mem_init.h" index="11">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="mem_init.c" index="12">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="system.h" index="10">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="system.h" index="10">
+<position info="not_deleted" x="13078" y="0"/>
+</item>
+<item historyLabel="main.c" index="13">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="system.h" index="14">
+<position info="not_deleted" x="12925" y="12"/>
+</item>
+<item historyLabel="main.c" index="13">
+<position info="not_deleted" x="5120" y="0"/>
+</item>
+<item historyLabel="system.h" index="14">
+<position info="not_deleted" x="9640" y="21"/>
+</item>
+<item historyLabel="main.c" index="13">
+<position info="not_deleted" x="5120" y="0"/>
+</item>
+<item active="true" historyLabel="main.c" index="13">
+<position info="not_deleted" x="5356" y="0"/>
+</item>
+</navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
 <workbenchWindowAdvisor/>
 <actionBarAdvisor/>
 <trimLayout>
 <trimArea IMemento.internal.id="128">
+<trimItem IMemento.internal.id="org.eclipse.mylyn.tasks.ui.trim.container"/>
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
 </trimArea>
 <trimArea IMemento.internal.id="1024">
@@ -282,6 +458,30 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="system.h" tooltip="DE4_DDR2_test_bsp/system.h">
+<persistable path="/DE4_DDR2_test_bsp/system.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="DE4_DDR2_test/main.c">
+<persistable path="/DE4_DDR2_test/main.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="alt_sys_init.c" tooltip="DE4_DDR2_test_bsp/alt_sys_init.c">
+<persistable path="/DE4_DDR2_test_bsp/alt_sys_init.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.make.editor" name="Makefile" tooltip="DE4_DDR2_test/Makefile">
+<persistable path="/DE4_DDR2_test/Makefile"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="mem_init.c" tooltip="DE4_DDR2_test/mem_init.c">
+<persistable path="/DE4_DDR2_test/mem_init.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="mem_init.h" tooltip="DE4_DDR2_test/mem_init.h">
+<persistable path="/DE4_DDR2_test/mem_init.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="dma_ctr.h" tooltip="DE4_DDR2_test/dma_ctr.h">
+<persistable path="/DE4_DDR2_test/dma_ctr.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="dma_ctr.c" tooltip="DE4_DDR2_test/dma_ctr.c">
+<persistable path="/DE4_DDR2_test/dma_ctr.c"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" name="settings.bsp" tooltip="DE4_DDR2_test_bsp/settings.bsp">
 <persistable path="/DE4_DDR2_test_bsp/settings.bsp"/>
 </file>

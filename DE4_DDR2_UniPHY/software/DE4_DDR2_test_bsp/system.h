@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_qsys' in SOPC Builder design 'DE4_QSYS'
  * SOPC Builder design path: ../../DE4_QSYS.sopcinfo
  *
- * Generated: Wed Jul 01 12:27:21 BST 2015
+ * Generated: Sun Jul 05 19:16:43 BST 2015
  */
 
 /*
@@ -135,6 +135,7 @@
 #define __ALTERA_AVALON_TIMER
 #define __ALTERA_MEM_IF_DDR2_EMIF
 #define __ALTERA_NIOS2_QSYS
+#define __WRAPPER
 
 
 /*
@@ -153,19 +154,19 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart"
-#define ALT_STDERR_BASE 0x41041020
+#define ALT_STDERR_BASE 0x41041040
 #define ALT_STDERR_DEV jtag_uart
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/jtag_uart"
-#define ALT_STDIN_BASE 0x41041020
+#define ALT_STDIN_BASE 0x41041040
 #define ALT_STDIN_DEV jtag_uart
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/jtag_uart"
-#define ALT_STDOUT_BASE 0x41041020
+#define ALT_STDOUT_BASE 0x41041040
 #define ALT_STDOUT_DEV jtag_uart
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -196,7 +197,7 @@
 #define BUTTON_IRQ_TYPE "NONE"
 #define BUTTON_NAME "/dev/button"
 #define BUTTON_RESET_VALUE 0
-#define BUTTON_SPAN 64
+#define BUTTON_SPAN 16
 #define BUTTON_TYPE "altera_avalon_pio"
 
 
@@ -223,7 +224,7 @@
 #define DDR2_I2C_SCL_IRQ_TYPE "NONE"
 #define DDR2_I2C_SCL_NAME "/dev/ddr2_i2c_scl"
 #define DDR2_I2C_SCL_RESET_VALUE 0
-#define DDR2_I2C_SCL_SPAN 64
+#define DDR2_I2C_SCL_SPAN 16
 #define DDR2_I2C_SCL_TYPE "altera_avalon_pio"
 
 
@@ -250,7 +251,7 @@
 #define DDR2_I2C_SDA_IRQ_TYPE "NONE"
 #define DDR2_I2C_SDA_NAME "/dev/ddr2_i2c_sda"
 #define DDR2_I2C_SDA_RESET_VALUE 0
-#define DDR2_I2C_SDA_SPAN 64
+#define DDR2_I2C_SDA_SPAN 16
 #define DDR2_I2C_SDA_TYPE "altera_avalon_pio"
 
 
@@ -262,16 +263,16 @@
 #define ALT_MODULE_CLASS_dma altera_avalon_dma
 #define DMA_ALLOW_BYTE_TRANSACTIONS 0
 #define DMA_ALLOW_DOUBLEWORD_TRANSACTIONS 0
-#define DMA_ALLOW_HW_TRANSACTIONS 0
-#define DMA_ALLOW_QUADWORD_TRANSACTIONS 1
-#define DMA_ALLOW_WORD_TRANSACTIONS 1
+#define DMA_ALLOW_HW_TRANSACTIONS 1
+#define DMA_ALLOW_QUADWORD_TRANSACTIONS 0
+#define DMA_ALLOW_WORD_TRANSACTIONS 0
 #define DMA_BASE 0x41041000
 #define DMA_IRQ 2
 #define DMA_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define DMA_LENGTHWIDTH 31
-#define DMA_MAX_BURST_SIZE 1024
+#define DMA_MAX_BURST_SIZE 1
 #define DMA_NAME "/dev/dma"
-#define DMA_SPAN 128
+#define DMA_SPAN 32
 #define DMA_TYPE "altera_avalon_dma"
 
 
@@ -291,13 +292,13 @@
  */
 
 #define ALT_MODULE_CLASS_jtag_uart altera_avalon_jtag_uart
-#define JTAG_UART_BASE 0x41041020
+#define JTAG_UART_BASE 0x41041040
 #define JTAG_UART_IRQ 0
 #define JTAG_UART_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_NAME "/dev/jtag_uart"
 #define JTAG_UART_READ_DEPTH 64
 #define JTAG_UART_READ_THRESHOLD 8
-#define JTAG_UART_SPAN 32
+#define JTAG_UART_SPAN 8
 #define JTAG_UART_TYPE "altera_avalon_jtag_uart"
 #define JTAG_UART_WRITE_DEPTH 64
 #define JTAG_UART_WRITE_THRESHOLD 8
@@ -326,7 +327,7 @@
 #define LED_IRQ_TYPE "NONE"
 #define LED_NAME "/dev/led"
 #define LED_RESET_VALUE 0
-#define LED_SPAN 64
+#define LED_SPAN 16
 #define LED_TYPE "altera_avalon_pio"
 
 
@@ -411,7 +412,7 @@
 #define SYSID_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_NAME "/dev/sysid"
 #define SYSID_SPAN 8
-#define SYSID_TIMESTAMP 1435748941
+#define SYSID_TIMESTAMP 1436119381
 #define SYSID_TYPE "altera_avalon_sysid_qsys"
 
 
@@ -435,9 +436,23 @@
 #define TIMER_PERIOD_UNITS "ms"
 #define TIMER_RESET_OUTPUT 0
 #define TIMER_SNAPSHOT 1
-#define TIMER_SPAN 128
+#define TIMER_SPAN 32
 #define TIMER_TICKS_PER_SEC 1000.0
 #define TIMER_TIMEOUT_PULSE_OUTPUT 0
 #define TIMER_TYPE "altera_avalon_timer"
+
+
+/*
+ * wrapper configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_wrapper wrapper
+#define WRAPPER_BASE 0x41041030
+#define WRAPPER_IRQ -1
+#define WRAPPER_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define WRAPPER_NAME "/dev/wrapper"
+#define WRAPPER_SPAN 16
+#define WRAPPER_TYPE "wrapper"
 
 #endif /* __SYSTEM_H_ */

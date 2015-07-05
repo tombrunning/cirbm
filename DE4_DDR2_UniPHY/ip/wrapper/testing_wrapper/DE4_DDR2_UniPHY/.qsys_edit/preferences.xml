@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences>
+ <debug showDebugMenu="0" />
+ <systemtable>
+  <columns>
+   <connections preferredWidth="207" />
+   <irq preferredWidth="34" />
+   <name preferredWidth="198" />
+   <inputclock preferredWidth="165" />
+   <description preferredWidth="272" />
+   <export preferredWidth="175" />
+  </columns>
+ </systemtable>
+ <clocktable>
+  <columns>
+   <clockname preferredWidth="462" />
+   <clocksource preferredWidth="461" />
+   <frequency preferredWidth="452" />
+  </columns>
+ </clocktable>
+ <library expandedCategories="Library,Project" />
+ <window width="1680" height="1006" x="0" y="0" />
+ <hdlexample language="VERILOG" />
+</preferences>

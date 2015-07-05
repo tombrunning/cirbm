@@ -1,0 +1,94 @@
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|altera_merlin_burst_adapter:burst_adapter_004|altera_merlin_burst_adapter_full:altera_merlin_burst_adapter_full.the_ba|state
+Name state.ST_IDLE state.ST_UNCOMP_WR_SUBBURST state.ST_UNCOMP_TRANS state.ST_COMP_TRANS 
+state.ST_IDLE 0 0 0 0 
+state.ST_COMP_TRANS 1 0 0 1 
+state.ST_UNCOMP_TRANS 1 0 1 0 
+state.ST_UNCOMP_WR_SUBBURST 1 1 0 0 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|altera_merlin_burst_adapter:burst_adapter_003|altera_merlin_burst_adapter_full:altera_merlin_burst_adapter_full.the_ba|state
+Name state.ST_IDLE state.ST_UNCOMP_WR_SUBBURST state.ST_UNCOMP_TRANS state.ST_COMP_TRANS 
+state.ST_IDLE 0 0 0 0 
+state.ST_COMP_TRANS 1 0 0 1 
+state.ST_UNCOMP_TRANS 1 0 1 0 
+state.ST_UNCOMP_WR_SUBBURST 1 1 0 0 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|altera_merlin_burst_adapter:burst_adapter_002|altera_merlin_burst_adapter_full:altera_merlin_burst_adapter_full.the_ba|state
+Name state.ST_IDLE state.ST_UNCOMP_WR_SUBBURST state.ST_UNCOMP_TRANS state.ST_COMP_TRANS 
+state.ST_IDLE 0 0 0 0 
+state.ST_COMP_TRANS 1 0 0 1 
+state.ST_UNCOMP_TRANS 1 0 1 0 
+state.ST_UNCOMP_WR_SUBBURST 1 1 0 0 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|altera_merlin_burst_adapter:burst_adapter_001|altera_merlin_burst_adapter_full:altera_merlin_burst_adapter_full.the_ba|state
+Name state.ST_IDLE state.ST_UNCOMP_WR_SUBBURST state.ST_UNCOMP_TRANS state.ST_COMP_TRANS 
+state.ST_IDLE 0 0 0 0 
+state.ST_COMP_TRANS 1 0 0 1 
+state.ST_UNCOMP_TRANS 1 0 1 0 
+state.ST_UNCOMP_WR_SUBBURST 1 1 0 0 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|altera_merlin_burst_adapter:burst_adapter|altera_merlin_burst_adapter_full:altera_merlin_burst_adapter_full.the_ba|state
+Name state.ST_IDLE state.ST_UNCOMP_WR_SUBBURST state.ST_UNCOMP_TRANS state.ST_COMP_TRANS 
+state.ST_IDLE 0 0 0 0 
+state.ST_COMP_TRANS 1 0 0 1 
+state.ST_UNCOMP_TRANS 1 0 1 0 
+state.ST_UNCOMP_WR_SUBBURST 1 1 0 0 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|DE4_QSYS_nios2_qsys:nios2_qsys|A_mul_cell_result_sel
+Name A_mul_cell_result_sel.00 A_mul_cell_result_sel.10 A_mul_cell_result_sel.01 
+A_mul_cell_result_sel.00 0 0 0 
+A_mul_cell_result_sel.01 1 0 1 
+A_mul_cell_result_sel.10 1 1 0 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|DE4_QSYS_nios2_qsys:nios2_qsys|DE4_QSYS_nios2_qsys_nios2_oci:the_DE4_QSYS_nios2_qsys_nios2_oci|DE4_QSYS_nios2_qsys_jtag_debug_module_wrapper:the_DE4_QSYS_nios2_qsys_jtag_debug_module_wrapper|DE4_QSYS_nios2_qsys_jtag_debug_module_tck:the_DE4_QSYS_nios2_qsys_jtag_debug_module_tck|DRsize
+Name DRsize.101 DRsize.100 DRsize.011 DRsize.010 DRsize.001 DRsize.000 
+DRsize.000 0 0 0 0 0 0 
+DRsize.001 0 0 0 0 1 1 
+DRsize.010 0 0 0 1 0 1 
+DRsize.011 0 0 1 0 0 1 
+DRsize.100 0 1 0 0 0 1 
+DRsize.101 1 0 0 0 0 1 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|DE4_QSYS_mem_if_ddr2_emif:mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_s0:s0|rw_manager_ddr2:sequencer_rw_mgr_inst|rw_manager_generic:rw_mgr_inst|state
+Name state.STATE_RW_IDLE state.STATE_RW_DONE state.STATE_RW_EXEC 
+state.STATE_RW_IDLE 0 0 0 
+state.STATE_RW_EXEC 1 0 1 
+state.STATE_RW_DONE 1 1 0 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|DE4_QSYS_mem_if_ddr2_emif:mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_s0:s0|rw_manager_ddr2:sequencer_rw_mgr_inst|rw_manager_generic:rw_mgr_inst|rw_manager_core:rw_mgr_core_inst|state
+Name state.RW_MGR_STATE_DONE state.RW_MGR_STATE_READING state.RW_MGR_STATE_RUNNING state.RW_MGR_STATE_IDLE 
+state.RW_MGR_STATE_IDLE 0 0 0 0 
+state.RW_MGR_STATE_RUNNING 0 0 1 1 
+state.RW_MGR_STATE_READING 0 1 0 1 
+state.RW_MGR_STATE_DONE 1 0 0 1 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|DE4_QSYS_mem_if_ddr2_emif:mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_s0:s0|sequencer_data_mgr:sequencer_data_mgr_inst|state_avl_curr
+Name state_avl_curr.STATE_AVL_DONE 
+state_avl_curr.STATE_AVL_IDLE 0 
+state_avl_curr.STATE_AVL_DONE 1 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|DE4_QSYS_mem_if_ddr2_emif:mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_s0:s0|sequencer_phy_mgr:sequencer_phy_mgr_inst|state_phy_curr
+Name state_phy_curr.STATE_PHY_DONE 
+state_phy_curr.STATE_PHY_IDLE 0 
+state_phy_curr.STATE_PHY_DONE 1 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|DE4_QSYS_mem_if_ddr2_emif:mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_s0:s0|sequencer_phy_mgr:sequencer_phy_mgr_inst|state_avl_curr
+Name state_avl_curr.STATE_AVL_IDLE state_avl_curr.STATE_AVL_DONE state_avl_curr.STATE_AVL_EXEC 
+state_avl_curr.STATE_AVL_IDLE 0 0 0 
+state_avl_curr.STATE_AVL_EXEC 1 0 1 
+state_avl_curr.STATE_AVL_DONE 1 1 0 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|DE4_QSYS_mem_if_ddr2_emif:mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_s0:s0|sequencer_reg_file:sequencer_reg_file_inst|state
+Name state.READ4 state.READ3 state.READ2 state.WRITE2 state.IDLE state.INIT 
+state.INIT 0 0 0 0 0 0 
+state.IDLE 0 0 0 0 1 1 
+state.WRITE2 0 0 0 1 0 1 
+state.READ2 0 0 1 0 0 1 
+state.READ3 0 1 0 0 0 1 
+state.READ4 1 0 0 0 0 1 
+
+State Machine - |DE4_DDR2|DE4_QSYS:u0|DE4_QSYS_mem_if_ddr2_emif:mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_s0:s0|sequencer_scc_mgr:sequencer_scc_mgr_inst|scc_state_curr
+Name scc_state_curr.STATE_SCC_IDLE scc_state_curr.STATE_SCC_DONE scc_state_curr.STATE_SCC_LOAD 
+scc_state_curr.STATE_SCC_IDLE 0 0 0 
+scc_state_curr.STATE_SCC_LOAD 1 0 1 
+scc_state_curr.STATE_SCC_DONE 1 1 0 

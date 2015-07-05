@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(EP4SGX530KH40) Path("D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/") File("DE4_DDR2.sof") MfrSpec(OpMask(1));
+		Device PartName(EP4SGX530KH40) Path("D:/Projects/fpl16/DE4_DDR2_UniPHY/") File("DE4_DDR2.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 

@@ -3,43 +3,43 @@ TimeQuest Timing Analyzer Summary
 ------------------------------------------------------------
 
 Type  : Slow 900mV 85C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 0.436
+Slack : 0.355
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Setup 'M1_DDR2_clk[1]'
-Slack : 0.614
+Slack : 0.603
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Setup 'M1_DDR2_clk[0]'
-Slack : 0.616
+Slack : 0.605
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_write_clk'
-Slack : 0.856
+Slack : 0.842
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 1.134
+Slack : 0.860
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Setup 'u0|mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk'
-Slack : 1.590
+Slack : 1.576
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 2.572
+Slack : 3.188
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 7.418
+Slack : 8.581
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Setup 'OSC_50_Bank3'
-Slack : 12.644
+Slack : 15.455
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Setup 'altera_reserved_tck'
-Slack : 48.078
+Slack : 48.174
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Hold 'altera_reserved_tck'
@@ -47,87 +47,87 @@ Slack : 0.195
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 0.221
-TNS   : 0.000
-
-Type  : Slow 900mV 85C Model Hold 'OSC_50_Bank3'
-Slack : 0.243
+Slack : 0.226
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
 Slack : 0.245
 TNS   : 0.000
 
+Type  : Slow 900mV 85C Model Hold 'OSC_50_Bank3'
+Slack : 0.246
+TNS   : 0.000
+
 Type  : Slow 900mV 85C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 0.250
+Slack : 0.249
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 0.255
+Slack : 0.271
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Hold 'u0|mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk'
-Slack : 0.975
+Slack : 0.987
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Hold 'M1_DDR2_clk[0]'
-Slack : 1.000
+Slack : 1.007
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Hold 'M1_DDR2_clk[1]'
-Slack : 1.002
+Slack : 1.010
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_write_clk'
-Slack : 1.982
+Slack : 1.999
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 1.762
+Slack : 1.315
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 3.088
+Slack : 4.524
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 7.209
+Slack : 6.014
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Recovery 'OSC_50_Bank3'
-Slack : 9.935
+Slack : 16.590
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 37.546
+Slack : 37.541
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Recovery 'altera_reserved_tck'
-Slack : 48.422
-TNS   : 0.000
-
-Type  : Slow 900mV 85C Model Removal 'altera_reserved_tck'
-Slack : 0.586
-TNS   : 0.000
-
-Type  : Slow 900mV 85C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 0.668
-TNS   : 0.000
-
-Type  : Slow 900mV 85C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 0.724
+Slack : 47.748
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 0.878
+Slack : 0.476
 TNS   : 0.000
 
-Type  : Slow 900mV 85C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 5.006
+Type  : Slow 900mV 85C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
+Slack : 0.516
+TNS   : 0.000
+
+Type  : Slow 900mV 85C Model Removal 'altera_reserved_tck'
+Slack : 0.544
+TNS   : 0.000
+
+Type  : Slow 900mV 85C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
+Slack : 0.676
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Removal 'OSC_50_Bank3'
-Slack : 8.487
+Slack : 2.512
+TNS   : 0.000
+
+Type  : Slow 900mV 85C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
+Slack : 6.223
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_write_clk'
@@ -143,11 +143,11 @@ Slack : 1.051
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 2.548
+Slack : 2.549
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 2.713
+Slack : 2.708
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
@@ -159,51 +159,51 @@ Slack : 6.667
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Minimum Pulse Width 'OSC_50_Bank3'
-Slack : 8.970
+Slack : 8.963
 TNS   : 0.000
 
 Type  : Slow 900mV 85C Model Minimum Pulse Width 'altera_reserved_tck'
-Slack : 49.329
+Slack : 49.331
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Setup 'M1_DDR2_clk[1]'
-Slack : 0.600
+Slack : 0.590
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Setup 'M1_DDR2_clk[0]'
-Slack : 0.603
+Slack : 0.593
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 0.661
+Slack : 0.652
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_write_clk'
-Slack : 0.876
+Slack : 0.866
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 1.376
+Slack : 1.033
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk'
-Slack : 1.609
+Slack : 1.599
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 2.810
+Slack : 3.348
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 7.728
+Slack : 8.774
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Setup 'OSC_50_Bank3'
-Slack : 13.163
+Slack : 15.643
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Setup 'altera_reserved_tck'
-Slack : 48.116
+Slack : 48.189
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Hold 'altera_reserved_tck'
@@ -211,15 +211,15 @@ Slack : 0.195
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 0.218
+Slack : 0.204
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Hold 'OSC_50_Bank3'
-Slack : 0.235
+Slack : 0.242
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 0.241
+Slack : 0.242
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
@@ -227,71 +227,71 @@ Slack : 0.245
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 0.250
+Slack : 0.266
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk'
-Slack : 0.995
+Slack : 1.007
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Hold 'M1_DDR2_clk[0]'
-Slack : 1.056
+Slack : 1.067
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Hold 'M1_DDR2_clk[1]'
-Slack : 1.060
+Slack : 1.070
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_write_clk'
-Slack : 1.993
+Slack : 2.010
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 1.986
+Slack : 1.584
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 3.268
+Slack : 4.591
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 7.526
+Slack : 6.455
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Recovery 'OSC_50_Bank3'
-Slack : 10.472
+Slack : 16.786
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 37.700
+Slack : 37.673
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Recovery 'altera_reserved_tck'
-Slack : 48.441
-TNS   : 0.000
-
-Type  : Slow 900mV 0C Model Removal 'altera_reserved_tck'
-Slack : 0.562
-TNS   : 0.000
-
-Type  : Slow 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 0.660
-TNS   : 0.000
-
-Type  : Slow 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 0.687
+Slack : 47.797
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 0.826
+Slack : 0.462
 TNS   : 0.000
 
-Type  : Slow 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 4.707
+Type  : Slow 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
+Slack : 0.497
+TNS   : 0.000
+
+Type  : Slow 900mV 0C Model Removal 'altera_reserved_tck'
+Slack : 0.520
+TNS   : 0.000
+
+Type  : Slow 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
+Slack : 0.658
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Removal 'OSC_50_Bank3'
-Slack : 7.900
+Slack : 2.363
+TNS   : 0.000
+
+Type  : Slow 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
+Slack : 5.793
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_write_clk'
@@ -311,11 +311,11 @@ Slack : 2.535
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 2.729
+Slack : 2.724
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 5.887
+Slack : 5.886
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
@@ -323,63 +323,67 @@ Slack : 6.667
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Minimum Pulse Width 'OSC_50_Bank3'
-Slack : 8.978
+Slack : 8.971
 TNS   : 0.000
 
 Type  : Slow 900mV 0C Model Minimum Pulse Width 'altera_reserved_tck'
-Slack : 49.385
-TNS   : 0.000
-
-Type  : Fast 900mV 0C Model Setup 'M1_DDR2_clk[0]'
-Slack : 0.555
+Slack : 49.382
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Setup 'M1_DDR2_clk[1]'
-Slack : 0.555
+Slack : 0.543
+TNS   : 0.000
+
+Type  : Fast 900mV 0C Model Setup 'M1_DDR2_clk[0]'
+Slack : 0.544
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_write_clk'
-Slack : 0.853
+Slack : 0.845
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk'
-Slack : 1.571
+Slack : 1.563
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 2.072
+Slack : 1.919
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 2.783
+Slack : 2.638
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 4.333
+Slack : 4.758
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Setup 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 10.085
+Slack : 10.779
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Setup 'OSC_50_Bank3'
-Slack : 15.606
+Slack : 17.563
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Setup 'altera_reserved_tck'
-Slack : 49.291
+Slack : 49.366
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Hold 'altera_reserved_tck'
 Slack : 0.102
 TNS   : 0.000
 
-Type  : Fast 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 0.111
+Type  : Fast 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
+Slack : 0.110
 TNS   : 0.000
 
-Type  : Fast 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 0.124
+Type  : Fast 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
+Slack : 0.126
+TNS   : 0.000
+
+Type  : Fast 900mV 0C Model Hold 'OSC_50_Bank3'
+Slack : 0.131
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
@@ -387,75 +391,71 @@ Slack : 0.134
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 0.138
-TNS   : 0.000
-
-Type  : Fast 900mV 0C Model Hold 'OSC_50_Bank3'
-Slack : 0.143
+Slack : 0.142
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Hold 'M1_DDR2_clk[0]'
-Slack : 1.242
+Slack : 1.248
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Hold 'M1_DDR2_clk[1]'
-Slack : 1.243
+Slack : 1.248
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|DE4_QSYS_mem_if_ddr2_emif_p0_leveling_clk'
-Slack : 1.285
+Slack : 1.291
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Hold 'u0|mem_if_ddr2_emif|pll0|pll_write_clk'
-Slack : 2.138
+Slack : 2.148
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 3.824
+Slack : 3.532
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 4.612
+Slack : 5.365
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 9.630
+Slack : 8.868
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Recovery 'OSC_50_Bank3'
-Slack : 13.819
+Slack : 17.966
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Recovery 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 38.568
+Slack : 38.543
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Recovery 'altera_reserved_tck'
-Slack : 49.460
-TNS   : 0.000
-
-Type  : Fast 900mV 0C Model Removal 'altera_reserved_tck'
-Slack : 0.308
-TNS   : 0.000
-
-Type  : Fast 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 0.359
-TNS   : 0.000
-
-Type  : Fast 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 0.380
+Slack : 49.037
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
-Slack : 0.520
+Slack : 0.262
 TNS   : 0.000
 
-Type  : Fast 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 3.094
+Type  : Fast 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
+Slack : 0.268
+TNS   : 0.000
+
+Type  : Fast 900mV 0C Model Removal 'altera_reserved_tck'
+Slack : 0.284
+TNS   : 0.000
+
+Type  : Fast 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
+Slack : 0.352
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Removal 'OSC_50_Bank3'
-Slack : 5.332
+Slack : 1.538
+TNS   : 0.000
+
+Type  : Fast 900mV 0C Model Removal 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
+Slack : 3.856
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_write_clk'
@@ -471,15 +471,15 @@ Slack : 1.257
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_afi_clk'
-Slack : 2.552
+Slack : 2.551
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_addr_cmd_clk'
-Slack : 2.917
+Slack : 2.913
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_avl_clk'
-Slack : 5.927
+Slack : 5.922
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Minimum Pulse Width 'u0|mem_if_ddr2_emif|pll0|pll_config_clk'
@@ -487,11 +487,11 @@ Slack : 6.667
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Minimum Pulse Width 'OSC_50_Bank3'
-Slack : 9.114
+Slack : 9.109
 TNS   : 0.000
 
 Type  : Fast 900mV 0C Model Minimum Pulse Width 'altera_reserved_tck'
-Slack : 49.254
+Slack : 49.253
 TNS   : 0.000
 
 ------------------------------------------------------------

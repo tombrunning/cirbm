@@ -74,7 +74,7 @@ module latency_aware_read_master (
 	input [ADDRESSWIDTH-1:0] coe_control_read_base;
 	input [ADDRESSWIDTH-1:0] coe_control_read_length;
 	input coe_control_go;
-	output wire coe_control_done;
+	output reg coe_control_done;
 	output wire coe_control_early_done;  // don't use this unless you know what you are doing!
 	
 	// user logic inputs and outputs
@@ -100,8 +100,10 @@ module latency_aware_read_master (
 	wire too_many_pending_reads;
 	reg too_many_pending_reads_d1;
 	wire [FIFODEPTH_LOG2-1:0] fifo_used;
-
-
+    
+    //Jiang adds
+    wire coe_control_done_w;
+    reg fifo_started;
 
 
 	// registering the coe_control_fixed_location bit
@@ -166,13 +168,33 @@ module latency_aware_read_master (
 		end
 	end	
 	
-	
+    // Introduction of coe_control_done_w and fifo_started to fix the logic issue that the initial state of control_done should be 0, rather than 1.
+	always @ (posedge clk or posedge reset)
+	begin
+		if (reset == 1)
+		begin
+            coe_control_done <= 0;
+        end else if (fifo_started == 1) begin
+            coe_control_done <= coe_control_done_w;
+        end
+    end
+    
+    always @ (posedge clk or posedge reset)
+	begin
+		if (reset == 1)
+		begin
+            fifo_started <= 0;
+        end else if (length != 0) begin
+            fifo_started <= 1;
+        end
+    end
+    
 	
 	// control logic
 	assign too_many_pending_reads = (fifo_used + reads_pending) >= (FIFODEPTH - 4);
 	assign master_read = (length != 0) & (too_many_pending_reads_d1 == 0);
 	assign increment_address = (length != 0) & (too_many_pending_reads_d1 == 0) & (master_waitrequest == 0);
-	assign coe_control_done = (reads_pending == 0) & (length == 0);  // master done posting reads and all reads have returned
+	assign coe_control_done_w = (reads_pending == 0) & (length == 0);  // master done posting reads and all reads have returned
 	assign coe_control_early_done = (length == 0);  // if you need all the pending reads to return then use 'coe_control_done' instead of this signal
 
 

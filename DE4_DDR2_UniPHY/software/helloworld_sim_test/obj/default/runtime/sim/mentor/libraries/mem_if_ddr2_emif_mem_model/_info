@@ -1,0 +1,93 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+valt_mem_if_common_ddr_mem_model_mem_if_dm_pins_en_mem_if_dqsn_en
+Z1 DXx6 sv_std 3 std 0 22 F[19LRNL:5;XmIFh[XOPn1
+!i10b 1
+!s100 [[YzB]Z6`V7Cn;o^?ZaBC3
+I=3hSm<XALO^ZeNSPz]AMK3
+Vf1`D=b1E=YBWlB_YoINSW3
+Z2 !s105 alt_mem_if_common_ddr_mem_model_mem_if_dm_pins_en_mem_if_dqsn_en_sv_unit
+S1
+Z3 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+Z4 w1435753713
+Z5 8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/alt_mem_if_common_ddr_mem_model_mem_if_dm_pins_en_mem_if_dqsn_en.sv
+Z6 FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/alt_mem_if_common_ddr_mem_model_mem_if_dm_pins_en_mem_if_dqsn_en.sv
+L0 16
+Z7 OV;L;10.1d;51
+r1
+!s85 0
+31
+Z8 !s108 1435754508.047000
+Z9 !s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/alt_mem_if_common_ddr_mem_model_mem_if_dm_pins_en_mem_if_dqsn_en.sv|
+Z10 !s90 -reportprogress|300|-sv|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/alt_mem_if_common_ddr_mem_model_mem_if_dm_pins_en_mem_if_dqsn_en.sv|-work|mem_if_ddr2_emif_mem_model|
+!s101 -O0
+Z11 o-sv -work mem_if_ddr2_emif_mem_model -O0
+valt_mem_if_ddr2_mem_model_top_mem_if_dm_pins_en_mem_if_dqsn_en
+R1
+IKW[g0m9k9IbA99hkBBb0^3
+VMVm4;;mLF5;1c7OhRgjk11
+S1
+R3
+R4
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/alt_mem_if_ddr2_mem_model_top_mem_if_dm_pins_en_mem_if_dqsn_en.sv
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/alt_mem_if_ddr2_mem_model_top_mem_if_dm_pins_en_mem_if_dqsn_en.sv
+L0 17
+R7
+r1
+31
+R11
+!i10b 1
+!s100 ok51O4:f`9ioB=>`le^SF2
+!s105 alt_mem_if_ddr2_mem_model_top_mem_if_dm_pins_en_mem_if_dqsn_en_sv_unit
+!s85 0
+!s108 1435754507.804000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/alt_mem_if_ddr2_mem_model_top_mem_if_dm_pins_en_mem_if_dqsn_en.sv|
+!s90 -reportprogress|300|-sv|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/alt_mem_if_ddr2_mem_model_top_mem_if_dm_pins_en_mem_if_dqsn_en.sv|-work|mem_if_ddr2_emif_mem_model|
+!s101 -O0
+vmem_rank_model
+R1
+!i10b 1
+!s100 ]g[YhbSgJ3Xg3ZG?Hm;[e2
+Ioi[`gH[>OgTg0iU>BS5Co1
+VKL73aKTNhfUIPD4DX]dBO0
+R2
+S1
+R3
+R4
+R5
+R6
+L0 273
+R7
+r1
+!s85 0
+31
+R8
+R9
+R10
+!s101 -O0
+R11
+vrdimm_chip
+R1
+!i10b 1
+!s100 =YKQclaDDoQa2fYY1MmzW3
+I9W;;GO`RzDcV=dC:Fi1AB2
+V52eh72a_^CKXfofEEFQ583
+R2
+S1
+R3
+R4
+R5
+R6
+L0 231
+R7
+r1
+!s85 0
+31
+R8
+R9
+R10
+!s101 -O0
+R11

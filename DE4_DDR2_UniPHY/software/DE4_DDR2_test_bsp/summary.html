@@ -22,13 +22,13 @@
 <td width="20%" bgcolor="#77BBFF">BSP Version:</td><td>default</td>
 </tr>
 <tr mode="wrap">
-<td width="20%" bgcolor="#77BBFF">BSP Generated On:</td><td>01-Jul-2015 12:27:20</td>
+<td width="20%" bgcolor="#77BBFF">BSP Generated On:</td><td>05-Jul-2015 19:16:41</td>
 </tr>
 <tr mode="wrap">
-<td width="20%" bgcolor="#77BBFF">BSP Generated Timestamp:</td><td>1435750040382</td>
+<td width="20%" bgcolor="#77BBFF">BSP Generated Timestamp:</td><td>1436120201658</td>
 </tr>
 <tr mode="wrap">
-<td width="20%" bgcolor="#77BBFF">BSP Generated Location:</td><td>D:\Projects\fpl16\cirbm\DE4_DDR2_UniPHY\software\DE4_DDR2_test_bsp</td>
+<td width="20%" bgcolor="#77BBFF">BSP Generated Location:</td><td>D:\Projects\fpl16\DE4_DDR2_UniPHY\software\DE4_DDR2_test_bsp</td>
 </tr>
 </table>
 <br>
@@ -38,10 +38,13 @@
 <th align="left" width="20%">Slave Descriptor</th><th align="left" width="40%">Address Range</th><th align="left" width="20%">Size</th><th align="left" width="20%">Attributes</th>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>jtag_uart</td><td>0x41041020 - 0x4104103F</td><td>32</td><td class="listing">printable</td>
+<td>jtag_uart</td><td>0x41041040 - 0x41041047</td><td>8</td><td class="listing">printable</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>dma</td><td>0x41041000 - 0x4104107F</td><td>128</td><td class="listing">&nbsp;</td>
+<td>wrapper</td><td>0x41041030 - 0x4104103F</td><td>16</td><td class="listing">&nbsp;</td>
+</tr>
+<tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
+<td>dma</td><td>0x41041000 - 0x4104101F</td><td>32</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
 <td>onchip_memory</td><td>0x41020000 - 0x4103F3FF</td><td>128000</td><td class="listing">memory</td>
@@ -50,19 +53,19 @@
 <td>sysid</td><td>0x40000060 - 0x40000067</td><td>8</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>button</td><td>0x40000050 - 0x4000008F</td><td>64</td><td class="listing">&nbsp;</td>
+<td>button</td><td>0x40000050 - 0x4000005F</td><td>16</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>led</td><td>0x40000040 - 0x4000007F</td><td>64</td><td class="listing">&nbsp;</td>
+<td>led</td><td>0x40000040 - 0x4000004F</td><td>16</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>ddr2_i2c_scl</td><td>0x40000030 - 0x4000006F</td><td>64</td><td class="listing">&nbsp;</td>
+<td>ddr2_i2c_scl</td><td>0x40000030 - 0x4000003F</td><td>16</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>ddr2_i2c_sda</td><td>0x40000020 - 0x4000005F</td><td>64</td><td class="listing">&nbsp;</td>
+<td>ddr2_i2c_sda</td><td>0x40000020 - 0x4000002F</td><td>16</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>timer</td><td>0x40000000 - 0x4000007F</td><td>128</td><td class="listing">timer</td>
+<td>timer</td><td>0x40000000 - 0x4000001F</td><td>32</td><td class="listing">timer</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
 <td>mem_if_ddr2_emif</td><td>0x00000000 - 0x3FFFFFFF</td><td>1073741824</td><td class="listing">memory</td>

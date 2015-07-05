@@ -1,0 +1,42 @@
+library verilog;
+use verilog.vl_types.all;
+entity DE4_QSYS_mem_if_ddr2_emif is
+    port(
+        pll_ref_clk     : in     vl_logic;
+        global_reset_n  : in     vl_logic;
+        soft_reset_n    : in     vl_logic;
+        afi_clk         : out    vl_logic;
+        afi_half_clk    : out    vl_logic;
+        afi_reset_n     : out    vl_logic;
+        afi_reset_export_n: out    vl_logic;
+        mem_a           : out    vl_logic_vector(13 downto 0);
+        mem_ba          : out    vl_logic_vector(2 downto 0);
+        mem_ck          : out    vl_logic_vector(1 downto 0);
+        mem_ck_n        : out    vl_logic_vector(1 downto 0);
+        mem_cke         : out    vl_logic_vector(0 downto 0);
+        mem_cs_n        : out    vl_logic_vector(0 downto 0);
+        mem_dm          : out    vl_logic_vector(7 downto 0);
+        mem_ras_n       : out    vl_logic_vector(0 downto 0);
+        mem_cas_n       : out    vl_logic_vector(0 downto 0);
+        mem_we_n        : out    vl_logic_vector(0 downto 0);
+        mem_dq          : inout  vl_logic_vector(63 downto 0);
+        mem_dqs         : inout  vl_logic_vector(7 downto 0);
+        mem_dqs_n       : inout  vl_logic_vector(7 downto 0);
+        mem_odt         : out    vl_logic_vector(0 downto 0);
+        avl_ready       : out    vl_logic;
+        avl_burstbegin  : in     vl_logic;
+        avl_addr        : in     vl_logic_vector(24 downto 0);
+        avl_rdata_valid : out    vl_logic;
+        avl_rdata       : out    vl_logic_vector(255 downto 0);
+        avl_wdata       : in     vl_logic_vector(255 downto 0);
+        avl_be          : in     vl_logic_vector(31 downto 0);
+        avl_read_req    : in     vl_logic;
+        avl_write_req   : in     vl_logic;
+        avl_size        : in     vl_logic_vector(2 downto 0);
+        local_init_done : out    vl_logic;
+        local_cal_success: out    vl_logic;
+        local_cal_fail  : out    vl_logic;
+        oct_rdn         : in     vl_logic;
+        oct_rup         : in     vl_logic
+    );
+end DE4_QSYS_mem_if_ddr2_emif;

@@ -1,0 +1,28 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+valtera_conduit_bfm_0005
+Z1 DXx6 sv_std 3 std 0 22 F[19LRNL:5;XmIFh[XOPn1
+DXx26 altera_avalon_vip_pkgs_lib 13 verbosity_pkg 0 22 UMjj8An7e>LD1ohVD]7KL0
+!i10b 1
+!s100 NI5<ad;[`=kVoabi>^MBV2
+I98cFZE[@fRd`6z1Kmmh7K2
+VhbXe4TIgak[`FSE3ili:C2
+!s105 altera_conduit_bfm_0005_sv_unit
+S1
+Z2 dD:\Projects\fpl16\DE4_DDR2_UniPHY\software\helloworld_sim_test\obj\default\runtime\sim\mentor
+w1435753713
+8D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_conduit_bfm_0005.sv
+FD:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_conduit_bfm_0005.sv
+L0 36
+Z3 OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1435754508.788000
+!s107 D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_conduit_bfm_0005.sv|
+!s90 -reportprogress|300|-sv|D:/Projects/fpl16/cirbm/DE4_DDR2_UniPHY/DE4_QSYS/testbench/DE4_QSYS_tb/simulation/submodules/altera_conduit_bfm_0005.sv|-L|altera_avalon_vip_pkgs_lib|-work|DE4_QSYS_inst_ddr2_i2c_scl_bfm|
+!s101 -O0
+o-sv -L altera_avalon_vip_pkgs_lib -work DE4_QSYS_inst_ddr2_i2c_scl_bfm -O0

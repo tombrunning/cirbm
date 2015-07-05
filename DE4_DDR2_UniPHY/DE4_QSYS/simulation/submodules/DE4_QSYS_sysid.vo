@@ -41,7 +41,7 @@ module  DE4_QSYS_sysid
 
 
 	assign
-		readdata = {1'b0, address, 1'b0, address, 1'b0, address, 1'b0, {2{address}}, {2{1'b0}}, address, {3{1'b0}}, address, 1'b0, {2{address}}, {3{1'b0}}, {2{address}}, {5{1'b0}}, address, {2{1'b0}}};
+		readdata = {1'b0, address, 1'b0, address, 1'b0, address, 1'b0, {2{address}}, {2{1'b0}}, address, 1'b0, {2{address}}, {2{1'b0}}, address, 1'b0, {2{address}}, {2{1'b0}}, {2{address}}, 1'b0, {3{address}}, 1'b0, {2{address}}};
 endmodule //DE4_QSYS_sysid
 //synopsys translate_on
 //VALID FILE

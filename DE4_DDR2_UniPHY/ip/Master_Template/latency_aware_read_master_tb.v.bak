@@ -1,0 +1,107 @@
+`timescale 10ns / 10ns
+
+module latency_aware_read_master_tb();
+
+	parameter DATAWIDTH = 32;
+	parameter ADDRESSWIDTH = 32;
+	reg clk;
+	reg reset;
+
+	// control inputs and outputs
+	reg coe_control_fixed_location;
+	reg coe_control_read_base;
+	reg coe_control_read_length;
+	reg coe_control_go;             //add to wave window
+	wire coe_control_done;          //add to wave window
+	wire coe_control_early_done;
+	
+	// user logic inputs and outputs
+	reg coe_user_read_buffer;       //add to wave window
+	wire coe_user_buffer_data;      //add to wave window
+	wire coe_user_data_available;   //add to wave window
+	
+	// master inputs and outputs
+	wire master_address;
+	wire master_read;               //add to wave window
+	wire master_byteenable;
+	reg master_readdata;            //add to wave window
+	reg master_readdatavalid;       //add to wave window
+	reg master_waitrequest;
+
+    
+    always begin
+        #5 clk = ~clk;
+    end
+    
+//Simulated logic of DDR2 memory controller
+    always @(posedge clk or posedge reset) begin
+        if(reset == 1) begin
+                master_readdatavalid <= 0;
+                master_readdata <= 0;
+        end else begin
+            if(master_read) begin
+                master_readdatavalid <= 1;
+                master_readdata <= master_readdata + 1'b1;
+            end
+        end
+    end
+
+    initial begin
+
+    //register init
+    clk = 0;
+    reset = 1;
+	coe_control_fixed_location = 0;
+	coe_control_read_base = 0;
+	coe_control_read_length = 4;
+	coe_control_go = 0;    
+	coe_user_read_buffer = 0;    
+	master_readdata = 1;
+	master_readdatavalid = 1;
+	master_waitrequest = 0;             //Ideal DDR memory, no wait requests.
+    
+    //actions
+    #100                                // initial state testing, should return nothing from the FIFO
+        coe_user_read_buffer = 1;
+    #40
+        coe_control_go = 1;
+    #200
+        //coe_control_go = 0;
+    
+    reset = 0;
+    
+    
+    
+    $finish
+    end
+
+
+// DUT instantiation   
+latency_aware_read_master inst(
+	
+    clk,
+	reset,
+
+	// control inputs and outputs
+	coe_control_fixed_location,
+	coe_control_read_base,
+	coe_control_read_length,
+	coe_control_go,
+	coe_control_done,
+	coe_control_early_done,
+	
+	// user logic inputs and outputs
+	coe_user_read_buffer,
+	coe_user_buffer_data,
+	coe_user_data_available,
+	
+	// master inputs and outputs
+	master_address,
+	master_read,
+	master_byteenable,
+	master_readdata,
+	master_readdatavalid,
+	master_waitrequest
+);
+
+endmodule

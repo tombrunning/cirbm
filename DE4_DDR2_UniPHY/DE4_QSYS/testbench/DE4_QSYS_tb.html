@@ -67,7 +67,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
   </table>
   <table class="blueBar">
    <tr>
-    <td class="l">2015.07.01.13:28:24</td>
+    <td class="l">2015.07.03.11:51:37</td>
     <td class="r">Datasheet</td>
    </tr>
   </table>
@@ -125,7 +125,10 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
      </a> altera_avalon_pio 13.0.1.99.2
      <br/>&#160;&#160;
      <a href="#module_DE4_QSYS_inst_dma"><b>DE4_QSYS_inst_dma</b>
-     </a> altera_avalon_dma 13.0.1.99.2</span>
+     </a> altera_avalon_dma 13.0.1.99.2
+     <br/>&#160;&#160;
+     <a href="#module_DE4_QSYS_inst_wrapper"><b>DE4_QSYS_inst_wrapper</b>
+     </a> wrapper 1.0</span>
    </div>
   </div>
   <div style="width:100% ;  height:10px"> </div>
@@ -141,12 +144,17 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
      <a href="#module_DE4_QSYS_inst_dma"><b>DE4_QSYS_inst_dma</b>
      </a>
     </td>
+    <td class="mastermodule" colspan="1">
+     <a href="#module_DE4_QSYS_inst_ppl_mem_reader"><b>DE4_QSYS_inst_ppl_mem_reader</b>
+     </a>
+    </td>
    </tr>
    <tr>
     <td class="masterl">&#160;data_master</td>
     <td class="masterr">&#160;instruction_master</td>
     <td class="masterl">&#160;read_master</td>
     <td class="masterr">&#160;write_master</td>
+    <td class="masterlr">&#160;avalon_master</td>
    </tr>
    <tr>
     <td class="slavemodule">&#160;
@@ -157,11 +165,13 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">s1&#160;</td>
     <td class="addr"><span style="color:#989898">0x</span>41020000</td>
     <td class="addr"><span style="color:#989898">0x</span>41020000</td>
+    <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
    </tr>
@@ -174,11 +184,13 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">avl&#160;</td>
     <td class="addr"><span style="color:#989898">0x</span>00000000</td>
     <td class="empty"></td>
+    <td class="addr"><span style="color:#989898">0x</span>00000000</td>
     <td class="addr"><span style="color:#989898">0x</span>00000000</td>
     <td class="addr"><span style="color:#989898">0x</span>00000000</td>
    </tr>
@@ -191,11 +203,13 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">jtag_debug_module&#160;</td>
     <td class="addr"><span style="color:#989898">0x</span>41040800</td>
     <td class="addr"><span style="color:#989898">0x</span>41040800</td>
+    <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
    </tr>
@@ -208,10 +222,12 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">avalon_jtag_slave&#160;</td>
-    <td class="addr"><span style="color:#989898">0x</span>41041020</td>
+    <td class="addr"><span style="color:#989898">0x</span>41041040</td>
+    <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
@@ -225,10 +241,12 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">control_slave&#160;</td>
     <td class="addr"><span style="color:#989898">0x</span>40000060</td>
+    <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
@@ -242,10 +260,12 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">s1&#160;</td>
     <td class="addr"><span style="color:#989898">0x</span>40000000</td>
+    <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
@@ -259,10 +279,12 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">s1&#160;</td>
     <td class="addr"><span style="color:#989898">0x</span>40000040</td>
+    <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
@@ -276,10 +298,12 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">s1&#160;</td>
     <td class="addr"><span style="color:#989898">0x</span>40000050</td>
+    <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
@@ -293,10 +317,12 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">s1&#160;</td>
     <td class="addr"><span style="color:#989898">0x</span>40000030</td>
+    <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
@@ -310,10 +336,12 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">s1&#160;</td>
     <td class="addr"><span style="color:#989898">0x</span>40000020</td>
+    <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
@@ -327,10 +355,31 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
+    <td class="empty"></td>
    </tr>
    <tr>
     <td class="slaveb">control_port_slave&#160;</td>
+    <td class="empty"></td>
     <td class="addr"><span style="color:#989898">0x</span>41041000</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+   </tr>
+   <tr>
+    <td class="slavemodule">&#160;
+     <a href="#module_DE4_QSYS_inst_wrapper"><b>DE4_QSYS_inst_wrapper</b>
+     </a>
+    </td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+   </tr>
+   <tr>
+    <td class="slaveb">s0&#160;</td>
+    <td class="addr"><span style="color:#989898">0x</span>41041020</td>
+    <td class="addr"><span style="color:#989898">0x</span>41041020</td>
     <td class="empty"></td>
     <td class="empty"></td>
     <td class="empty"></td>
@@ -350,7 +399,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <table>
        <tr>
         <td class="parametername">AUTO_GENERATION_ID</td>
-        <td class="parametervalue">1435753704</td>
+        <td class="parametervalue">1435920697</td>
        </tr>
        <tr>
         <td class="parametername">AUTO_UNIQUE_ID</td>
@@ -407,7 +456,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        <a href="#module_DE4_QSYS_inst_clk_bfm">DE4_QSYS_inst_clk_bfm</a>
       </td>
       <td class="from">clk&#160;&#160;</td>
-      <td class="main" rowspan="60">DE4_QSYS_inst_clk_50</td>
+      <td class="main" rowspan="66">DE4_QSYS_inst_clk_50</td>
      </tr>
      <tr>
       <td class="to">&#160;&#160;clk_in</td>
@@ -677,7 +726,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
      <tr>
       <td></td>
       <td></td>
-      <td class="from">clk_reset&#160;&#160;</td>
+      <td class="from">clk&#160;&#160;</td>
       <td class="neighbor" rowspan="4">
        <a href="#module_DE4_QSYS_inst_ddr2_i2c_sda">DE4_QSYS_inst_ddr2_i2c_sda</a>
       </td>
@@ -685,17 +734,17 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
      <tr>
       <td></td>
       <td></td>
-      <td class="to">&#160;&#160;reset</td>
-     </tr>
-     <tr>
-      <td></td>
-      <td></td>
-      <td class="from">clk&#160;&#160;</td>
-     </tr>
-     <tr>
-      <td></td>
-      <td></td>
       <td class="to">&#160;&#160;clk</td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">clk_reset&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;reset</td>
      </tr>
      <tr style="height:6px">
       <td></td>
@@ -706,6 +755,38 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <td class="from">clk_reset&#160;&#160;</td>
       <td class="neighbor" rowspan="2">
        <a href="#module_DE4_QSYS_inst_dma">DE4_QSYS_inst_dma</a>
+      </td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;reset</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">clk_reset&#160;&#160;</td>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_ppl_mem_reader">DE4_QSYS_inst_ppl_mem_reader</a>
+      </td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;reset</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">clk_reset&#160;&#160;</td>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_wrapper">DE4_QSYS_inst_wrapper</a>
       </td>
      </tr>
      <tr>
@@ -995,11 +1076,23 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
    <div class="greydiv">
     <table class="connectionboxes">
      <tr>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_nios2_qsys">DE4_QSYS_inst_nios2_qsys</a>
+      </td>
+      <td class="from">data_master&#160;&#160;</td>
+      <td class="main" rowspan="46">DE4_QSYS_inst_mem_if_ddr2_emif</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;avl</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
       <td class="neighbor" rowspan="6">
        <a href="#module_DE4_QSYS_inst_clk_50">DE4_QSYS_inst_clk_50</a>
       </td>
       <td class="from">clk&#160;&#160;</td>
-      <td class="main" rowspan="37">DE4_QSYS_inst_mem_if_ddr2_emif</td>
      </tr>
      <tr>
       <td class="to">&#160;&#160;pll_ref_clk</td>
@@ -1039,9 +1132,9 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
      </tr>
      <tr>
       <td class="neighbor" rowspan="2">
-       <a href="#module_DE4_QSYS_inst_nios2_qsys">DE4_QSYS_inst_nios2_qsys</a>
+       <a href="#module_DE4_QSYS_inst_ppl_mem_reader">DE4_QSYS_inst_ppl_mem_reader</a>
       </td>
-      <td class="from">data_master&#160;&#160;</td>
+      <td class="from">avalon_master&#160;&#160;</td>
      </tr>
      <tr>
       <td class="to">&#160;&#160;avl</td>
@@ -1158,6 +1251,38 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <td></td>
       <td></td>
       <td class="to">&#160;&#160;clk</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">afi_clk&#160;&#160;</td>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_ppl_mem_reader">DE4_QSYS_inst_ppl_mem_reader</a>
+      </td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;clock</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">afi_clk&#160;&#160;</td>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_wrapper">DE4_QSYS_inst_wrapper</a>
+      </td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;clock</td>
      </tr>
     </table>
    </div>
@@ -6859,7 +6984,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        <a href="#module_DE4_QSYS_inst_clk_50">DE4_QSYS_inst_clk_50</a>
       </td>
       <td class="from">clk_reset&#160;&#160;</td>
-      <td class="main" rowspan="28">DE4_QSYS_inst_nios2_qsys</td>
+      <td class="main" rowspan="33">DE4_QSYS_inst_nios2_qsys</td>
      </tr>
      <tr>
       <td class="to">&#160;&#160;reset_n</td>
@@ -6898,6 +7023,22 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <td></td>
       <td></td>
       <td class="to">&#160;&#160;s1</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">data_master&#160;&#160;</td>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_mem_if_ddr2_emif">DE4_QSYS_inst_mem_if_ddr2_emif</a>
+      </td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;avl</td>
      </tr>
      <tr style="height:6px">
       <td></td>
@@ -6963,7 +7104,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
      <tr>
       <td></td>
       <td></td>
-      <td class="from">data_master&#160;&#160;</td>
+      <td class="from">instruction_master&#160;&#160;</td>
       <td class="neighbor" rowspan="4">
        <a href="#module_DE4_QSYS_inst_dma">DE4_QSYS_inst_dma</a>
       </td>
@@ -6990,14 +7131,24 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <td></td>
       <td></td>
       <td class="from">data_master&#160;&#160;</td>
-      <td class="neighbor" rowspan="2">
-       <a href="#module_DE4_QSYS_inst_mem_if_ddr2_emif">DE4_QSYS_inst_mem_if_ddr2_emif</a>
+      <td class="neighbor" rowspan="4">
+       <a href="#module_DE4_QSYS_inst_wrapper">DE4_QSYS_inst_wrapper</a>
       </td>
      </tr>
      <tr>
       <td></td>
       <td></td>
-      <td class="to">&#160;&#160;avl</td>
+      <td class="to">&#160;&#160;s0</td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">instruction_master&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;s0</td>
      </tr>
     </table>
    </div>
@@ -7446,11 +7597,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">instSlaveMapParam</td>
-        <td class="parametervalue">&lt;address-map&gt;&lt;slave name='onchip_memory.s1' start='0x41020000' end='0x4103F400' /&gt;&lt;slave name='nios2_qsys.jtag_debug_module' start='0x41040800' end='0x41041000' /&gt;&lt;/address-map&gt;</td>
+        <td class="parametervalue">&lt;address-map&gt;&lt;slave name='onchip_memory.s1' start='0x41020000' end='0x4103F400' /&gt;&lt;slave name='nios2_qsys.jtag_debug_module' start='0x41040800' end='0x41041000' /&gt;&lt;slave name='dma.control_port_slave' start='0x41041000' end='0x41041020' /&gt;&lt;slave name='wrapper.s0' start='0x41041020' end='0x41041040' /&gt;&lt;/address-map&gt;</td>
        </tr>
        <tr>
         <td class="parametername">dataSlaveMapParam</td>
-        <td class="parametervalue">&lt;address-map&gt;&lt;slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /&gt;&lt;slave name='timer.s1' start='0x40000000' end='0x40000020' /&gt;&lt;slave name='ddr2_i2c_sda.s1' start='0x40000020' end='0x40000030' /&gt;&lt;slave name='ddr2_i2c_scl.s1' start='0x40000030' end='0x40000040' /&gt;&lt;slave name='led.s1' start='0x40000040' end='0x40000050' /&gt;&lt;slave name='button.s1' start='0x40000050' end='0x40000060' /&gt;&lt;slave name='sysid.control_slave' start='0x40000060' end='0x40000068' /&gt;&lt;slave name='onchip_memory.s1' start='0x41020000' end='0x4103F400' /&gt;&lt;slave name='nios2_qsys.jtag_debug_module' start='0x41040800' end='0x41041000' /&gt;&lt;slave name='dma.control_port_slave' start='0x41041000' end='0x41041020' /&gt;&lt;slave name='jtag_uart.avalon_jtag_slave' start='0x41041020' end='0x41041028' /&gt;&lt;/address-map&gt;</td>
+        <td class="parametervalue">&lt;address-map&gt;&lt;slave name='mem_if_ddr2_emif.avl' start='0x0' end='0x40000000' /&gt;&lt;slave name='timer.s1' start='0x40000000' end='0x40000020' /&gt;&lt;slave name='ddr2_i2c_sda.s1' start='0x40000020' end='0x40000030' /&gt;&lt;slave name='ddr2_i2c_scl.s1' start='0x40000030' end='0x40000040' /&gt;&lt;slave name='led.s1' start='0x40000040' end='0x40000050' /&gt;&lt;slave name='button.s1' start='0x40000050' end='0x40000060' /&gt;&lt;slave name='sysid.control_slave' start='0x40000060' end='0x40000068' /&gt;&lt;slave name='onchip_memory.s1' start='0x41020000' end='0x4103F400' /&gt;&lt;slave name='nios2_qsys.jtag_debug_module' start='0x41040800' end='0x41041000' /&gt;&lt;slave name='wrapper.s0' start='0x41041020' end='0x41041040' /&gt;&lt;slave name='jtag_uart.avalon_jtag_slave' start='0x41041040' end='0x41041048' /&gt;&lt;/address-map&gt;</td>
        </tr>
        <tr>
         <td class="parametername">clockFrequency</td>
@@ -7830,7 +7981,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">timestamp</td>
-        <td class="parametervalue">1435753704</td>
+        <td class="parametervalue">1435920697</td>
        </tr>
        <tr>
         <td class="parametername">AUTO_CLK_CLOCK_RATE</td>
@@ -7863,7 +8014,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">TIMESTAMP</td>
-        <td class="parametervalue">1435753704</td>
+        <td class="parametervalue">1435920697</td>
        </tr>
       </table>
      </td>
@@ -8924,32 +9075,32 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
    <div class="greydiv">
     <table class="connectionboxes">
      <tr>
-      <td class="neighbor" rowspan="2">
-       <a href="#module_DE4_QSYS_inst_mm_clock_crossing_bridge_io">DE4_QSYS_inst_mm_clock_crossing_bridge_io</a>
-      </td>
-      <td class="from">m0&#160;&#160;</td>
-      <td class="main" rowspan="10">DE4_QSYS_inst_ddr2_i2c_sda</td>
-     </tr>
-     <tr>
-      <td class="to">&#160;&#160;s1</td>
-     </tr>
-     <tr style="height:6px">
-      <td></td>
-     </tr>
-     <tr>
       <td class="neighbor" rowspan="4">
        <a href="#module_DE4_QSYS_inst_clk_50">DE4_QSYS_inst_clk_50</a>
       </td>
+      <td class="from">clk&#160;&#160;</td>
+      <td class="main" rowspan="10">DE4_QSYS_inst_ddr2_i2c_sda</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;clk</td>
+     </tr>
+     <tr>
       <td class="from">clk_reset&#160;&#160;</td>
      </tr>
      <tr>
       <td class="to">&#160;&#160;reset</td>
      </tr>
-     <tr>
-      <td class="from">clk&#160;&#160;</td>
+     <tr style="height:6px">
+      <td></td>
      </tr>
      <tr>
-      <td class="to">&#160;&#160;clk</td>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_mm_clock_crossing_bridge_io">DE4_QSYS_inst_mm_clock_crossing_bridge_io</a>
+      </td>
+      <td class="from">m0&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;s1</td>
      </tr>
      <tr style="height:6px">
       <td></td>
@@ -9162,7 +9313,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
       <td class="neighbor" rowspan="4">
        <a href="#module_DE4_QSYS_inst_nios2_qsys">DE4_QSYS_inst_nios2_qsys</a>
       </td>
-      <td class="from">data_master&#160;&#160;</td>
+      <td class="from">instruction_master&#160;&#160;</td>
      </tr>
      <tr>
       <td class="to">&#160;&#160;control_port_slave</td>
@@ -9215,15 +9366,15 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">allowHalfWordTransactions</td>
-        <td class="parametervalue">false</td>
+        <td class="parametervalue">true</td>
        </tr>
        <tr>
         <td class="parametername">allowQuadWordTransactions</td>
-        <td class="parametervalue">true</td>
+        <td class="parametervalue">false</td>
        </tr>
        <tr>
         <td class="parametername">allowWordTransactions</td>
-        <td class="parametervalue">true</td>
+        <td class="parametervalue">false</td>
        </tr>
        <tr>
         <td class="parametername">bigEndian</td>
@@ -9235,11 +9386,11 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">fifoDepth</td>
-        <td class="parametervalue">8</td>
+        <td class="parametervalue">64</td>
        </tr>
        <tr>
         <td class="parametername">maxBurstSize</td>
-        <td class="parametervalue">2</td>
+        <td class="parametervalue">1</td>
        </tr>
        <tr>
         <td class="parametername">minimumDmaTransactionRegisterWidth</td>
@@ -9324,15 +9475,15 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">ALLOW_HW_TRANSACTIONS</td>
-        <td class="parametervalue">0</td>
+        <td class="parametervalue">1</td>
        </tr>
        <tr>
         <td class="parametername">ALLOW_QUADWORD_TRANSACTIONS</td>
-        <td class="parametervalue">1</td>
+        <td class="parametervalue">0</td>
        </tr>
        <tr>
         <td class="parametername">ALLOW_WORD_TRANSACTIONS</td>
-        <td class="parametervalue">1</td>
+        <td class="parametervalue">0</td>
        </tr>
        <tr>
         <td class="parametername">LENGTHWIDTH</td>
@@ -9340,10 +9491,248 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
        </tr>
        <tr>
         <td class="parametername">MAX_BURST_SIZE</td>
-        <td class="parametervalue">2</td>
+        <td class="parametervalue">1</td>
        </tr>
       </table>
      </td>
+    </tr>
+   </table>
+  </div>
+  <a name="module_DE4_QSYS_inst_wrapper"> </a>
+  <div>
+   <hr/>
+   <h2>DE4_QSYS_inst_wrapper</h2>wrapper v1.0
+   <br/>
+   <div class="greydiv">
+    <table class="connectionboxes">
+     <tr>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_mem_if_ddr2_emif">DE4_QSYS_inst_mem_if_ddr2_emif</a>
+      </td>
+      <td class="from">afi_clk&#160;&#160;</td>
+      <td class="main" rowspan="15">DE4_QSYS_inst_wrapper</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;clock</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_clk_50">DE4_QSYS_inst_clk_50</a>
+      </td>
+      <td class="from">clk_reset&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;reset</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td class="neighbor" rowspan="4">
+       <a href="#module_DE4_QSYS_inst_nios2_qsys">DE4_QSYS_inst_nios2_qsys</a>
+      </td>
+      <td class="from">data_master&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;s0</td>
+     </tr>
+     <tr>
+      <td class="from">instruction_master&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;s0</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_ppl_mem_reader">DE4_QSYS_inst_ppl_mem_reader</a>
+      </td>
+      <td class="from">user&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;user</td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">control&#160;&#160;</td>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_ppl_mem_reader">DE4_QSYS_inst_ppl_mem_reader</a>
+      </td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;control</td>
+     </tr>
+    </table>
+   </div>
+   <br/>
+   <br/>
+   <table class="flowbox">
+    <tr>
+     <td class="parametersbox">
+      <h2>Parameters</h2>
+      <table>
+       <tr>
+        <td class="parametername">DATAWIDTH</td>
+        <td class="parametervalue">32</td>
+       </tr>
+       <tr>
+        <td class="parametername">ADDRESS_WIDTH</td>
+        <td class="parametervalue">32</td>
+       </tr>
+       <tr>
+        <td class="parametername">AUTO_CLOCK_CLOCK_RATE</td>
+        <td class="parametervalue">150000000</td>
+       </tr>
+       <tr>
+        <td class="parametername">deviceFamily</td>
+        <td class="parametervalue">UNKNOWN</td>
+       </tr>
+       <tr>
+        <td class="parametername">generateLegacySim</td>
+        <td class="parametervalue">false</td>
+       </tr>
+      </table>
+     </td>
+    </tr>
+   </table>&#160;&#160;
+   <table class="flowbox">
+    <tr>
+     <td class="parametersbox">
+      <h2>Software Assignments</h2>(none)</td>
+    </tr>
+   </table>
+  </div>
+  <a name="module_DE4_QSYS_inst_ppl_mem_reader"> </a>
+  <div>
+   <hr/>
+   <h2>DE4_QSYS_inst_ppl_mem_reader</h2>ppl_mem_reader v1.0
+   <br/>
+   <div class="greydiv">
+    <table class="connectionboxes">
+     <tr>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_mem_if_ddr2_emif">DE4_QSYS_inst_mem_if_ddr2_emif</a>
+      </td>
+      <td class="from">afi_clk&#160;&#160;</td>
+      <td class="main" rowspan="13">DE4_QSYS_inst_ppl_mem_reader</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;clock</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_clk_50">DE4_QSYS_inst_clk_50</a>
+      </td>
+      <td class="from">clk_reset&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;reset</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_wrapper">DE4_QSYS_inst_wrapper</a>
+      </td>
+      <td class="from">control&#160;&#160;</td>
+     </tr>
+     <tr>
+      <td class="to">&#160;&#160;control</td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">avalon_master&#160;&#160;</td>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_mem_if_ddr2_emif">DE4_QSYS_inst_mem_if_ddr2_emif</a>
+      </td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;avl</td>
+     </tr>
+     <tr style="height:6px">
+      <td></td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="from">user&#160;&#160;</td>
+      <td class="neighbor" rowspan="2">
+       <a href="#module_DE4_QSYS_inst_wrapper">DE4_QSYS_inst_wrapper</a>
+      </td>
+     </tr>
+     <tr>
+      <td></td>
+      <td></td>
+      <td class="to">&#160;&#160;user</td>
+     </tr>
+    </table>
+   </div>
+   <br/>
+   <br/>
+   <table class="flowbox">
+    <tr>
+     <td class="parametersbox">
+      <h2>Parameters</h2>
+      <table>
+       <tr>
+        <td class="parametername">DATAWIDTH</td>
+        <td class="parametervalue">32</td>
+       </tr>
+       <tr>
+        <td class="parametername">BYTEENABLEWIDTH</td>
+        <td class="parametervalue">4</td>
+       </tr>
+       <tr>
+        <td class="parametername">ADDRESSWIDTH</td>
+        <td class="parametervalue">32</td>
+       </tr>
+       <tr>
+        <td class="parametername">FIFODEPTH</td>
+        <td class="parametervalue">32</td>
+       </tr>
+       <tr>
+        <td class="parametername">FIFODEPTH_LOG2</td>
+        <td class="parametervalue">5</td>
+       </tr>
+       <tr>
+        <td class="parametername">FIFOUSEMEMORY</td>
+        <td class="parametervalue">1</td>
+       </tr>
+       <tr>
+        <td class="parametername">AUTO_CLOCK_CLOCK_RATE</td>
+        <td class="parametervalue">150000000</td>
+       </tr>
+       <tr>
+        <td class="parametername">deviceFamily</td>
+        <td class="parametervalue">UNKNOWN</td>
+       </tr>
+       <tr>
+        <td class="parametername">generateLegacySim</td>
+        <td class="parametervalue">false</td>
+       </tr>
+      </table>
+     </td>
+    </tr>
+   </table>&#160;&#160;
+   <table class="flowbox">
+    <tr>
+     <td class="parametersbox">
+      <h2>Software Assignments</h2>(none)</td>
     </tr>
    </table>
   </div>
@@ -10636,7 +11025,7 @@ div.greydiv { vertical-align:top ; text-align:center ; background:#eeeeee ; bord
   <table class="blueBar">
    <tr>
     <td class="l">generation took 0.00 seconds</td>
-    <td class="r">rendering took 0.60 seconds</td>
+    <td class="r">rendering took 0.63 seconds</td>
    </tr>
   </table>
  </body>

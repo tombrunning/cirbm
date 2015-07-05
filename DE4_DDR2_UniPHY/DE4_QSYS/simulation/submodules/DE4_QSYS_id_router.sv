@@ -47,23 +47,23 @@ module DE4_QSYS_id_router_default_decode
      parameter DEFAULT_CHANNEL = 0,
                DEFAULT_WR_CHANNEL = -1,
                DEFAULT_RD_CHANNEL = -1,
-               DEFAULT_DESTID = 4 
+               DEFAULT_DESTID = 3 
    )
-  (output [106 - 104 : 0] default_destination_id,
-   output [6-1 : 0] default_wr_channel,
-   output [6-1 : 0] default_rd_channel,
-   output [6-1 : 0] default_src_channel
+  (output [99 - 97 : 0] default_destination_id,
+   output [7-1 : 0] default_wr_channel,
+   output [7-1 : 0] default_rd_channel,
+   output [7-1 : 0] default_src_channel
   );
 
   assign default_destination_id = 
-    DEFAULT_DESTID[106 - 104 : 0];
+    DEFAULT_DESTID[99 - 97 : 0];
 
   generate begin : default_decode
     if (DEFAULT_CHANNEL == -1) begin
       assign default_src_channel = '0;
     end
     else begin
-      assign default_src_channel = 6'b1 << DEFAULT_CHANNEL;
+      assign default_src_channel = 7'b1 << DEFAULT_CHANNEL;
     end
   end
   endgenerate
@@ -74,8 +74,8 @@ module DE4_QSYS_id_router_default_decode
       assign default_rd_channel = '0;
     end
     else begin
-      assign default_wr_channel = 6'b1 << DEFAULT_WR_CHANNEL;
-      assign default_rd_channel = 6'b1 << DEFAULT_RD_CHANNEL;
+      assign default_wr_channel = 7'b1 << DEFAULT_WR_CHANNEL;
+      assign default_rd_channel = 7'b1 << DEFAULT_RD_CHANNEL;
     end
   end
   endgenerate
@@ -95,7 +95,7 @@ module DE4_QSYS_id_router
     // Command Sink (Input)
     // -------------------
     input                       sink_valid,
-    input  [117-1 : 0]    sink_data,
+    input  [110-1 : 0]    sink_data,
     input                       sink_startofpacket,
     input                       sink_endofpacket,
     output                      sink_ready,
@@ -104,8 +104,8 @@ module DE4_QSYS_id_router
     // Command Source (Output)
     // -------------------
     output                          src_valid,
-    output reg [117-1    : 0] src_data,
-    output reg [6-1 : 0] src_channel,
+    output reg [110-1    : 0] src_data,
+    output reg [7-1 : 0] src_channel,
     output                          src_startofpacket,
     output                          src_endofpacket,
     input                           src_ready
@@ -116,12 +116,12 @@ module DE4_QSYS_id_router
     // -------------------------------------------------------
     localparam PKT_ADDR_H = 67;
     localparam PKT_ADDR_L = 36;
-    localparam PKT_DEST_ID_H = 106;
-    localparam PKT_DEST_ID_L = 104;
-    localparam PKT_PROTECTION_H = 110;
-    localparam PKT_PROTECTION_L = 108;
-    localparam ST_DATA_W = 117;
-    localparam ST_CHANNEL_W = 6;
+    localparam PKT_DEST_ID_H = 99;
+    localparam PKT_DEST_ID_L = 97;
+    localparam PKT_PROTECTION_H = 103;
+    localparam PKT_PROTECTION_L = 101;
+    localparam ST_DATA_W = 110;
+    localparam ST_CHANNEL_W = 7;
     localparam DECODER_TYPE = 1;
 
     localparam PKT_TRANS_WRITE = 70;
@@ -161,7 +161,7 @@ module DE4_QSYS_id_router
     assign src_endofpacket   = sink_endofpacket;
 
     wire [PKT_DEST_ID_W-1:0] default_destid;
-    wire [6-1 : 0] default_src_channel;
+    wire [7-1 : 0] default_src_channel;
 
 
 
@@ -186,12 +186,12 @@ module DE4_QSYS_id_router
 
 
 
-        if (destid == 4 ) begin
-            src_channel = 6'b01;
+        if (destid == 3 ) begin
+            src_channel = 7'b01;
         end
 
-        if (destid == 3 ) begin
-            src_channel = 6'b10;
+        if (destid == 2 ) begin
+            src_channel = 7'b10;
         end
 
 

@@ -12,7 +12,7 @@
 # or its authorized distributors. Please refer to the applicable 
 # agreement for further details.
 
-# ACDS 13.0sp1 232 win32 2015.07.01.13:29:38
+# ACDS 13.0sp1 232 win32 2015.07.03.11:52:58
 
 # ----------------------------------------
 # vcsmx - auto-generated simulation script
@@ -59,27 +59,29 @@ mkdir -p ./libraries/irq_synchronizer/
 mkdir -p ./libraries/irq_mapper/
 mkdir -p ./libraries/crosser/
 mkdir -p ./libraries/width_adapter/
-mkdir -p ./libraries/rsp_xbar_mux_004/
-mkdir -p ./libraries/rsp_xbar_demux_006/
-mkdir -p ./libraries/cmd_xbar_demux_004/
+mkdir -p ./libraries/rsp_xbar_mux_005/
+mkdir -p ./libraries/rsp_xbar_demux_007/
+mkdir -p ./libraries/cmd_xbar_demux_005/
 mkdir -p ./libraries/rsp_xbar_mux_001/
 mkdir -p ./libraries/rsp_xbar_mux/
-mkdir -p ./libraries/rsp_xbar_demux_005/
-mkdir -p ./libraries/rsp_xbar_demux_002/
+mkdir -p ./libraries/rsp_xbar_demux_004/
 mkdir -p ./libraries/rsp_xbar_demux/
-mkdir -p ./libraries/cmd_xbar_mux_005/
+mkdir -p ./libraries/cmd_xbar_mux_004/
 mkdir -p ./libraries/cmd_xbar_mux/
+mkdir -p ./libraries/cmd_xbar_demux_003/
 mkdir -p ./libraries/cmd_xbar_demux_002/
 mkdir -p ./libraries/cmd_xbar_demux_001/
 mkdir -p ./libraries/cmd_xbar_demux/
 mkdir -p ./libraries/rst_controller/
 mkdir -p ./libraries/burst_adapter/
 mkdir -p ./libraries/limiter/
-mkdir -p ./libraries/id_router_006/
-mkdir -p ./libraries/addr_router_004/
+mkdir -p ./libraries/id_router_007/
+mkdir -p ./libraries/addr_router_005/
 mkdir -p ./libraries/id_router_005/
+mkdir -p ./libraries/id_router_004/
 mkdir -p ./libraries/id_router_002/
 mkdir -p ./libraries/id_router/
+mkdir -p ./libraries/addr_router_003/
 mkdir -p ./libraries/addr_router_002/
 mkdir -p ./libraries/addr_router_001/
 mkdir -p ./libraries/addr_router/
@@ -88,6 +90,8 @@ mkdir -p ./libraries/nios2_qsys_jtag_debug_module_translator_avalon_universal_sl
 mkdir -p ./libraries/nios2_qsys_instruction_master_translator_avalon_universal_master_0_agent/
 mkdir -p ./libraries/nios2_qsys_jtag_debug_module_translator/
 mkdir -p ./libraries/nios2_qsys_instruction_master_translator/
+mkdir -p ./libraries/ppl_mem_reader/
+mkdir -p ./libraries/wrapper/
 mkdir -p ./libraries/dma/
 mkdir -p ./libraries/ddr2_i2c_sda/
 mkdir -p ./libraries/ddr2_i2c_scl/
@@ -289,21 +293,21 @@ if [ $SKIP_COM -eq 0 ]; then
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_width_adapter.sv"                                        -work width_adapter                                                                  
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_address_alignment.sv"                                    -work width_adapter                                                                  
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_burst_uncompressor.sv"                                   -work width_adapter                                                                  
-  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"                                           -work rsp_xbar_mux_004                                                               
-  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_mux_004.sv"                                          -work rsp_xbar_mux_004                                                               
-  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_006.sv"                                        -work rsp_xbar_demux_006                                                             
-  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_004.sv"                                        -work cmd_xbar_demux_004                                                             
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"                                           -work rsp_xbar_mux_005                                                               
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_mux_005.sv"                                          -work rsp_xbar_mux_005                                                               
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_007.sv"                                        -work rsp_xbar_demux_007                                                             
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_005.sv"                                        -work cmd_xbar_demux_005                                                             
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"                                           -work rsp_xbar_mux_001                                                               
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_mux_001.sv"                                          -work rsp_xbar_mux_001                                                               
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"                                           -work rsp_xbar_mux                                                                   
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_mux.sv"                                              -work rsp_xbar_mux                                                                   
-  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_005.sv"                                        -work rsp_xbar_demux_005                                                             
-  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_002.sv"                                        -work rsp_xbar_demux_002                                                             
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux_004.sv"                                        -work rsp_xbar_demux_004                                                             
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_rsp_xbar_demux.sv"                                            -work rsp_xbar_demux                                                                 
-  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"                                           -work cmd_xbar_mux_005                                                               
-  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_mux_005.sv"                                          -work cmd_xbar_mux_005                                                               
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"                                           -work cmd_xbar_mux_004                                                               
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_mux_004.sv"                                          -work cmd_xbar_mux_004                                                               
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_arbitrator.sv"                                           -work cmd_xbar_mux                                                                   
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_mux.sv"                                              -work cmd_xbar_mux                                                                   
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_003.sv"                                        -work cmd_xbar_demux_003                                                             
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_002.sv"                                        -work cmd_xbar_demux_002                                                             
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux_001.sv"                                        -work cmd_xbar_demux_001                                                             
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_cmd_xbar_demux.sv"                                            -work cmd_xbar_demux                                                                 
@@ -313,11 +317,13 @@ if [ $SKIP_COM -eq 0 ]; then
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_address_alignment.sv"                                    -work burst_adapter                                                                  
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_traffic_limiter.sv"                                      -work limiter                                                                        
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_avalon_st_pipeline_base.v"                                      -work limiter                                                                        
-  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_006.sv"                                             -work id_router_006                                                                  
-  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_004.sv"                                           -work addr_router_004                                                                
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_007.sv"                                             -work id_router_007                                                                  
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_005.sv"                                           -work addr_router_005                                                                
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_005.sv"                                             -work id_router_005                                                                  
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_004.sv"                                             -work id_router_004                                                                  
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router_002.sv"                                             -work id_router_002                                                                  
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_id_router.sv"                                                 -work id_router                                                                      
+  vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_003.sv"                                           -work addr_router_003                                                                
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_002.sv"                                           -work addr_router_002                                                                
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router_001.sv"                                           -work addr_router_001                                                                
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_addr_router.sv"                                               -work addr_router                                                                    
@@ -327,6 +333,8 @@ if [ $SKIP_COM -eq 0 ]; then
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_master_agent.sv"                                         -work nios2_qsys_instruction_master_translator_avalon_universal_master_0_agent       
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_slave_translator.sv"                                     -work nios2_qsys_jtag_debug_module_translator                                        
   vlogan +v2k -sverilog                                                             "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/altera_merlin_master_translator.sv"                                    -work nios2_qsys_instruction_master_translator                                       
+  vlogan +v2k                                                                       "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/latency_aware_read_master.v"                                           -work ppl_mem_reader                                                                 
+  vlogan +v2k                                                                       "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/rbm_demo.v"                                                            -work wrapper                                                                        
   vlogan +v2k                                                                       "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_dma.v"                                                        -work dma                                                                            
   vlogan +v2k                                                                       "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_ddr2_i2c_sda.v"                                               -work ddr2_i2c_sda                                                                   
   vlogan +v2k                                                                       "$QSYS_SIMDIR/DE4_QSYS_tb/simulation/submodules/DE4_QSYS_ddr2_i2c_scl.v"                                               -work ddr2_i2c_scl                                                                   

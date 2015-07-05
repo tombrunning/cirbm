@@ -1,0 +1,43 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip
+vlatency_aware_read_master
+!i10b 1
+Z1 !s100 3WGQM5;0:o@z1g92WDX?=1
+Z2 IMbF7CeQ5HUcQo7Z>fiJ=e1
+Z3 VhTCnb310c6lO;kEbmi`ba3
+Z4 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\Master_Template
+Z5 w1435833189
+Z6 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/Master_Template/latency_aware_read_master.v
+Z7 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/Master_Template/latency_aware_read_master.v
+L0 35
+Z8 OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1436099206.483000
+!s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/Master_Template/latency_aware_read_master.v|
+Z9 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/Master_Template/latency_aware_read_master.v|
+!s101 -O0
+Z10 o-work work -O0
+vlatency_aware_read_master_tb
+Z11 IM9fOlog213keI6@jc?ZHF3
+Z12 Vol09Q>0PK2WQRWEJLg^>Z0
+R4
+Z13 w1436099203
+Z14 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/Master_Template/latency_aware_read_master_tb.v
+Z15 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/Master_Template/latency_aware_read_master_tb.v
+L0 3
+R8
+r1
+31
+R10
+!i10b 1
+Z16 !s100 i<3hNn6j^e_b[188h;TIz3
+!s85 0
+Z17 !s108 1436099206.235000
+Z18 !s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/Master_Template/latency_aware_read_master_tb.v|
+Z19 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/Master_Template/latency_aware_read_master_tb.v|
+!s101 -O0

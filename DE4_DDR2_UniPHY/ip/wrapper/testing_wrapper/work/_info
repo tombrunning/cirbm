@@ -1,0 +1,43 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\wrapper
+vtesting_wrapper
+!i10b 1
+!s100 CnZ_bi7Nd9@j_:j6H0KRK3
+I67L:XYYk:NFge?GIIGb=<2
+Z1 Vi7:[>jG^cIGA7Oj?UDX;N3
+Z2 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\wrapper\testing_wrapper
+w1436015750
+Z3 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/testing_wrapper.v
+Z4 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/testing_wrapper.v
+L0 3
+Z5 OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1436015784.194000
+!s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/testing_wrapper.v|
+Z6 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/testing_wrapper.v|
+!s101 -O0
+Z7 o-work work -O0
+vtesting_wrapper_tb
+Z8 !s100 mc>zPz;7TDX5A8d<oR`1K1
+Z9 IDm[3Q^0YkB>TYYZ5kd;Fm2
+Z10 Vg`ckgW^`L>Rd?10B1GBfA1
+R2
+Z11 w1436013288
+Z12 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/testing_wrapper_tb.v
+Z13 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/testing_wrapper_tb.v
+L0 3
+R5
+r1
+31
+Z14 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/testing_wrapper_tb.v|
+R7
+!i10b 1
+!s85 0
+Z15 !s108 1436015784.001000
+Z16 !s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/testing_wrapper_tb.v|
+!s101 -O0
