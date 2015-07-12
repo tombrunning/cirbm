@@ -1,0 +1,9 @@
+library verilog;
+use verilog.vl_types.all;
+entity tb_PLAN_mod_mag_cmp is
+    generic(
+        DATAWIDTH       : integer := 16
+    );
+    attribute mti_svvh_generic_type : integer;
+    attribute mti_svvh_generic_type of DATAWIDTH : constant is 1;
+end tb_PLAN_mod_mag_cmp;

@@ -1,0 +1,44 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\RBM_blocks\sigmoid
+vDTXY
+!i10b 1
+!s100 G_9NO:@Fm_]k^a`[4[hL@1
+IPjz[?6U>@LIdCDWOBX?j62
+Z1 Ve>3k6Lel1kST=]QHL_Shg2
+Z2 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\RBM_blocks\DTXY
+w1436449852
+Z3 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/DTXY/dtxy.v
+Z4 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/DTXY/dtxy.v
+L0 1
+Z5 OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1436449856.337000
+!s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/DTXY/dtxy.v|
+Z6 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/DTXY/dtxy.v|
+!s101 -O0
+Z7 o-work work -O0
+Z8 n@d@t@x@y
+vtb_dtxy
+Z9 !s100 ;8:nfIj5FMkD=G2?gh[CB3
+Z10 IOKZHXbZ?YD3n>7OiTZ<zU0
+Z11 VYh7ggXZc`ll^;ekX;OnKa0
+R2
+Z12 w1436449738
+Z13 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/DTXY/tb_dtxy.v
+Z14 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/DTXY/tb_dtxy.v
+L0 3
+R5
+r1
+31
+Z15 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/DTXY/tb_dtxy.v|
+R7
+!i10b 1
+!s85 0
+Z16 !s108 1436449856.232000
+Z17 !s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/DTXY/tb_dtxy.v|
+!s101 -O0

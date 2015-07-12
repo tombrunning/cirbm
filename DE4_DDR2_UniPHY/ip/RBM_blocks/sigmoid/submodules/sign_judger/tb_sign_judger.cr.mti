@@ -1,0 +1,15 @@
+D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/sign_judger/tb_sign_judger.v {1 {vlog -work work D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/sign_judger/tb_sign_judger.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module tb_sign_judger
+
+Top level modules:
+	tb_sign_judger
+
+} {} {}} D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/sign_judger.v {1 {vlog -work work D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/sign_judger.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module sign_judger
+
+Top level modules:
+	sign_judger
+
+} {} {}}

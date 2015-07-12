@@ -146,6 +146,11 @@ C_SRCS += I2C.c
 C_SRCS += main.c
 C_SRCS += mem_test.c
 C_SRCS += .metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+C_SRCS += backup/I2C.c
+C_SRCS += backup/main.c
+C_SRCS += backup/mem_test.c
+C_SRCS += dma_ctr.c
+C_SRCS += mem_init.c
 CXX_SRCS := .metadata/.plugins/org.eclipse.cdt.make.core/specs.cpp
 ASM_SRCS :=
 

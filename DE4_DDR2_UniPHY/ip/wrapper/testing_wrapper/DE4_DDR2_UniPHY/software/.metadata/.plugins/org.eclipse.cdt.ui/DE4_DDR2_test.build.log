@@ -2,11 +2,31 @@
 **** Build of configuration Nios II for project DE4_DDR2_test ****
 
 make all 
-makefile:748: warning: overriding commands for target `obj/default/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o'
-makefile:745: warning: ignoring old commands for target `obj/default/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o'
+makefile:753: warning: overriding commands for target `obj/default/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o'
+makefile:750: warning: ignoring old commands for target `obj/default/.metadata/.plugins/org.eclipse.cdt.make.core/specs.o'
 Info: Building ../DE4_DDR2_test_bsp
 make --no-print-directory -C ../DE4_DDR2_test_bsp
 [BSP build complete]
-[DE4_DDR2_test build complete]
+Info: Compiling backup/I2C.c to obj/default/backup/I2C.o
+nios2-elf-gcc -xc -MP -MMD -c -I../DE4_DDR2_test_bsp/HAL/inc -I../DE4_DDR2_test_bsp -I../DE4_DDR2_test_bsp/drivers/inc  -DSYSTEM_BUS_WIDTH=32 -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -EL -mno-hw-div -mhw-mul -mhw-mulx  -o obj/default/backup/I2C.o backup/I2C.c
+Info: Compiling backup/main.c to obj/default/backup/main.o
+nios2-elf-gcc -xc -MP -MMD -c -I../DE4_DDR2_test_bsp/HAL/inc -I../DE4_DDR2_test_bsp -I../DE4_DDR2_test_bsp/drivers/inc  -DSYSTEM_BUS_WIDTH=32 -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -EL -mno-hw-div -mhw-mul -mhw-mulx  -o obj/default/backup/main.o backup/main.c
+Info: Compiling backup/mem_test.c to obj/default/backup/mem_test.o
+nios2-elf-gcc -xc -MP -MMD -c -I../DE4_DDR2_test_bsp/HAL/inc -I../DE4_DDR2_test_bsp -I../DE4_DDR2_test_bsp/drivers/inc  -DSYSTEM_BUS_WIDTH=32 -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -EL -mno-hw-div -mhw-mul -mhw-mulx  -o obj/default/backup/mem_test.o backup/mem_test.c
+Info: Compiling dma_ctr.c to obj/default/dma_ctr.o
+nios2-elf-gcc -xc -MP -MMD -c -I../DE4_DDR2_test_bsp/HAL/inc -I../DE4_DDR2_test_bsp -I../DE4_DDR2_test_bsp/drivers/inc  -DSYSTEM_BUS_WIDTH=32 -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -EL -mno-hw-div -mhw-mul -mhw-mulx  -o obj/default/dma_ctr.o dma_ctr.c
+Info: Compiling main.c to obj/default/main.o
+nios2-elf-gcc -xc -MP -MMD -c -I../DE4_DDR2_test_bsp/HAL/inc -I../DE4_DDR2_test_bsp -I../DE4_DDR2_test_bsp/drivers/inc  -DSYSTEM_BUS_WIDTH=32 -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -EL -mno-hw-div -mhw-mul -mhw-mulx  -o obj/default/main.o main.c
+main.c: In function 'main':
+main.c:83: error: 'WRAPPER_BASE' undeclared (first use in this function)
+main.c:83: error: (Each undeclared identifier is reported only once
+main.c:83: error: for each function it appears in.)
+main.c:108: warning: operation on 'pAddr' may be undefined
+main.c:109: warning: operation on 'pAddr' may be undefined
+main.c:110: warning: operation on 'pAddr' may be undefined
+main.c:111: warning: operation on 'pAddr' may be undefined
+main.c:112: warning: operation on 'pAddr' may be undefined
+main.c:113: warning: operation on 'pAddr' may be undefined
+make: *** [obj/default/main.o] Error 1
 
 **** Build Finished ****

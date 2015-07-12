@@ -1,0 +1,34 @@
+`timescale 10ns / 10ns
+
+module tb_vtohTimer();
+
+parameter DATAWIDTH = 16;
+parameter BATCHSIZE = 16;
+parameter CHUNKSIZE = DATAWIDTH*BATCHSIZE;
+
+reg clk;
+reg reset;
+reg in_available;
+wire out_available; 
+
+always begin
+    #5 clk = ~clk;
+end
+initial begin
+clk =1;
+reset =1;
+in_available = 0;
+
+#10 reset = 0; in_available = 1;
+#50 in_available = 0;
+#20 in_available = 1;
+#10000 $finish;
+end
+
+
+
+
+
+vtohTimer timer_inst(clk,reset,in_available,out_available);
+
+endmodule

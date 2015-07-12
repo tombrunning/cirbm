@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="35" version="2.0">
+<workbench progressCount="34" version="2.0">
 <workbenchAdvisor/>
-<window height="768" width="1024" x="342" y="167">
+<window height="768" maximized="true" width="1024" x="2016" y="-8">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="160"/>
@@ -39,19 +39,19 @@
 </editorArea>
 <editor id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" partName="main.c" path="D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/software/DE4_DDR2_test/main.c" title="main.c" tooltip="DE4_DDR2_test/main.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DE4_DDR2_test/main.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="19" selectionOffset="2060" selectionTopPixel="30"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="0"/>
 </editor>
-<editor id="org.eclipse.cdt.ui.editor.CEditor" name="system.h" partName="system.h" path="D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/software/DE4_DDR2_test_bsp/system.h" title="system.h" tooltip="DE4_DDR2_test_bsp/system.h" workbook="DefaultEditorWorkbook">
+<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="system.h" partName="system.h" path="D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/software/DE4_DDR2_test_bsp/system.h" title="system.h" tooltip="DE4_DDR2_test_bsp/system.h" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DE4_DDR2_test_bsp/system.h"/>
-<editorState selectionHorizontalPixel="0" selectionLength="21" selectionOffset="10900" selectionTopPixel="4905"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="11156" selectionTopPixel="4264"/>
 </editor>
 <editor id="org.eclipse.cdt.ui.editor.CEditor" name="mem_test.h" partName="mem_test.h" path="D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/software/DE4_DDR2_test/mem_test.h" title="mem_test.h" tooltip="DE4_DDR2_test/mem_test.h" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DE4_DDR2_test/mem_test.h"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="0"/>
 </editor>
-<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="mem_test.c" partName="mem_test.c" path="D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/software/DE4_DDR2_test/mem_test.c" title="mem_test.c" tooltip="DE4_DDR2_test/mem_test.c" workbook="DefaultEditorWorkbook">
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="mem_test.c" partName="mem_test.c" path="D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/software/DE4_DDR2_test/mem_test.c" title="mem_test.c" tooltip="DE4_DDR2_test/mem_test.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DE4_DDR2_test/mem_test.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="3552" selectionTopPixel="1235"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="3391" selectionTopPixel="1425"/>
 </editor>
 </editors>
 <views>
@@ -62,9 +62,6 @@
 <view id="org.eclipse.cdt.make.ui.views.MakeView" partName="Make Target"/>
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
-<expanded>
-<category IMemento.internal.id="Warnings"/>
-</expanded>
 <columnWidths org.eclipse.ui.ide.locationField="64" org.eclipse.ui.ide.markerType="94" org.eclipse.ui.ide.pathField="124" org.eclipse.ui.ide.resourceField="94" org.eclipse.ui.ide.severityAndDescriptionField="1134"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
@@ -250,8 +247,8 @@
 </folder>
 </info>
 <info part="org.eclipse.ui.editorss" ratio="0.27128157" ratioLeft="290" ratioRight="779" relationship="2" relative="topLeft"/>
-<info folder="true" part="bottom" ratio="0.8074534" ratioLeft="520" ratioRight="124" relationship="4" relative="org.eclipse.ui.editorss">
-<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
+<info folder="true" part="bottom" ratio="0.5833333" ratioLeft="567" ratioRight="405" relationship="4" relative="org.eclipse.ui.editorss">
+<folder activePageID="org.eclipse.ui.views.ProblemView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
 <page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
@@ -285,6 +282,8 @@
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/mem_test.h"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/mem_test.c"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/mem_test.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test/main.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DE4_DDR2_test_bsp/system.h"/>
 </editors>
 <item historyLabel="main.c" index="0">
 <position info="not_deleted" x="0" y="0"/>
@@ -349,8 +348,17 @@
 <item historyLabel="system.h" index="1">
 <position info="not_deleted" x="10900" y="21"/>
 </item>
-<item active="true" historyLabel="mem_test.c" index="4">
+<item historyLabel="mem_test.c" index="4">
 <position info="not_deleted" x="3510" y="0"/>
+</item>
+<item historyLabel="main.c" index="5">
+<position info="not_deleted" x="2060" y="19"/>
+</item>
+<item historyLabel="mem_test.c" index="4">
+<position info="not_deleted" x="3391" y="0"/>
+</item>
+<item active="true" historyLabel="system.h" index="6">
+<position info="not_deleted" x="10900" y="21"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>

@@ -3,7 +3,6 @@
 	<name>DE4_DDR2_test</name>
 	<comment></comment>
 	<projects>
-		<project>DE4_DDR2_test_bsp</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

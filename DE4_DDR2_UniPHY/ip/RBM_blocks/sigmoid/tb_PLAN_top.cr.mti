@@ -1,0 +1,19 @@
+D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/PLAN_top.v {1 {vlog -work work D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/PLAN_top.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module sign_judger
+-- Compiling module magnitude_comparator
+-- Compiling module DTXY
+-- Compiling module arbitrator
+-- Compiling module PLAN_top
+
+Top level modules:
+	PLAN_top
+
+} {} {}} D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/tb_PLAN_top.v {1 {vlog -work work D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/tb_PLAN_top.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module tb_PLAN_top
+
+Top level modules:
+	tb_PLAN_top
+
+} {} {}}

@@ -52,9 +52,11 @@ module rbm_demo (
     //Internal signals    
     wire load_base_address;
     wire load_read_length;
+    wire reset_ip;
     //wire load_readdata;
     //wire load_buffer_data;
     //reg data_ready;
+    reg [DATAWIDTH-1:0]counter;
     
     reg [ADDRESS_WIDTH-1:0] base_address; 
     reg [ADDRESS_WIDTH-1:0] read_length;
@@ -80,29 +82,28 @@ module rbm_demo (
     always @(posedge clk) begin
         if(reset == 1) begin
             data_reg <= 0;
+            counter <= 0;
         end 
-        else if (coe_user_data_available) begin
-            data_reg <= coe_user_buffer_data;
+        else begin
+            if (coe_user_data_available) begin
+                data_reg <= coe_user_buffer_data;
+                counter <= counter +1;
+            end
+            if (reset_ip) begin
+                counter <= 0;
+            end
+            
         end
     end
-    
-    /*always @(posedge clk) begin
-        if(reset == 1) begin
-            data_ready <= 0;
-        end 
-        else begin        
-            if(coe_control_done & (accumu == read_length/4)) begin               
-                data_ready <= 1'b1;
-            end
-        end
-    end*/
+
     
     assign load_base_address = (avs_s0_address == 2'b00) & (avs_s0_write == 1);
     assign load_read_length = (avs_s0_address == 2'b01) & (avs_s0_write == 1); 
     assign coe_control_go = (avs_s0_address == 2'b10) & (avs_s0_write == 1);
+    assign reset_ip = (avs_s0_address == 2'b11) & (avs_s0_write == 1);
     assign avs_s0_readdatavalid = avs_s0_read; //& ( data_ready == 1); // use done signal in a right way in the future.
     assign coe_user_read_buffer = coe_user_data_available;   
-    assign avs_s0_readdata = data_reg;
+    assign avs_s0_readdata = counter;//data_reg;
     
     //Interconnect with memory reader
     assign coe_control_read_base = base_address;

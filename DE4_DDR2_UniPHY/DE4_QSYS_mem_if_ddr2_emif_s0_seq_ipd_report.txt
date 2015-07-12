@@ -209,20 +209,20 @@ generated files (just this core):
  
  
  [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.avl_clk: Timing: ELA:1/0.001s
- [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_rst: Timing: VAL:1/0.000s ELA:1/0.087s
- [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.cpu_inst: Timing: VAL:13/0.001s/0.003s ELA:13/0.026s/0.278s
+ [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_rst: Timing: VAL:1/0.001s ELA:1/0.083s
+ [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.cpu_inst: Timing: VAL:13/0.001s/0.002s ELA:13/0.028s/0.323s
  [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_scc_mgr_inst: Timing: VAL:1/0.001s ELA:1/0.004s
- [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_reg_file_inst: Timing: VAL:1/0.000s ELA:1/0.002s
- [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_phy_mgr_inst: Timing: VAL:1/0.000s ELA:1/0.007s
- [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_data_mgr_inst: Timing: VAL:1/0.001s ELA:1/0.001s
+ [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_reg_file_inst: Timing: VAL:1/0.001s ELA:1/0.004s
+ [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_phy_mgr_inst: Timing: VAL:1/0.000s ELA:1/0.006s
+ [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_data_mgr_inst: Timing: VAL:1/0.000s ELA:1/0.002s
  [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.afi_clk: Timing: ELA:1/0.001s
  [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.afi_reset: Timing: ELA:1/0.000s
- [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_rw_mgr_inst: Timing: VAL:1/0.000s ELA:1/0.004s
- [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_mem: Timing: VAL:2/0.000s/0.000s ELA:2/0.003s/0.004s
- [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.scc_clk: Timing: ELA:1/0.000s
- [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.scc_reset: Timing: ELA:1/0.000s
+ [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_rw_mgr_inst: Timing: VAL:1/0.001s ELA:1/0.004s
+ [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_mem: Timing: VAL:2/0.000s/0.001s ELA:2/0.002s/0.003s
+ [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.scc_clk: Timing: ELA:1/0.001s
+ [Debug] DE4_QSYS_mem_if_ddr2_emif_s0.scc_reset: Timing: ELA:1/0.001s
  [Warning] DE4_QSYS_mem_if_ddr2_emif_s0.sequencer_rw_mgr_inst: <b>sequencer_rw_mgr_inst.csr</b> must be exported, or connected to a matching conduit.
- [Debug] DE4_QSYS_mem_if_ddr2_emif_s0: Timing: VAL:1/0.001s COM:1/1.651s
+ [Debug] DE4_QSYS_mem_if_ddr2_emif_s0: Timing: VAL:1/0.001s COM:1/1.588s
  [Info] DE4_QSYS_mem_if_ddr2_emif_s0: Generating <b>qsys_sequencer_110</b> "<b>DE4_QSYS_mem_if_ddr2_emif_s0</b>" for QUARTUS_SYNTH
  [Debug] DE4_QSYS_mem_if_ddr2_emif_s0: queue size: 0 starting:qsys_sequencer_110 "DE4_QSYS_mem_if_ddr2_emif_s0"
  [Debug] Transform: PipelineBridgeSwap

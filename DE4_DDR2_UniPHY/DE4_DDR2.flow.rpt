@@ -1,5 +1,5 @@
 Flow report for DE4_DDR2
-Sun Jul 05 19:14:30 2015
+Sun Jul 12 17:35:20 2015
 Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Full Version
 
 
@@ -40,7 +40,7 @@ applicable agreement for further details.
 +--------------------------------------------------------------------------------------+
 ; Flow Summary                                                                         ;
 +-----------------------------------+--------------------------------------------------+
-; Flow Status                       ; Successful - Sun Jul 05 19:13:43 2015            ;
+; Flow Status                       ; Successful - Sun Jul 12 17:34:33 2015            ;
 ; Quartus II 64-Bit Version         ; 13.0.1 Build 232 06/12/2013 SP 1 SJ Full Version ;
 ; Revision Name                     ; DE4_DDR2                                         ;
 ; Top-level Entity Name             ; DE4_DDR2                                         ;
@@ -48,13 +48,13 @@ applicable agreement for further details.
 ; Device                            ; EP4SGX530KH40C2                                  ;
 ; Timing Models                     ; Final                                            ;
 ; Logic utilization                 ; 4 %                                              ;
-;     Combinational ALUTs           ; 9,283 / 424,960 ( 2 % )                          ;
-;     Memory ALUTs                  ; 1,002 / 212,480 ( < 1 % )                        ;
-;     Dedicated logic registers     ; 12,168 / 424,960 ( 3 % )                         ;
-; Total registers                   ; 12806                                            ;
+;     Combinational ALUTs           ; 9,296 / 424,960 ( 2 % )                          ;
+;     Memory ALUTs                  ; 970 / 212,480 ( < 1 % )                          ;
+;     Dedicated logic registers     ; 12,091 / 424,960 ( 3 % )                         ;
+; Total registers                   ; 12729                                            ;
 ; Total pins                        ; 156 / 888 ( 18 % )                               ;
 ; Total virtual pins                ; 0                                                ;
-; Total block memory bits           ; 1,234,492 / 21,233,664 ( 6 % )                   ;
+; Total block memory bits           ; 1,234,472 / 21,233,664 ( 6 % )                   ;
 ; DSP block 18-bit elements         ; 4 / 1,024 ( < 1 % )                              ;
 ; Total GXB Receiver Channel PCS    ; 0 / 24 ( 0 % )                                   ;
 ; Total GXB Receiver Channel PMA    ; 0 / 36 ( 0 % )                                   ;
@@ -70,7 +70,7 @@ applicable agreement for further details.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 07/05/2015 19:06:03 ;
+; Start date & time ; 07/12/2015 17:27:41 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; DE4_DDR2            ;
 +-------------------+---------------------+
@@ -81,7 +81,7 @@ applicable agreement for further details.
 +-------------------------------------+---------------------------------------------------------------------------------------+---------------+------------------------------------------+------------+
 ; Assignment Name                     ; Value                                                                                 ; Default Value ; Entity Name                              ; Section Id ;
 +-------------------------------------+---------------------------------------------------------------------------------------+---------------+------------------------------------------+------------+
-; COMPILER_SIGNATURE_ID               ; 109622335619.143611956332468                                                          ; --            ; --                                       ; --         ;
+; COMPILER_SIGNATURE_ID               ; 109622335619.143671846115892                                                          ; --            ; --                                       ; --         ;
 ; ECO_REGENERATE_REPORT               ; On                                                                                    ; Off           ; --                                       ; --         ;
 ; IP_TOOL_ENV                         ; Qsys                                                                                  ; --            ; DE4_QSYS                                 ; --         ;
 ; IP_TOOL_ENV                         ; Qsys                                                                                  ; --            ; DE4_QSYS_addr_router                     ; --         ;
@@ -263,7 +263,7 @@ applicable agreement for further details.
 ; PARTITION_COLOR                     ; 16764057                                                                              ; --            ; --                                       ; Top        ;
 ; PARTITION_FITTER_PRESERVATION_LEVEL ; PLACEMENT_AND_ROUTING                                                                 ; --            ; --                                       ; Top        ;
 ; PARTITION_NETLIST_TYPE              ; SOURCE                                                                                ; --            ; --                                       ; Top        ;
-; SLD_INFO                            ; QSYS_NAME DE4_QSYS HAS_SOPCINFO 1 GENERATION_ID 1436119381                            ; --            ; DE4_QSYS                                 ; --         ;
+; SLD_INFO                            ; QSYS_NAME DE4_QSYS HAS_SOPCINFO 1 GENERATION_ID 1436718101                            ; --            ; DE4_QSYS                                 ; --         ;
 ; SOPCINFO_FILE                       ; DE4_QSYS/synthesis/../../DE4_QSYS.sopcinfo                                            ; --            ; --                                       ; --         ;
 ; SYNTHESIS_ONLY_QIP                  ; On                                                                                    ; --            ; --                                       ; --         ;
 +-------------------------------------+---------------------------------------------------------------------------------------+---------------+------------------------------------------+------------+
@@ -274,11 +274,11 @@ applicable agreement for further details.
 +---------------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name               ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +---------------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis      ; 00:02:07     ; 1.0                     ; 1276 MB             ; 00:02:00                           ;
-; Fitter                    ; 00:04:31     ; 1.6                     ; 2422 MB             ; 00:06:09                           ;
-; Assembler                 ; 00:00:35     ; 1.0                     ; 1057 MB             ; 00:00:33                           ;
-; TimeQuest Timing Analyzer ; 00:00:43     ; 1.2                     ; 1209 MB             ; 00:00:48                           ;
-; Total                     ; 00:07:56     ; --                      ; --                  ; 00:09:30                           ;
+; Analysis & Synthesis      ; 00:01:42     ; 1.0                     ; 1277 MB             ; 00:01:40                           ;
+; Fitter                    ; 00:04:15     ; 1.6                     ; 2421 MB             ; 00:05:50                           ;
+; Assembler                 ; 00:00:33     ; 1.0                     ; 1063 MB             ; 00:00:32                           ;
+; TimeQuest Timing Analyzer ; 00:00:40     ; 1.1                     ; 1217 MB             ; 00:00:45                           ;
+; Total                     ; 00:07:10     ; --                      ; --                  ; 00:08:47                           ;
 +---------------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 

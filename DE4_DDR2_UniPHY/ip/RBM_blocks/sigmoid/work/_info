@@ -1,0 +1,146 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\RBM_blocks\sigmoid\submodules\magnitude_comparator
+varbitrator
+!i10b 1
+Z1 !s100 `d5P9[F53k^@BEEIN<L<:1
+Z2 IP`KY1nRoF9`GPD@H05IUY1
+Z3 Vz<2VMIS9Y6PQ4BECQH84=3
+Z4 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\RBM_blocks\sigmoid
+Z5 w1436538697
+Z6 Farbitrator.v
+Z7 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/PLAN_top.v
+Z8 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/PLAN_top.v
+L0 2
+Z9 OV;L;10.1d;51
+r1
+!s85 0
+31
+Z10 !s108 1436539185.551000
+Z11 !s107 arbitrator.v|dtxy.v|magnitude_comparator.v|sign_judger.v|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/PLAN_top.v|
+Z12 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/PLAN_top.v|
+!s101 -O0
+Z13 o-work work -O0
+vDTXY
+!i10b 1
+Z14 !s100 GA<Ck2Lo<U7Ql<K9jecKo0
+Z15 IVHiE=Hd8eF:J]K<QF2UjQ2
+Z16 V=g18BZBm=c`;debK5GnjK3
+R4
+Z17 w1436539020
+Z18 Fdtxy.v
+R7
+R8
+L0 1
+R9
+r1
+!s85 0
+31
+R10
+R11
+R12
+!s101 -O0
+R13
+Z19 n@d@t@x@y
+vmagnitude_comparator
+!i10b 1
+Z20 !s100 ;CND<a=<0H]Dk@5d978?A2
+Z21 IT@^oVSo]Q9>CJbG>>gQWS1
+Z22 VjbRiUVgcWI=e5Bio2lG@M2
+R4
+Z23 w1436536852
+Z24 Fmagnitude_comparator.v
+R7
+R8
+L0 1
+R9
+r1
+!s85 0
+31
+R10
+R11
+R12
+!s101 -O0
+R13
+vPLAN_top
+!i10b 1
+Z25 !s100 ;ESloj^Ia3^KhAH@Tcbaz1
+Z26 I`6kFVb_@D1;1?UVhbK2zk2
+Z27 VYjnCT1i;7>8gcWBkYzcCJ0
+R4
+R23
+R7
+R8
+L0 15
+R9
+r1
+!s85 0
+31
+R10
+R11
+R12
+!s101 -O0
+R13
+Z28 n@p@l@a@n_top
+vsign_judger
+!i10b 1
+Z29 !s100 V=Za2d[LGCVlPz<c=>F`S0
+Z30 I_zJ`hJ:6a@8Eh8295[DVV2
+Z31 VQiGR5Geo<^0onnDmmL@M`1
+R4
+R23
+Z32 Fsign_judger.v
+R7
+R8
+L0 1
+R9
+r1
+!s85 0
+31
+R10
+R11
+R12
+!s101 -O0
+R13
+vtb_PLAN
+Z33 !s100 Ii_e^N2lBkzA?]]:zOYKN0
+Z34 I58>4Y<PT?RGlYiQ4`43J90
+Z35 V:l]RE6HzR?PaDUTRJ`l_e3
+R4
+Z36 w1436536642
+Z37 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/tb_PLAN_top.v
+Z38 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/tb_PLAN_top.v
+L0 3
+R9
+r1
+31
+Z39 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/tb_PLAN_top.v|
+R13
+Z40 ntb_@p@l@a@n
+Z41 !s108 1436536696.180000
+Z42 !s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/tb_PLAN_top.v|
+!i10b 1
+!s85 0
+!s101 -O0
+vtb_PLAN_top
+Z43 InR0CNPTkg35DnR=Wm48QR0
+Z44 VZAb<`]JN178a4_GI1KcDY0
+R4
+Z45 w1436539180
+R37
+R38
+L0 3
+R9
+r1
+31
+R39
+R13
+Z46 ntb_@p@l@a@n_top
+!i10b 1
+Z47 !s100 IQL7JB?Raz99C99JHQ?<81
+!s85 0
+Z48 !s108 1436539185.437000
+R42
+!s101 -O0

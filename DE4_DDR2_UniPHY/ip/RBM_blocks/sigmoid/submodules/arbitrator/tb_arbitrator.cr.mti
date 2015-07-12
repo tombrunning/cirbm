@@ -1,0 +1,15 @@
+D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/arbitrator/arbitrator.v {1 {vlog -work work D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/arbitrator/arbitrator.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module arbitrator
+
+Top level modules:
+	arbitrator
+
+} {} {}} D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/arbitrator/tb_arbitrator.v {1 {vlog -work work D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/arbitrator/tb_arbitrator.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module tb_arbitrator
+
+Top level modules:
+	tb_arbitrator
+
+} {} {}}

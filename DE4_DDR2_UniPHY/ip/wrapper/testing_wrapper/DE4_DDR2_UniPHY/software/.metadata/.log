@@ -515,3 +515,16 @@ java.lang.Exception: Connected system ID hash not found on target at expected ba
 
 !ENTRY com.altera.sbtgui.launch 1 0 2015-07-04 14:55:26.418
 !MESSAGE Executing: [C:/altera/13.0sp1/quartus\bin\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --accept-bad-sysid --sidp=0x40000060 /cygdrive/d/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/software/DE4_DDR2_test/DE4_DDR2_test.elf]
+!SESSION 2015-07-12 17:54:50.234 -----------------------------------------------
+eclipse.buildId=M20120208-0800
+java.version=1.6.0_23
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.cpp.product -perspective com.altera.sbtgui.ui.cPerspective
+Command-line arguments:  -data D:\Projects\fpl16\DE4_DDR2_UniPHY\ip\wrapper\testing_wrapper\DE4_DDR2_UniPHY\software -os win32 -ws win32 -arch x86 -product org.eclipse.epp.package.cpp.product -perspective com.altera.sbtgui.ui.cPerspective
+
+!ENTRY com.altera.sbtgui.launch 1 0 2015-07-12 17:55:45.367
+!MESSAGE Executing: [C:/altera/13.0sp1/quartus\bin\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --stop --accept-bad-sysid --sidp=0x40000060]
+
+!ENTRY com.altera.sbtgui.launch 1 0 2015-07-12 17:55:49.841
+!MESSAGE Executing: [C:/altera/13.0sp1/quartus\bin\cygwin\bin\bash.exe, -c, nios2-download '--cable=USB-Blaster on localhost [USB-0]' --device=1 --instance=0 --go --accept-bad-sysid --sidp=0x40000060 /cygdrive/d/Projects/fpl16/DE4_DDR2_UniPHY/ip/wrapper/testing_wrapper/DE4_DDR2_UniPHY/software/DE4_DDR2_test/DE4_DDR2_test.elf]

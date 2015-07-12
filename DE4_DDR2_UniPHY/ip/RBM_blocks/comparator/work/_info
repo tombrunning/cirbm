@@ -1,0 +1,43 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\RBM_blocks\htovMMM
+vcomparator
+!i10b 1
+Z1 !s100 n3<0>=`0eS>_Z4DQ7i1L<3
+Z2 Im_aIVnoAMZ:N@WlVBUllE2
+Z3 VMz?@:?IiLHh>iN?^O=GnB2
+Z4 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\RBM_blocks\comparator
+Z5 w1436617532
+Z6 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/comparator.v
+Z7 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/comparator.v
+L0 5
+Z8 OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1436617758.401000
+!s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/comparator.v|
+Z9 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/comparator.v|
+!s101 -O0
+Z10 o-work work -O0
+vtb_comparator
+Z11 I3Y16SPT1U0Xj7=TDg11oI2
+Z12 VDXOE@N8V>`AOgOjOakdQe1
+R4
+Z13 w1436617744
+Z14 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/tb_comparator.v
+Z15 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/tb_comparator.v
+L0 3
+R8
+r1
+31
+Z16 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/tb_comparator.v|
+R10
+!i10b 1
+Z17 !s100 F^RM6C9N_L[fIjf3Xomcz2
+!s85 0
+Z18 !s108 1436617758.287000
+Z19 !s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/tb_comparator.v|
+!s101 -O0

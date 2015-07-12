@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_qsys' in SOPC Builder design 'DE4_QSYS'
  * SOPC Builder design path: ../../DE4_QSYS.sopcinfo
  *
- * Generated: Sun Jul 05 19:16:43 BST 2015
+ * Generated: Sun Jul 12 18:06:33 BST 2015
  */
 
 /*
@@ -412,7 +412,7 @@
 #define SYSID_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_NAME "/dev/sysid"
 #define SYSID_SPAN 8
-#define SYSID_TIMESTAMP 1436119381
+#define SYSID_TIMESTAMP 1436718101
 #define SYSID_TYPE "altera_avalon_sysid_qsys"
 
 
@@ -443,16 +443,16 @@
 
 
 /*
- * wrapper configuration
+ * wrapper_0 configuration
  *
  */
 
-#define ALT_MODULE_CLASS_wrapper wrapper
-#define WRAPPER_BASE 0x41041030
-#define WRAPPER_IRQ -1
-#define WRAPPER_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define WRAPPER_NAME "/dev/wrapper"
-#define WRAPPER_SPAN 16
-#define WRAPPER_TYPE "wrapper"
+#define ALT_MODULE_CLASS_wrapper_0 wrapper
+#define WRAPPER_0_BASE 0x41041030
+#define WRAPPER_0_IRQ -1
+#define WRAPPER_0_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define WRAPPER_0_NAME "/dev/wrapper_0"
+#define WRAPPER_0_SPAN 16
+#define WRAPPER_0_TYPE "wrapper"
 
 #endif /* __SYSTEM_H_ */

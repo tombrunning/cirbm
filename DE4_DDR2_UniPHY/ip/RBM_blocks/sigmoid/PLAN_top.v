@@ -1,0 +1,173 @@
+/*
+input(16-bit fix point):   sign a  b  c  d . e  f g h i j k l m n o
+bits:                      15  14 13 12 11. 10 9 8 7 6 5 4 3 2 1 0
+
+sign: 				0 f| positive number, 1 f| negative number;
+integral part: 		a-d
+fractional part: 	e-o
+*/
+
+`include "sigmoid/sign_judger.v"
+`include "sigmoid/magnitude_comparator.v"
+`include "sigmoid/dtxy.v"
+`include "sigmoid/arbitrator.v"
+
+module PLAN_top(clock,reset,enable,in,sigmoid_value,sigmoid_value_available);
+
+parameter DATAWIDTH = 16;
+input clock;
+input reset;
+input enable;
+
+input [DATAWIDTH-1:0]in;
+output wire [DATAWIDTH-1:0]sigmoid_value;
+output wire sigmoid_value_available;
+
+//wires from module "sign_judger" to "magnitude_comparator" 
+wire [DATAWIDTH-1:0] abs_value;
+wire sign_bit;
+wire sign_judger_available;
+
+//wires from "magnitude_comparator" to "DTXY"
+wire [3:0] flag;
+wire flag_available;
+wire mag_cmp_sign_out;
+wire [DATAWIDTH-1:0] mag_cmp_absValue_out;
+
+//wires from "DTXY" to "arbitrator"
+wire abs_sigmoid_available;
+wire dtxy_sign_bit_out;
+wire [DATAWIDTH-1:0] abs_sigmoid_value;
+
+
+sign_judger inst_sign_judger(.clock(clock),
+                             .reset(reset),
+                             .in_available(enable),
+                             .in(in),
+                             .abs_out(abs_value),
+                             .sign_bit(sign_bit),
+                             .out_available(sign_judger_available)
+                            );
+	
+
+magnitude_comparator inst_magnitude_comparator(.clock(clock),
+                                               .reset(reset),
+                                               .enable(sign_judger_available),
+                                               .abs_in(abs_value),
+                                               .sign_bit(sign_bit),
+                                               .flag(flag),
+                                               .flag_available(flag_available),
+                                               .sign_bit_out(mag_cmp_sign_out),
+                                               .abs_value_out(mag_cmp_absValue_out)
+                                               );
+
+DTXY inst_DTXY(.clock(clock),
+               .reset(reset),
+               .abs_in(mag_cmp_absValue_out),
+               .flag(flag),
+               .flag_available(flag_available),
+               .abs_sign_in(mag_cmp_sign_out),
+               .abs_sigmoid_available(abs_sigmoid_available),
+               .abs_sigmoid_out(abs_sigmoid_value),
+               .dtxy_sign_bit_out(dtxy_sign_bit_out)
+               );
+    
+arbitrator inst_arbitrator(.clock(clock),
+                           .reset(reset),
+                           .abs_in(abs_sigmoid_value),
+                           .sign_bit_in(dtxy_sign_bit_out),
+                           .input_available(abs_sigmoid_available),
+                           .out(sigmoid_value),
+                           .output_available(sigmoid_value_available)
+                           );
+
+endmodule
+
+
+//Abandoned codes for the direct transformation process which is not necessary here
+/*reg wire_dircttrans_pos1;// All comments are for Direct Transformation.
+	reg wire_dircttrans_pos2;
+	reg wire_dircttrans_pos3;
+	reg wire_dircttrans_pos4;
+	reg wire_dircttrans_pos5;
+	reg wire_dircttrans_pos6;
+	reg wire_dircttrans_pos7;
+	reg wire_dircttrans_pos8;
+	reg wire_dircttrans_pos9;
+	reg wire_dircttrans_pos10;
+	reg wire_dircttrans_pos11;
+	reg wire_dircttrans_pos12;
+	reg wire_dircttrans_pos13;
+	reg wire_dircttrans_pos14;
+	reg wire_dircttrans_pos15;*/
+	
+	//assign abs_in = in;
+	//assign abs_in[sign]=0;
+/* 	
+always @(posedge clock) begin
+	if(reset == 1'b1) begin
+		abs_in<=0;
+		abs_out<=0;
+		out  <= 0;
+		flag <= 0;//4 bits flag
+	
+		z4_1 <= 0;//temp|ary registers one bit each
+		z4_2 <= 0;
+		
+		wire_z2_1 <= 0;
+		wire_z2_2 <= 0;
+		wire_z2_3 <= 0;
+		wire_z2_4 <= 0;
+		wire_z2_5 <= 0;
+		
+		wire_dircttrans_pos1 <= 0;
+		wire_dircttrans_pos2 <= 0;
+		wire_dircttrans_pos3 <= 0;
+		wire_dircttrans_pos4 <= 0;
+		wire_dircttrans_pos5 <= 0;
+		wire_dircttrans_pos6 <= 0;
+		wire_dircttrans_pos7 <= 0;
+		wire_dircttrans_pos8 <= 0;
+		wire_dircttrans_pos9 <= 0;
+		wire_dircttrans_pos10 <= 0;
+		wire_dircttrans_pos11 <= 0;
+		wire_dircttrans_pos12 <= 0;
+		wire_dircttrans_pos13 <= 0;
+		wire_dircttrans_pos14 <= 0;
+		wire_dircttrans_pos15 <= 0;
+		end
+	
+	
+	
+	out[sign] <= 0;										//bit sign (In this version of codes, we only discuss about positive numbers)
+	out[a] <= flag[z4];									//bit A'
+	out[b] <= ~flag[z4];								//bit B'
+	out[c] <= flag[z2]|flag[z3];						//bit C'
+	
+	wire_dircttrans_pos1 <= flag[z2]&in[c];				//bit D'
+	wire_dircttrans_pos2 <= flag[z1]&in[e];
+	| bit_d_|(out[d],flag[z3],wire_dircttrans_pos1,wire_dircttrans_pos2);
+	
+	wire_dircttrans_pos3 <= in[c]^-in[d];				//bit E'
+	wire_dircttrans_pos4 <= flag[z3]&wire_dircttrans_pos3;
+	wire_dircttrans_pos5								//??????????
+	wire_dircttrans_pos6 <= flag[z1]&in[f];
+	| bit_e_|(out[e],wire_dircttrans_pos4,wire_dircttrans_pos5,wire_dircttrans_pos6);
+	
+	wire_dircttrans_pos7 <= in[g]&flag[z1];				//bit F'
+	wire_dircttrans_pos8 <= in[f]&flag[z2];
+	wire_dircttrans_pos9 <= in[d]&flag[z3];
+	| bit_f_|(out[f],wire_dircttrans_pos7,wire_dircttrans_pos8,wire_dircttrans_pos9);
+
+	wire_dircttrans_pos10<= in[h]&flag[z1];				//bit G'
+	wire_dircttrans_pos11<= in[g]&flag[z2];
+	wire_dircttrans_pos12<= in[e]&flag[z3];
+	| bit_g_|(out[g],wire_dircttrans_pos10,wire_dircttrans_pos11,wire_dircttrans_pos12);
+	
+	wire_dircttrans_pos13<= 1&flag[z1];				//bit H' ????????
+	wire_dircttrans_pos14<= in[h]&flag[z2];
+	wire_dircttrans_pos15<= in[f]&flag[z3];
+	| bit_h_|(out[h],wire_dircttrans_pos13,wire_dircttrans_pos14,wire_dircttrans_pos15);
+
+end  */
+

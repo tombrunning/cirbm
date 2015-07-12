@@ -1,0 +1,15 @@
+D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/comparator.v {1 {vlog -work work D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/comparator.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module comparator
+
+Top level modules:
+	comparator
+
+} {} {}} D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/tb_comparator.v {1 {vlog -work work D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/comparator/tb_comparator.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module tb_comparator
+
+Top level modules:
+	tb_comparator
+
+} {} {}}

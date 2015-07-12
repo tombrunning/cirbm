@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>05-Jul-2015 19:16:41</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1436120201658</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>12-Jul-2015 18:10:13</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1436721013874</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>D:\Projects\fpl16\DE4_DDR2_UniPHY\software\DE4_DDR2_test_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\DE4_QSYS.sopcinfo</SopcDesignFile>
@@ -917,7 +917,7 @@
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>wrapper</slaveDescriptor>
+                <slaveDescriptor>wrapper_0</slaveDescriptor>
                 <addressRange>0x41041030 - 0x4104103F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>

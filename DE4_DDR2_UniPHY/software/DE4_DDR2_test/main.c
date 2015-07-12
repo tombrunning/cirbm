@@ -1,43 +1,12 @@
 // ============================================================================
-// Copyright (c) 2011 by Terasic Technologies Inc.
+// RMB FPGA
 // ============================================================================
-//
-// Permission:
-//
-//   Terasic grants permission to use and modify this code for use
-//   in synthesis for all Terasic Development Boards and Altera Development 
-//   Kits made by Terasic.  Other use of this code, including the selling 
-//   ,duplication, or modification of any portion is strictly prohibited.
-//
-// Disclaimer:
-//
-//   This VHDL/Verilog or C/C++ source code is intended as a design reference
-//   which illustrates how these types of functions can be implemented.
-//   It is the user's responsibility to verify their design for
-//   consistency and functionality through the use of formal
-//   verification methods.  Terasic provides no warranty regarding the use 
-//   or functionality of this code.
-//
-// ============================================================================
-//           
-//                     Terasic Technologies Inc
-//                     356 Fu-Shin E. Rd Sec. 1. JhuBei City,
-//                     HsinChu County, Taiwan
-//                     302
-//
-//                     web: http://www.terasic.com/
-//                     email: support@terasic.com
-//
-// ============================================================================
-// Major Functions/Design Description:
-//
-//   Please refer to DE4_UserManual.pdf in DE4 system CD.
 //
 // ============================================================================
 // Revision History:
 // ============================================================================
 //   Ver.: |Author:   |Mod. Date:    |Changes Made:
-//   V1.0  |Richard   |07/19/2011    |Init, System built by Quartus 11.0 SP1 Build 208
+//   V1.0  |Jiang Su  |06/07/2015    |DDR2+Pipelining memory reader+simple ip
 // ============================================================================
 
 #include <stdio.h>
@@ -59,25 +28,15 @@ int main(){
     void *ddr2_base = (void *)MEM_IF_DDR2_EMIF_BASE;
     alt_u32 InitValue;
     alt_u8 ButtonMask;
-
-    //DDR2 Initialisation
-    printf("===== DE4 DDR2 DBM Program =====\n");
-    printf("DDR2  Size: %d MBytes\n", MEM_IF_DDR2_EMIF_SPAN/1024/1024);
-    
-    //Text length transfered in Bytes
-    //int txlen = 16;
-    //int rxlen = 16;
-
-    // Flag to continue
     char go = 0;
 
-    //dma destination
-    //void* ptx_source = (void*) 0x00000000;// address of DDR2 memory
-    //void* ptx_dest = (void*) 0x40000000;// address of IP
+    //DDR2 Initialisation
+    printf("//////////////////// DE4 DDR2 SDRAM Information /////////////////////////\n");
+    printf("DDR2  Size: %d MBytes\n\n\n", MEM_IF_DDR2_EMIF_SPAN/1024/1024);
+
 
     while(1){
-        printf("==========================================================\n");
-        printf("Press any BUTTON to start DDR2 initialisation [BUTTON0 for continued test] \n");
+        printf("//////////////////// Memory Initialization //////////////////////////////\n");
         ButtonMask = 0x00;
         while((ButtonMask & 0x0F) == 0x0F){
             ButtonMask = IORD(BUTTON_BASE, 0) & 0x0F;
@@ -95,56 +54,65 @@ int main(){
         do{
             TimeStart = alt_nticks();
             TestIndex++;
-            // memory test
             InitValue = 0x00000001;
-            printf("=====> DDR2 Initialisation, Iteration: %d\n", TestIndex);
+            printf("=====> DDR2 Initialization Iteration: %d\n", TestIndex);
             bPass = mem_init((alt_u32)ddr2_base, MemSize, InitValue);
             TimeElapsed = alt_nticks()-TimeStart;
             if (bPass){
-                printf("DDR2 Initialisation is Completed! size=%d bytes, %.3f sec\n", MemSize, (float)TimeElapsed/(float)alt_ticks_per_second());
+                printf("> DDR2 Initialisation is Completed! size=%d bytes, %.3f sec\n\n\n", MemSize, (float)TimeElapsed/(float)alt_ticks_per_second());
             }else{
-                printf("DDR2 Initialisation is failed. \n");
+                printf("> DDR2 Initialisation is failed. \n");
             }
             bLoop = FALSE;
         }while(bLoop && bPass);
-        /*////////////
-        alt_u32 pAddr = (void*) 0x00000000;
-	    printf ("BeforeBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-	    printf ("BeforeBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-	    printf ("BeforeBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-	    printf ("BeforeBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-	    printf ("BeforeBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-	    printf ("BeforeBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-	    printf ("BeforeBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-        ///////////////
-         */
-        //dma_transmit (txlen, ptx_source, ptx_dest);
-        //dma_receive (rxlen, ptx_dest, ptx_source);*/
 
-        alt_u32 length_in_byte = 36;
-        alt_u32 dummy_value = 0;
-        alt_u32 result = 0;
+        //IP
+        int rbmTimeStart, rbmTimeElapsed = 0;
+        int DATA_WIDTH = 32;
+        int too_many_iters = 0;
+        alt_u32 length_in_byte = 20000;
+        alt_u32 target_trans = length_in_byte/4;
 
-        IOWR_32DIRECT(WRAPPER_BASE, 0x0, MEM_IF_DDR2_EMIF_BASE);
+        alt_u32 start_ip = 1;
+        alt_u32 reset_ip = 1;
+        alt_u32 num_trans = 0;
 
-        IOWR_32DIRECT(WRAPPER_BASE, 0x4, length_in_byte);
+        printf("//////////////////// Data Transfer and IP Activation ////////////////////\n");
+        rbmTimeStart = alt_nticks();
 
-        IOWR_32DIRECT(WRAPPER_BASE, 0x8, dummy_value);
-        usleep(10000);
-        result = IORD_32DIRECT(WRAPPER_BASE,0x0);
+        IOWR_32DIRECT(WRAPPER_0_BASE, 0xC, reset_ip);
 
-        printf("\n Thank God, the result is %d. \n\n", (int)result);
-        //pointers for testing purpose
-        alt_u32* pAddr = 0x00000000;
-        printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(pAddr), (int)(*pAddr));
-        printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-        printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-        printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-        printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-        printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-        printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
-    	printf("Repeat RBM?");
+        IOWR_32DIRECT(WRAPPER_0_BASE, 0x0, MEM_IF_DDR2_EMIF_BASE);
 
+        IOWR_32DIRECT(WRAPPER_0_BASE, 0x4, length_in_byte);
+
+        IOWR_32DIRECT(WRAPPER_0_BASE, 0x8, start_ip);
+        //usleep(5000);
+
+        while(num_trans != target_trans && too_many_iters <= target_trans){
+        	num_trans = IORD_32DIRECT(WRAPPER_0_BASE,0x0);
+        	too_many_iters=+1;
+        }
+
+        rbmTimeElapsed = alt_nticks()-rbmTimeStart;
+
+        if(too_many_iters > target_trans){
+        	printf(">Data transfer between memory and IP was failed and target transfer amount was not achieved.\n");
+        }else{
+			printf(">Time cost by IP is: %.3f sec \n", (float)rbmTimeElapsed/(float)alt_ticks_per_second());
+			printf(">The number of words transferred is %d. \n>Each word is %d bits\n", (int)num_trans, DATA_WIDTH);
+			printf(">Memory info:\n");
+			//pointers for testing purpose
+			alt_u32* pAddr = 0x00000000;
+			printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(pAddr), (int)(*pAddr));
+			printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
+			printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
+			printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
+			printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
+			printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
+			printf ("BBAddress: 0x%08X------- Value: 0x%08X \n", (int)(++pAddr), (int)(*pAddr));
+			printf("Repeat RBM?");
+        }
     	go = getchar();
     	go = getchar();
     	if (go == 'n' || go == 'N') break;

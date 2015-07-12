@@ -1,0 +1,63 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\RBM_blocks\sigmoid\submodules\sign_judger
+vmagnitude_comparator
+!i10b 1
+Z1 !s100 TA=aVKK1XYG7;5NK9ZGG20
+Z2 I@KT1A:5U4>cjFY`[UFM[^3
+Z3 VjbRiUVgcWI=e5Bio2lG@M2
+Z4 dD:\Projects\fpl16\DE4_DDR2_UniPHY\ip\RBM_blocks\sigmoid\submodules\magnitude_comparator
+Z5 w1436535873
+Z6 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/magnitude_comparator/magnitude_comparator.v
+Z7 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/magnitude_comparator/magnitude_comparator.v
+L0 14
+Z8 OV;L;10.1d;51
+r1
+!s85 0
+31
+!s108 1436536404.521000
+!s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/magnitude_comparator/magnitude_comparator.v|
+Z9 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/magnitude_comparator/magnitude_comparator.v|
+!s101 -O0
+Z10 o-work work -O0
+vtb_magnitude_comparator
+Z11 IK0Lo?^VgPAhOej<leh7960
+Z12 VkaiKedE=z6H^i]C<5WL8m2
+R4
+Z13 w1436536401
+Z14 8D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/magnitude_comparator/tb_magnitude_comparator.v
+Z15 FD:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/magnitude_comparator/tb_magnitude_comparator.v
+L0 3
+R8
+r1
+31
+Z16 !s90 -reportprogress|300|-work|work|D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/magnitude_comparator/tb_magnitude_comparator.v|
+R10
+!i10b 1
+Z17 !s100 TA_0X69iXXXAJ4<IPTUR@3
+!s85 0
+Z18 !s108 1436536404.398000
+Z19 !s107 D:/Projects/fpl16/DE4_DDR2_UniPHY/ip/RBM_blocks/sigmoid/submodules/magnitude_comparator/tb_magnitude_comparator.v|
+!s101 -O0
+vtb_PLAN_mod_mag_cmp
+Z20 IRY>3cGMlVAzWGfRZ2?mgO0
+Z21 VZf[ERYgXF@GK7>5QKUO9O3
+R4
+Z22 w1436535259
+R14
+R15
+L0 3
+R8
+r1
+31
+R16
+R10
+Z23 ntb_@p@l@a@n_mod_mag_cmp
+Z24 !s100 z:ze_hG5zY1=o]zO07;?T2
+Z25 !s108 1436535263.412000
+R19
+!i10b 1
+!s85 0
+!s101 -O0
